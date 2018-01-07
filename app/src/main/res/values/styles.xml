@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -11,24 +11,16 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
+    <style name="TextStyle">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/very_dark_blue</item>
+        <item name="android:letterSpacing">0.05</item>
+    </style>
 
     <style name="TextStyle2">
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">@color/very_dark_blue</item>
         <item name="android:gravity">center_horizontal</item>
-    </style>
-
-    <style name="TextStyle5">
-        <item name="android:textSize">20sp</item>
-        <item name="android:textColor">@color/very_dark_blue</item>
-        <item name="android:letterSpacing">0.05</item>
-        <item name="android:gravity">center_horizontal</item>
-    </style>
-
-    <style name="TextStyle">
-        <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/very_dark_blue</item>
-        <item name="android:letterSpacing">0.05</item>
     </style>
 
     <style name="TextStyle3">
@@ -38,18 +30,19 @@
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="TextStyle8">
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/very_dark_blue_two</item>
-        <item name="android:letterSpacing">0.06</item>
-        <item name="android:gravity">center_horizontal</item>
-    </style>
-
     <style name="TextStyle4">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/dark_sky_blue</item>
         <item name="android:letterSpacing">0.36</item>
         <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="TextStyle5">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/very_dark_blue</item>
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:fontFamily">@font/nunito_light</item>
     </style>
 
     <style name="TextStyle6">
@@ -62,6 +55,13 @@
     <style name="TextStyle7">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/very_dark_blue</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="TextStyle8">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/very_dark_blue_two</item>
         <item name="android:letterSpacing">0.06</item>
         <item name="android:gravity">center_horizontal</item>
     </style>
