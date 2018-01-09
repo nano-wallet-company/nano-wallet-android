@@ -14,6 +14,7 @@ android {
                 cppFlags "-fexceptions"
             }
         }
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
@@ -30,7 +31,7 @@ android {
 dependencies {
     final AWESOME_QRCODE_VERSION = '1.0.6'
     final BUTTER_KNIFE_VERSION = '8.8.1'
-    final CONSTRAINT_LAYOUT_VERSION = '1.0.2'
+    final CONSTRAINT_LAYOUT_VERSION = '1.1.0-beta4'
     final ESPRESSO_VERSION = '3.0.1'
     final EVENT_BUS_VERSION = '3.1.1'
     final GSON_VERSION = '2.8.2'
