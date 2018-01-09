@@ -46,6 +46,7 @@
         android:id="@+id/intro_welcome_button_add_wallet"
         style="@style/LargeButton"
         android:layout_marginTop="20dp"
+        android:layout_marginBottom="65dp"
         android:text="@string/intro_welcome_have_wallet_cta"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/intro_welcome_guideline_vert"
