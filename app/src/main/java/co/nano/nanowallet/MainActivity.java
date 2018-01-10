@@ -47,9 +47,6 @@ public class MainActivity extends FragmentActivity {
         Log.i("Wallet", "Address " + NanoUtil.publicToAddress(public_address));
 
         initUi();
-
-        // we have a wallet, lets connect and sync with the server
-        // connectWebSocket();
     }
 
     private void initUi() {
@@ -62,7 +59,7 @@ public class MainActivity extends FragmentActivity {
         // Add the fragment to the 'fragment_container' FrameLayout
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.container, introWelcomeFragment).commit();
-
+        connectWebSocket();
     }
 
     private void connectWebSocket() {
@@ -78,12 +75,15 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
                 Log.i("Websocket", "Opened");
+                mWebSocketClient.send("{\"action\":\"account_subscribe\",\"account\":\"xrb_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3\"}");
                 mWebSocketClient.send("{\"action\":\"block_count\"}");
+                mWebSocketClient.send("{\"action\":\"price_data\",\"currency\":\"usd\"}");
             }
 
             @Override
             public void onMessage(String s) {
                 final String message = s;
+                Log.i("Websocket", message);
                 //runOnUiThread(new Runnable() {
                 //    @Override
                 //    public void run() {
