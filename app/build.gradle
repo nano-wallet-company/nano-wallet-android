@@ -75,10 +75,6 @@ dependencies {
     // Event Bus
     implementation "org.greenrobot:eventbus:$EVENT_BUS_VERSION"
 
-    // Libsodium
-    //implementation "com.github.joshjdevl.libsodiumjni:libsodium-jni:1.0.8"
-    implementation project(':libsodium-jni-release')
-
     // Testing
     androidTestImplementation "com.android.support.test:runner:$TEST_RUNNER_VERSION"
     androidTestImplementation("com.android.support.test.espresso:espresso-core:$ESPRESSO_VERSION", {
