@@ -11,20 +11,23 @@ import android.view.ViewGroup;
 import co.nano.nanowallet.BuildConfig;
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentIntroWelcomeBinding;
+import co.nano.nanowallet.ui.common.FragmentControl;
+import co.nano.nanowallet.ui.common.FragmentUtility;
 
 /**
  * The Intro Screen to the app
  */
 
 public class IntroWelcomeFragment extends Fragment {
-    public String TAG = IntroWelcomeFragment.class.getSimpleName();
+    private FragmentIntroWelcomeBinding binding;
+    public static String TAG = IntroWelcomeFragment.class.getSimpleName();
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // inflate the view
-        FragmentIntroWelcomeBinding binding = DataBindingUtil.inflate(
+        binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_intro_welcome, container, false);
         View view = binding.getRoot();
 
@@ -38,6 +41,16 @@ public class IntroWelcomeFragment extends Fragment {
 
     public class ClickHandlers {
         public void onClickNewWallet(View view) {
+            if (getActivity() instanceof FragmentControl) {
+                ((FragmentControl) getActivity()).getFragmentUtility().add(
+                        new IntroSeedFragment(),
+                        FragmentUtility.Animation.CROSSFADE,
+                        FragmentUtility.Animation.CROSSFADE,
+                        IntroSeedFragment.TAG,
+                        binding.introWelcomeLogo
+                );
+            }
+
             Log.d(TAG, "New Wallet");
         }
 

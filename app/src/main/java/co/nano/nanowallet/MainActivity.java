@@ -16,10 +16,13 @@ import java.net.URISyntaxException;
 import java.security.SecureRandom;
 
 import co.nano.nanowallet.ui.IntroWelcomeFragment;
+import co.nano.nanowallet.ui.common.FragmentControl;
+import co.nano.nanowallet.ui.common.FragmentUtility;
 
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements FragmentControl {
     private WebSocketClient mWebSocketClient;
+    private FragmentUtility mFragmentUtility;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,12 +56,14 @@ public class MainActivity extends FragmentActivity {
         // set main content view
         setContentView(R.layout.activity_main);
 
-        // Create a new Fragment to be placed in the activity layout
-        IntroWelcomeFragment introWelcomeFragment = new IntroWelcomeFragment();
+        // create fragment utility instance
+        mFragmentUtility = new FragmentUtility(getSupportFragmentManager());
+        mFragmentUtility.setContainerViewId(R.id.container);
 
-        // Add the fragment to the 'fragment_container' FrameLayout
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.container, introWelcomeFragment).commit();
+        // set the intro welcome fragment as the first fragment
+        // TODO: Add logic to see if this is a first time user or not
+        mFragmentUtility.replace(new IntroWelcomeFragment());
+
         connectWebSocket();
     }
 
@@ -112,4 +117,8 @@ public class MainActivity extends FragmentActivity {
         editText.setText("");
     }
 
+    @Override
+    public FragmentUtility getFragmentUtility() {
+        return mFragmentUtility;
+    }
 }

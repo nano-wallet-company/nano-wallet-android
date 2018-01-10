@@ -4,7 +4,13 @@
     <string name="version_display">NANO V%s</string>
 
     <!-- Intro Screens -->
+    <string name="intro_logo_transition">LogoTransition</string>
     <string name="intro_welcome_title">Welcome to Nano</string>
     <string name="intro_welcome_new_wallet_cta">Start a new wallet</string>
     <string name="intro_welcome_have_wallet_cta">I already have a wallet</string>
+    <string name="intro_seed_steps">%d / 2</string>
+    <string name="intro_seed_title">Paste a seed or scan a\n code to begin</string>
+    <string name="intro_seed_seed_label">Seed</string>
+    <string name="intro_seed_seed_hint">(Seed Address)</string>
+    <string name="intro_seed_confirm_cta">Confirm Seed</string>
 </resources>
