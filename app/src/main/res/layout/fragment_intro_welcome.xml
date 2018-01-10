@@ -3,7 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
+        <!-- Click Listeners -->
+        <variable
+            name="handlers"
+            type="co.nano.nanowallet.ui.IntroWelcomeFragment.ClickHandlers" />
+        <!-- Data -->
         <variable
             name="version"
             type="String" />
@@ -44,18 +48,20 @@
             android:id="@+id/intro_welcome_button_new_wallet"
             style="@style/LargeButton"
             android:layout_marginTop="37dp"
+            android:onClick="@{handlers::onClickNewWallet}"
             android:text="@string/intro_welcome_new_wallet_cta"
-            app:layout_constraintBottom_toTopOf="@+id/intro_welcome_button_add_wallet"
+            app:layout_constraintBottom_toTopOf="@+id/intro_welcome_button_have_wallet"
             app:layout_constraintEnd_toStartOf="@+id/intro_welcome_guideline_vert"
             app:layout_constraintStart_toStartOf="@+id/intro_welcome_guideline_vert"
             app:layout_constraintTop_toBottomOf="@+id/intro_welcome_title"
             app:layout_constraintVertical_chainStyle="packed" />
 
         <Button
-            android:id="@+id/intro_welcome_button_add_wallet"
+            android:id="@+id/intro_welcome_button_have_wallet"
             style="@style/LargeButton"
             android:layout_marginBottom="65dp"
             android:layout_marginTop="20dp"
+            android:onClick="@{handlers::onClickHaveWallet}"
             android:text="@string/intro_welcome_have_wallet_cta"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/intro_welcome_guideline_vert"
