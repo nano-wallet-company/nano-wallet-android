@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="dark_sky_blue">#4a90e2</color>
+    <color name="light_sky_blue">#334a90e2</color>
     <color name="very_dark_blue">#000034</color>
     <color name="deep_blue">#000075</color>
     <color name="burnt_yellow">#e1990e</color>

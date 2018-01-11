@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="TextStyle4">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/dark_sky_blue</item>
+        <item name="android:letterSpacing">0.36</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:fontFamily">@font/sofiapro_regular</item>
+    </style>
+</resources>

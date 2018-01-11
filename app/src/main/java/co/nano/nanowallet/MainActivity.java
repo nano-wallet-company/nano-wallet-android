@@ -1,31 +1,30 @@
 package co.nano.nanowallet;
 
-import android.content.SharedPreferences;
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Build;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
-import java.security.SecureRandom;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.SecureRandom;
+
+import co.nano.nanowallet.ui.IntroWelcomeFragment;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FragmentActivity {
     private WebSocketClient mWebSocketClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().hide();
+
         // check if we have a wallet. if none, send intent to welcome wizard, return with valid seed
         // for now, either load an existing seed or generate a new one
         SharedPreferences pref = this.getSharedPreferences("co.nano.nanowallet", Context.MODE_PRIVATE);
@@ -47,11 +46,20 @@ public class MainActivity extends AppCompatActivity {
         Log.i("Wallet", "Public " + public_address);
         Log.i("Wallet", "Address " + NanoUtil.publicToAddress(public_address));
 
-        // load our wallet view
-        // setContentView(R.layout.activity_main);
-        // we have a wallet, lets connect and sync with the server
-        connectWebSocket();
+        initUi();
+    }
 
+    private void initUi() {
+        // set main content view
+        setContentView(R.layout.activity_main);
+
+        // Create a new Fragment to be placed in the activity layout
+        IntroWelcomeFragment introWelcomeFragment = new IntroWelcomeFragment();
+
+        // Add the fragment to the 'fragment_container' FrameLayout
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.container, introWelcomeFragment).commit();
+        connectWebSocket();
     }
 
     private void connectWebSocket() {
@@ -99,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void sendMessage(View view) {
-        EditText editText = (EditText)findViewById(R.id.message);
+        EditText editText = (EditText) findViewById(R.id.message);
         mWebSocketClient.send(editText.getText().toString());
         editText.setText("");
     }
