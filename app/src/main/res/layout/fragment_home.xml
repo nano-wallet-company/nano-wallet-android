@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <!-- Click Listeners -->
+        <variable
+            name="handlers"
+            type="co.nano.nanowallet.ui.HomeFragment.ClickHandlers" />
+        <!-- Data -->
+        <variable
+            name="wallet"
+            type="co.nano.nanowallet.NanoWallet" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bright_white">
+
+        <FrameLayout
+            android:id="@+id/home_top_background"
+            android:layout_width="match_parent"
+            android:layout_height="130dp"
+            android:background="@color/very_dark_blue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/home_logo"
+            android:layout_width="52dp"
+            android:layout_height="22dp"
+            android:layout_marginTop="20dp"
+            android:contentDescription="@string/app_name"
+            android:transitionName="@string/intro_logo_transition"
+            app:layout_constraintEnd_toStartOf="@+id/home_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/home_guideline_vert"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:srcCompat="@drawable/ic_logo"
+            tools:ignore="UnusedAttribute"
+            tools:layout_editor_absoluteX="166dp" />
+
+        <TextView
+            android:id="@+id/home_title"
+            style="@style/TextStyle12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:drawableLeft="@drawable/ic_currency_nano"
+            android:drawablePadding="5dp"
+            android:drawableStart="@drawable/ic_currency_nano"
+            app:layout_constraintEnd_toStartOf="@+id/home_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/home_guideline_vert"
+            app:layout_constraintTop_toBottomOf="@+id/home_logo"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="18024.12" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/home_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="105dp"
+            android:layout_marginTop="130dp" />
+
+        <FrameLayout
+            android:id="@+id/home_bottom_background"
+            android:layout_width="match_parent"
+            android:layout_height="105dp"
+            android:background="@color/very_dark_blue"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <Button
+            android:id="@+id/button2"
+            style="@style/SmallButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="33dp"
+            android:text="@string/home_send_cta"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/button"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/button"
+            style="@style/SmallButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="33dp"
+            android:text="@string/home_receive_cta"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/button2" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/home_guideline_vert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

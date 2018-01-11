@@ -3,7 +3,6 @@ package co.nano.nanowallet.ui;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +40,22 @@ public class IntroWelcomeFragment extends Fragment {
 
     public class ClickHandlers {
         public void onClickNewWallet(View view) {
+            // TODO: Create new wallet
+
+            // go to home screen
+            if (getActivity() instanceof FragmentControl) {
+                ((FragmentControl) getActivity()).getFragmentUtility().replace(
+                        new HomeFragment(),
+                        FragmentUtility.Animation.CROSSFADE,
+                        FragmentUtility.Animation.CROSSFADE,
+                        IntroSeedFragment.TAG,
+                        binding.introWelcomeLogo
+                );
+            }
+        }
+
+        public void onClickHaveWallet(View view) {
+            // let user input their existing wallet
             if (getActivity() instanceof FragmentControl) {
                 ((FragmentControl) getActivity()).getFragmentUtility().add(
                         new IntroSeedFragment(),
@@ -50,12 +65,6 @@ public class IntroWelcomeFragment extends Fragment {
                         binding.introWelcomeLogo
                 );
             }
-
-            Log.d(TAG, "New Wallet");
-        }
-
-        public void onClickHaveWallet(View view) {
-            Log.d(TAG, "Have Wallet");
         }
     }
 

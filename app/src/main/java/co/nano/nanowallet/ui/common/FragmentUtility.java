@@ -167,12 +167,12 @@ public class FragmentUtility {
                 )
                 .add(mContainerViewId, fragment);
 
-        if (sharedElement != null) {
-            transaction.addSharedElement(sharedElement, ViewCompat.getTransitionName(sharedElement));
-        }
-
         if (addToBackStack) {
             transaction.addToBackStack(tag);
+        }
+
+        if (sharedElement != null) {
+            transaction.addSharedElement(sharedElement, ViewCompat.getTransitionName(sharedElement));
         }
 
         transaction.commitAllowingStateLoss();
@@ -208,12 +208,12 @@ public class FragmentUtility {
                     .replace(mContainerViewId, fragment, tag);
         }
 
-        if (addToBackStack) {
-            transaction.addToBackStack(tag);
-        }
-
         if (sharedElement != null) {
             transaction.addSharedElement(sharedElement, ViewCompat.getTransitionName(sharedElement));
+        }
+
+        if (addToBackStack) {
+            transaction.addToBackStack(tag);
         }
 
         transaction.commitAllowingStateLoss();
