@@ -2,7 +2,6 @@ package co.nano.nanowallet.ui;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.style.ForegroundColorSpan;
@@ -14,12 +13,15 @@ import android.widget.EditText;
 
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentIntroSeedBinding;
+import co.nano.nanowallet.ui.common.BaseFragment;
+import co.nano.nanowallet.ui.common.FragmentControl;
+import co.nano.nanowallet.ui.common.FragmentUtility;
 
 /**
  * The Intro Screen to the app
  */
 
-public class IntroSeedFragment extends Fragment {
+public class IntroSeedFragment extends BaseFragment {
     private FragmentIntroSeedBinding binding;
     private int currentStep = 1;
     public static String TAG = IntroSeedFragment.class.getSimpleName();
@@ -32,6 +34,8 @@ public class IntroSeedFragment extends Fragment {
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_intro_seed, container, false);
         View view = binding.getRoot();
+
+        setStatusBarWhite(view);
 
         // bind data to view
         binding.setSteps(getString(R.string.intro_seed_steps, currentStep));
@@ -82,7 +86,15 @@ public class IntroSeedFragment extends Fragment {
          * @param view
          */
         public void onClickConfirm(View view) {
-            Log.d(TAG, "Confirm Seed Clicked");
+            // go to home screen
+            if (getActivity() instanceof FragmentControl) {
+                ((FragmentControl) getActivity()).getFragmentUtility().replace(
+                        new HomeFragment(),
+                        FragmentUtility.Animation.ENTER_LEFT_EXIT_RIGHT,
+                        FragmentUtility.Animation.ENTER_RIGHT_EXIT_LEFT,
+                        IntroSeedFragment.TAG
+                );
+            }
         }
 
         /**
