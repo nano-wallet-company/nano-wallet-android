@@ -10,17 +10,17 @@ import android.view.ViewGroup;
  * ViewPager Adapter that is used for listing the wallet transactions on the home screen
  */
 
-public class HomeAdapter extends PagerAdapter {
+public class CurrencyPagerAdapter extends PagerAdapter {
 
     private Context mContext;
 
-    public HomeAdapter(Context context) {
+    public CurrencyPagerAdapter(Context context) {
         mContext = context;
     }
 
     @Override
     public Object instantiateItem(ViewGroup collection, int position) {
-        HomePagerEnum customPagerEnum = HomePagerEnum.values()[position];
+        CurrencyPagerEnum customPagerEnum = CurrencyPagerEnum.values()[position];
         LayoutInflater inflater = LayoutInflater.from(mContext);
         ViewGroup layout = (ViewGroup) inflater.inflate(customPagerEnum.getLayoutResId(), collection, false);
         collection.addView(layout);
@@ -34,7 +34,7 @@ public class HomeAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return HomePagerEnum.values().length;
+        return CurrencyPagerEnum.values().length;
     }
 
     @Override

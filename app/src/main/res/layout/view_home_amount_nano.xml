@@ -8,9 +8,9 @@
         android:id="@+id/amount_nano_symbol"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/ic_currency_nano"
+        android:drawableLeft="@drawable/ic_currency_nano_white"
         android:drawablePadding="5dp"
-        android:drawableStart="@drawable/ic_currency_nano"
+        android:drawableStart="@drawable/ic_currency_nano_white"
         app:layout_constraintEnd_toStartOf="@+id/amount_nano_title"
         app:layout_constraintTop_toTopOf="parent" />
 

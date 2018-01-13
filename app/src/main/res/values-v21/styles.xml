@@ -1,12 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="TextStyle4">
+    <style name="SeedInput">
+        <item name="android:background">@drawable/bg_seed_input</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/dark_sky_blue</item>
-        <item name="android:letterSpacing">0.36</item>
-        <item name="android:gravity">center_horizontal</item>
+        <item name="android:textColorHint">@color/very_dark_blue</item>
+        <item name="android:textColor">@color/bright_white</item>
         <item name="android:fontFamily">@font/sofiapro_regular</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">80dp</item>
+        <item name="android:maxLength">64</item>
+        <item name="android:scrollHorizontally">false</item>
+        <item name="android:inputType">textMultiLine|textNoSuggestions</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingLeft">60dp</item>
+        <item name="android:paddingRight">60dp</item>
+        <item name="android:letterSpacing">0.1</item>
     </style>
 
     <style name="LargeButton">
@@ -32,6 +43,14 @@
         <item name="android:fontFamily">@font/sofiapro_regular</item>
         <item name="android:padding">14dp</item>
         <item name="android:letterSpacing">0.32</item>
+    </style>
+
+    <style name="TextStyle4">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/dark_sky_blue</item>
+        <item name="android:letterSpacing">0.36</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:fontFamily">@font/sofiapro_regular</item>
     </style>
 
     <style name="TextStyle">
@@ -105,23 +124,11 @@
         <item name="android:fontFamily">@font/nunito_light</item>
     </style>
 
-    <style name="SeedInput">
-        <item name="android:background">@drawable/bg_seed_input</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColorHint">@color/very_dark_blue</item>
-        <item name="android:textColor">@color/bright_white</item>
+    <style name="TextStyle13">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">#cccccc</item>
+        <item name="android:letterSpacing">0.06</item>
         <item name="android:fontFamily">@font/sofiapro_regular</item>
-        <item name="android:gravity">center</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">80dp</item>
-        <item name="android:maxLength">64</item>
-        <item name="android:scrollHorizontally">false</item>
-        <item name="android:inputType">textMultiLine|textNoSuggestions</item>
-        <item name="android:paddingTop">10dp</item>
-        <item name="android:paddingBottom">10dp</item>
-        <item name="android:paddingLeft">60dp</item>
-        <item name="android:paddingRight">60dp</item>
-        <item name="android:letterSpacing">0.1</item>
     </style>
 
 </resources>
