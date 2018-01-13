@@ -53,29 +53,15 @@
             app:srcCompat="@drawable/ic_logo"
             tools:ignore="UnusedAttribute" />
 
-        <TextView
-            android:id="@+id/home_currency_symbol"
+        <android.support.v4.view.ViewPager
+            android:id="@+id/home_viewpager"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/app_name"
-            android:drawableLeft="@drawable/ic_currency_nano"
-            android:drawablePadding="5dp"
-            android:drawableStart="@drawable/ic_currency_nano"
-            app:layout_constraintEnd_toStartOf="@+id/home_title"
-            app:layout_constraintTop_toTopOf="@+id/home_title" />
-
-        <TextView
-            android:id="@+id/home_title"
-            style="@style/TextStyle12"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="27dp"
             android:layout_marginTop="26dp"
-            android:text="@{String.valueOf(wallet.accountBalance)}"
             app:layout_constraintEnd_toStartOf="@+id/home_guideline_vert"
             app:layout_constraintStart_toStartOf="@+id/home_guideline_vert"
             app:layout_constraintTop_toBottomOf="@+id/home_logo"
-            app:layout_constraintVertical_chainStyle="packed"
-            tools:text="18024.12" />
+            app:layout_constraintVertical_chainStyle="packed" />
 
         <android.support.design.widget.TabLayout
             android:id="@+id/home_tabs"
@@ -83,15 +69,15 @@
             android:layout_height="30dp"
             app:layout_constraintEnd_toStartOf="@+id/home_guideline_vert"
             app:layout_constraintStart_toStartOf="@+id/home_guideline_vert"
-            app:layout_constraintTop_toBottomOf="@+id/home_title"
+            app:layout_constraintTop_toBottomOf="@+id/home_viewpager"
             app:layout_constraintVertical_chainStyle="packed"
             app:tabBackground="@drawable/tab_selector"
             app:tabGravity="center"
             app:tabIndicatorHeight="0dp"
             app:tabPadding="2dp" />
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/home_viewpager"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/home_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="105dp"
