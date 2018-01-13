@@ -6,12 +6,10 @@ import java.security.Security;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import org.libsodium.jni.NaCl;
-
-// import blake2bjava.Blake2b;
-// import blake2bjava.Blake2bConfig;
-// import blake2bjava.Blake2bCore;
-// import blake2bjava.Blake2bHasher;
+import blake2bjava.Blake2b;
+import blake2bjava.Blake2bConfig;
+import blake2bjava.Blake2bCore;
+import blake2bjava.Blake2bHasher;
 
 //import com.rfksystems.blake2b.security.*;
 
@@ -130,11 +128,7 @@ public class ED25519 {
         //Blake2bHasher context = new Blake2bHasher(null);
         //context.Update(message,0,message.length);
         //return context.Finish();
-        //return Blake2b.computeHash(message);
-
-        byte[] output = new byte[32];
-        NaCl.sodium().crypto_generichash_blake2b(output, 32, message, message.length, new byte[0], 0);
-        return output;
+        return Blake2b.computeHash(message);
     }
 
     static private BigInteger xRecover(BigInteger y) {

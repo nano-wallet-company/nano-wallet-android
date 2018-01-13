@@ -8,4 +8,108 @@
         <item name="android:gravity">center_horizontal</item>
         <item name="android:fontFamily">@font/sofiapro_regular</item>
     </style>
+
+    <style name="LargeButton">
+        <item name="android:background">@color/light_sky_blue</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/very_dark_blue</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:fontFamily">@font/nunito_regular</item>
+        <item name="android:padding">14dp</item>
+    </style>
+
+    <style name="TextStyle">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/very_dark_blue</item>
+        <item name="android:letterSpacing">0.05</item>
+    </style>
+
+    <style name="TextStyle3">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/very_dark_blue</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="TextStyle5">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/very_dark_blue</item>
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:fontFamily">@font/nunito_light</item>
+    </style>
+
+    <style name="TextStyle6">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/very_dark_blue</item>
+        <item name="android:letterSpacing">0.36</item>
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="TextStyle7">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/very_dark_blue</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="TextStyle8">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/very_dark_blue_two</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="TextStyle9">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="TextStyle10">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/dark_sky_blue</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="TextStyle11">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/burnt_yellow</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="TextStyle12">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:gravity">end</item>
+        <item name="android:fontFamily">@font/nunito_light</item>
+    </style>
+
+    <style name="SeedInput">
+        <item name="android:background">@drawable/bg_seed_input</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColorHint">@color/very_dark_blue</item>
+        <item name="android:textColor">@color/bright_white</item>
+        <item name="android:fontFamily">@font/sofiapro_regular</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">80dp</item>
+        <item name="android:maxLength">64</item>
+        <item name="android:scrollHorizontally">false</item>
+        <item name="android:inputType">textMultiLine|textNoSuggestions</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingLeft">60dp</item>
+        <item name="android:paddingRight">60dp</item>
+        <item name="android:letterSpacing">0.1</item>
+    </style>
+
 </resources>

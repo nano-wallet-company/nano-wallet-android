@@ -4,11 +4,19 @@ package co.nano.nanowallet;
  * Created by admin on 12/24/2017.
  */
 
-import org.libsodium.jni.NaCl;
+//import com.rfksystems.blake2b.*;
+//import at.gadermaier.argon2.blake2.Blake2b;
+//import at.gadermaier.argon2.blake2.at.gadermaier.argon2.*;
+import blake2bjava.Blake2bConfig;
+import blake2bjava.Blake2bHasher;
 
 import java.math.BigInteger;
 
-//import blake2bjava.Blake2bHasher;
+
+//import net.i2p.crypto.eddsa.EdDSAPublicKey;
+//import net.i2p.crypto.eddsa.Utils;
+//import net.i2p.crypto.eddsa.spec.EdDSAPublicKeySpec;
+
 
 class NanoUtil {
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
@@ -41,20 +49,14 @@ class NanoUtil {
     public static String seedToPrivate(String seed) {
         //Blake2bConfig config = new Blake2bConfig();
         //config.setOutputSizeInBits(256);
-        //Blake2bHasher digest = new Blake2bHasher(null);
+        Blake2bHasher digest = new Blake2bHasher(null);
         byte[] seed_b = hexToBytes(seed);
         byte[] index_b = {0x00, 0x00, 0x00, 0x00};
 
-        //digest.Update(seed_b, 0, seed_b.length);
-        //digest.Update(index_b,0,index_b.length);
+        digest.Update(seed_b, 0, seed_b.length);
+        digest.Update(index_b,0,index_b.length);
 
-        byte[] state = new byte[361];
-        NaCl.sodium().crypto_generichash_blake2b_init(state, new byte[0], 0, 32 );
-        NaCl.sodium().crypto_generichash_blake2b_update(state, seed_b, seed_b.length);
-        NaCl.sodium().crypto_generichash_blake2b_update(state, index_b, index_b.length);
-        byte[] finish = new byte[32];
-        NaCl.sodium().crypto_generichash_blake2b_final(state, finish, finish.length);
-        return bytesToHex(finish);
+        return bytesToHex(digest.Finish());
     }
 
     public static String privateToPublic(String private_key) {
@@ -96,16 +98,12 @@ class NanoUtil {
         byte[] bytePublic = NanoUtil.hexStringToByteArray(public_key);
         String encodedAddress = encode(public_key);
         NanoUtil.reverse(bytePublic);
-
-        //Blake2bConfig config = new Blake2bConfig();
-        //config.setOutputSizeInBits(40);
-        //Blake2bHasher context = new Blake2bHasher(config);
-        //context.Update(bytePublic,0,bytePublic.length);
-        //byte[] check_b = new byte[5];
-        //check_b = context.Finish();
-
+        Blake2bConfig config = new Blake2bConfig();
+        config.setOutputSizeInBits(40);
+        Blake2bHasher context = new Blake2bHasher(config);
+        context.Update(bytePublic,0,bytePublic.length);
         byte[] check_b = new byte[5];
-        NaCl.sodium().crypto_generichash_blake2b(check_b, 5, bytePublic, bytePublic.length, new byte[0], 0);
+        check_b = context.Finish();
 
         StringBuilder resultAddress = new StringBuilder();
 
