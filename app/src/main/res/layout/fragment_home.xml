@@ -7,7 +7,7 @@
         <!-- Click Listeners -->
         <variable
             name="handlers"
-            type="co.nano.nanowallet.ui.HomeFragment.ClickHandlers" />
+            type="co.nano.nanowallet.ui.home.HomeFragment.ClickHandlers" />
         <!-- Data -->
         <variable
             name="wallet"
@@ -23,9 +23,21 @@
             android:id="@+id/home_top_background"
             android:layout_width="match_parent"
             android:layout_height="130dp"
-            android:background="@color/very_dark_blue"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:background="@color/very_dark_blue">
+
+        </FrameLayout>
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/home_settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="37dp"
+            android:layout_marginRight="37dp"
+            android:layout_marginTop="20dp"
+            android:onClick="@{handlers::onClickSettings}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_settings" />
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/home_logo"
@@ -39,8 +51,18 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed"
             app:srcCompat="@drawable/ic_logo"
-            tools:ignore="UnusedAttribute"
-            tools:layout_editor_absoluteX="166dp" />
+            tools:ignore="UnusedAttribute" />
+
+        <TextView
+            android:id="@+id/home_currency_symbol"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/app_name"
+            android:drawableLeft="@drawable/ic_currency_nano"
+            android:drawablePadding="5dp"
+            android:drawableStart="@drawable/ic_currency_nano"
+            app:layout_constraintEnd_toStartOf="@+id/home_title"
+            app:layout_constraintTop_toTopOf="@+id/home_title" />
 
         <TextView
             android:id="@+id/home_title"
@@ -48,14 +70,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="26dp"
-            android:drawableLeft="@drawable/ic_currency_nano"
-            android:drawablePadding="5dp"
-            android:drawableStart="@drawable/ic_currency_nano"
+            android:text="@{String.valueOf(wallet.accountBalance)}"
             app:layout_constraintEnd_toStartOf="@+id/home_guideline_vert"
             app:layout_constraintStart_toStartOf="@+id/home_guideline_vert"
             app:layout_constraintTop_toBottomOf="@+id/home_logo"
             app:layout_constraintVertical_chainStyle="packed"
             tools:text="18024.12" />
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/home_tabs"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            app:layout_constraintEnd_toStartOf="@+id/home_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/home_guideline_vert"
+            app:layout_constraintTop_toBottomOf="@+id/home_title"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:tabBackground="@drawable/tab_selector"
+            app:tabGravity="center"
+            app:tabIndicatorHeight="0dp"
+            app:tabPadding="2dp" />
 
         <android.support.v4.view.ViewPager
             android:id="@+id/home_viewpager"

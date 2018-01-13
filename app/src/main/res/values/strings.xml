@@ -17,4 +17,7 @@
     <!-- Home Screen -->
     <string name="home_send_cta">Send</string>
     <string name="home_receive_cta">Receive</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Settings</string>
 </resources>

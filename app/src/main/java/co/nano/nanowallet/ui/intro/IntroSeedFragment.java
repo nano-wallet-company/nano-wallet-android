@@ -1,4 +1,4 @@
-package co.nano.nanowallet.ui;
+package co.nano.nanowallet.ui.intro;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -13,6 +13,7 @@ import android.widget.EditText;
 
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentIntroSeedBinding;
+import co.nano.nanowallet.ui.home.HomeFragment;
 import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.FragmentControl;
 import co.nano.nanowallet.ui.common.FragmentUtility;

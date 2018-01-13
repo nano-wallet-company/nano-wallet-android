@@ -19,7 +19,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.SecureRandom;
 
-import co.nano.nanowallet.ui.IntroWelcomeFragment;
+import co.nano.nanowallet.ui.intro.IntroWelcomeFragment;
 import co.nano.nanowallet.ui.common.FragmentControl;
 import co.nano.nanowallet.ui.common.FragmentUtility;
 
