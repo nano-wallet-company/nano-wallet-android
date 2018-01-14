@@ -23,4 +23,7 @@
 
     <!-- Settings Screen -->
     <string name="settings_title">Settings</string>
+    <string name="settings_local_currency">Local Currency</string>
+    <string name="settings_show_seed">Show My Seed</string>
+    <string name="settings_log_out">Log Out</string>
 </resources>

@@ -1,24 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
-
+        <!-- Click Listeners -->
+        <variable
+            name="handlers"
+            type="co.nano.nanowallet.ui.settings.SettingsDialogFragment.ClickHandlers" />
     </data>
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/bright_white"
+        android:orientation="vertical">
 
-        <include layout="@layout/view_appbar_dialog" />
+        <include
+            android:id="@+id/dialog_appbar"
+            layout="@layout/view_appbar_dialog"
+            app:layout_constraintBottom_toTopOf="@+id/settings_local_currency"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/bookingsearchlocationsdialog_recyclerview"
+        <TextView
+            android:id="@+id/settings_local_currency"
+            style="@style/TextStyle14"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="?actionBarSize"
-            android:clipToPadding="false" />
+            android:layout_height="54dp"
+            android:background="@drawable/bg_border_bottom"
+            android:gravity="center"
+            android:onClick="@{handlers::onClickLocalCurrency}"
+            android:text="@string/settings_local_currency"
+            app:layout_constraintBottom_toTopOf="@+id/settings_show_seed"
+            app:layout_constraintTop_toBottomOf="@+id/dialog_appbar" />
+
+        <TextView
+            android:id="@+id/settings_show_seed"
+            style="@style/TextStyle14"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:background="@drawable/bg_border_bottom"
+            android:gravity="center"
+            android:onClick="@{handlers::onClickShowSeed}"
+            android:text="@string/settings_show_seed"
+            app:layout_constraintTop_toBottomOf="@+id/settings_local_currency" />
+
+        <TextView
+            android:id="@+id/settings_log_out"
+            style="@style/TextStyle14"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:background="@drawable/bg_border_top"
+            android:gravity="center"
+            android:onClick="@{handlers::onClickLogOut}"
+            android:text="@string/settings_log_out"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
+
 </layout>

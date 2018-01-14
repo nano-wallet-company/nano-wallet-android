@@ -7,10 +7,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentSettingsBinding;
 import co.nano.nanowallet.ui.common.BaseDialogFragment;
+import co.nano.nanowallet.ui.common.FragmentControl;
 
 /**
  * Created by szeidner on 13/01/2018.
@@ -54,10 +56,35 @@ public class SettingsDialogFragment extends BaseDialogFragment {
         Toolbar toolbar = view.findViewById(R.id.dialog_appbar);
         if (toolbar != null) {
             final SettingsDialogFragment window = this;
-            toolbar.setTitle(getContext().getResources().getString(R.string.settings_title).toUpperCase());
+            TextView title = view.findViewById(R.id.dialog_toolbar_title);
+            title.setText(R.string.settings_title);
             toolbar.setNavigationOnClickListener(v1 -> window.dismiss());
         }
 
         return view;
+    }
+
+    public class ClickHandlers {
+        public void onClickLocalCurrency(View view) {
+            if (getActivity() instanceof FragmentControl) {
+
+            }
+        }
+
+        public void onClickShowSeed(View view) {
+            if (getActivity() instanceof FragmentControl) {
+
+            }
+        }
+
+        public void onClickLogOut(View view) {
+            if (getActivity() instanceof FragmentControl) {
+
+            }
+        }
+//
+//        public void onClickHaveWallet(View view) {
+//            Log.d(TAG, "Have Wallet");
+//        }
     }
 }

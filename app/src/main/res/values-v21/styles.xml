@@ -78,6 +78,7 @@
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/very_dark_blue</item>
         <item name="android:letterSpacing">0.36</item>
+        <item name="android:textAllCaps">true</item>
         <item name="android:gravity">center_horizontal</item>
     </style>
 
@@ -128,6 +129,14 @@
         <item name="android:textSize">10sp</item>
         <item name="android:textColor">#cccccc</item>
         <item name="android:letterSpacing">0.06</item>
+        <item name="android:fontFamily">@font/sofiapro_regular</item>
+    </style>
+
+    <style name="TextStyle14">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/very_dark_blue</item>
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:gravity">center_horizontal</item>
         <item name="android:fontFamily">@font/sofiapro_regular</item>
     </style>
 

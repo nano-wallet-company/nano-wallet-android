@@ -13,6 +13,6 @@
     <color name="bright_white">#ffffff</color>
 
     <color name="colorPrimary">@color/bright_white</color>
-    <color name="colorPrimaryDark">@color/bright_white</color>
+    <color name="colorPrimaryDark">@color/white</color>
     <color name="colorAccent">@color/dark_sky_blue</color>
 </resources>
