@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
     <data>
-        <!-- Click Listeners -->
+
+        <import type="android.view.View" />
+
+        <variable
+            name="showCurrency"
+            type="Boolean" />
+
         <variable
             name="handlers"
             type="co.nano.nanowallet.ui.settings.SettingsDialogFragment.ClickHandlers" />
@@ -11,6 +19,7 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
         android:background="@color/bright_white"
         android:orientation="vertical">
 
@@ -25,34 +34,77 @@
             style="@style/TextStyle14"
             android:layout_width="match_parent"
             android:layout_height="54dp"
-            android:background="@drawable/bg_border_bottom"
             android:gravity="center"
             android:onClick="@{handlers::onClickLocalCurrency}"
             android:text="@string/settings_local_currency"
-            app:layout_constraintBottom_toTopOf="@+id/settings_show_seed"
+            app:layout_constraintBottom_toTopOf="@+id/settings_local_currency_spinner"
             app:layout_constraintTop_toBottomOf="@+id/dialog_appbar" />
+
+        <Spinner
+            android:id="@+id/settings_local_currency_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginLeft="38dp"
+            android:layout_marginRight="38dp"
+            android:background="@drawable/bg_spinner"
+            android:entries="@array/settings_local_currency_array"
+            android:prompt="@string/settings_local_currency"
+            android:spinnerMode="dropdown"
+            android:theme="@style/TextStyle15"
+            android:popupBackground="@color/kiwi_green_light"
+            app:layout_constraintTop_toBottomOf="@+id/settings_local_currency" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/settings_local_currency_spinner_check"
+            android:layout_width="13dp"
+            android:layout_height="18dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="14dp"
+            app:layout_constraintStart_toStartOf="@+id/settings_local_currency_spinner"
+            app:layout_constraintTop_toTopOf="@+id/settings_local_currency_spinner"
+            app:srcCompat="@drawable/ic_check" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/settings_local_currency_spinner_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintEnd_toEndOf="@+id/settings_local_currency_spinner"
+            app:layout_constraintTop_toTopOf="@+id/settings_local_currency_spinner"
+            app:srcCompat="@drawable/ic_arrow_drop_down" />
 
         <TextView
             android:id="@+id/settings_show_seed"
             style="@style/TextStyle14"
             android:layout_width="match_parent"
             android:layout_height="54dp"
-            android:background="@drawable/bg_border_bottom"
+            android:layout_marginTop="@{showCurrency != null &amp;&amp; showCurrency ? @dimen/margin_visible : @dimen/margin_gone}"
+            android:background="@drawable/bg_border_top_bottom_dark"
             android:gravity="center"
             android:onClick="@{handlers::onClickShowSeed}"
             android:text="@string/settings_show_seed"
-            app:layout_constraintTop_toBottomOf="@+id/settings_local_currency" />
+            app:layout_constraintTop_toBottomOf="@+id/settings_local_currency_spinner" />
 
         <TextView
             android:id="@+id/settings_log_out"
             style="@style/TextStyle14"
             android:layout_width="match_parent"
             android:layout_height="54dp"
-            android:background="@drawable/bg_border_top"
+            android:background="@drawable/bg_border_top_dark"
             android:gravity="center"
             android:onClick="@{handlers::onClickLogOut}"
             android:text="@string/settings_log_out"
             app:layout_constraintBottom_toBottomOf="parent" />
+
+        <android.support.constraint.Group
+            android:id="@+id/settings_group_currency_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="@{showCurrency != null &amp;&amp; showCurrency ? View.VISIBLE : View.GONE}"
+            app:constraint_referenced_ids="settings_local_currency_spinner, settings_local_currency_spinner_check, settings_local_currency_spinner_arrow" />
 
     </android.support.constraint.ConstraintLayout>
 

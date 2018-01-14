@@ -8,7 +8,9 @@
     <color name="deep_blue">#000075</color>
     <color name="burnt_yellow">#e1990e</color>
     <color name="white">#eeeeee</color>
+    <color name="gray">#cccccc</color>
     <color name="kiwi_green">#9be845</color>
+    <color name="kiwi_green_light">#EAFAD9</color>
     <color name="very_dark_blue_two">#000031</color>
     <color name="bright_white">#ffffff</color>
 
