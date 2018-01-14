@@ -81,6 +81,9 @@ dependencies {
     //implementation project(':libsodium-jni-release');
     implementation 'com.github.joshjdevl.libsodiumjni:libsodium-jni-aar:1.0.8@aar'
 
+    // Stetho (for debugging only)
+    implementation 'com.facebook.stetho:stetho:1.5.0'
+
     // Testing
     androidTestImplementation "com.android.support.test:runner:$TEST_RUNNER_VERSION"
     androidTestImplementation("com.android.support.test.espresso:espresso-core:$ESPRESSO_VERSION", {
