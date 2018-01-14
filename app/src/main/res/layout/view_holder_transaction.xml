@@ -8,6 +8,9 @@
         <variable
             name="transaction"
             type="co.nano.nanowallet.model.Transaction" />
+        <variable
+            name="currency"
+            type="co.nano.nanowallet.ui.home.CurrencyPagerEnum" />
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -33,9 +36,9 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="17dp"
             android:layout_marginStart="17dp"
-            android:drawableLeft="@drawable/ic_currency_nano_blue"
+            android:drawableLeft="@{transaction.send ? @drawable/ic_currency_nano_blue : @drawable/ic_currency_nano_gray}"
             android:drawablePadding="3dp"
-            android:drawableStart="@drawable/ic_currency_nano_blue"
+            android:drawableStart="@{transaction.send ? @drawable/ic_currency_nano_blue : @drawable/ic_currency_nano_gray}"
             app:layout_constraintBottom_toTopOf="@+id/home_transaction_guideline_horiz"
             app:layout_constraintStart_toEndOf="@+id/transaction_type"
             app:layout_constraintTop_toTopOf="@+id/home_transaction_guideline_horiz" />
