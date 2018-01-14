@@ -5,7 +5,7 @@ import android.app.Application;
 import com.facebook.stetho.Stetho;
 
 /**
- * Created by szeidner on 13/01/2018.
+ * Any custom application logic can go here
  */
 
 public class NanoApplication extends Application {

@@ -48,7 +48,6 @@ public class SettingsDialogFragment extends BaseDialogFragment {
                 inflater, R.layout.fragment_settings, container, false);
         View view = binding.getRoot();
 
-        // set status bar to blue
         setStatusBarWhite(view);
 
         // set the listener for Navigation
@@ -61,5 +60,4 @@ public class SettingsDialogFragment extends BaseDialogFragment {
 
         return view;
     }
-
 }

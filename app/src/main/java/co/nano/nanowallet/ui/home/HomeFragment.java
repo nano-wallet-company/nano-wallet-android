@@ -59,7 +59,7 @@ public class HomeFragment extends BaseFragment {
         binding.setHandlers(new ClickHandlers());
 
         // initialize view pager (swipeable currency list)
-        binding.homeViewpager.setAdapter(new CurrencyPagerAdapter(getContext()));
+        binding.homeViewpager.setAdapter(new CurrencyPagerAdapter(getContext(), wallet));
         binding.homeTabs.setupWithViewPager(binding.homeViewpager, true);
 
         // initialize recyclerview (list of wallet transactions)
@@ -142,6 +142,5 @@ public class HomeFragment extends BaseFragment {
 //            Log.d(TAG, "Have Wallet");
 //        }
     }
-
 
 }
