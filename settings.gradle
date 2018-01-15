@@ -1,1 +1,1 @@
-include ':app'//, ':libsodium-jni-release'
+include ':app', ':libsodium-jni-release'
