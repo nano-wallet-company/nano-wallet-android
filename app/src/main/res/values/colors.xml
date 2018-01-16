@@ -13,6 +13,7 @@
     <color name="kiwi_green_light">#EAFAD9</color>
     <color name="very_dark_blue_two">#000031</color>
     <color name="bright_white">#ffffff</color>
+    <color name="black">#000000</color>
 
     <color name="colorPrimary">@color/bright_white</color>
     <color name="colorPrimaryDark">@color/white</color>

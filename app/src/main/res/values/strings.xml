@@ -41,4 +41,12 @@
     <string name="settings_logout_alert_message">Logging out will remove your seed, keys, and all of your Nano-related data from this device.</string>
     <string name="settings_logout_alert_confirm_cta">Okay</string>
     <string name="settings_logout_alert_cancel_cta">Cancel</string>
+
+    <!-- Receive Screen -->
+    <string name="receive_title">Receive</string>
+    <string name="receive_instructions">Scan the QR code\nbelow to receive NANO</string>
+    <string name="receive_copy_cta">Copy</string>
+    <string name="receive_address_label">Nano Address</string>
+    <string name="receive_copy_message"><![CDATA[<font color=\"#ffffff\">Your Nano Address has been copied.<br>Share it with a friend to receive Nano!</font>]]></string>
+    <string name="receive_copy_done">Done</string>
 </resources>

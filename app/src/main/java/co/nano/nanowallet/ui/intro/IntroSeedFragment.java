@@ -2,9 +2,6 @@ package co.nano.nanowallet.ui.intro;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.text.Spannable;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,10 +10,11 @@ import android.widget.EditText;
 
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentIntroSeedBinding;
-import co.nano.nanowallet.ui.home.HomeFragment;
 import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.FragmentControl;
 import co.nano.nanowallet.ui.common.FragmentUtility;
+import co.nano.nanowallet.ui.common.UIUtil;
+import co.nano.nanowallet.ui.home.HomeFragment;
 
 /**
  * The Intro Screen to the app
@@ -78,7 +76,7 @@ public class IntroSeedFragment extends BaseFragment {
             }
 
             // colorize input string
-            colorizeSpannable(binding.introSeedSeed.getText());
+            UIUtil.colorizeSpannable(binding.introSeedSeed.getText(), getContext());
         }
 
         /**
@@ -114,21 +112,5 @@ public class IntroSeedFragment extends BaseFragment {
     private void updateSteps() {
         binding.setSteps(getString(R.string.intro_seed_steps, currentStep));
     }
-
-    /**
-     * Colorize a string in the following manner:
-     * First 9 characters are blue
-     * Last 5 characters are orange
-     *
-     * @param s
-     * @return Colorized Spannable String
-     */
-    private void colorizeSpannable(Spannable s) {
-        s.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.dark_sky_blue)), 0, s.length() > 8 ? 9 : s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        if (s.length() > 59) {
-            s.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.burnt_yellow)), 59, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
-    }
-
 
 }

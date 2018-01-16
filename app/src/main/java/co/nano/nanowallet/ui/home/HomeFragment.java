@@ -23,6 +23,7 @@ import co.nano.nanowallet.databinding.FragmentHomeBinding;
 import co.nano.nanowallet.model.Transaction;
 import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.FragmentControl;
+import co.nano.nanowallet.ui.receive.ReceiveDialogFragment;
 import co.nano.nanowallet.ui.settings.SettingsDialogFragment;
 
 /**
@@ -137,10 +138,22 @@ public class HomeFragment extends BaseFragment {
             }
 
         }
-//
-//        public void onClickHaveWallet(View view) {
-//            Log.d(TAG, "Have Wallet");
-//        }
+
+        public void onClickReceive(View view) {
+            if (getActivity() instanceof FragmentControl) {
+                // show settings dialog
+                ReceiveDialogFragment dialog = ReceiveDialogFragment.newInstance();
+                dialog.show(((FragmentControl) getActivity()).getFragmentUtility().getFragmentManager(),
+                        ReceiveDialogFragment.TAG);
+
+                // make sure that dialog is not null
+                ((FragmentControl) getActivity()).getFragmentUtility().getFragmentManager().executePendingTransactions();
+
+                // reset status bar to blue when dialog is closed
+                dialog.getDialog().setOnDismissListener(dialogInterface -> setStatusBarBlue());
+            }
+
+        }
     }
 
 }

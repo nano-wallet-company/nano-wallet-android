@@ -100,6 +100,7 @@
             android:layout_marginLeft="19dp"
             android:layout_marginRight="20dp"
             android:layout_marginStart="19dp"
+            android:onClick="@{handlers::onClickReceive}"
             android:text="@string/home_receive_cta"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/home_send_button"

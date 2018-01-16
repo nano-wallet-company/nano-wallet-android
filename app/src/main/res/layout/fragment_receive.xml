@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <!-- Click Listeners -->
+        <variable
+            name="handlers"
+            type="co.nano.nanowallet.ui.receive.ReceiveDialogFragment.ClickHandlers" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bright_white">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/receive_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:onClick="@{handlers::onClickClose}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_close" />
+
+        <TextView
+            android:id="@+id/receive_title"
+            style="@style/TextStyle6"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:drawableLeft="@drawable/ic_receive"
+            android:drawablePadding="5dp"
+            android:drawableStart="@drawable/ic_receive"
+            android:gravity="center_vertical"
+            android:text="@string/receive_title"
+            app:layout_constraintEnd_toStartOf="@+id/receive_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/receive_guideline_vert"
+            app:layout_constraintTop_toTopOf="@+id/receive_close" />
+
+        <TextView
+            android:id="@+id/receive_instructions"
+            style="@style/TextStyle5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:text="@string/receive_instructions"
+            app:layout_constraintEnd_toStartOf="@+id/receive_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/receive_guideline_vert"
+            app:layout_constraintTop_toBottomOf="@+id/receive_title" />
+
+        <ImageView
+            android:id="@+id/receive_barcode"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            app:layout_constraintEnd_toStartOf="@+id/receive_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/receive_guideline_vert"
+            app:layout_constraintTop_toBottomOf="@+id/receive_instructions" />
+
+        <TextView
+            android:id="@+id/receive_address_label"
+            style="@style/TextStyle6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="11dp"
+            android:text="@string/receive_address_label"
+            android:textAllCaps="true"
+            app:layout_constraintBottom_toTopOf="@+id/receive_address"
+            app:layout_constraintEnd_toStartOf="@+id/receive_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/receive_guideline_vert" />
+
+        <TextView
+            android:id="@+id/receive_address"
+            style="@style/SeedText"
+            android:layout_marginBottom="20dp"
+            android:layout_marginEnd="45dp"
+            android:layout_marginStart="45dp"
+            app:layout_constraintBottom_toTopOf="@+id/receive_button_copy"
+            app:layout_constraintEnd_toStartOf="@+id/receive_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/receive_guideline_vert"
+            tools:text="xrb_3gntuoguehi9d1mnhnar6ojx7jseeerwj5hesb4b4jga7oybbdbqyzap7ijg" />
+
+        <Button
+            android:id="@+id/receive_button_copy"
+            style="@style/LargeButton"
+            android:layout_marginBottom="31dp"
+            android:layout_marginEnd="45dp"
+            android:layout_marginStart="45dp"
+            android:letterSpacing="0.4"
+            android:onClick="@{handlers::onClickCopy}"
+            android:text="@string/receive_copy_cta"
+            android:textAllCaps="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/receive_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/receive_guideline_vert"
+            tools:ignore="UnusedAttribute" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/receive_guideline_vert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

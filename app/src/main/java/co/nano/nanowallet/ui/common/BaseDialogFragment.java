@@ -23,6 +23,15 @@ public class BaseDialogFragment extends DialogFragment {
      * @param view an active view
      */
     protected void setStatusBarWhite(View view) {
+        setStatusBarColor(R.color.bright_white);
+        setIconsDark(view);
+    }
+
+    /**
+     * Set status bar color to white
+     * @param view an active view
+     */
+    protected void setStatusBarOffWhite(View view) {
         setStatusBarColor(R.color.white);
         setIconsDark(view);
     }
