@@ -43,6 +43,18 @@
             app:layout_constraintStart_toStartOf="@+id/receive_guideline_vert"
             app:layout_constraintTop_toTopOf="@+id/receive_close" />
 
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/receive_share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp"
+            android:onClick="@{handlers::onClickShare}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_share" />
+
         <TextView
             android:id="@+id/receive_instructions"
             style="@style/TextStyle5"

@@ -27,15 +27,6 @@ public class BaseDialogFragment extends DialogFragment {
         setIconsDark(view);
     }
 
-    /**
-     * Set status bar color to white
-     * @param view an active view
-     */
-    protected void setStatusBarOffWhite(View view) {
-        setStatusBarColor(R.color.white);
-        setIconsDark(view);
-    }
-
     private void setStatusBarColor(int color) {
         if (getActivity() instanceof FragmentControl) {
             ((FragmentControl) getActivity()).setStatusBarColor(color);

@@ -1,8 +1,10 @@
 package co.nano.nanowallet.ui.receive;
 
 import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,9 +16,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+
+import java.util.HashMap;
 
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentReceiveBinding;
@@ -69,8 +75,11 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
         // generate QR code
         QRCodeWriter writer = new QRCodeWriter();
         try {
+            HashMap hints = new HashMap<EncodeHintType, Object>();
+            hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
             BitMatrix bitMatrix = writer.encode(address, BarcodeFormat.QR_CODE,
-                    (int) UIUtil.convertDpToPixel(200, getContext()), (int) UIUtil.convertDpToPixel(200, getContext()));
+                    (int) UIUtil.convertDpToPixel(200, getContext()),
+                    (int) UIUtil.convertDpToPixel(200, getContext()), hints);
             int width = bitMatrix.getWidth();
             int height = bitMatrix.getHeight();
             Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
@@ -79,7 +88,8 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
                     bmp.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
                 }
             }
-            binding.receiveBarcode.setImageBitmap(bmp);
+            Bitmap overlay = BitmapFactory.decodeResource(getResources(), R.drawable.logo);
+            binding.receiveBarcode.setImageBitmap(UIUtil.mergeBitmaps(overlay, bmp));
         } catch (WriterException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -93,6 +103,14 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
     public class ClickHandlers {
         public void onClickClose(View view) {
             dismiss();
+        }
+
+        public void onClickShare(View view) {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, address);
+            shareIntent.putExtra(Intent.EXTRA_STREAM, UIUtil.viewToByteArray(binding.receiveBarcode));
+            shareIntent.setType("image/png");
+            startActivity(Intent.createChooser(shareIntent, getString(R.string.receive_share_title)));
         }
 
         public void onClickCopy(View view) {

@@ -49,4 +49,5 @@
     <string name="receive_address_label">Nano Address</string>
     <string name="receive_copy_message"><![CDATA[<font color=\"#ffffff\">Your Nano Address has been copied.<br>Share it with a friend to receive Nano!</font>]]></string>
     <string name="receive_copy_done">Done</string>
+    <string name="receive_share_title">Share via…</string>
 </resources>
