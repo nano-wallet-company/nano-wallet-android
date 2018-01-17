@@ -70,6 +70,11 @@ public class HomeFragment extends BaseFragment {
         // TODO: use real data here
         controller.setData(generateTestTransactions(), CurrencyPagerEnum.NANO);
 
+        binding.homeSwiperefresh.setOnRefreshListener(() -> {
+            // TODO: Refresh wallet data
+            binding.homeSwiperefresh.setRefreshing(false);
+        });
+
         return view;
     }
 

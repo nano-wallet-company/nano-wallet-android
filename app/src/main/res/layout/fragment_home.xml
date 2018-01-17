@@ -76,12 +76,19 @@
             app:tabIndicatorHeight="0dp"
             app:tabPadding="2dp" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/home_recyclerview"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/home_swiperefresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="105dp"
-            android:layout_marginTop="130dp" />
+            android:layout_marginTop="130dp">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/home_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </android.support.v4.widget.SwipeRefreshLayout>
+
 
         <FrameLayout
             android:id="@+id/home_bottom_background"
