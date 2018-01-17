@@ -119,5 +119,16 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.5" />
 
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/imageView"
+            android:layout_width="13dp"
+            android:layout_height="13dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="32dp"
+            app:layout_constraintStart_toStartOf="@+id/receive_address"
+            app:layout_constraintTop_toTopOf="@+id/receive_address"
+            app:srcCompat="@drawable/ic_check" />
+
     </android.support.constraint.ConstraintLayout>
 </layout>
