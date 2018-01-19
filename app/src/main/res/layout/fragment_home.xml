@@ -124,6 +124,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="19dp"
             android:layout_marginStart="20dp"
+            android:onClick="@{handlers::onClickSend}"
             android:text="@string/home_send_cta"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

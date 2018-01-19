@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <!-- Click Listeners -->
+        <variable
+            name="handlers"
+            type="co.nano.nanowallet.ui.send.SendDialogFragment.ClickHandlers" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bright_white">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/send_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:onClick="@{handlers::onClickClose}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_close" />
+
+        <TextView
+            android:id="@+id/send_title"
+            style="@style/TextStyle6"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:drawableLeft="@drawable/ic_send"
+            android:drawablePadding="5dp"
+            android:drawableStart="@drawable/ic_send"
+            android:gravity="center_vertical"
+            android:text="@string/send_title"
+            app:layout_constraintEnd_toStartOf="@+id/send_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/send_guideline_vert"
+            app:layout_constraintTop_toTopOf="@+id/send_close" />
+
+        <EditText
+            android:id="@+id/send_address"
+            style="@style/SeedInput"
+            android:layout_height="45dp"
+            android:layout_marginEnd="37dp"
+            android:layout_marginLeft="37dp"
+            android:layout_marginRight="37dp"
+            android:layout_marginStart="37dp"
+            android:layout_marginTop="16dp"
+            android:hint="@string/send_address_hint"
+            android:onTextChanged="@{handlers::onAddressTextChanged}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/send_title" />
+
+        <FrameLayout
+            android:id="@+id/send_amounts_background"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/dark_sky_blue"
+            app:layout_constraintBottom_toTopOf="@+id/send_keyboard_background"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/send_address" />
+
+
+        <FrameLayout
+            android:id="@+id/send_keyboard_background"
+            android:layout_width="match_parent"
+            android:layout_height="388dp"
+            android:background="@color/very_dark_blue"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/send_send_button"
+            style="@style/SmallButton"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="33dp"
+            android:layout_marginEnd="37dp"
+            android:layout_marginLeft="37dp"
+            android:layout_marginRight="37dp"
+            android:layout_marginStart="37dp"
+            android:onClick="@{handlers::onClickSend}"
+            android:text="@string/send_send_cta"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- . -->
+        <Button
+            android:id="@+id/send_keyboard_decimal"
+            style="@style/NumberButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="36dp"
+            android:layout_marginEnd="36dp"
+            android:layout_marginRight="36dp"
+            android:onClick="@{handlers::onClickDecimal}"
+            android:text="@string/send_keyboard_decimal"
+            app:layout_constraintBottom_toTopOf="@+id/send_send_button"
+            app:layout_constraintEnd_toStartOf="@+id/send_keyboard_zero" />
+
+        <!-- 0 -->
+        <Button
+            android:id="@+id/send_keyboard_zero"
+            style="@style/NumberButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="36dp"
+            android:onClick="@{handlers::onClickZero}"
+            android:text="@string/send_keyboard_zero"
+            app:layout_constraintBottom_toTopOf="@+id/send_send_button"
+            app:layout_constraintEnd_toStartOf="@+id/send_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/send_guideline_vert" />
+
+        <!-- < -->
+        <Button
+            android:id="@+id/send_keyboard_delete"
+            style="@style/NumberButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="36dp"
+            android:layout_marginLeft="36dp"
+            android:layout_marginStart="36dp"
+            android:onClick="@{handlers::onClickDelete}"
+            android:text="@string/send_keyboard_delete"
+            app:layout_constraintBottom_toTopOf="@+id/send_send_button"
+            app:layout_constraintStart_toEndOf="@+id/send_keyboard_zero" />
+
+        <!-- 7 -->
+        <Button
+            android:id="@+id/send_keyboard_seven"
+            style="@style/NumberButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="36dp"
+            android:layout_marginRight="36dp"
+            android:onClick="@{handlers::onClickSeven}"
+            android:text="@string/send_keyboard_seven"
+            app:layout_constraintBottom_toTopOf="@+id/send_keyboard_decimal"
+            app:layout_constraintEnd_toStartOf="@+id/send_keyboard_zero" />
+
+        <!-- 8 -->
+        <Button
+            android:id="@+id/send_keyboard_eight"
+            style="@style/NumberButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:onClick="@{handlers::onClickEight}"
+            android:text="@string/send_keyboard_eight"
+            app:layout_constraintBottom_toTopOf="@+id/send_keyboard_zero"
+            app:layout_constraintEnd_toStartOf="@+id/send_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/send_guideline_vert" />
+
+        <!-- 9 -->
+        <Button
+            android:id="@+id/send_keyboard_nine"
+            style="@style/NumberButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="36dp"
+            android:layout_marginStart="36dp"
+            android:onClick="@{handlers::onClickNine}"
+            android:text="@string/send_keyboard_nine"
+            app:layout_constraintBottom_toTopOf="@+id/send_keyboard_delete"
+            app:layout_constraintStart_toEndOf="@+id/send_keyboard_zero" />
+
+        <!-- 4 -->
+        <Button
+            android:id="@+id/send_keyboard_four"
+            style="@style/NumberButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="36dp"
+            android:layout_marginRight="36dp"
+            android:onClick="@{handlers::onClickFour}"
+            android:text="@string/send_keyboard_four"
+            app:layout_constraintBottom_toTopOf="@+id/send_keyboard_seven"
+            app:layout_constraintEnd_toStartOf="@+id/send_keyboard_zero" />
+
+        <!-- 5 -->
+        <Button
+            android:id="@+id/send_keyboard_five"
+            style="@style/NumberButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:onClick="@{handlers::onClickFive}"
+            android:text="@string/send_keyboard_five"
+            app:layout_constraintBottom_toTopOf="@+id/send_keyboard_eight"
+            app:layout_constraintEnd_toStartOf="@+id/send_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/send_guideline_vert" />
+
+        <!-- 6 -->
+        <Button
+            android:id="@+id/send_keyboard_six"
+            style="@style/NumberButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="36dp"
+            android:layout_marginStart="36dp"
+            android:onClick="@{handlers::onClickSix}"
+            android:text="@string/send_keyboard_six"
+            app:layout_constraintBottom_toTopOf="@+id/send_keyboard_nine"
+            app:layout_constraintStart_toEndOf="@+id/send_keyboard_zero" />
+
+        <!-- 1 -->
+        <Button
+            android:id="@+id/send_keyboard_one"
+            style="@style/NumberButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="36dp"
+            android:layout_marginRight="36dp"
+            android:onClick="@{handlers::onClickOne}"
+            android:text="@string/send_keyboard_one"
+            app:layout_constraintBottom_toTopOf="@+id/send_keyboard_four"
+            app:layout_constraintEnd_toStartOf="@+id/send_keyboard_zero" />
+
+        <!-- 2 -->
+        <Button
+            android:id="@+id/send_keyboard_two"
+            style="@style/NumberButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:onClick="@{handlers::onClickTwo}"
+            android:text="@string/send_keyboard_two"
+            app:layout_constraintBottom_toTopOf="@+id/send_keyboard_five"
+            app:layout_constraintEnd_toStartOf="@+id/send_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/send_guideline_vert" />
+
+        <!-- 3 -->
+        <Button
+            android:id="@+id/send_keyboard_three"
+            style="@style/NumberButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="36dp"
+            android:layout_marginStart="36dp"
+            android:onClick="@{handlers::onClickThree}"
+            android:text="@string/send_keyboard_three"
+            app:layout_constraintBottom_toTopOf="@+id/send_keyboard_six"
+            app:layout_constraintStart_toEndOf="@+id/send_keyboard_zero" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/send_guideline_vert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <android.support.constraint.Group
+            android:id="@+id/group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="send_keyboard_one,send_keyboard_background,send_keyboard_seven,send_keyboard_eight,send_keyboard_two,send_keyboard_four,send_send_button,send_keyboard_decimal,send_keyboard_six,send_keyboard_five,send_keyboard_nine,send_keyboard_three,send_keyboard_delete,send_keyboard_zero" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

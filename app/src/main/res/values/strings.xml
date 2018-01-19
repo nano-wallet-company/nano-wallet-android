@@ -50,4 +50,21 @@
     <string name="receive_copy_message"><![CDATA[<font color=\"#ffffff\">Your Nano Address has been copied.<br>Share it with a friend to receive Nano!</font>]]></string>
     <string name="receive_copy_done">Done</string>
     <string name="receive_share_title">Share via…</string>
+
+    <!-- Send Screen -->
+    <string name="send_title">Send To</string>
+    <string name="send_address_hint">(Enter Address)</string>
+    <string name="send_keyboard_decimal">.</string>
+    <string name="send_keyboard_one">1</string>
+    <string name="send_keyboard_two">2</string>
+    <string name="send_keyboard_three">3</string>
+    <string name="send_keyboard_four">4</string>
+    <string name="send_keyboard_five">5</string>
+    <string name="send_keyboard_six">6</string>
+    <string name="send_keyboard_seven">7</string>
+    <string name="send_keyboard_eight">8</string>
+    <string name="send_keyboard_nine">9</string>
+    <string name="send_keyboard_zero">0</string>
+    <string name="send_keyboard_delete">&lt;</string>
+    <string name="send_send_cta">Send</string>
 </resources>

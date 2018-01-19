@@ -21,9 +21,11 @@ import co.nano.nanowallet.NanoWallet;
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentHomeBinding;
 import co.nano.nanowallet.model.Transaction;
+import co.nano.nanowallet.ui.common.BaseDialogFragment;
 import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.FragmentControl;
 import co.nano.nanowallet.ui.receive.ReceiveDialogFragment;
+import co.nano.nanowallet.ui.send.SendDialogFragment;
 import co.nano.nanowallet.ui.settings.SettingsDialogFragment;
 
 /**
@@ -135,29 +137,44 @@ public class HomeFragment extends BaseFragment {
                 dialog.show(((FragmentControl) getActivity()).getFragmentUtility().getFragmentManager(),
                         SettingsDialogFragment.TAG);
 
-                // make sure that dialog is not null
-                ((FragmentControl) getActivity()).getFragmentUtility().getFragmentManager().executePendingTransactions();
-
-                // reset status bar to blue when dialog is closed
-                dialog.getDialog().setOnDismissListener(dialogInterface -> setStatusBarBlue());
+                resetStatusBar(dialog);
             }
 
         }
 
         public void onClickReceive(View view) {
             if (getActivity() instanceof FragmentControl) {
-                // show settings dialog
+                // show receive dialog
                 ReceiveDialogFragment dialog = ReceiveDialogFragment.newInstance();
                 dialog.show(((FragmentControl) getActivity()).getFragmentUtility().getFragmentManager(),
                         ReceiveDialogFragment.TAG);
 
-                // make sure that dialog is not null
-                ((FragmentControl) getActivity()).getFragmentUtility().getFragmentManager().executePendingTransactions();
-
-                // reset status bar to blue when dialog is closed
-                dialog.getDialog().setOnDismissListener(dialogInterface -> setStatusBarBlue());
+                resetStatusBar(dialog);
             }
+        }
 
+        public void onClickSend(View view) {
+            if (getActivity() instanceof FragmentControl) {
+                // show send dialog
+                SendDialogFragment dialog = SendDialogFragment.newInstance();
+                dialog.show(((FragmentControl) getActivity()).getFragmentUtility().getFragmentManager(),
+                        SendDialogFragment.TAG);
+
+                resetStatusBar(dialog);
+            }
+        }
+
+        /**
+         * Execute all pending transactions and set up a listener to set the status bar to
+         * blue when the dialog is closed
+         * @param dialog
+         */
+        private void resetStatusBar(BaseDialogFragment dialog) {
+            // make sure that dialog is not null
+            ((FragmentControl) getActivity()).getFragmentUtility().getFragmentManager().executePendingTransactions();
+
+            // reset status bar to blue when dialog is closed
+            dialog.getDialog().setOnDismissListener(dialogInterface -> setStatusBarBlue());
         }
     }
 

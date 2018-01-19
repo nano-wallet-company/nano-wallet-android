@@ -148,4 +148,11 @@
         <item name="android:fontFamily">@font/sofiapro_regular</item>
     </style>
 
+    <style name="TextStyle16">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/dark_sky_blue</item>
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:fontFamily">@font/nunito_light</item>
+    </style>
+
 </resources>
