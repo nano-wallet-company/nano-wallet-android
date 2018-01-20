@@ -3,6 +3,7 @@ package co.nano.nanowallet.ui.send;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -75,6 +76,10 @@ public class SendFragment extends BaseFragment {
         setTitle(getString(R.string.send_title));
         setTitleDrawable(R.drawable.ic_send);
 
+        // hide keyboard for edittext fields
+        binding.sendAmountNano.setInputType(InputType.TYPE_NULL);
+        binding.sendAmountLocalcurrency.setInputType(InputType.TYPE_NULL);
+        
         return view;
     }
 
