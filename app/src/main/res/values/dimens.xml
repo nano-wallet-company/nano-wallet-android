@@ -2,5 +2,4 @@
 <resources>
     <dimen name="margin_visible">20dp</dimen>
     <dimen name="margin_gone">0dp</dimen>
-
 </resources>

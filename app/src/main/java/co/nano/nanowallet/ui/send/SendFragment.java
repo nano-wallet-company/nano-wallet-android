@@ -4,6 +4,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.InputType;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -11,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentSendBinding;
@@ -79,8 +81,16 @@ public class SendFragment extends BaseFragment {
         // hide keyboard for edittext fields
         binding.sendAmountNano.setInputType(InputType.TYPE_NULL);
         binding.sendAmountLocalcurrency.setInputType(InputType.TYPE_NULL);
-        
+
+        // set active and inactive states for edittext fields
+        binding.sendAmountNano.setOnFocusChangeListener((view1, b) -> toggleFieldFocus((EditText) view1, b));
+        binding.sendAmountLocalcurrency.setOnFocusChangeListener((view1, b) -> toggleFieldFocus((EditText) view1, b));
+
         return view;
+    }
+
+    private void toggleFieldFocus(EditText v, boolean hasFocus) {
+        v.setTextSize(TypedValue.COMPLEX_UNIT_SP, hasFocus ? 20f : 16f);
     }
 
     private void updateAmount(CharSequence value) {

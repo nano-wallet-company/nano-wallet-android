@@ -84,6 +84,15 @@
         <item name="android:background">@drawable/bg_seed_input_active</item>
     </style>
 
+    <style name="SendAmountInput" parent="@android:style/Widget.EditText">
+        <item name="android:background">@null</item>
+        <item name="android:textColor">@color/edittext_sendamount</item>
+        <item name="android:textColorHint">@color/edittext_sendamount</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:fontFamily">@font/nunito_regular</item>
+    </style>
+
+
     <!-- Spinner Style -->
     <style name="spinnerItemStyle" parent="android:Widget.TextView.SpinnerItem">
 
