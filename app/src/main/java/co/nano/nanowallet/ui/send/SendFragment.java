@@ -3,6 +3,7 @@ package co.nano.nanowallet.ui.send;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.text.InputType;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -16,16 +17,18 @@ import android.widget.EditText;
 
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentSendBinding;
+import co.nano.nanowallet.model.SendAmount;
 import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.UIUtil;
 
 /**
- * Settings main screen
+ * Send Screen
  */
 public class SendFragment extends BaseFragment {
     private FragmentSendBinding binding;
     public static String TAG = SendFragment.class.getSimpleName();
-    private String nanoValue = "";
+    private SendAmount sendAmount = new SendAmount();
+    private boolean localCurrencyActive = false;
 
     /**
      * Create new instance of the fragment (handy pattern if any data needs to be passed to it)
@@ -83,32 +86,71 @@ public class SendFragment extends BaseFragment {
         binding.sendAmountLocalcurrency.setInputType(InputType.TYPE_NULL);
 
         // set active and inactive states for edittext fields
-        binding.sendAmountNano.setOnFocusChangeListener((view1, b) -> toggleFieldFocus((EditText) view1, b));
-        binding.sendAmountLocalcurrency.setOnFocusChangeListener((view1, b) -> toggleFieldFocus((EditText) view1, b));
+        binding.sendAmountNano.setOnFocusChangeListener((view1, b) -> toggleFieldFocus((EditText) view1, b, false));
+        binding.sendAmountLocalcurrency.setOnFocusChangeListener((view1, b) -> toggleFieldFocus((EditText) view1, b, true));
 
         return view;
     }
 
-    private void toggleFieldFocus(EditText v, boolean hasFocus) {
+    /**
+     * Helper to set focus size and color on fields
+     *
+     * @param v
+     * @param hasFocus
+     * @param isLocalCurrency
+     */
+    private void toggleFieldFocus(EditText v, boolean hasFocus, boolean isLocalCurrency) {
+        localCurrencyActive = isLocalCurrency;
+
         v.setTextSize(TypedValue.COMPLEX_UNIT_SP, hasFocus ? 20f : 16f);
+        binding.sendAmountNanoSymbol.setTextSize(TypedValue.COMPLEX_UNIT_SP, hasFocus && isLocalCurrency ? 16f : 14f);
+        binding.sendAmountNanoSymbol.setAlpha(hasFocus && !isLocalCurrency ? 1.0f : 0.5f);
+        binding.sendAmountLocalcurrencySymbol.setTextSize(TypedValue.COMPLEX_UNIT_SP, hasFocus && isLocalCurrency ? 16f : 14f);
+        binding.sendAmountLocalcurrencySymbol.setTextColor(hasFocus && isLocalCurrency ?
+                ContextCompat.getColor(getContext(), R.color.bright_white) : ContextCompat.getColor(getContext(), R.color.semitranslucent_white));
+
+        // clear amounts
+        // TODO: Should this be cleared every time?
+        sendAmount = new SendAmount();
+        binding.setSendAmount(sendAmount);
     }
 
+    /**
+     * Update amount strings based on input processed
+     * @param value String value of character pressed
+     */
     private void updateAmount(CharSequence value) {
         if (value.equals(getString(R.string.send_keyboard_delete))) {
             // delete last character
-            if (nanoValue.length() > 0) {
-                nanoValue = nanoValue.substring(0, nanoValue.length() - 1);
+            if (localCurrencyActive) {
+                if (sendAmount.getLocalCurrencyAmount().length() > 0) {
+                    sendAmount.setLocalCurrencyAmount(sendAmount.getLocalCurrencyAmount().substring(0, sendAmount.getLocalCurrencyAmount().length() - 1));
+                }
+            } else {
+                if (sendAmount.getNanoAmount().length() > 0) {
+                    sendAmount.setNanoAmount(sendAmount.getNanoAmount().substring(0, sendAmount.getNanoAmount().length() - 1));
+                }
             }
         } else if (value.equals(getString(R.string.send_keyboard_decimal))) {
             // decimal point
-            if (!nanoValue.contains(value)) {
-                nanoValue = nanoValue + value;
+            if (localCurrencyActive) {
+                if (!sendAmount.getLocalCurrencyAmount().contains(value)) {
+                    sendAmount.setLocalCurrencyAmount(sendAmount.getLocalCurrencyAmount() + value);
+                }
+            } else {
+                if (!sendAmount.getNanoAmount().contains(value)) {
+                    sendAmount.setNanoAmount(sendAmount.getNanoAmount() + value);
+                }
             }
         } else {
             // digits
-            nanoValue = nanoValue + value;
+            if (localCurrencyActive) {
+                sendAmount.setLocalCurrencyAmount(sendAmount.getLocalCurrencyAmount() + value);
+            } else {
+                sendAmount.setNanoAmount(sendAmount.getNanoAmount() + value);
+            }
         }
-        binding.setNanoValue(nanoValue);
+        binding.setSendAmount(sendAmount);
     }
 
     public class ClickHandlers {

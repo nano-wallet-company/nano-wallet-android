@@ -70,5 +70,5 @@
     <string name="send_send_cta">Send</string>
     <string name="send_camera">Camera</string>
     <string name="send_nano_hint">0.00</string>
-    <string name="send_localcurrency_hint">$</string>
+    <string name="send_localcurrency_hint">0.00</string>
 </resources>

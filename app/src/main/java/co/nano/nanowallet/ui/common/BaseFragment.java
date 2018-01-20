@@ -6,7 +6,7 @@ import android.view.View;
 import co.nano.nanowallet.R;
 
 /**
- * Created by szeidner on 12/01/2018.
+ * Helper methods used by all fragments
  */
 
 public class BaseFragment extends Fragment {

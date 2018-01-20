@@ -34,7 +34,7 @@ import co.nano.nanowallet.ui.send.SendFragment;
 import co.nano.nanowallet.ui.settings.SettingsDialogFragment;
 
 /**
- * The Intro Screen to the app
+ * Home Wallet Screen
  */
 
 @BindingMethods({

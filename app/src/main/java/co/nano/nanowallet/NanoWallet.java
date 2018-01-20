@@ -35,12 +35,12 @@ public class NanoWallet {
     }
 
     public String getAccountBalanceUsd() {
-        // TODO: Put proper conversion forumla in here
+        // TODO: Put proper conversion formula in here
         return formatBalance(accountBalance.multiply(new BigDecimal(28), MathContext.DECIMAL64));
     }
 
     public String getAccountBalanceBtc() {
-        // TODO: Put proper conversion forumla in here
+        // TODO: Put proper conversion formula in here
         return formatBalance(accountBalance.divide(new BigDecimal(175), RoundingMode.FLOOR));
     }
 
