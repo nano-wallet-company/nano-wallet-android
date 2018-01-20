@@ -22,45 +22,18 @@
         <FrameLayout
             android:id="@+id/home_top_background"
             android:layout_width="match_parent"
-            android:layout_height="130dp"
+            android:layout_height="74dp"
             android:background="@color/very_dark_blue">
-
         </FrameLayout>
-
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/home_settings"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="37dp"
-            android:layout_marginRight="37dp"
-            android:layout_marginTop="15dp"
-            android:onClick="@{handlers::onClickSettings}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_settings" />
-
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/home_logo"
-            android:layout_width="52dp"
-            android:layout_height="22dp"
-            android:layout_marginTop="15dp"
-            android:contentDescription="@string/app_name"
-            android:transitionName="@string/intro_logo_transition"
-            app:layout_constraintEnd_toStartOf="@+id/home_guideline_vert"
-            app:layout_constraintStart_toStartOf="@+id/home_guideline_vert"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed"
-            app:srcCompat="@drawable/ic_logo"
-            tools:ignore="UnusedAttribute" />
 
         <android.support.v4.view.ViewPager
             android:id="@+id/home_viewpager"
             android:layout_width="wrap_content"
             android:layout_height="27dp"
-            android:layout_marginTop="26dp"
-            app:layout_constraintEnd_toStartOf="@+id/home_guideline_vert"
-            app:layout_constraintStart_toStartOf="@+id/home_guideline_vert"
-            app:layout_constraintTop_toBottomOf="@+id/home_logo"
+            android:layout_marginTop="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed" />
 
         <android.support.design.widget.TabLayout
@@ -81,7 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="105dp"
-            android:layout_marginTop="130dp">
+            android:layout_marginTop="74dp">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/home_recyclerview"

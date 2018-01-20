@@ -28,14 +28,14 @@ public class BaseDialogFragment extends DialogFragment {
     }
 
     private void setStatusBarColor(int color) {
-        if (getActivity() instanceof FragmentControl) {
-            ((FragmentControl) getActivity()).setStatusBarColor(color);
+        if (getActivity() instanceof WindowControl) {
+            ((WindowControl) getActivity()).setStatusBarColor(color);
         }
     }
 
     private void setIconsDark(View view) {
-        if (getActivity() instanceof FragmentControl) {
-            ((FragmentControl) getActivity()).setDarkIcons(view);
+        if (getActivity() instanceof WindowControl) {
+            ((WindowControl) getActivity()).setDarkIcons(view);
         }
     }
 

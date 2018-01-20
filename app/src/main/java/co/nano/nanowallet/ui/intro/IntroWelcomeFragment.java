@@ -11,7 +11,7 @@ import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentIntroWelcomeBinding;
 import co.nano.nanowallet.ui.home.HomeFragment;
 import co.nano.nanowallet.ui.common.BaseFragment;
-import co.nano.nanowallet.ui.common.FragmentControl;
+import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.common.FragmentUtility;
 
 /**
@@ -22,7 +22,6 @@ public class IntroWelcomeFragment extends BaseFragment {
     private FragmentIntroWelcomeBinding binding;
     public static String TAG = IntroWelcomeFragment.class.getSimpleName();
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -32,6 +31,7 @@ public class IntroWelcomeFragment extends BaseFragment {
         View view = binding.getRoot();
 
         setStatusBarWhite(view);
+        hideToolbar();
 
         // bind data to view
         binding.setVersion(getString(R.string.version_display, BuildConfig.VERSION_NAME));
@@ -46,8 +46,8 @@ public class IntroWelcomeFragment extends BaseFragment {
             // TODO: Create new wallet
 
             // go to home screen
-            if (getActivity() instanceof FragmentControl) {
-                ((FragmentControl) getActivity()).getFragmentUtility().replace(
+            if (getActivity() instanceof WindowControl) {
+                ((WindowControl) getActivity()).getFragmentUtility().replace(
                         new HomeFragment(),
                         FragmentUtility.Animation.ENTER_LEFT_EXIT_RIGHT,
                         FragmentUtility.Animation.ENTER_RIGHT_EXIT_LEFT,
@@ -59,8 +59,8 @@ public class IntroWelcomeFragment extends BaseFragment {
 
         public void onClickHaveWallet(View view) {
             // let user input their existing wallet
-            if (getActivity() instanceof FragmentControl) {
-                ((FragmentControl) getActivity()).getFragmentUtility().add(
+            if (getActivity() instanceof WindowControl) {
+                ((WindowControl) getActivity()).getFragmentUtility().add(
                         new IntroSeedFragment(),
                         FragmentUtility.Animation.CROSSFADE,
                         FragmentUtility.Animation.CROSSFADE,

@@ -67,4 +67,5 @@
     <string name="send_keyboard_zero">0</string>
     <string name="send_keyboard_delete">&lt;</string>
     <string name="send_send_cta">Send</string>
+    <string name="send_camera">Camera</string>
 </resources>

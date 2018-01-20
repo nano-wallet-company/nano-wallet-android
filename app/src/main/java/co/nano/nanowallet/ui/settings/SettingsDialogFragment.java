@@ -17,7 +17,7 @@ import android.widget.TextView;
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentSettingsBinding;
 import co.nano.nanowallet.ui.common.BaseDialogFragment;
-import co.nano.nanowallet.ui.common.FragmentControl;
+import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.intro.IntroWelcomeFragment;
 
@@ -121,7 +121,7 @@ public class SettingsDialogFragment extends BaseDialogFragment {
         }
 
         public void onClickLogOut(View view) {
-            if (getActivity() instanceof FragmentControl) {
+            if (getActivity() instanceof WindowControl) {
                 // show the logout are-you-sure dialog
                 AlertDialog.Builder builder;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -133,7 +133,7 @@ public class SettingsDialogFragment extends BaseDialogFragment {
                         .setMessage(R.string.settings_logout_alert_message)
                         .setPositiveButton(R.string.settings_logout_alert_confirm_cta, (dialog, which) -> {
                             // go back to welcome fragment
-                            ((FragmentControl) getActivity()).getFragmentUtility().replace(new IntroWelcomeFragment(), FragmentUtility.Animation.CROSSFADE);
+                            ((WindowControl) getActivity()).getFragmentUtility().replace(new IntroWelcomeFragment(), FragmentUtility.Animation.CROSSFADE);
                             dismiss();
                             // TODO: Clear any local items in memory
                         })

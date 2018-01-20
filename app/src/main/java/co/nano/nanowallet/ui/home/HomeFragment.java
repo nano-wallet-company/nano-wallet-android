@@ -4,8 +4,12 @@ import android.databinding.BindingMethod;
 import android.databinding.BindingMethods;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -23,7 +27,8 @@ import co.nano.nanowallet.databinding.FragmentHomeBinding;
 import co.nano.nanowallet.model.Transaction;
 import co.nano.nanowallet.ui.common.BaseDialogFragment;
 import co.nano.nanowallet.ui.common.BaseFragment;
-import co.nano.nanowallet.ui.common.FragmentControl;
+import co.nano.nanowallet.ui.common.FragmentUtility;
+import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.receive.ReceiveDialogFragment;
 import co.nano.nanowallet.ui.send.SendDialogFragment;
 import co.nano.nanowallet.ui.settings.SettingsDialogFragment;
@@ -42,12 +47,49 @@ public class HomeFragment extends BaseFragment {
     private WalletController controller;
     public static String TAG = HomeFragment.class.getSimpleName();
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_home, menu);
+        super.onCreateOptionsMenu(menu,inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.home_settings:
+                if (getActivity() instanceof WindowControl) {
+                    // show settings dialog
+                    SettingsDialogFragment dialog = SettingsDialogFragment.newInstance();
+                    dialog.show(((WindowControl) getActivity()).getFragmentUtility().getFragmentManager(),
+                            SettingsDialogFragment.TAG);
+
+                    // make sure that dialog is not null
+                    ((WindowControl) getActivity()).getFragmentUtility().getFragmentManager().executePendingTransactions();
+
+                    // reset status bar to blue when dialog is closed
+                    dialog.getDialog().setOnDismissListener(dialogInterface -> setStatusBarBlue());
+                }
+                return true;
+        }
+
+        return false;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // set status bar to blue
         setStatusBarBlue();
+        setTitle("");
+        setTitleDrawable(R.drawable.ic_logo_toolbar);
+        setBackEndabled(false);
 
         // inflate the view
         binding = DataBindingUtil.inflate(
@@ -130,23 +172,11 @@ public class HomeFragment extends BaseFragment {
     }
 
     public class ClickHandlers {
-        public void onClickSettings(View view) {
-            if (getActivity() instanceof FragmentControl) {
-                // show settings dialog
-                SettingsDialogFragment dialog = SettingsDialogFragment.newInstance();
-                dialog.show(((FragmentControl) getActivity()).getFragmentUtility().getFragmentManager(),
-                        SettingsDialogFragment.TAG);
-
-                resetStatusBar(dialog);
-            }
-
-        }
-
         public void onClickReceive(View view) {
-            if (getActivity() instanceof FragmentControl) {
+            if (getActivity() instanceof WindowControl) {
                 // show receive dialog
                 ReceiveDialogFragment dialog = ReceiveDialogFragment.newInstance();
-                dialog.show(((FragmentControl) getActivity()).getFragmentUtility().getFragmentManager(),
+                dialog.show(((WindowControl) getActivity()).getFragmentUtility().getFragmentManager(),
                         ReceiveDialogFragment.TAG);
 
                 resetStatusBar(dialog);
@@ -154,13 +184,14 @@ public class HomeFragment extends BaseFragment {
         }
 
         public void onClickSend(View view) {
-            if (getActivity() instanceof FragmentControl) {
-                // show send dialog
-                SendDialogFragment dialog = SendDialogFragment.newInstance();
-                dialog.show(((FragmentControl) getActivity()).getFragmentUtility().getFragmentManager(),
-                        SendDialogFragment.TAG);
-
-                resetStatusBar(dialog);
+            if (getActivity() instanceof WindowControl) {
+                // navigate to send screen
+                ((WindowControl) getActivity()).getFragmentUtility().add(
+                        new SendDialogFragment(),
+                        FragmentUtility.Animation.ENTER_LEFT_EXIT_RIGHT,
+                        FragmentUtility.Animation.ENTER_RIGHT_EXIT_LEFT,
+                        SendDialogFragment.TAG
+                );
             }
         }
 
@@ -171,7 +202,7 @@ public class HomeFragment extends BaseFragment {
          */
         private void resetStatusBar(BaseDialogFragment dialog) {
             // make sure that dialog is not null
-            ((FragmentControl) getActivity()).getFragmentUtility().getFragmentManager().executePendingTransactions();
+            ((WindowControl) getActivity()).getFragmentUtility().getFragmentManager().executePendingTransactions();
 
             // reset status bar to blue when dialog is closed
             dialog.getDialog().setOnDismissListener(dialogInterface -> setStatusBarBlue());

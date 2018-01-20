@@ -4,21 +4,23 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentSendBinding;
-import co.nano.nanowallet.ui.common.BaseDialogFragment;
+import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.UIUtil;
 
 /**
  * Settings main screen
  */
-public class SendDialogFragment extends BaseDialogFragment {
+public class SendDialogFragment extends BaseFragment {
     private FragmentSendBinding binding;
     public static String TAG = SendDialogFragment.class.getSimpleName();
-    private String address;
     private static final int QRCODE_SIZE = 200;
 
     /**
@@ -36,10 +38,25 @@ public class SendDialogFragment extends BaseDialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setStyle(STYLE_NO_FRAME, R.style.AppTheme_Modal_Window);
+        setHasOptionsMenu(true);
+    }
 
-        // TODO: The receive address should be passed in or generated somewhere
-        address = "xrb_3gntuoguehi9d1mnhnar6ojx7jseeerwj5hesb4b4jga7oybbdbqyzap7ijg";
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_send, menu);
+        super.onCreateOptionsMenu(menu,inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.send_camera:
+                // TODO: Load camera
+                return true;
+        }
+
+        return false;
     }
 
     @Nullable
@@ -52,7 +69,10 @@ public class SendDialogFragment extends BaseDialogFragment {
         View view = binding.getRoot();
         binding.setHandlers(new ClickHandlers());
 
-        setStatusBarWhite(view);
+        setStatusBarBlue();
+        setBackEndabled(true);
+        setTitle(getString(R.string.send_title));
+        setTitleDrawable(R.drawable.ic_send);
 
         return view;
     }
@@ -60,7 +80,6 @@ public class SendDialogFragment extends BaseDialogFragment {
 
     public class ClickHandlers {
         public void onClickClose(View view) {
-            dismiss();
         }
 
         /**

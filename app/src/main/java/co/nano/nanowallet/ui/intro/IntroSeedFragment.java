@@ -11,7 +11,7 @@ import android.widget.EditText;
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentIntroSeedBinding;
 import co.nano.nanowallet.ui.common.BaseFragment;
-import co.nano.nanowallet.ui.common.FragmentControl;
+import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.common.UIUtil;
 import co.nano.nanowallet.ui.home.HomeFragment;
@@ -35,6 +35,7 @@ public class IntroSeedFragment extends BaseFragment {
         View view = binding.getRoot();
 
         setStatusBarWhite(view);
+        hideToolbar();
 
         // bind data to view
         binding.setSteps(getString(R.string.intro_seed_steps, currentStep));
@@ -86,8 +87,8 @@ public class IntroSeedFragment extends BaseFragment {
          */
         public void onClickConfirm(View view) {
             // go to home screen
-            if (getActivity() instanceof FragmentControl) {
-                ((FragmentControl) getActivity()).getFragmentUtility().replace(
+            if (getActivity() instanceof WindowControl) {
+                ((WindowControl) getActivity()).getFragmentUtility().replace(
                         new HomeFragment(),
                         FragmentUtility.Animation.ENTER_LEFT_EXIT_RIGHT,
                         FragmentUtility.Animation.ENTER_RIGHT_EXIT_LEFT,

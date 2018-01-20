@@ -28,14 +28,61 @@ public class BaseFragment extends Fragment {
     }
 
     private void setStatusBarColor(int color) {
-        if (getActivity() instanceof FragmentControl) {
-            ((FragmentControl) getActivity()).setStatusBarColor(color);
+        if (getActivity() instanceof WindowControl) {
+            ((WindowControl) getActivity()).setStatusBarColor(color);
         }
     }
 
     private void setIconsDark(View view) {
-        if (getActivity() instanceof FragmentControl) {
-            ((FragmentControl) getActivity()).setDarkIcons(view);
+        if (getActivity() instanceof WindowControl) {
+            ((WindowControl) getActivity()).setDarkIcons(view);
+        }
+    }
+
+    /**
+     * Hide the app toolbar
+     */
+    protected void hideToolbar() {
+        if (getActivity() instanceof WindowControl) {
+            ((WindowControl) getActivity()).setToolbarVisible(false);
+        }
+    }
+
+    /**
+     * Show the app toolbar
+     */
+    protected void showToolbar() {
+        if (getActivity() instanceof WindowControl) {
+            ((WindowControl) getActivity()).setToolbarVisible(true);
+        }
+    }
+
+    /**
+     * Set the title of the toolbar
+     */
+    protected void setTitle(String title) {
+        if (getActivity() instanceof WindowControl) {
+            ((WindowControl) getActivity()).setTitle(title);
+        }
+    }
+
+    /**
+     * Set drawable on the toolbar
+     * @param drawable
+     */
+    protected void setTitleDrawable(int drawable) {
+        if (getActivity() instanceof WindowControl) {
+            ((WindowControl) getActivity()).setTitleDrawable(drawable);
+        }
+    }
+
+    /**
+     * Enable or disable back button
+     * @param enabled
+     */
+    protected void setBackEndabled(boolean enabled) {
+        if (getActivity() instanceof WindowControl) {
+            ((WindowControl) getActivity()).setBackEnabled(enabled);
         }
     }
 

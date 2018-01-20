@@ -165,7 +165,7 @@ public class FragmentUtility {
                         popAnimations.getEnter(),
                         pushAnimations.getExit()
                 )
-                .add(mContainerViewId, fragment);
+                .replace(mContainerViewId, fragment, tag);
 
         if (addToBackStack) {
             transaction.addToBackStack(tag);
