@@ -18,6 +18,8 @@
         <EditText
             android:id="@+id/send_address"
             style="@style/SeedInput"
+            android:layout_height="0dp"
+            android:layout_marginBottom="16dp"
             android:layout_marginEnd="37dp"
             android:layout_marginLeft="37dp"
             android:layout_marginRight="37dp"
@@ -25,6 +27,7 @@
             android:layout_marginTop="16dp"
             android:hint="@string/send_address_hint"
             android:onTextChanged="@{handlers::onAddressTextChanged}"
+            app:layout_constraintBottom_toTopOf="@+id/send_guideline_amounts_top"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -32,12 +35,52 @@
             android:id="@+id/send_amounts_background"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="20dp"
             android:background="@color/dark_sky_blue"
             app:layout_constraintBottom_toTopOf="@+id/send_keyboard_background"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/send_address" />
+            app:layout_constraintTop_toBottomOf="@+id/send_guideline_amounts_top" />
 
+        <FrameLayout
+            android:id="@+id/send_amounts_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/translucent_white"
+            app:layout_constraintBottom_toTopOf="@+id/send_keyboard_background"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/send_guideline_amounts_top" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/send_arrows"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/send_guideline_keyboard_top"
+            app:layout_constraintEnd_toStartOf="@+id/send_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/send_guideline_vert"
+            app:layout_constraintTop_toBottomOf="@+id/send_guideline_amounts_top"
+            app:srcCompat="@drawable/ic_arrows" />
+
+        <TextView
+            android:id="@+id/send_amount_localcurrency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/send_guideline_keyboard_top"
+            app:layout_constraintEnd_toStartOf="@+id/send_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/send_guideline_vert"
+            app:layout_constraintTop_toBottomOf="@+id/send_arrows"
+            tools:text="$200,000.34" />
+
+        <TextView
+            android:id="@+id/send_amount_nano"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_currency_nano_white"
+            android:drawablePadding="5dp"
+            android:drawableStart="@drawable/ic_currency_nano_white"
+            app:layout_constraintBottom_toTopOf="@+id/send_arrows"
+            app:layout_constraintEnd_toStartOf="@+id/send_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/send_guideline_vert"
+            app:layout_constraintTop_toTopOf="@+id/send_guideline_amounts_top"
+            tools:text="123,405.695" />
 
         <FrameLayout
             android:id="@+id/send_keyboard_background"
@@ -238,11 +281,18 @@
             app:layout_constraintGuide_percent="0.5" />
 
         <android.support.constraint.Guideline
+            android:id="@+id/send_guideline_amounts_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.13" />
+
+        <android.support.constraint.Guideline
             android:id="@+id/send_guideline_keyboard_top"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.4" />
+            app:layout_constraintGuide_percent="0.36" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>
