@@ -52,6 +52,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/bg_max"
             android:fontFamily="@font/sofiapro_regular"
+            android:letterSpacing=".26"
             android:minHeight="0dp"
             android:minWidth="0dp"
             android:onClick="@{handlers::onClickMax}"
@@ -65,7 +66,8 @@
             android:textSize="12sp"
             app:layout_constraintBottom_toTopOf="@+id/send_arrows"
             app:layout_constraintStart_toStartOf="@+id/send_address"
-            app:layout_constraintTop_toTopOf="@+id/send_guideline_amounts_top" />
+            app:layout_constraintTop_toTopOf="@+id/send_guideline_amounts_top"
+            tools:ignore="UnusedAttribute" />
 
         <EditText
             android:id="@+id/send_amount_nano"
