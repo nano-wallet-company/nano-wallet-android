@@ -80,9 +80,18 @@ public class BaseFragment extends Fragment {
      * Enable or disable back button
      * @param enabled
      */
-    protected void setBackEndabled(boolean enabled) {
+    protected void setBackEnabled(boolean enabled) {
         if (getActivity() instanceof WindowControl) {
             ((WindowControl) getActivity()).setBackEnabled(enabled);
+        }
+    }
+
+    /**
+     * Go back action
+     */
+    protected void goBack() {
+        if (getActivity() instanceof WindowControl) {
+            ((WindowControl) getActivity()).getFragmentUtility().pop();
         }
     }
 

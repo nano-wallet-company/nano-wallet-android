@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentSendBinding;
@@ -18,19 +19,19 @@ import co.nano.nanowallet.ui.common.UIUtil;
 /**
  * Settings main screen
  */
-public class SendDialogFragment extends BaseFragment {
+public class SendFragment extends BaseFragment {
     private FragmentSendBinding binding;
-    public static String TAG = SendDialogFragment.class.getSimpleName();
-    private static final int QRCODE_SIZE = 200;
+    public static String TAG = SendFragment.class.getSimpleName();
+    private String nanoValue = "";
 
     /**
-     * Create new instance of the dialog fragment (handy pattern if any data needs to be passed to it)
+     * Create new instance of the fragment (handy pattern if any data needs to be passed to it)
      *
      * @return
      */
-    public static SendDialogFragment newInstance() {
+    public static SendFragment newInstance() {
         Bundle args = new Bundle();
-        SendDialogFragment fragment = new SendDialogFragment();
+        SendFragment fragment = new SendFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -44,7 +45,7 @@ public class SendDialogFragment extends BaseFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_send, menu);
-        super.onCreateOptionsMenu(menu,inflater);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -70,18 +71,32 @@ public class SendDialogFragment extends BaseFragment {
         binding.setHandlers(new ClickHandlers());
 
         setStatusBarBlue();
-        setBackEndabled(true);
+        setBackEnabled(true);
         setTitle(getString(R.string.send_title));
         setTitleDrawable(R.drawable.ic_send);
 
         return view;
     }
 
+    private void updateAmount(CharSequence value) {
+        if (value.equals(getString(R.string.send_keyboard_delete))) {
+            // delete last character
+            if (nanoValue.length() > 0) {
+                nanoValue = nanoValue.substring(0, nanoValue.length() - 1);
+            }
+        } else if (value.equals(getString(R.string.send_keyboard_decimal))) {
+            // decimal point
+            if (!nanoValue.contains(value)) {
+                nanoValue = nanoValue + value;
+            }
+        } else {
+            // digits
+            nanoValue = nanoValue + value;
+        }
+        binding.setNanoValue(nanoValue);
+    }
 
     public class ClickHandlers {
-        public void onClickClose(View view) {
-        }
-
         /**
          * Listener for styling updates when text changes
          *
@@ -99,55 +114,16 @@ public class SendDialogFragment extends BaseFragment {
         }
 
         public void onClickSend(View view) {
-
+            // TODO: Send money
+            goBack();
         }
 
-        public void onClickDecimal(View view) {
-
+        public void onClickMax(View view) {
+            // TODO: Seed with max from wallet
         }
 
-        public void onClickDelete(View view) {
-
-        }
-
-        public void onClickZero(View view) {
-
-        }
-
-        public void onClickOne(View view) {
-
-        }
-
-        public void onClickTwo(View view) {
-
-        }
-
-        public void onClickThree(View view) {
-
-        }
-
-        public void onClickFour(View view) {
-
-        }
-
-        public void onClickFive(View view) {
-
-        }
-
-        public void onClickSix(View view) {
-
-        }
-
-        public void onClickSeven(View view) {
-
-        }
-
-        public void onClickEight(View view) {
-
-        }
-
-        public void onClickNine(View view) {
-
+        public void onClickNumKeyboard(View view) {
+            updateAmount(((Button) view).getText());
         }
 
     }

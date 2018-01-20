@@ -54,6 +54,7 @@
     <!-- Send Screen -->
     <string name="send_title">Send To</string>
     <string name="send_address_hint">(Enter Address)</string>
+    <string name="send_max_cta">Max</string>
     <string name="send_keyboard_decimal">.</string>
     <string name="send_keyboard_one">1</string>
     <string name="send_keyboard_two">2</string>
@@ -68,4 +69,6 @@
     <string name="send_keyboard_delete">&lt;</string>
     <string name="send_send_cta">Send</string>
     <string name="send_camera">Camera</string>
+    <string name="send_nano_hint">0.00</string>
+    <string name="send_localcurrency_hint"></string>
 </resources>

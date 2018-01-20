@@ -30,7 +30,7 @@ import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.receive.ReceiveDialogFragment;
-import co.nano.nanowallet.ui.send.SendDialogFragment;
+import co.nano.nanowallet.ui.send.SendFragment;
 import co.nano.nanowallet.ui.settings.SettingsDialogFragment;
 
 /**
@@ -89,7 +89,7 @@ public class HomeFragment extends BaseFragment {
         setStatusBarBlue();
         setTitle("");
         setTitleDrawable(R.drawable.ic_logo_toolbar);
-        setBackEndabled(false);
+        setBackEnabled(false);
 
         // inflate the view
         binding = DataBindingUtil.inflate(
@@ -187,10 +187,10 @@ public class HomeFragment extends BaseFragment {
             if (getActivity() instanceof WindowControl) {
                 // navigate to send screen
                 ((WindowControl) getActivity()).getFragmentUtility().add(
-                        new SendDialogFragment(),
+                        SendFragment.newInstance(),
                         FragmentUtility.Animation.ENTER_LEFT_EXIT_RIGHT,
                         FragmentUtility.Animation.ENTER_RIGHT_EXIT_LEFT,
-                        SendDialogFragment.TAG
+                        SendFragment.TAG
                 );
             }
         }
