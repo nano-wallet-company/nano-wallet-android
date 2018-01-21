@@ -17,6 +17,7 @@ import co.nano.nanowallet.ui.scan.ScanActivity;
 
 public class BaseFragment extends Fragment {
     private static final int ZXING_CAMERA_PERMISSION = 1;
+    protected static final int SCAN_RESULT = 2;
 
     /**
      * Set status bar color to dark blue
@@ -113,7 +114,7 @@ public class BaseFragment extends Fragment {
                     new String[]{Manifest.permission.CAMERA}, ZXING_CAMERA_PERMISSION);
         } else {
             Intent intent = new Intent(getActivity(), ScanActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, SCAN_RESULT);
         }
     }
 

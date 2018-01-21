@@ -9,10 +9,10 @@ import android.view.ViewGroup;
 import co.nano.nanowallet.BuildConfig;
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentIntroWelcomeBinding;
-import co.nano.nanowallet.ui.home.HomeFragment;
 import co.nano.nanowallet.ui.common.BaseFragment;
-import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.common.FragmentUtility;
+import co.nano.nanowallet.ui.common.WindowControl;
+import co.nano.nanowallet.ui.home.HomeFragment;
 
 /**
  * The Intro Screen to the app
@@ -39,7 +39,6 @@ public class IntroWelcomeFragment extends BaseFragment {
 
         return view;
     }
-
 
     public class ClickHandlers {
         public void onClickNewWallet(View view) {

@@ -1,5 +1,6 @@
 package co.nano.nanowallet.ui.send;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,6 +21,9 @@ import co.nano.nanowallet.databinding.FragmentSendBinding;
 import co.nano.nanowallet.model.SendAmount;
 import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.UIUtil;
+import co.nano.nanowallet.ui.scan.ScanActivity;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Send Screen
@@ -90,6 +94,21 @@ public class SendFragment extends BaseFragment {
         binding.sendAmountLocalcurrency.setOnFocusChangeListener((view1, b) -> toggleFieldFocus((EditText) view1, b, true));
 
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == SCAN_RESULT) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                Bundle res = data.getExtras();
+                if (res != null) {
+                    // set to scanned value
+                    binding.sendAddress.setText(res.getString(ScanActivity.QR_CODE_RESULT));
+                }
+            }
+        }
     }
 
     /**

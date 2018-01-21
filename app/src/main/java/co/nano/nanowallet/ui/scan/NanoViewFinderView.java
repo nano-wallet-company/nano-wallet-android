@@ -117,7 +117,7 @@ public class NanoViewFinderView extends View implements IViewFinder {
     public void drawViewFinderMask(Canvas canvas) {
         RectF framingRect = this.getFramingRectF();
         Paint paint = this.mFinderMaskPaint;
-        
+
         // background
         paint.setStyle(Paint.Style.FILL);
         canvas.drawPaint(paint);
