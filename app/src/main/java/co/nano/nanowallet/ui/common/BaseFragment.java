@@ -1,15 +1,22 @@
 package co.nano.nanowallet.ui.common;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 
 import co.nano.nanowallet.R;
+import co.nano.nanowallet.ui.scan.ScanActivity;
 
 /**
  * Helper methods used by all fragments
  */
 
 public class BaseFragment extends Fragment {
+    private static final int ZXING_CAMERA_PERMISSION = 1;
 
     /**
      * Set status bar color to dark blue
@@ -20,6 +27,7 @@ public class BaseFragment extends Fragment {
 
     /**
      * Set status bar color to white
+     *
      * @param view an active view
      */
     protected void setStatusBarWhite(View view) {
@@ -68,6 +76,7 @@ public class BaseFragment extends Fragment {
 
     /**
      * Set drawable on the toolbar
+     *
      * @param drawable
      */
     protected void setTitleDrawable(int drawable) {
@@ -78,6 +87,7 @@ public class BaseFragment extends Fragment {
 
     /**
      * Enable or disable back button
+     *
      * @param enabled
      */
     protected void setBackEnabled(boolean enabled) {
@@ -92,6 +102,18 @@ public class BaseFragment extends Fragment {
     protected void goBack() {
         if (getActivity() instanceof WindowControl) {
             ((WindowControl) getActivity()).getFragmentUtility().pop();
+        }
+    }
+
+    protected void startScanActivity() {
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            // check first to see if camera permission has been granted
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.CAMERA}, ZXING_CAMERA_PERMISSION);
+        } else {
+            Intent intent = new Intent(getActivity(), ScanActivity.class);
+            startActivity(intent);
         }
     }
 

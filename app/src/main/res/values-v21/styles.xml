@@ -164,4 +164,12 @@
         <item name="android:fontFamily">@font/nunito_light</item>
     </style>
 
+    <style name="TextStyle17">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:fontFamily">@font/nunito_light</item>
+    </style>
+
 </resources>

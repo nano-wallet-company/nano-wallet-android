@@ -69,6 +69,9 @@
     <string name="send_keyboard_delete">&lt;</string>
     <string name="send_send_cta">Send</string>
     <string name="send_camera">Camera</string>
-    <string name="send_nano_hint">0.00</string>
+    <string name="send_nano_hint">0</string>
     <string name="send_localcurrency_hint">0.00</string>
+
+    <!-- Scan Screen -->
+    <string name="scan_instruction_label">Center code to\nscan your seed</string>
 </resources>

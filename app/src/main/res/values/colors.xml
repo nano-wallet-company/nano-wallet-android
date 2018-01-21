@@ -16,6 +16,7 @@
     <color name="translucent_white">#33ffffff</color>
     <color name="semitranslucent_white">#80ffffff</color>
     <color name="black">#000000</color>
+    <color name="semitranslucent_black">#80000000</color>
 
     <color name="colorPrimary">@color/bright_white</color>
     <color name="colorPrimaryDark">@color/bright_white</color>

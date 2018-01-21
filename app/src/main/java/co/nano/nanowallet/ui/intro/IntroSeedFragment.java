@@ -1,5 +1,6 @@
 package co.nano.nanowallet.ui.intro;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,10 +12,13 @@ import android.widget.EditText;
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentIntroSeedBinding;
 import co.nano.nanowallet.ui.common.BaseFragment;
-import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.common.UIUtil;
+import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.home.HomeFragment;
+
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
 
 /**
  * The Intro Screen to the app
@@ -51,6 +55,18 @@ public class IntroSeedFragment extends BaseFragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 0) {
+            if (resultCode == RESULT_OK) {
+                String contents = data.getStringExtra("SCAN_RESULT");
+                Log.d(TAG, "contents: " + contents);
+            } else if (resultCode == RESULT_CANCELED) {
+                Log.d(TAG, "RESULT_CANCELED");
+            }
+        }
     }
 
 
@@ -103,7 +119,7 @@ public class IntroSeedFragment extends BaseFragment {
          * @param view
          */
         public void onClickCamera(View view) {
-            Log.d(TAG, "Camera Clicked");
+            startScanActivity();
         }
     }
 

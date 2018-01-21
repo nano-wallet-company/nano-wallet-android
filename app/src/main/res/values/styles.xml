@@ -2,7 +2,6 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -11,8 +10,24 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
+    <style name="AppOverlayTheme" parent="@style/Theme.AppCompat.Light">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <!-- darker variant for the status bar and contextual app bars -->
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <!--   theme UI controls like checkboxes and text fields e.g. FloatActionButton -->
+        <item name="colorAccent">@color/colorAccent</item>
+        <!-- Title Text Color -->
+        <item name="android:textColorPrimary">@color/bright_white</item>
+        <!-- color of the menu overflow icon (three vertical dots) -->
+        <item name="android:textColorSecondary">@color/bright_white</item>
+    </style>
+
     <style name="AppTheme.Modal" parent="AppTheme">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -54,7 +69,7 @@
         <item name="android:padding">14dp</item>
     </style>
 
-    <style name="NumberButton">
+    <style name="NumberButton" parent="@style/Widget.AppCompat.Button.Borderless">
         <item name="android:background">@drawable/bg_number_button</item>
         <item name="android:theme">@style/TextStyle16</item>
         <item name="android:gravity">center</item>
@@ -202,6 +217,13 @@
     <style name="TextStyle16">
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">@color/dark_sky_blue</item>
+        <item name="android:fontFamily">@font/nunito_light</item>
+    </style>
+
+    <style name="TextStyle17">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:gravity">center_horizontal</item>
         <item name="android:fontFamily">@font/nunito_light</item>
     </style>
 
