@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 
 android {
-<<<<<<< HEAD
     compileSdkVersion 25
     defaultConfig {
         applicationId "co.nano.nanowallet"
@@ -97,111 +96,6 @@ dependencies {
     })
     testImplementation "junit:junit:$J_UNIT_VERSION"
     testImplementation 'org.hamcrest:hamcrest-library:1.3'
-    testImplementation 'org.mockito:mockito-core:1.10.19'
-}
-
-apply plugin: 'com.android.application'
-
-android {
-=======
->>>>>>> ui
-    compileSdkVersion 26
-    defaultConfig {
-        applicationId "co.nano.nanowallet"
-        minSdkVersion 16
-        targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        externalNativeBuild {
-            cmake {
-                cppFlags "-fexceptions"
-            }
-        }
-        vectorDrawables.useSupportLibrary = true
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    dataBinding {
-        enabled = true
-    }
-}
-
-dependencies {
-    final AWESOME_QRCODE_VERSION = '1.0.6'
-    final CONSTRAINT_LAYOUT_VERSION = '1.1.0-beta4'
-    final ESPRESSO_VERSION = '3.0.1'
-    final EPOXY_VERSION = '2.8.0'
-    final EVENT_BUS_VERSION = '3.1.1'
-    final GSON_VERSION = '2.8.2'
-    final J_UNIT_VERSION = '4.12'
-    final JAVA_WEBSOCKET_VERSION = '1.3.7'
-    final NV_WEBSOCKET_VERSION = '2.3'
-    final RX_ANDROID = '2.0.1'
-    final RX_JAVA_2 = '2.1.8'
-    final SUPPORT_LIBRARY_VERSION = '26.1.0'
-    final TEST_RUNNER_VERSION = '1.0.1'
-    final ZXING_VERSION = '1.9'
-
-    // Support
-    implementation "com.android.support:appcompat-v7:$SUPPORT_LIBRARY_VERSION"
-    implementation "com.android.support:design:$SUPPORT_LIBRARY_VERSION"
-    implementation "com.android.support:recyclerview-v7:$SUPPORT_LIBRARY_VERSION"
-    implementation "com.android.support.constraint:constraint-layout:$CONSTRAINT_LAYOUT_VERSION"
-
-    // Epoxy
-    implementation "com.airbnb.android:epoxy:$EPOXY_VERSION"
-    implementation "com.airbnb.android:epoxy-databinding:$EPOXY_VERSION"
-    annotationProcessor "com.airbnb.android:epoxy-processor:$EPOXY_VERSION"
-
-    // RX
-    implementation "io.reactivex.rxjava2:rxjava:$RX_JAVA_2"
-    implementation "io.reactivex.rxjava2:rxandroid:$RX_ANDROID"
-
-    // Bar Codes
-    implementation "me.dm7.barcodescanner:zxing:$ZXING_VERSION"
-    implementation "com.github.SumiMakito:AwesomeQRCode:$AWESOME_QRCODE_VERSION"
-
-    // WebSocket
-    implementation "com.neovisionaries:nv-websocket-client:$NV_WEBSOCKET_VERSION"
-    implementation "org.java-websocket:Java-WebSocket:$JAVA_WEBSOCKET_VERSION"
-
-    // JSON Serialization
-    implementation "com.google.code.gson:gson:$GSON_VERSION"
-
-    // Event Bus
-    implementation "org.greenrobot:eventbus:$EVENT_BUS_VERSION"
-	
-	// Libsodium
-    //implementation "com.github.joshjdevl.libsodiumjni:libsodium-jni:1.0.8"
-    //implementation project(':libsodium-jni-release');
-    implementation 'com.github.joshjdevl.libsodiumjni:libsodium-jni-aar:1.0.8@aar'
-
-    // Stetho (for debugging only)
-    implementation 'com.facebook.stetho:stetho:1.5.0'
-
-    // Testing
-    androidTestImplementation "com.android.support.test:runner:$TEST_RUNNER_VERSION"
-    androidTestImplementation("com.android.support.test.espresso:espresso-core:$ESPRESSO_VERSION", {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    androidTestImplementation("com.android.support.test.espresso:espresso-contrib:$ESPRESSO_VERSION", {
-        exclude group: 'com.android.support', module: 'appcompat-v7'
-        exclude group: 'com.android.support', module: 'support-v4'
-        exclude group: 'com.android.support', module: 'design'
-        exclude group: 'com.android.support', module: 'support-annotations'
-        exclude module: 'recyclerview-v7'
-    })
-    testImplementation "junit:junit:$J_UNIT_VERSION"
-    testImplementation group: 'org.hamcrest', name: 'hamcrest-library', version: '1.3'
     testImplementation 'org.mockito:mockito-core:1.10.19'
 }
 
