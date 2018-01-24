@@ -14,6 +14,9 @@ android {
                 cppFlags "-fexceptions"
             }
         }
+        // Enabling multidex support.
+        multiDexEnabled true
+
     }
     buildTypes {
         release {
@@ -42,6 +45,8 @@ dependencies {
     final SUPPORT_LIBRARY_VERSION = '26.1.0'
     final TEST_RUNNER_VERSION = '1.0.1'
     final ZXING_VERSION = '1.9'
+
+    compile 'com.android.support:multidex:1.0.2'
 
     // Support
     implementation "com.android.support:appcompat-v7:$SUPPORT_LIBRARY_VERSION"
@@ -74,7 +79,7 @@ dependencies {
     // Libsodium
 
     //implementation "com.github.joshjdevl.libsodiumjni:libsodium-jni:1.0.8"
-    implementation project(':libsodium-jni-release') // custom built with forked libsodium to support blake2b hashing in ed25519 natively
+    //implementation project(':libsodium-jni-release') // custom built with forked libsodium to support blake2b hashing in ed25519 natively
     //implementation 'com.github.joshjdevl.libsodiumjni:libsodium-jni-aar:1.0.8@aar'
 
     // Testing

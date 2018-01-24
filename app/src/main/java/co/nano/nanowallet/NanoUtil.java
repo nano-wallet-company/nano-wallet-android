@@ -9,6 +9,9 @@ import org.libsodium.jni.NaCl;
 
 import java.math.BigInteger;
 
+import android.util.Log;
+
+
 //import blake2bjava.Blake2bHasher;
 
 class NanoUtil {
@@ -44,13 +47,12 @@ class NanoUtil {
         //config.setOutputSizeInBits(256);
         //Blake2bHasher digest = new Blake2bHasher(null);
         byte[] seed_b = hexToBytes(seed);
-        byte[] index_b = {0x00, 0x00, 0x00, 0x00};
+        byte[] index_b = {0x00, 0x00, 0x00, 0x01};
 
         //digest.Update(seed_b, 0, seed_b.length);
         //digest.Update(index_b,0,index_b.length);
 
         byte[] state = new byte[361];
-        //libs = NaCl.sodium();
         NaCl.sodium().crypto_generichash_blake2b_init(state, new byte[0], 0, 32 );
         NaCl.sodium().crypto_generichash_blake2b_update(state, seed_b, seed_b.length);
         NaCl.sodium().crypto_generichash_blake2b_update(state, index_b, index_b.length);
@@ -61,8 +63,16 @@ class NanoUtil {
 
     public static String privateToPublic(String private_key) {
         byte[] public_b = new byte[32];
-        byte[] private_b = NanoUtil.hexToBytes(private_key);
-        public_b = ED25519.publicKey(private_b);
+        byte[] private_b = hexToBytes(private_key);
+        byte[] seed = new byte[32];
+        //public_b = ED25519.publicKey(private_b);
+        NaCl.sodium().crypto_sign_ed25519_sk_to_seed(seed, private_b);
+        NaCl.sodium().crypto_sign_ed25519_seed_keypair(public_b, private_b, seed);
+        Log.i("privateToPublic","Public: " + NanoUtil.bytesToHex(public_b));
+        Log.i("privateToPublic","Private: " + NanoUtil.bytesToHex(private_b));
+        Log.i("privateToPublic","Seed: " + NanoUtil.bytesToHex(seed));
+        //NaCl.sodium().crypto_sign_ed25519_sk_to_pk(public_b, private_b);
+
         return bytesToHex(public_b);
     }
 
@@ -110,7 +120,7 @@ class NanoUtil {
         NaCl.sodium().crypto_generichash_blake2b(check_b, 5, bytePublic, bytePublic.length, new byte[0], 0);
 
         StringBuilder resultAddress = new StringBuilder();
-
+        reverse(check_b);
         resultAddress.insert(0,"xrb_");
         resultAddress.append(encodedAddress);
         resultAddress.append(encode(NanoUtil.bytesToHex(check_b)));
