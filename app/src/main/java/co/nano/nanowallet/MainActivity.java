@@ -4,13 +4,17 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -19,14 +23,16 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.SecureRandom;
 
-import co.nano.nanowallet.ui.IntroWelcomeFragment;
-import co.nano.nanowallet.ui.common.FragmentControl;
 import co.nano.nanowallet.ui.common.FragmentUtility;
+import co.nano.nanowallet.ui.common.WindowControl;
+import co.nano.nanowallet.ui.intro.IntroWelcomeFragment;
 
 
-public class MainActivity extends FragmentActivity implements FragmentControl {
+public class MainActivity extends AppCompatActivity implements WindowControl {
     private WebSocketClient mWebSocketClient;
     private FragmentUtility mFragmentUtility;
+    private Toolbar mToolbar;
+    private TextView mToolbarTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +69,17 @@ public class MainActivity extends FragmentActivity implements FragmentControl {
         Log.i("Wallet","Test Address "+ NanoUtil.publicToAddress("8933B4083FE0E42A97FF0B7E16B9B2CEF93D31318700B328D6CF6CE931BBF8D4"));
 
         initUi();
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
     }
 
     private void initUi() {
@@ -72,6 +89,14 @@ public class MainActivity extends FragmentActivity implements FragmentControl {
         // create fragment utility instance
         mFragmentUtility = new FragmentUtility(getSupportFragmentManager());
         mFragmentUtility.setContainerViewId(R.id.container);
+
+        // set up toolbar
+        mToolbar = findViewById(R.id.toolbar);
+        mToolbarTitle = findViewById(R.id.toolbar_title);
+        setSupportActionBar(mToolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
 
         // set the intro welcome fragment as the first fragment
         // TODO: Add logic to see if this is a first time user or not
@@ -156,6 +181,54 @@ public class MainActivity extends FragmentActivity implements FragmentControl {
             int flags = view.getSystemUiVisibility();
             flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
             view.setSystemUiVisibility(flags);
+        }
+    }
+
+    /**
+     * Set visibility of app toolbar
+     * @param visible
+     */
+    @Override
+    public void setToolbarVisible(boolean visible) {
+        if (mToolbar != null) {
+            mToolbar.setVisibility(visible ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    /**
+     * Set title of the app toolbar
+     * @param title
+     */
+    @Override
+    public void setTitle(String title) {
+        if (mToolbarTitle != null) {
+            mToolbarTitle.setText(title);
+        }
+        setToolbarVisible(true);
+    }
+
+    /**
+     * Set title drawable of app toolbar
+     * @param drawable
+     */
+    @Override
+    public void setTitleDrawable(int drawable) {
+        if (mToolbarTitle != null) {
+            mToolbarTitle.setCompoundDrawablesWithIntrinsicBounds(drawable, 0, 0, 0);
+        }
+        setToolbarVisible(true);
+    }
+
+    @Override
+    public void setBackEnabled(boolean enabled) {
+        if (mToolbar != null) {
+            if (enabled) {
+                mToolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+                mToolbar.setNavigationOnClickListener(view -> mFragmentUtility.pop());
+            } else {
+                mToolbar.setNavigationIcon(null);
+                mToolbar.setNavigationOnClickListener(null);
+            }
         }
     }
 }

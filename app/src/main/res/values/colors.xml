@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="dark_sky_blue">#4a90e2</color>
-    <color name="dark_sky_blue_transparent">#8b4a90e2</color>
+    <color name="dark_sky_blue_light_transparent">#8b4a90e2</color>
+    <color name="dark_sky_blue_dark_transparent">#404a90e2</color>
     <color name="light_sky_blue">#334a90e2</color>
     <color name="very_dark_blue">#000034</color>
     <color name="deep_blue">#000075</color>
     <color name="burnt_yellow">#e1990e</color>
     <color name="white">#eeeeee</color>
+    <color name="gray">#cccccc</color>
     <color name="kiwi_green">#9be845</color>
+    <color name="kiwi_green_light">#EAFAD9</color>
     <color name="very_dark_blue_two">#000031</color>
     <color name="bright_white">#ffffff</color>
+    <color name="translucent_white">#33ffffff</color>
+    <color name="semitranslucent_white">#80ffffff</color>
+    <color name="black">#000000</color>
+    <color name="semitranslucent_black">#80000000</color>
 
     <color name="colorPrimary">@color/bright_white</color>
     <color name="colorPrimaryDark">@color/bright_white</color>

@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="sendAmount"
+            type="co.nano.nanowallet.model.SendAmount" />
+
+        <!-- Click Listeners -->
+        <variable
+            name="handlers"
+            type="co.nano.nanowallet.ui.send.SendFragment.ClickHandlers" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bright_white">
+
+        <EditText
+            android:id="@+id/send_address"
+            style="@style/SeedInput"
+            android:layout_height="0dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="37dp"
+            android:layout_marginLeft="37dp"
+            android:layout_marginRight="37dp"
+            android:layout_marginStart="37dp"
+            android:layout_marginTop="16dp"
+            android:hint="@string/send_address_hint"
+            android:onTextChanged="@{handlers::onAddressTextChanged}"
+            app:layout_constraintBottom_toTopOf="@+id/send_guideline_amounts_top"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <FrameLayout
+            android:id="@+id/send_amounts_background"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/dark_sky_blue"
+            app:layout_constraintBottom_toTopOf="@+id/send_keyboard_background"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/send_guideline_amounts_top" />
+
+        <Button
+            android:id="@+id/send_max_button"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_max"
+            android:fontFamily="@font/sofiapro_regular"
+            android:letterSpacing=".26"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:onClick="@{handlers::onClickMax}"
+            android:paddingBottom="6dp"
+            android:paddingLeft="9dp"
+            android:paddingRight="9dp"
+            android:paddingTop="6dp"
+            android:text="@string/send_max_cta"
+            android:textAllCaps="true"
+            android:textColor="@color/bright_white"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toTopOf="@+id/send_arrows"
+            app:layout_constraintStart_toStartOf="@+id/send_address"
+            app:layout_constraintTop_toTopOf="@+id/send_guideline_amounts_top"
+            tools:ignore="UnusedAttribute" />
+
+        <TextView
+            android:id="@+id/send_amount_nano_symbol"
+            style="@style/SendAmountInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="3dp"
+            android:layout_marginRight="3dp"
+            android:drawableLeft="@drawable/ic_currency_nano_white"
+            android:drawableStart="@drawable/ic_currency_nano_white"
+            app:layout_constraintBottom_toTopOf="@+id/send_arrows"
+            app:layout_constraintEnd_toStartOf="@+id/send_amount_nano"
+            app:layout_constraintTop_toTopOf="@+id/send_guideline_amounts_top" />
+
+        <EditText
+            android:id="@+id/send_amount_nano"
+            style="@style/SendAmountInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/send_nano_hint"
+            android:text="@{sendAmount.nanoAmount}"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/send_arrows"
+            app:layout_constraintEnd_toStartOf="@+id/send_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/send_guideline_vert"
+            app:layout_constraintTop_toTopOf="@+id/send_guideline_amounts_top"
+            tools:text="123,405.695">
+
+            <requestFocus />
+        </EditText>
+
+        <FrameLayout
+            android:id="@+id/send_amounts_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/translucent_white"
+            app:layout_constraintBottom_toTopOf="@+id/send_keyboard_background"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/send_guideline_amounts_top" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/send_arrows"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/send_guideline_keyboard_top"
+            app:layout_constraintEnd_toStartOf="@+id/send_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/send_guideline_vert"
+            app:layout_constraintTop_toBottomOf="@+id/send_guideline_amounts_top"
+            app:srcCompat="@drawable/ic_arrows" />
+
+        <TextView
+            android:id="@+id/send_amount_localcurrency_symbol"
+            style="@style/SendAmountInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="3dp"
+            android:layout_marginRight="3dp"
+            android:text="@string/symbol_usd"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@+id/send_guideline_keyboard_top"
+            app:layout_constraintEnd_toStartOf="@+id/send_amount_localcurrency"
+            app:layout_constraintTop_toBottomOf="@+id/send_arrows"
+            tools:text="@string/symbol_usd" />
+
+        <EditText
+            android:id="@+id/send_amount_localcurrency"
+            style="@style/SendAmountInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/send_localcurrency_hint"
+            android:text="@{sendAmount.localCurrencyAmountFormatted}"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/send_guideline_keyboard_top"
+            app:layout_constraintEnd_toStartOf="@+id/send_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/send_guideline_vert"
+            app:layout_constraintTop_toBottomOf="@+id/send_arrows"
+            tools:text="200,000.34" />
+
+        <FrameLayout
+            android:id="@+id/send_keyboard_background"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/very_dark_blue"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/send_guideline_keyboard_top" />
+
+        <!-- 1 -->
+        <Button
+            android:id="@+id/send_keyboard_one"
+            style="@style/NumberButton"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:onClick="@{handlers::onClickNumKeyboard}"
+            android:text="@string/send_keyboard_one"
+            app:layout_constraintBottom_toTopOf="@+id/send_keyboard_four"
+            app:layout_constraintEnd_toStartOf="@+id/send_keyboard_two"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_weight="0.33"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/send_amounts_background" />
+
+        <!-- 2 -->
+        <Button
+            android:id="@+id/send_keyboard_two"
+            style="@style/NumberButton"
+            android:layout_marginTop="16dp"
+            android:onClick="@{handlers::onClickNumKeyboard}"
+            android:text="@string/send_keyboard_two"
+            app:layout_constraintBottom_toTopOf="@+id/send_keyboard_five"
+            app:layout_constraintEnd_toStartOf="@+id/send_keyboard_three"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_weight="0.33"
+            app:layout_constraintStart_toEndOf="@+id/send_keyboard_one"
+            app:layout_constraintTop_toBottomOf="@+id/send_amounts_background" />
+
+        <!-- 3 -->
+        <Button
+            android:id="@+id/send_keyboard_three"
+            style="@style/NumberButton"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:onClick="@{handlers::onClickNumKeyboard}"
+            android:text="@string/send_keyboard_three"
+            app:layout_constraintBottom_toTopOf="@+id/send_keyboard_six"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_weight="0.33"
+            app:layout_constraintStart_toEndOf="@+id/send_keyboard_two"
+            app:layout_constraintTop_toBottomOf="@+id/send_amounts_background" />
+
+        <!-- 4 -->
+        <Button
+            android:id="@+id/send_keyboard_four"
+            style="@style/NumberButton"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:onClick="@{handlers::onClickNumKeyboard}"
+            android:text="@string/send_keyboard_four"
+            app:layout_constraintBottom_toTopOf="@+id/send_keyboard_seven"
+            app:layout_constraintEnd_toStartOf="@+id/send_keyboard_five"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/send_keyboard_one" />
+
+        <!-- 5 -->
+        <Button
+            android:id="@+id/send_keyboard_five"
+            style="@style/NumberButton"
+            android:onClick="@{handlers::onClickNumKeyboard}"
+            android:text="@string/send_keyboard_five"
+            app:layout_constraintBottom_toTopOf="@+id/send_keyboard_eight"
+            app:layout_constraintEnd_toStartOf="@+id/send_keyboard_six"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/send_keyboard_four"
+            app:layout_constraintTop_toBottomOf="@+id/send_keyboard_two" />
+
+        <!-- 6 -->
+        <Button
+            android:id="@+id/send_keyboard_six"
+            style="@style/NumberButton"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:onClick="@{handlers::onClickNumKeyboard}"
+            android:text="@string/send_keyboard_six"
+            app:layout_constraintBottom_toTopOf="@+id/send_keyboard_nine"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/send_keyboard_five"
+            app:layout_constraintTop_toBottomOf="@+id/send_keyboard_three" />
+
+        <!-- 7 -->
+        <Button
+            android:id="@+id/send_keyboard_seven"
+            style="@style/NumberButton"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:onClick="@{handlers::onClickNumKeyboard}"
+            android:text="@string/send_keyboard_seven"
+            app:layout_constraintBottom_toTopOf="@+id/send_keyboard_decimal"
+            app:layout_constraintEnd_toStartOf="@+id/send_keyboard_eight"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/send_keyboard_four" />
+
+        <!-- 8 -->
+        <Button
+            android:id="@+id/send_keyboard_eight"
+            style="@style/NumberButton"
+            android:onClick="@{handlers::onClickNumKeyboard}"
+            android:text="@string/send_keyboard_eight"
+            app:layout_constraintBottom_toTopOf="@+id/send_keyboard_zero"
+            app:layout_constraintEnd_toStartOf="@+id/send_keyboard_nine"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/send_keyboard_seven"
+            app:layout_constraintTop_toBottomOf="@+id/send_keyboard_five" />
+
+        <!-- 9 -->
+        <Button
+            android:id="@+id/send_keyboard_nine"
+            style="@style/NumberButton"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:onClick="@{handlers::onClickNumKeyboard}"
+            android:text="@string/send_keyboard_nine"
+            app:layout_constraintBottom_toTopOf="@+id/send_keyboard_delete"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/send_keyboard_eight"
+            app:layout_constraintTop_toBottomOf="@+id/send_keyboard_six" />
+
+        <!-- . -->
+        <Button
+            android:id="@+id/send_keyboard_decimal"
+            style="@style/NumberButton"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:onClick="@{handlers::onClickNumKeyboard}"
+            android:text="@string/send_keyboard_decimal"
+            app:layout_constraintBottom_toTopOf="@+id/send_send_button"
+            app:layout_constraintEnd_toStartOf="@+id/send_keyboard_zero"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/send_keyboard_seven" />
+
+        <!-- 0 -->
+        <Button
+            android:id="@+id/send_keyboard_zero"
+            style="@style/NumberButton"
+            android:layout_marginBottom="16dp"
+            android:onClick="@{handlers::onClickNumKeyboard}"
+            android:text="@string/send_keyboard_zero"
+            app:layout_constraintBottom_toTopOf="@+id/send_send_button"
+            app:layout_constraintEnd_toStartOf="@+id/send_keyboard_delete"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/send_keyboard_decimal"
+            app:layout_constraintTop_toBottomOf="@+id/send_keyboard_eight" />
+
+        <!-- < -->
+        <Button
+            android:id="@+id/send_keyboard_delete"
+            style="@style/NumberButton"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:onClick="@{handlers::onClickNumKeyboard}"
+            android:text="@string/send_keyboard_delete"
+            app:layout_constraintBottom_toTopOf="@+id/send_send_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/send_keyboard_zero"
+            app:layout_constraintTop_toBottomOf="@+id/send_keyboard_nine" />
+
+        <Button
+            android:id="@+id/send_send_button"
+            style="@style/SmallButton"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="33dp"
+            android:layout_marginEnd="37dp"
+            android:layout_marginLeft="37dp"
+            android:layout_marginRight="37dp"
+            android:layout_marginStart="37dp"
+            android:onClick="@{handlers::onClickSend}"
+            android:text="@string/send_send_cta"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/send_guideline_vert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/send_guideline_amounts_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.13" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/send_guideline_keyboard_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.36" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

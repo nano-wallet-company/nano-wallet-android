@@ -7,7 +7,7 @@
         <!-- Click Listeners -->
         <variable
             name="handlers"
-            type="co.nano.nanowallet.ui.HomeFragment.ClickHandlers" />
+            type="co.nano.nanowallet.ui.home.HomeFragment.ClickHandlers" />
         <!-- Data -->
         <variable
             name="wallet"
@@ -22,47 +22,46 @@
         <FrameLayout
             android:id="@+id/home_top_background"
             android:layout_width="match_parent"
-            android:layout_height="130dp"
-            android:background="@color/very_dark_blue"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/home_logo"
-            android:layout_width="52dp"
-            android:layout_height="22dp"
-            android:layout_marginTop="20dp"
-            android:contentDescription="@string/app_name"
-            android:transitionName="@string/intro_logo_transition"
-            app:layout_constraintEnd_toStartOf="@+id/home_guideline_vert"
-            app:layout_constraintStart_toStartOf="@+id/home_guideline_vert"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed"
-            app:srcCompat="@drawable/ic_logo"
-            tools:ignore="UnusedAttribute"
-            tools:layout_editor_absoluteX="166dp" />
-
-        <TextView
-            android:id="@+id/home_title"
-            style="@style/TextStyle12"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="26dp"
-            android:drawableLeft="@drawable/ic_currency_nano"
-            android:drawablePadding="5dp"
-            android:drawableStart="@drawable/ic_currency_nano"
-            app:layout_constraintEnd_toStartOf="@+id/home_guideline_vert"
-            app:layout_constraintStart_toStartOf="@+id/home_guideline_vert"
-            app:layout_constraintTop_toBottomOf="@+id/home_logo"
-            app:layout_constraintVertical_chainStyle="packed"
-            tools:text="18024.12" />
+            android:layout_height="74dp"
+            android:background="@color/very_dark_blue">
+        </FrameLayout>
 
         <android.support.v4.view.ViewPager
             android:id="@+id/home_viewpager"
+            android:layout_width="wrap_content"
+            android:layout_height="27dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/home_tabs"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            app:layout_constraintEnd_toStartOf="@+id/home_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/home_guideline_vert"
+            app:layout_constraintTop_toBottomOf="@+id/home_viewpager"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:tabBackground="@drawable/tab_selector"
+            app:tabGravity="center"
+            app:tabIndicatorHeight="0dp"
+            app:tabPadding="2dp" />
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/home_swiperefresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="105dp"
-            android:layout_marginTop="130dp" />
+            android:layout_marginTop="74dp">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/home_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </android.support.v4.widget.SwipeRefreshLayout>
+
 
         <FrameLayout
             android:id="@+id/home_bottom_background"
@@ -74,35 +73,37 @@
             app:layout_constraintVertical_chainStyle="packed" />
 
         <Button
-            android:id="@+id/home_send_button"
+            android:id="@+id/home_receive_button"
             style="@style/SmallButton"
             android:layout_marginBottom="33dp"
             android:layout_marginEnd="20dp"
             android:layout_marginLeft="19dp"
             android:layout_marginRight="20dp"
             android:layout_marginStart="19dp"
-            android:text="@string/home_send_cta"
+            android:onClick="@{handlers::onClickReceive}"
+            android:text="@string/home_receive_cta"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/home_receive_button"
+            app:layout_constraintEnd_toStartOf="@+id/home_send_button"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_weight="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintVertical_chainStyle="spread" />
 
         <Button
-            android:id="@+id/home_receive_button"
+            android:id="@+id/home_send_button"
             style="@style/SmallButton"
             android:layout_marginBottom="33dp"
             android:layout_marginEnd="19dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="19dp"
             android:layout_marginStart="20dp"
-            android:text="@string/home_receive_cta"
+            android:onClick="@{handlers::onClickSend}"
+            android:text="@string/home_send_cta"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_weight="0.5"
-            app:layout_constraintStart_toEndOf="@+id/home_send_button"
+            app:layout_constraintStart_toEndOf="@+id/home_receive_button"
             app:layout_constraintVertical_chainStyle="spread" />
 
         <android.support.constraint.Guideline

@@ -1,11 +1,8 @@
-package co.nano.nanowallet.ui;
+package co.nano.nanowallet.ui.intro;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.text.Spannable;
-import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +11,13 @@ import android.widget.EditText;
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentIntroSeedBinding;
 import co.nano.nanowallet.ui.common.BaseFragment;
-import co.nano.nanowallet.ui.common.FragmentControl;
 import co.nano.nanowallet.ui.common.FragmentUtility;
+import co.nano.nanowallet.ui.common.UIUtil;
+import co.nano.nanowallet.ui.common.WindowControl;
+import co.nano.nanowallet.ui.home.HomeFragment;
+import co.nano.nanowallet.ui.scan.ScanActivity;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * The Intro Screen to the app
@@ -36,6 +38,7 @@ public class IntroSeedFragment extends BaseFragment {
         View view = binding.getRoot();
 
         setStatusBarWhite(view);
+        hideToolbar();
 
         // bind data to view
         binding.setSteps(getString(R.string.intro_seed_steps, currentStep));
@@ -53,6 +56,20 @@ public class IntroSeedFragment extends BaseFragment {
         return view;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == SCAN_RESULT) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                Bundle res = data.getExtras();
+                if (res != null) {
+                    // set to scanned value
+                    binding.introSeedSeed.setText(res.getString(ScanActivity.QR_CODE_RESULT));
+                }
+            }
+        }
+    }
 
     public class ClickHandlers {
 
@@ -77,7 +94,7 @@ public class IntroSeedFragment extends BaseFragment {
             }
 
             // colorize input string
-            colorizeSpannable(binding.introSeedSeed.getText());
+            UIUtil.colorizeSpannable(binding.introSeedSeed.getText(), getContext());
         }
 
         /**
@@ -87,8 +104,8 @@ public class IntroSeedFragment extends BaseFragment {
          */
         public void onClickConfirm(View view) {
             // go to home screen
-            if (getActivity() instanceof FragmentControl) {
-                ((FragmentControl) getActivity()).getFragmentUtility().replace(
+            if (getActivity() instanceof WindowControl) {
+                ((WindowControl) getActivity()).getFragmentUtility().replace(
                         new HomeFragment(),
                         FragmentUtility.Animation.ENTER_LEFT_EXIT_RIGHT,
                         FragmentUtility.Animation.ENTER_RIGHT_EXIT_LEFT,
@@ -103,7 +120,7 @@ public class IntroSeedFragment extends BaseFragment {
          * @param view
          */
         public void onClickCamera(View view) {
-            Log.d(TAG, "Camera Clicked");
+            startScanActivity();
         }
     }
 
@@ -113,21 +130,5 @@ public class IntroSeedFragment extends BaseFragment {
     private void updateSteps() {
         binding.setSteps(getString(R.string.intro_seed_steps, currentStep));
     }
-
-    /**
-     * Colorize a string in the following manner:
-     * First 9 characters are blue
-     * Last 5 characters are orange
-     *
-     * @param s
-     * @return Colorized Spannable String
-     */
-    private void colorizeSpannable(Spannable s) {
-        s.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.dark_sky_blue)), 0, s.length() > 8 ? 9 : s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        if (s.length() > 59) {
-            s.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.burnt_yellow)), 59, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
-    }
-
 
 }

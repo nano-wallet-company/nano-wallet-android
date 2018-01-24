@@ -17,4 +17,61 @@
     <!-- Home Screen -->
     <string name="home_send_cta">Send</string>
     <string name="home_receive_cta">Receive</string>
+    <string name="symbol_btc">₿</string>
+    <string name="symbol_usd">$</string>
+    <string name="ellipsis">&#8230;</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_local_currency">Local Currency</string>
+    <string name="settings_show_seed">Show My Seed</string>
+    <string name="settings_log_out">Log Out</string>
+    <string-array name="settings_local_currency_array">
+        <item>$  US Dollar</item>
+        <item>€  Euro</item>
+        <item>£  Pound</item>
+        <item>¥  Yen</item>
+        <item>₹  Rupee</item>
+    </string-array>
+    <string name="settings_seed_alert_title">Here is your Wallet Seed, be careful.</string>
+    <string name="settings_seed_alert_message">Tap the button below to copy your Seed to paste later. The Seed is pasteable for 2 minutes and then expires.\n\nWe suggest copying to an app like 1Password, LastPass, or printing the Seed out and hiding it somewhere safe.\n\nNever share your seed with anyone, ever, under any circumstances.</string>
+    <string name="settings_seed_alert_confirm_cta">Copy Seed</string>
+    <string name="settings_seed_alert_cancel_cta">Cancel</string>
+    <string name="settings_logout_alert_title">Are you sure you want to log out?</string>
+    <string name="settings_logout_alert_message">Logging out will remove your seed, keys, and all of your Nano-related data from this device.</string>
+    <string name="settings_logout_alert_confirm_cta">Okay</string>
+    <string name="settings_logout_alert_cancel_cta">Cancel</string>
+
+    <!-- Receive Screen -->
+    <string name="receive_title">Receive</string>
+    <string name="receive_instructions">Scan the QR code\nbelow to receive NANO</string>
+    <string name="receive_copy_cta">Copy</string>
+    <string name="receive_address_label">Nano Address</string>
+    <string name="receive_copy_message"><![CDATA[<font color=\"#ffffff\">Your Nano Address has been copied.<br>Share it with a friend to receive Nano!</font>]]></string>
+    <string name="receive_copy_done">Done</string>
+    <string name="receive_share_title">Share via…</string>
+
+    <!-- Send Screen -->
+    <string name="send_title">Send To</string>
+    <string name="send_address_hint">(Enter Address)</string>
+    <string name="send_max_cta">Max</string>
+    <string name="send_keyboard_decimal">.</string>
+    <string name="send_keyboard_one">1</string>
+    <string name="send_keyboard_two">2</string>
+    <string name="send_keyboard_three">3</string>
+    <string name="send_keyboard_four">4</string>
+    <string name="send_keyboard_five">5</string>
+    <string name="send_keyboard_six">6</string>
+    <string name="send_keyboard_seven">7</string>
+    <string name="send_keyboard_eight">8</string>
+    <string name="send_keyboard_nine">9</string>
+    <string name="send_keyboard_zero">0</string>
+    <string name="send_keyboard_delete">&lt;</string>
+    <string name="send_send_cta">Send</string>
+    <string name="send_camera">Camera</string>
+    <string name="send_nano_hint">0</string>
+    <string name="send_localcurrency_hint">0.00</string>
+
+    <!-- Scan Screen -->
+    <string name="scan_instruction_label">Center code to\nscan your seed</string>
 </resources>

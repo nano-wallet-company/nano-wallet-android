@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <!-- Data -->
+        <variable
+            name="wallet"
+            type="co.nano.nanowallet.NanoWallet" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/very_dark_blue">
+
+        <TextView
+            android:id="@+id/amount_nano_symbol"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_currency_nano_white"
+            android:drawablePadding="5dp"
+            android:drawableStart="@drawable/ic_currency_nano_white"
+            app:layout_constraintEnd_toStartOf="@+id/amount_nano_title"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/amount_nano_title"
+            style="@style/TextStyle12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{wallet.accountBalanceNano}"
+            app:layout_constraintEnd_toStartOf="@+id/amount_nano_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/amount_nano_guideline_vert"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="18024.12" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/amount_nano_guideline_vert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="192dp" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

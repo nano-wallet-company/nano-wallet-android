@@ -2,13 +2,46 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColor">@color/very_dark_blue_two</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="AppOverlayTheme" parent="@style/Theme.AppCompat.Light">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <!-- darker variant for the status bar and contextual app bars -->
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <!--   theme UI controls like checkboxes and text fields e.g. FloatActionButton -->
+        <item name="colorAccent">@color/colorAccent</item>
+        <!-- Title Text Color -->
+        <item name="android:textColorPrimary">@color/bright_white</item>
+        <!-- color of the menu overflow icon (three vertical dots) -->
+        <item name="android:textColorSecondary">@color/bright_white</item>
+    </style>
+
+    <style name="AppTheme.Modal" parent="AppTheme">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.Modal.Window" parent="AppTheme">
+        <item name="android:windowAnimationStyle">@style/AppTheme.Modal.Window.Animation</item>
+    </style>
+
+    <style name="AppTheme.Modal.Window.Animation">
+        <item name="android:windowEnterAnimation">@anim/enter_slide_up</item>
+        <item name="android:windowExitAnimation">@anim/exit_slide_down</item>
     </style>
 
     <!-- Button Styles -->
@@ -20,9 +53,11 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textAllCaps">false</item>
-        <item name="android:fontFamily">@font/nunito_regular</item>
+        <item name="android:fontFamily">@font/sofiapro_regular</item>
         <item name="android:padding">14dp</item>
+        <item name="android:theme">?android:attr/borderlessButtonStyle</item>
     </style>
+
     <style name="SmallButton">
         <item name="android:background">@drawable/bg_small_button</item>
         <item name="android:textSize">14sp</item>
@@ -32,6 +67,14 @@
         <item name="android:textAllCaps">true</item>
         <item name="android:fontFamily">@font/sofiapro_regular</item>
         <item name="android:padding">14dp</item>
+    </style>
+
+    <style name="NumberButton" parent="@style/Widget.AppCompat.Button.Borderless">
+        <item name="android:background">@drawable/bg_number_button</item>
+        <item name="android:theme">@style/TextStyle16</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
     </style>
 
     <!-- EditText Styles -->
@@ -51,6 +94,27 @@
         <item name="android:paddingBottom">10dp</item>
         <item name="android:paddingLeft">60dp</item>
         <item name="android:paddingRight">60dp</item>
+    </style>
+    <style name="SeedText" parent="SeedInput">
+        <item name="android:background">@drawable/bg_seed_input_active</item>
+    </style>
+
+    <style name="SendAmountInput" parent="@android:style/Widget.EditText">
+        <item name="android:background">@null</item>
+        <item name="android:textColor">@color/edittext_sendamount</item>
+        <item name="android:textColorHint">@color/edittext_sendamount</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:fontFamily">@font/nunito_regular</item>
+    </style>
+
+
+    <!-- Spinner Style -->
+    <style name="spinnerItemStyle" parent="android:Widget.TextView.SpinnerItem">
+
+    </style>
+
+    <style name="spinnerDropDownItemStyle" parent="android:TextAppearance.Widget.TextView.SpinnerItem">
+
     </style>
 
     <!-- Text Styles -->
@@ -89,6 +153,7 @@
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/very_dark_blue</item>
         <item name="android:gravity">center_horizontal</item>
+        <item name="android:textAllCaps">true</item>
         <item name="android:fontFamily">@font/sofiapro_regular</item>
     </style>
 
@@ -126,6 +191,39 @@
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">@color/bright_white</item>
         <item name="android:gravity">top|end</item>
+        <item name="android:fontFamily">@font/nunito_light</item>
+    </style>
+
+    <style name="TextStyle13">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">#cccccc</item>
+        <item name="android:fontFamily">@font/sofiapro_regular</item>
+    </style>
+
+    <style name="TextStyle14">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/very_dark_blue</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:fontFamily">@font/sofiapro_regular</item>
+    </style>
+
+    <style name="TextStyle15">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/very_dark_blue</item>
+        <item name="android:lineSpacingExtra">26sp</item>
+        <item name="android:fontFamily">@font/sofiapro_regular</item>
+    </style>
+
+    <style name="TextStyle16">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/dark_sky_blue</item>
+        <item name="android:fontFamily">@font/nunito_light</item>
+    </style>
+
+    <style name="TextStyle17">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:gravity">center_horizontal</item>
         <item name="android:fontFamily">@font/nunito_light</item>
     </style>
 

@@ -7,7 +7,7 @@
         <!-- Click Listeners -->
         <variable
             name="handlers"
-            type="co.nano.nanowallet.ui.IntroWelcomeFragment.ClickHandlers" />
+            type="co.nano.nanowallet.ui.intro.IntroWelcomeFragment.ClickHandlers" />
         <!-- Data -->
         <variable
             name="version"

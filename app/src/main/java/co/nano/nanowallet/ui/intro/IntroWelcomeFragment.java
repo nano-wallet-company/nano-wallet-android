@@ -1,4 +1,4 @@
-package co.nano.nanowallet.ui;
+package co.nano.nanowallet.ui.intro;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -10,8 +10,9 @@ import co.nano.nanowallet.BuildConfig;
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentIntroWelcomeBinding;
 import co.nano.nanowallet.ui.common.BaseFragment;
-import co.nano.nanowallet.ui.common.FragmentControl;
 import co.nano.nanowallet.ui.common.FragmentUtility;
+import co.nano.nanowallet.ui.common.WindowControl;
+import co.nano.nanowallet.ui.home.HomeFragment;
 
 /**
  * The Intro Screen to the app
@@ -20,7 +21,6 @@ import co.nano.nanowallet.ui.common.FragmentUtility;
 public class IntroWelcomeFragment extends BaseFragment {
     private FragmentIntroWelcomeBinding binding;
     public static String TAG = IntroWelcomeFragment.class.getSimpleName();
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -31,6 +31,7 @@ public class IntroWelcomeFragment extends BaseFragment {
         View view = binding.getRoot();
 
         setStatusBarWhite(view);
+        hideToolbar();
 
         // bind data to view
         binding.setVersion(getString(R.string.version_display, BuildConfig.VERSION_NAME));
@@ -39,14 +40,13 @@ public class IntroWelcomeFragment extends BaseFragment {
         return view;
     }
 
-
     public class ClickHandlers {
         public void onClickNewWallet(View view) {
             // TODO: Create new wallet
 
             // go to home screen
-            if (getActivity() instanceof FragmentControl) {
-                ((FragmentControl) getActivity()).getFragmentUtility().replace(
+            if (getActivity() instanceof WindowControl) {
+                ((WindowControl) getActivity()).getFragmentUtility().replace(
                         new HomeFragment(),
                         FragmentUtility.Animation.ENTER_LEFT_EXIT_RIGHT,
                         FragmentUtility.Animation.ENTER_RIGHT_EXIT_LEFT,
@@ -58,8 +58,8 @@ public class IntroWelcomeFragment extends BaseFragment {
 
         public void onClickHaveWallet(View view) {
             // let user input their existing wallet
-            if (getActivity() instanceof FragmentControl) {
-                ((FragmentControl) getActivity()).getFragmentUtility().add(
+            if (getActivity() instanceof WindowControl) {
+                ((WindowControl) getActivity()).getFragmentUtility().add(
                         new IntroSeedFragment(),
                         FragmentUtility.Animation.CROSSFADE,
                         FragmentUtility.Animation.CROSSFADE,
