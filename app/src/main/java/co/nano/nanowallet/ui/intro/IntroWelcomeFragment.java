@@ -34,7 +34,7 @@ public class IntroWelcomeFragment extends BaseFragment {
         hideToolbar();
 
         // bind data to view
-        binding.setVersion(getString(R.string.version_display, BuildConfig.VERSION_NAME));
+        binding.setVersion(getString(R.string.version_display, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE));
         binding.setHandlers(new ClickHandlers());
 
         return view;

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">NANO Wallet</string>
 
-    <string name="version_display">NANO V%s</string>
+    <string name="version_display">NANO V%1$s (%2$d)</string>
 
     <!-- Intro Screens -->
     <string name="intro_logo_transition">LogoTransition</string>
