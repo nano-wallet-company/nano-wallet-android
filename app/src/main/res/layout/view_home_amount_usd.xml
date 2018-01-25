@@ -23,6 +23,7 @@
             android:layout_marginRight="3dp"
             android:text="@string/symbol_usd"
             android:textColor="@color/bright_white"
+            android:fontFamily="@font/nunito_light"
             app:layout_constraintEnd_toStartOf="@+id/amount_usd_title"
             app:layout_constraintTop_toTopOf="parent" />
 

@@ -16,13 +16,12 @@
         android:background="@color/very_dark_blue">
 
         <TextView
-            android:id="@+id/amount_btc_symbol"
-            android:layout_width="10dp"
-            android:layout_height="18dp"
-            android:layout_marginEnd="3dp"
-            android:layout_marginRight="3dp"
-            android:text="@string/symbol_btc"
-            android:textColor="@color/bright_white"
+            android:id="@+id/amount_nano_symbol"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_currency_btc"
+            android:drawablePadding="5dp"
+            android:drawableStart="@drawable/ic_currency_btc"
             app:layout_constraintEnd_toStartOf="@+id/amount_btc_title"
             app:layout_constraintTop_toTopOf="parent" />
 
