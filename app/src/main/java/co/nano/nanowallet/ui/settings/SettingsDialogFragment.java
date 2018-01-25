@@ -132,10 +132,11 @@ public class SettingsDialogFragment extends BaseDialogFragment {
                 builder.setTitle(R.string.settings_logout_alert_title)
                         .setMessage(R.string.settings_logout_alert_message)
                         .setPositiveButton(R.string.settings_logout_alert_confirm_cta, (dialog, which) -> {
+                            // TODO: Clear any local items in memory
+
+                            dismiss();
                             // go back to welcome fragment
                             ((WindowControl) getActivity()).getFragmentUtility().replace(new IntroWelcomeFragment(), FragmentUtility.Animation.CROSSFADE);
-                            dismiss();
-                            // TODO: Clear any local items in memory
                         })
                         .setNegativeButton(R.string.settings_logout_alert_cancel_cta, (dialog, which) -> {
                             // do nothing which dismisses the dialog
