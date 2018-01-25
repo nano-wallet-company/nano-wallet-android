@@ -69,7 +69,7 @@ public class ScanActivity extends BaseScannerActivity implements ZXingScannerVie
     public void handleResult(Result rawResult) {
         Bundle conData = new Bundle();
         if (!isSeedOnlyScan || Address.isValidSeed(rawResult.getText())) {
-            conData.putString(QR_CODE_RESULT, rawResult.getText());
+            conData.putString(QR_CODE_RESULT, rawResult.getText().toUpperCase());
             Intent intent = new Intent();
             intent.putExtras(conData);
             setResult(RESULT_OK, intent);

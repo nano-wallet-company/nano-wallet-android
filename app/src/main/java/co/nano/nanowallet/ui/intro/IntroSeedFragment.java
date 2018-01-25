@@ -3,6 +3,7 @@ package co.nano.nanowallet.ui.intro;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,6 +73,15 @@ public class IntroSeedFragment extends BaseFragment {
         }
     }
 
+    private void removeInvalidCharacters(Editable text) {
+        for (int i = 0; i < text.length(); i++) {
+            char letter = text.toString().toLowerCase().charAt(i);
+            if (!Address.VALID_SEED_CHARACTERS.contains(letter)) {
+                text.delete(i, i+1);
+            }
+        }
+    }
+
     public class ClickHandlers {
 
         /**
@@ -83,12 +93,14 @@ public class IntroSeedFragment extends BaseFragment {
          * @param count
          */
         public void onSeedTextChanged(CharSequence s, int start, int before, int count) {
-            // update background color of edittext and step we are on
+            // update background color based on entry length
             if (s.length() > 0) {
                 binding.introSeedSeed.setBackgroundResource(R.drawable.bg_seed_input_active);
             } else {
                 binding.introSeedSeed.setBackgroundResource(R.drawable.bg_seed_input);
             }
+
+            // validate input string and update styles if valid
             if (Address.isValidSeed(s.toString())) {
                 currentStep = 2;
                 updateSteps();
@@ -98,6 +110,9 @@ public class IntroSeedFragment extends BaseFragment {
                 updateSteps();
                 binding.introSeedIconCheck.setVisibility(View.GONE);
             }
+
+            // remove any invalid characters
+            removeInvalidCharacters(binding.introSeedSeed.getText());
 
             // colorize input string
             UIUtil.colorizeSeed(binding.introSeedSeed.getText(), getContext());
