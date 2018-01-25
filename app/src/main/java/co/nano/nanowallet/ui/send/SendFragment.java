@@ -63,7 +63,7 @@ public class SendFragment extends BaseFragment {
         int id = item.getItemId();
         switch (id) {
             case R.id.send_camera:
-                startScanActivity();
+                startScanActivity(getString(R.string.scan_send_instruction_label), false);
                 return true;
         }
 

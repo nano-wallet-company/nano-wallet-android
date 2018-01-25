@@ -41,6 +41,21 @@ public class UIUtil {
      * First 9 characters are blue
      * Last 5 characters are orange
      *
+     * @param s       Spannable
+     * @param context
+     */
+    public static void colorizeSeed(Spannable s, Context context) {
+        s.setSpan(new ForegroundColorSpan(ContextCompat.getColor(context, R.color.dark_sky_blue)), 0, s.length() > 4 ? 5 : s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        if (s.length() > 59) {
+            s.setSpan(new ForegroundColorSpan(ContextCompat.getColor(context, R.color.burnt_yellow)), 59, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+    }
+
+    /**
+     * Colorize a string in the following manner:
+     * First 9 characters are blue
+     * Last 5 characters are orange
+     *
      * @param s       String
      * @param context Context
      * @return Spannable string

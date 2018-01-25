@@ -29,6 +29,7 @@
             </intent-filter>
         </activity>
         <activity
+            android:screenOrientation="portrait"
             android:name=".ui.scan.ScanActivity"
             android:theme="@style/AppOverlayTheme" />
     </application>

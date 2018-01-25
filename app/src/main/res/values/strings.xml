@@ -73,5 +73,7 @@
     <string name="send_localcurrency_hint">0.00</string>
 
     <!-- Scan Screen -->
-    <string name="scan_instruction_label">Center code to\nscan your seed</string>
+    <string name="scan_instruction_label">Scan a Nano or RaiBlocks\nwallet seed QR code to\nimport an existing wallet</string>
+    <string name="scan_send_instruction_label">Scan a Nano or RaiBlocks\naddress QR code</string>
+    <string name="scan_seed_error">Please scan a valid seed.</string>
 </resources>

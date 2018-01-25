@@ -106,7 +106,11 @@ public class BaseFragment extends Fragment {
         }
     }
 
-    protected void startScanActivity() {
+    /**
+     * Start the scanner activity
+     * @param title Title that should be displayed above the viewfinder
+     */
+    protected void startScanActivity(String title, boolean isSeedScanner) {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             // check first to see if camera permission has been granted
@@ -114,6 +118,8 @@ public class BaseFragment extends Fragment {
                     new String[]{Manifest.permission.CAMERA}, ZXING_CAMERA_PERMISSION);
         } else {
             Intent intent = new Intent(getActivity(), ScanActivity.class);
+            intent.putExtra(ScanActivity.EXTRA_TITLE, title);
+            intent.putExtra(ScanActivity.EXTRA_IS_SEED, isSeedScanner);
             startActivityForResult(intent, SCAN_RESULT);
         }
     }

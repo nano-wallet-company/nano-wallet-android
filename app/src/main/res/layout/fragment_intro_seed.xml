@@ -91,6 +91,19 @@
             app:layout_constraintTop_toBottomOf="@+id/intro_seed_label"
             app:layout_constraintVertical_chainStyle="packed" />
 
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/intro_seed_icon_check"
+            android:layout_width="13dp"
+            android:layout_height="13dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="33dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@+id/intro_seed_seed"
+            app:layout_constraintTop_toTopOf="@+id/intro_seed_seed"
+            app:srcCompat="@drawable/ic_check"
+            tools:visibility="visible" />
+
         <android.support.v7.widget.AppCompatImageButton
             android:id="@+id/intro_seed_button_camera"
             android:layout_width="17dp"

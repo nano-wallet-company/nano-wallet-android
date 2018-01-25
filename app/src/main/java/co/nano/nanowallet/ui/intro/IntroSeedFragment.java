@@ -10,6 +10,7 @@ import android.widget.EditText;
 
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentIntroSeedBinding;
+import co.nano.nanowallet.model.Address;
 import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.common.UIUtil;
@@ -84,17 +85,22 @@ public class IntroSeedFragment extends BaseFragment {
         public void onSeedTextChanged(CharSequence s, int start, int before, int count) {
             // update background color of edittext and step we are on
             if (s.length() > 0) {
+                binding.introSeedSeed.setBackgroundResource(R.drawable.bg_seed_input_active);
+            } else {
+                binding.introSeedSeed.setBackgroundResource(R.drawable.bg_seed_input);
+            }
+            if (Address.isValidSeed(s.toString())) {
                 currentStep = 2;
                 updateSteps();
-                binding.introSeedSeed.setBackgroundResource(R.drawable.bg_seed_input_active);
+                binding.introSeedIconCheck.setVisibility(View.VISIBLE);
             } else {
                 currentStep = 1;
                 updateSteps();
-                binding.introSeedSeed.setBackgroundResource(R.drawable.bg_seed_input);
+                binding.introSeedIconCheck.setVisibility(View.GONE);
             }
 
             // colorize input string
-            UIUtil.colorizeSpannable(binding.introSeedSeed.getText(), getContext());
+            UIUtil.colorizeSeed(binding.introSeedSeed.getText(), getContext());
         }
 
         /**
@@ -120,7 +126,7 @@ public class IntroSeedFragment extends BaseFragment {
          * @param view
          */
         public void onClickCamera(View view) {
-            startScanActivity();
+            startScanActivity(getString(R.string.scan_instruction_label), true);
         }
     }
 

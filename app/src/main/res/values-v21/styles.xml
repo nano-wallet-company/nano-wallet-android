@@ -15,8 +15,8 @@
         <item name="android:inputType">textMultiLine|textNoSuggestions</item>
         <item name="android:paddingTop">10dp</item>
         <item name="android:paddingBottom">10dp</item>
-        <item name="android:paddingLeft">60dp</item>
-        <item name="android:paddingRight">60dp</item>
+        <item name="android:paddingLeft">50dp</item>
+        <item name="android:paddingRight">50dp</item>
         <item name="android:letterSpacing">0.1</item>
     </style>
 
