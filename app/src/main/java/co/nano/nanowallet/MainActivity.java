@@ -25,8 +25,8 @@ import java.security.SecureRandom;
 
 import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.common.WindowControl;
+import co.nano.nanowallet.ui.home.HomeFragment;
 import co.nano.nanowallet.ui.intro.IntroWelcomeFragment;
-
 
 public class MainActivity extends AppCompatActivity implements WindowControl {
     private WebSocketClient mWebSocketClient;
@@ -37,36 +37,6 @@ public class MainActivity extends AppCompatActivity implements WindowControl {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // check if we have a wallet. if none, send intent to welcome wizard, return with valid seed
-        // for now, either load an existing seed or generate a new one
-        SharedPreferences pref = this.getSharedPreferences("co.nano.nanowallet", Context.MODE_PRIVATE);
-        String encryptedSeedHex = "9F1D53E732E48F25F94711D5B22086778278624F715D9B2BEC8FB81134E7C904";//pref.getString("seed", null);
-        if (encryptedSeedHex == null) {
-            SecureRandom random = new SecureRandom();
-            byte seed[] = new byte[32];
-            random.nextBytes(seed);
-            encryptedSeedHex = NanoUtil.bytesToHex(seed);
-            SharedPreferences.Editor edit = pref.edit();
-            edit.putString("seed", encryptedSeedHex);
-            edit.commit();
-        }
-
-        // Seed:            9F1D53E732E48F25F94711D5B22086778278624F715D9B2BEC8FB81134E7C904
-        // Acct 1 Private:  85A6F4618829397190319D19A5C3993C300AE4370B46DA0B670D5FD07C3835F6
-        // Acct 1 Public:   8933B4083FE0E42A97FF0B7E16B9B2CEF93D31318700B328D6CF6CE931BBF8D4
-        // Acct 1 Address:  xrb_34bmpi65zr967cdzy4uy4twu7mqs9nrm53r1penffmuex6ruqy8nxp7ms1h1
-        //                  xrb_34bmpi65zr967cdzy4uy4twu7mqs9nrm53r1penffmuex6ruqy8n kmtpcij8?
-
-        Log.i("Wallet", "Seed " + NanoUtil.bytesToHex(NanoUtil.hexToBytes(encryptedSeedHex)));
-        String private_key = NanoUtil.seedToPrivate(encryptedSeedHex);
-        Log.i("Wallet", "Private " + private_key);
-        String public_address = NanoUtil.privateToPublic(private_key);
-        Log.i("Wallet", "Public " + public_address);
-        Log.i("Wallet", "Address " + NanoUtil.publicToAddress(public_address));
-
-        //8933B4083FE0E42A97FF0B7E16B9B2CEF93D31318700B328D6CF6CE931BBF8D4
-        Log.i("Wallet","Test Address "+ NanoUtil.publicToAddress("8933B4083FE0E42A97FF0B7E16B9B2CEF93D31318700B328D6CF6CE931BBF8D4"));
 
         initUi();
 
@@ -100,7 +70,11 @@ public class MainActivity extends AppCompatActivity implements WindowControl {
 
         // set the intro welcome fragment as the first fragment
         // TODO: Add logic to see if this is a first time user or not
+        SharedPreferences pref = this.getSharedPreferences("co.nano.nanowallet", Context.MODE_PRIVATE);
+        // if we dont have a wallet, start the intro
         mFragmentUtility.replace(new IntroWelcomeFragment());
+        // if we do have a wallet, load and configure
+        //mFragmentUtility.replace(new HomeFragment());
 
         connectWebSocket();
     }
