@@ -14,126 +14,128 @@
             type="String" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/intro_seed_scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/bright_white"
-        android:paddingEnd="45dp"
-        android:paddingStart="45dp"
-        android:paddingTop="45dp">
+        android:fillViewport="true">
 
-
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/intro_seed_logo"
-            android:layout_width="104dp"
-            android:layout_height="44dp"
-            android:contentDescription="@string/app_name"
-            android:transitionName="@string/intro_logo_transition"
-            app:layout_constraintBottom_toTopOf="@+id/intro_seed_steps"
-            app:layout_constraintEnd_toStartOf="@+id/intro_seed_guideline_vert"
-            app:layout_constraintStart_toStartOf="@+id/intro_seed_guideline_vert"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed"
-            app:srcCompat="@drawable/ic_logo"
-            tools:ignore="UnusedAttribute" />
-
-        <TextView
-            android:id="@+id/intro_seed_steps"
-            style="@style/TextStyle4"
-            android:layout_width="wrap_content"
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="34dp"
-            android:alpha="0.35"
-            android:text="@{steps}"
-            app:layout_constraintBottom_toTopOf="@+id/intro_seed_title"
-            app:layout_constraintEnd_toStartOf="@+id/intro_seed_guideline_vert"
-            app:layout_constraintStart_toStartOf="@+id/intro_seed_guideline_vert"
-            app:layout_constraintTop_toBottomOf="@+id/intro_seed_logo"
-            app:layout_constraintVertical_chainStyle="packed" />
+            android:background="@color/bright_white"
+            android:paddingEnd="45dp"
+            android:paddingStart="45dp"
+            android:paddingTop="45dp">
 
-        <TextView
-            android:id="@+id/intro_seed_title"
-            style="@style/TextStyle5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:text="@string/intro_seed_title"
-            app:layout_constraintBottom_toTopOf="@+id/intro_seed_label"
-            app:layout_constraintEnd_toStartOf="@+id/intro_seed_guideline_vert"
-            app:layout_constraintStart_toStartOf="@+id/intro_seed_guideline_vert"
-            app:layout_constraintTop_toBottomOf="@+id/intro_seed_steps"
-            app:layout_constraintVertical_chainStyle="packed" />
 
-        <TextView
-            android:id="@+id/intro_seed_label"
-            style="@style/TextStyle6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="35dp"
-            android:text="@string/intro_seed_seed_label"
-            android:textAllCaps="true"
-            app:layout_constraintBottom_toTopOf="@+id/intro_seed_seed"
-            app:layout_constraintEnd_toStartOf="@+id/intro_seed_guideline_vert"
-            app:layout_constraintStart_toStartOf="@+id/intro_seed_guideline_vert"
-            app:layout_constraintTop_toBottomOf="@+id/intro_seed_title"
-            app:layout_constraintVertical_chainStyle="packed" />
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/intro_seed_logo"
+                android:layout_width="104dp"
+                android:layout_height="44dp"
+                android:contentDescription="@string/app_name"
+                android:transitionName="@string/intro_logo_transition"
+                app:layout_constraintBottom_toTopOf="@+id/intro_seed_steps"
+                app:layout_constraintEnd_toStartOf="@+id/intro_seed_guideline_vert"
+                app:layout_constraintStart_toStartOf="@+id/intro_seed_guideline_vert"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_logo"
+                tools:ignore="UnusedAttribute" />
 
-        <EditText
-            android:id="@+id/intro_seed_seed"
-            style="@style/SeedInput"
-            android:layout_marginBottom="90dp"
-            android:layout_marginTop="11dp"
-            android:hint="@string/intro_seed_seed_hint"
-            android:onTextChanged="@{handlers::onSeedTextChanged}"
-            android:inputType="textNoSuggestions|textCapCharacters|textMultiLine"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/intro_seed_guideline_vert"
-            app:layout_constraintStart_toStartOf="@+id/intro_seed_guideline_vert"
-            app:layout_constraintTop_toBottomOf="@+id/intro_seed_label"
-            app:layout_constraintVertical_chainStyle="packed" />
+            <TextView
+                android:id="@+id/intro_seed_steps"
+                style="@style/TextStyle4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="34dp"
+                android:alpha="0.35"
+                android:text="@{steps}"
+                app:layout_constraintBottom_toTopOf="@+id/intro_seed_title"
+                app:layout_constraintEnd_toStartOf="@+id/intro_seed_guideline_vert"
+                app:layout_constraintStart_toStartOf="@+id/intro_seed_guideline_vert"
+                app:layout_constraintTop_toBottomOf="@+id/intro_seed_logo" />
 
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/intro_seed_icon_check"
-            android:layout_width="13dp"
-            android:layout_height="13dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="33dp"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="@+id/intro_seed_seed"
-            app:layout_constraintTop_toTopOf="@+id/intro_seed_seed"
-            app:srcCompat="@drawable/ic_check"
-            tools:visibility="visible" />
+            <TextView
+                android:id="@+id/intro_seed_title"
+                style="@style/TextStyle5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:text="@string/intro_seed_title"
+                app:layout_constraintBottom_toTopOf="@+id/intro_seed_label"
+                app:layout_constraintEnd_toStartOf="@+id/intro_seed_guideline_vert"
+                app:layout_constraintStart_toStartOf="@+id/intro_seed_guideline_vert"
+                app:layout_constraintTop_toBottomOf="@+id/intro_seed_steps" />
 
-        <android.support.v7.widget.AppCompatImageButton
-            android:id="@+id/intro_seed_button_camera"
-            android:layout_width="17dp"
-            android:layout_height="12dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="33dp"
-            android:background="@android:color/transparent"
-            android:onClick="@{handlers::onClickCamera}"
-            app:layout_constraintEnd_toEndOf="@+id/intro_seed_seed"
-            app:layout_constraintTop_toTopOf="@+id/intro_seed_seed"
-            app:srcCompat="@drawable/ic_camera" />
+            <TextView
+                android:id="@+id/intro_seed_label"
+                style="@style/TextStyle6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp"
+                android:text="@string/intro_seed_seed_label"
+                android:textAllCaps="true"
+                app:layout_constraintBottom_toTopOf="@+id/intro_seed_seed"
+                app:layout_constraintEnd_toStartOf="@+id/intro_seed_guideline_vert"
+                app:layout_constraintStart_toStartOf="@+id/intro_seed_guideline_vert"
+                app:layout_constraintTop_toBottomOf="@+id/intro_seed_title" />
 
-        <Button
-            android:id="@+id/intro_seed_button_confirm"
-            style="@style/LargeButton"
-            android:layout_marginBottom="45dp"
-            android:onClick="@{handlers::onClickConfirm}"
-            android:text="@string/intro_seed_confirm_cta"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/intro_seed_guideline_vert"
-            app:layout_constraintStart_toStartOf="@+id/intro_seed_guideline_vert" />
+            <EditText
+                android:id="@+id/intro_seed_seed"
+                style="@style/SeedInput"
+                android:layout_marginTop="11dp"
+                android:hint="@string/intro_seed_seed_hint"
+                android:inputType="textNoSuggestions|textCapCharacters|textMultiLine"
+                android:onTextChanged="@{handlers::onSeedTextChanged}"
+                app:layout_constraintBottom_toTopOf="@+id/intro_seed_button_confirm"
+                app:layout_constraintEnd_toStartOf="@+id/intro_seed_guideline_vert"
+                app:layout_constraintStart_toStartOf="@+id/intro_seed_guideline_vert"
+                app:layout_constraintTop_toBottomOf="@+id/intro_seed_label" />
 
-        <android.support.constraint.Guideline
-            android:id="@+id/intro_seed_guideline_vert"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5" />
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/intro_seed_icon_check"
+                android:layout_width="13dp"
+                android:layout_height="13dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="33dp"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="@+id/intro_seed_seed"
+                app:layout_constraintTop_toTopOf="@+id/intro_seed_seed"
+                app:srcCompat="@drawable/ic_check"
+                tools:visibility="visible" />
 
-    </android.support.constraint.ConstraintLayout>
+            <android.support.v7.widget.AppCompatImageButton
+                android:id="@+id/intro_seed_button_camera"
+                android:layout_width="17dp"
+                android:layout_height="12dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="33dp"
+                android:background="@android:color/transparent"
+                android:onClick="@{handlers::onClickCamera}"
+                app:layout_constraintEnd_toEndOf="@+id/intro_seed_seed"
+                app:layout_constraintTop_toTopOf="@+id/intro_seed_seed"
+                app:srcCompat="@drawable/ic_camera" />
+
+            <Button
+                android:id="@+id/intro_seed_button_confirm"
+                style="@style/LargeButton"
+                android:layout_marginBottom="45dp"
+                android:onClick="@{handlers::onClickConfirm}"
+                android:text="@string/intro_seed_confirm_cta"
+                android:enabled="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/intro_seed_guideline_vert"
+                app:layout_constraintStart_toStartOf="@+id/intro_seed_guideline_vert" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/intro_seed_guideline_vert"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
+
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v4.widget.NestedScrollView>
 </layout>

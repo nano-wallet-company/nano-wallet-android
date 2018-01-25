@@ -2,6 +2,7 @@ package co.nano.nanowallet.ui.intro;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Editable;
 import android.view.LayoutInflater;
@@ -55,6 +56,24 @@ public class IntroSeedFragment extends BaseFragment {
             }
         });
 
+        // keyboard raised listener
+        view.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+
+            Rect r = new Rect();
+            view.getWindowVisibleDisplayFrame(r);
+            int screenHeight = view.getRootView().getHeight();
+
+            // r.bottom is the position above soft keypad or device button.
+            // if keypad is shown, the r.bottom is smaller than that before.
+            int keypadHeight = screenHeight - r.bottom;
+
+            if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is perhaps enough to determine keypad height.
+                binding.introSeedScrollview.smoothScrollTo(0, (int) (binding.introSeedScrollview.getMaxScrollAmount()));
+            }
+            else {
+            }
+        });
+
         return view;
     }
 
@@ -105,10 +124,12 @@ public class IntroSeedFragment extends BaseFragment {
                 currentStep = 2;
                 updateSteps();
                 binding.introSeedIconCheck.setVisibility(View.VISIBLE);
+                binding.introSeedButtonConfirm.setEnabled(true);
             } else {
                 currentStep = 1;
                 updateSteps();
                 binding.introSeedIconCheck.setVisibility(View.GONE);
+                binding.introSeedButtonConfirm.setEnabled(false);
             }
 
             // remove any invalid characters

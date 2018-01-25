@@ -46,7 +46,7 @@
 
     <!-- Button Styles -->
     <style name="LargeButton">
-        <item name="android:background">@color/light_sky_blue</item>
+        <item name="android:background">@drawable/bg_large_button</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/very_dark_blue</item>
         <item name="android:gravity">center_horizontal</item>
