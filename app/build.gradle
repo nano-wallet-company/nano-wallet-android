@@ -1,7 +1,11 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 26
+    buildToolsVersion "26.0.2"
+    dataBinding {
+        enabled = true
+    }
     defaultConfig {
         applicationId "co.nano.nanowallet"
         minSdkVersion 16
@@ -16,6 +20,8 @@ android {
         }
         // Enabling multidex support.
         multiDexEnabled true
+
+        vectorDrawables.useSupportLibrary = true
 
     }
     buildTypes {
@@ -32,8 +38,8 @@ android {
 
 dependencies {
     final AWESOME_QRCODE_VERSION = '1.0.6'
-    final BUTTER_KNIFE_VERSION = '8.8.1'
-    final CONSTRAINT_LAYOUT_VERSION = '1.0.2'
+    final EPOXY_VERSION = '2.8.0'
+    final CONSTRAINT_LAYOUT_VERSION = '1.1.0-beta4'
     final ESPRESSO_VERSION = '3.0.1'
     final EVENT_BUS_VERSION = '3.1.1'
     final GSON_VERSION = '2.8.2'
@@ -54,9 +60,10 @@ dependencies {
     implementation "com.android.support:recyclerview-v7:$SUPPORT_LIBRARY_VERSION"
     implementation "com.android.support.constraint:constraint-layout:$CONSTRAINT_LAYOUT_VERSION"
 
-    // ButterKnife (Logging)
-    implementation "com.jakewharton:butterknife:$BUTTER_KNIFE_VERSION"
-    annotationProcessor "com.jakewharton:butterknife-compiler:$BUTTER_KNIFE_VERSION"
+    // Epoxy
+    implementation "com.airbnb.android:epoxy:$EPOXY_VERSION"
+    implementation "com.airbnb.android:epoxy-databinding:$EPOXY_VERSION"
+    annotationProcessor "com.airbnb.android:epoxy-processor:$EPOXY_VERSION"
 
     // RX
     implementation "io.reactivex.rxjava2:rxjava:$RX_JAVA_2"
@@ -79,8 +86,11 @@ dependencies {
     // Libsodium
 
     //implementation "com.github.joshjdevl.libsodiumjni:libsodium-jni:1.0.8"
-    //implementation project(':libsodium-jni-release') // custom built with forked libsodium to support blake2b hashing in ed25519 natively
+    implementation project(':libsodium-jni-release') // custom built with forked libsodium to support blake2b hashing in ed25519 natively
     //implementation 'com.github.joshjdevl.libsodiumjni:libsodium-jni-aar:1.0.8@aar'
+
+    // Stetho (for debugging only)
+    implementation 'com.facebook.stetho:stetho:1.5.0'
 
     // Testing
     androidTestImplementation "com.android.support.test:runner:$TEST_RUNNER_VERSION"

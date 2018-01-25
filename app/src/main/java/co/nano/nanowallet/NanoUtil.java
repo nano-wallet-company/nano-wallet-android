@@ -64,13 +64,14 @@ class NanoUtil {
     public static String privateToPublic(String private_key) {
         byte[] public_b = new byte[32];
         byte[] private_b = hexToBytes(private_key);
-        byte[] seed = new byte[32];
+        //byte[] seed = new byte[32];
         //public_b = ED25519.publicKey(private_b);
-        NaCl.sodium().crypto_sign_ed25519_sk_to_seed(seed, private_b);
-        NaCl.sodium().crypto_sign_ed25519_seed_keypair(public_b, private_b, seed);
+        //NaCl.sodium().crypto_sign_ed25519_sk_to_seed(seed, private_b);
+        //NaCl.sodium().crypto_sign_ed25519_seed_keypair(public_b, private_b, seed);
+        NaCl.sodium().crypto_derive_public_from_secret_impl(public_b, private_b);
         Log.i("privateToPublic","Public: " + NanoUtil.bytesToHex(public_b));
         Log.i("privateToPublic","Private: " + NanoUtil.bytesToHex(private_b));
-        Log.i("privateToPublic","Seed: " + NanoUtil.bytesToHex(seed));
+        //Log.i("privateToPublic","Seed: " + NanoUtil.bytesToHex(seed));
         //NaCl.sodium().crypto_sign_ed25519_sk_to_pk(public_b, private_b);
 
         return bytesToHex(public_b);
