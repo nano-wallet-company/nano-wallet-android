@@ -2,6 +2,10 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
+    buildToolsVersion "26.0.2"
+    dataBinding {
+        enabled = true
+    }
     defaultConfig {
         applicationId "co.nano.nanowallet"
         minSdkVersion 16
@@ -14,7 +18,11 @@ android {
                 cppFlags "-fexceptions"
             }
         }
+        // Enabling multidex support.
+        multiDexEnabled true
+
         vectorDrawables.useSupportLibrary = true
+
     }
     buildTypes {
         release {
@@ -26,16 +34,13 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    dataBinding {
-        enabled = true
-    }
 }
 
 dependencies {
     final AWESOME_QRCODE_VERSION = '1.0.6'
+    final EPOXY_VERSION = '2.8.0'
     final CONSTRAINT_LAYOUT_VERSION = '1.1.0-beta4'
     final ESPRESSO_VERSION = '3.0.1'
-    final EPOXY_VERSION = '2.8.0'
     final EVENT_BUS_VERSION = '3.1.1'
     final GSON_VERSION = '2.8.2'
     final J_UNIT_VERSION = '4.12'
@@ -46,6 +51,8 @@ dependencies {
     final SUPPORT_LIBRARY_VERSION = '26.1.0'
     final TEST_RUNNER_VERSION = '1.0.1'
     final ZXING_VERSION = '1.9'
+
+    compile 'com.android.support:multidex:1.0.2'
 
     // Support
     implementation "com.android.support:appcompat-v7:$SUPPORT_LIBRARY_VERSION"
@@ -75,11 +82,11 @@ dependencies {
 
     // Event Bus
     implementation "org.greenrobot:eventbus:$EVENT_BUS_VERSION"
-	
-	// Libsodium
+
+    // Libsodium
     //implementation "com.github.joshjdevl.libsodiumjni:libsodium-jni:1.0.8"
-    //implementation project(':libsodium-jni-release');
-    implementation 'com.github.joshjdevl.libsodiumjni:libsodium-jni-aar:1.0.8@aar'
+    //implementation project(':libsodium-jni-release') // custom built with forked libsodium to support blake2b hashing in ed25519 natively
+    //implementation 'com.github.joshjdevl.libsodiumjni:libsodium-jni-aar:1.0.8@aar'
 
     // Stetho (for debugging only)
     implementation 'com.facebook.stetho:stetho:1.5.0'
@@ -97,7 +104,7 @@ dependencies {
         exclude module: 'recyclerview-v7'
     })
     testImplementation "junit:junit:$J_UNIT_VERSION"
-    testImplementation group: 'org.hamcrest', name: 'hamcrest-library', version: '1.3'
+    testImplementation 'org.hamcrest:hamcrest-library:1.3'
     testImplementation 'org.mockito:mockito-core:1.10.19'
 }
 

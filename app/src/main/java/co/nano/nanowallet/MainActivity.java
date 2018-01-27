@@ -25,8 +25,8 @@ import java.security.SecureRandom;
 
 import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.common.WindowControl;
+import co.nano.nanowallet.ui.home.HomeFragment;
 import co.nano.nanowallet.ui.intro.IntroWelcomeFragment;
-
 
 public class MainActivity extends AppCompatActivity implements WindowControl {
     private WebSocketClient mWebSocketClient;
@@ -37,27 +37,6 @@ public class MainActivity extends AppCompatActivity implements WindowControl {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // check if we have a wallet. if none, send intent to welcome wizard, return with valid seed
-        // for now, either load an existing seed or generate a new one
-        SharedPreferences pref = this.getSharedPreferences("co.nano.nanowallet", Context.MODE_PRIVATE);
-        String encryptedSeedHex = "9F1D53E732E48F25F94711D5B22086778278624F715D9B2BEC8FB81134E7C904";//pref.getString("seed", null);
-        if (encryptedSeedHex == null) {
-            SecureRandom random = new SecureRandom();
-            byte seed[] = new byte[32];
-            random.nextBytes(seed);
-            encryptedSeedHex = NanoUtil.bytesToHex(seed);
-            SharedPreferences.Editor edit = pref.edit();
-            edit.putString("seed", encryptedSeedHex);
-            edit.commit();
-        }
-
-        Log.i("Wallet", "Seed " + encryptedSeedHex);
-        String private_key = NanoUtil.seedToPrivate(encryptedSeedHex);
-        Log.i("Wallet", "Private " + private_key);
-        String public_address = NanoUtil.privateToPublic(private_key);
-        Log.i("Wallet", "Public " + public_address);
-        Log.i("Wallet", "Address " + NanoUtil.publicToAddress(public_address));
 
         initUi();
 
@@ -91,7 +70,11 @@ public class MainActivity extends AppCompatActivity implements WindowControl {
 
         // set the intro welcome fragment as the first fragment
         // TODO: Add logic to see if this is a first time user or not
+        SharedPreferences pref = this.getSharedPreferences("co.nano.nanowallet", Context.MODE_PRIVATE);
+        // if we dont have a wallet, start the intro
         mFragmentUtility.replace(new IntroWelcomeFragment());
+        // if we do have a wallet, load and configure
+        //mFragmentUtility.replace(new HomeFragment());
 
         connectWebSocket();
     }

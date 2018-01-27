@@ -145,6 +145,8 @@ public class IntroSeedFragment extends BaseFragment {
          * @param view
          */
         public void onClickConfirm(View view) {
+            // TODO: Create wallet from seed
+
             // go to home screen
             if (getActivity() instanceof WindowControl) {
                 ((WindowControl) getActivity()).getFragmentUtility().replace(
