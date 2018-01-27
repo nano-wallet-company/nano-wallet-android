@@ -5,24 +5,15 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-
-import java.util.HashMap;
+import com.github.sumimakito.awesomeqr.AwesomeQRCode;
 
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.alarm.ClipboardAlarmReceiver;
@@ -74,26 +65,23 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
         binding.receiveAddress.setText(UIUtil.getColorizedSpannable(address, getContext()));
 
         // generate QR code
-        QRCodeWriter writer = new QRCodeWriter();
-        try {
-            HashMap hints = new HashMap<EncodeHintType, Object>();
-            hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
-            BitMatrix bitMatrix = writer.encode(address, BarcodeFormat.QR_CODE,
-                    (int) UIUtil.convertDpToPixel(200, getContext()),
-                    (int) UIUtil.convertDpToPixel(200, getContext()), hints);
-            int width = bitMatrix.getWidth();
-            int height = bitMatrix.getHeight();
-            Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
-                    bmp.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
-                }
-            }
-            Bitmap overlay = BitmapFactory.decodeResource(getResources(), R.drawable.logo);
-            binding.receiveBarcode.setImageBitmap(UIUtil.mergeBitmaps(overlay, bmp));
-        } catch (WriterException e) {
-            Log.e(TAG, e.getMessage());
-        }
+        new AwesomeQRCode.Renderer()
+                .contents(address)
+                .size((int) UIUtil.convertDpToPixel(240, getContext()))
+                .margin((int) UIUtil.convertDpToPixel(20, getContext()))
+                .dotScale(0.55f)
+                .background(BitmapFactory.decodeResource(getResources(), R.drawable.qrbackground))
+                .renderAsync(new AwesomeQRCode.Callback() {
+                    @Override
+                    public void onRendered(AwesomeQRCode.Renderer renderer, final Bitmap bitmap) {
+                        getActivity().runOnUiThread(() -> binding.receiveBarcode.setImageBitmap(bitmap));
+                    }
+
+                    @Override
+                    public void onError(AwesomeQRCode.Renderer renderer, Exception e) {
+                        e.printStackTrace();
+                    }
+                });
 
         setStatusBarWhite(view);
 

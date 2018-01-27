@@ -228,7 +228,7 @@
     </style>
 
     <style name="TextStyle18">
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/very_dark_blue</item>
         <item name="android:gravity">center_horizontal</item>
         <item name="android:fontFamily">@font/nunito_regular</item>
