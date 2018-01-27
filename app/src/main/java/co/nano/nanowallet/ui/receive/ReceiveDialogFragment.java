@@ -5,15 +5,23 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.FileProvider;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.sumimakito.awesomeqr.AwesomeQRCode;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.alarm.ClipboardAlarmReceiver;
@@ -29,6 +37,7 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
     public static String TAG = ReceiveDialogFragment.class.getSimpleName();
     private String address;
     private static final int QRCODE_SIZE = 200;
+    private final String TEMP_FILE_NAME = "nanoreceive.png";
 
     /**
      * Create new instance of the dialog fragment (handy pattern if any data needs to be passed to it)
@@ -88,6 +97,40 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
         return view;
     }
 
+    public Bitmap setViewToBitmapImage(View view) {
+        //Define a bitmap with the same size as the view
+        Bitmap returnedBitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+        //Bind a canvas to it
+        Canvas canvas = new Canvas(returnedBitmap);
+        //Get the view's background
+        Drawable bgDrawable = view.getBackground();
+        if (bgDrawable != null) {
+            //has background drawable, then draw it on the canvas
+            bgDrawable.draw(canvas);
+        } else {
+            //does not have background drawable, then draw white background on the canvas
+            canvas.drawColor(Color.WHITE);
+        }
+        // draw the view on the canvas
+        view.draw(canvas);
+        //return the bitmap
+        return returnedBitmap;
+    }
+
+    public void saveImage(Bitmap finalBitmap) {
+        try {
+            File cachePath = new File(getContext().getCacheDir(), "images");
+            cachePath.mkdirs();
+            FileOutputStream outputStream;
+            outputStream = new FileOutputStream(new File(cachePath + "/" + TEMP_FILE_NAME), true);
+            finalBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+            outputStream.flush();
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public class ClickHandlers {
         public void onClickClose(View view) {
@@ -95,10 +138,16 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
         }
 
         public void onClickShare(View view) {
+            saveImage(setViewToBitmapImage(binding.receiveBarcode));
+            File imagePath = new File(getContext().getCacheDir(), "images");
+            File newFile = new File(imagePath, TEMP_FILE_NAME);
+            Uri imageUri = FileProvider.getUriForFile(getContext(), "co.nano.nanowallet.fileprovider", newFile);
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             shareIntent.putExtra(Intent.EXTRA_TEXT, address);
-            shareIntent.putExtra(Intent.EXTRA_STREAM, UIUtil.viewToByteArray(binding.receiveBarcode));
-            shareIntent.setType("image/png");
+            shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+            shareIntent.setDataAndType(imageUri, getActivity().getContentResolver().getType(imageUri));
+            shareIntent.setType("image/*");
             startActivity(Intent.createChooser(shareIntent, getString(R.string.receive_share_title)));
         }
 
