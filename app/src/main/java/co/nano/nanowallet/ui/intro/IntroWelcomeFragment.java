@@ -12,7 +12,6 @@ import co.nano.nanowallet.databinding.FragmentIntroWelcomeBinding;
 import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.common.WindowControl;
-import co.nano.nanowallet.ui.home.HomeFragment;
 
 /**
  * The Intro Screen to the app
@@ -47,7 +46,7 @@ public class IntroWelcomeFragment extends BaseFragment {
             // go to home screen
             if (getActivity() instanceof WindowControl) {
                 ((WindowControl) getActivity()).getFragmentUtility().replace(
-                        new HomeFragment(),
+                        IntroNewWalletFragment.newInstance(),
                         FragmentUtility.Animation.ENTER_LEFT_EXIT_RIGHT,
                         FragmentUtility.Animation.ENTER_RIGHT_EXIT_LEFT,
                         IntroSeedFragment.TAG,

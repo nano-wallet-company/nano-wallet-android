@@ -112,6 +112,8 @@ public class SettingsDialogFragment extends BaseDialogFragment {
                         if (clipboard != null) {
                             clipboard.setPrimaryClip(clip);
                         }
+
+                        setClearClipboardAlarm();
                     })
                     .setNegativeButton(R.string.settings_seed_alert_cancel_cta, (dialog, which) -> {
                         // do nothing which dismisses the dialog

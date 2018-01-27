@@ -1,14 +1,20 @@
 package co.nano.nanowallet.ui.common;
 
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
+import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 
 import co.nano.nanowallet.R;
+import co.nano.nanowallet.alarm.ClipboardAlarmReceiver;
 import co.nano.nanowallet.ui.scan.ScanActivity;
 
 /**
@@ -108,6 +114,7 @@ public class BaseFragment extends Fragment {
 
     /**
      * Start the scanner activity
+     *
      * @param title Title that should be displayed above the viewfinder
      */
     protected void startScanActivity(String title, boolean isSeedScanner) {
@@ -121,6 +128,26 @@ public class BaseFragment extends Fragment {
             intent.putExtra(ScanActivity.EXTRA_TITLE, title);
             intent.putExtra(ScanActivity.EXTRA_IS_SEED, isSeedScanner);
             startActivityForResult(intent, SCAN_RESULT);
+        }
+    }
+
+    /**
+     * Set alarm for 2 minutes to clear the clipboard
+     */
+    protected void setClearClipboardAlarm() {
+        // create pending intent
+        AlarmManager alarmMgr = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(getContext(), ClipboardAlarmReceiver.class);
+        intent.setAction("co.nano.nanowallet.alarm");
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(getContext(), 0, intent, 0);
+
+        // set a two minute alarm to start the pending intent
+        if (alarmMgr != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                alarmMgr.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 120 * 1000, alarmIntent);
+            } else {
+                alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 120 * 1000, alarmIntent);
+            }
         }
     }
 

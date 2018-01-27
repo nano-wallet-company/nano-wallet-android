@@ -29,9 +29,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:screenOrientation="portrait"
             android:name=".ui.scan.ScanActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppOverlayTheme" />
+
+        <receiver android:name=".alarm.ClipboardAlarmReceiver">
+            <intent-filter>
+                <action android:name="co.nano.nanowallet.alarm" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

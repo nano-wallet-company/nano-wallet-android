@@ -25,6 +25,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import java.util.HashMap;
 
 import co.nano.nanowallet.R;
+import co.nano.nanowallet.alarm.ClipboardAlarmReceiver;
 import co.nano.nanowallet.databinding.FragmentReceiveBinding;
 import co.nano.nanowallet.ui.common.BaseDialogFragment;
 import co.nano.nanowallet.ui.common.UIUtil;
@@ -116,7 +117,7 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
         public void onClickCopy(View view) {
             // copy address to clipboard
             android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-            android.content.ClipData clip = android.content.ClipData.newPlainText("address", address);
+            android.content.ClipData clip = android.content.ClipData.newPlainText(ClipboardAlarmReceiver.CLIPBOARD_NAME, address);
             if (clipboard != null) {
                 clipboard.setPrimaryClip(clip);
             }
@@ -125,6 +126,8 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
             snackbar.setAction(R.string.receive_copy_done, view1 -> {
             });
             snackbar.show();
+
+            setClearClipboardAlarm();
         }
     }
 }
