@@ -37,13 +37,6 @@
     <string name="settings_local_currency">Local Currency</string>
     <string name="settings_show_seed">Show My Seed</string>
     <string name="settings_log_out">Log Out</string>
-    <string-array name="settings_local_currency_array">
-        <item>$  US Dollar</item>
-        <item>€  Euro</item>
-        <item>£  Pound</item>
-        <item>¥  Yen</item>
-        <item>₹  Rupee</item>
-    </string-array>
     <string name="settings_seed_alert_title">Here is your Wallet Seed, be careful.</string>
     <string name="settings_seed_alert_message">Tap the button below to copy your Seed to paste later. The Seed is pasteable for 2 minutes and then expires.\n\nWe suggest copying to an app like 1Password, LastPass, or printing the Seed out and hiding it somewhere safe.\n\nNever share your seed with anyone, ever, under any circumstances.</string>
     <string name="settings_seed_alert_confirm_cta">Copy Seed</string>

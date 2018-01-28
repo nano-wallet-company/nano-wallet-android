@@ -11,15 +11,25 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentSettingsBinding;
+import co.nano.nanowallet.model.AvailableCurrency;
+import co.nano.nanowallet.model.StringWithTag;
+import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseDialogFragment;
-import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.common.FragmentUtility;
+import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.intro.IntroWelcomeFragment;
+import co.nano.nanowallet.util.SharedPreferencesUtil;
 
 /**
  * Settings main screen
@@ -28,6 +38,9 @@ public class SettingsDialogFragment extends BaseDialogFragment {
     private FragmentSettingsBinding binding;
     public static String TAG = SettingsDialogFragment.class.getSimpleName();
     private Boolean showCurrency = false;
+
+    @Inject
+    SharedPreferencesUtil sharedPreferencesUtil;
 
     @BindingAdapter("android:layout_marginTop")
     public static void setTopMargin(View view, float topMargin) {
@@ -58,6 +71,9 @@ public class SettingsDialogFragment extends BaseDialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        if (getActivity() instanceof ActivityWithComponent) {
+            ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
+        }
 
         // inflate the view
         binding = DataBindingUtil.inflate(
@@ -69,13 +85,33 @@ public class SettingsDialogFragment extends BaseDialogFragment {
         setStatusBarWhite(view);
 
         // set up spinner
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(getContext(),
+        List<StringWithTag> availableCurrencies = getAllCurrencies();
+        ArrayAdapter<StringWithTag> spinnerArrayAdapter = new ArrayAdapter<>(getContext(),
                 R.layout.view_textview_spinner,
-                getResources().getStringArray(R.array.settings_local_currency_array)
+                availableCurrencies
         );
 
         spinnerArrayAdapter.setDropDownViewResource(R.layout.view_textview_spinner);
         binding.settingsLocalCurrencySpinner.setAdapter(spinnerArrayAdapter);
+        binding.settingsLocalCurrencySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                // save local currency to shared preferences
+                StringWithTag swt = (StringWithTag) adapterView.getItemAtPosition(i);
+                AvailableCurrency key = (AvailableCurrency) swt.tag;
+                if (key != null) {
+                    sharedPreferencesUtil.setLocalCurrency(key);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        // set selected item with value saved in shared preferences
+        binding.settingsLocalCurrencySpinner.setSelection(getIndexOf(sharedPreferencesUtil.getLocalCurrency(), availableCurrencies));
 
         // set the listener for Navigation
         Toolbar toolbar = view.findViewById(R.id.dialog_appbar);
@@ -87,6 +123,33 @@ public class SettingsDialogFragment extends BaseDialogFragment {
         }
 
         return view;
+    }
+
+    /**
+     * Get list of all of the available currencies
+     * @return
+     */
+    private List<StringWithTag> getAllCurrencies() {
+        List<StringWithTag> itemList = new ArrayList<StringWithTag>();
+        for (AvailableCurrency currency : AvailableCurrency.values()) {
+            itemList.add(new StringWithTag(currency.getFullDisplayName(), currency));
+        }
+        return itemList;
+    }
+
+    /**
+     * Get list of all of the available currencies
+     * @return
+     */
+    private int getIndexOf(AvailableCurrency currency, List<StringWithTag> availableCurrencies) {
+        int i = 0;
+        for (StringWithTag availableCurrency : availableCurrencies) {
+            if (availableCurrency.tag.equals(currency)) {
+                return i;
+            }
+            i++;
+        }
+        return 0;
     }
 
     public class ClickHandlers {

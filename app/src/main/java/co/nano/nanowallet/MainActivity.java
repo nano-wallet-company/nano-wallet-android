@@ -21,22 +21,33 @@ import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.SecureRandom;
 
+import co.nano.nanowallet.di.activity.ActivityComponent;
+import co.nano.nanowallet.di.activity.DaggerActivityComponent;
+import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.common.WindowControl;
-import co.nano.nanowallet.ui.home.HomeFragment;
 import co.nano.nanowallet.ui.intro.IntroWelcomeFragment;
 
-public class MainActivity extends AppCompatActivity implements WindowControl {
+public class MainActivity extends AppCompatActivity implements WindowControl, ActivityWithComponent {
     private WebSocketClient mWebSocketClient;
     private FragmentUtility mFragmentUtility;
     private Toolbar mToolbar;
     private TextView mToolbarTitle;
+    protected ActivityComponent mActivityComponent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // build the activity component
+        mActivityComponent = DaggerActivityComponent
+                .builder()
+                .applicationComponent(NanoApplication.getApplication(this).getApplicationComponent())
+                .build();
+
+        // perform dagger injections
+        mActivityComponent.inject(this);
 
         initUi();
 
@@ -160,6 +171,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl {
 
     /**
      * Set visibility of app toolbar
+     *
      * @param visible
      */
     @Override
@@ -171,6 +183,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl {
 
     /**
      * Set title of the app toolbar
+     *
      * @param title
      */
     @Override
@@ -183,6 +196,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl {
 
     /**
      * Set title drawable of app toolbar
+     *
      * @param drawable
      */
     @Override
@@ -204,5 +218,17 @@ public class MainActivity extends AppCompatActivity implements WindowControl {
                 mToolbar.setNavigationOnClickListener(null);
             }
         }
+    }
+
+    @Override
+    public ActivityComponent getActivityComponent() {
+        if (mActivityComponent == null) {
+            // build the activity component
+            mActivityComponent = DaggerActivityComponent
+                    .builder()
+                    .applicationComponent(NanoApplication.getApplication(this).getApplicationComponent())
+                    .build();
+        }
+        return mActivityComponent;
     }
 }

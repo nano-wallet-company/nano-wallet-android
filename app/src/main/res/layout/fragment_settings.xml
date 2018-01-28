@@ -47,7 +47,6 @@
             android:layout_marginLeft="38dp"
             android:layout_marginRight="38dp"
             android:background="@drawable/bg_spinner"
-            android:entries="@array/settings_local_currency_array"
             android:prompt="@string/settings_local_currency"
             android:spinnerMode="dropdown"
             android:theme="@style/TextStyle15"

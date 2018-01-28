@@ -1,0 +1,168 @@
+package co.nano.nanowallet.model;
+
+/**
+ * Class to define all of the available currency options
+ */
+
+public enum AvailableCurrency {
+    AUD("AUD"), BRL("BRL"), CAD("CAD"), CHF("CHF"), CLP("CLP"), CNY("CNY"), CZK("CZK"), DKK("DKK"),
+    EUR("EUR"), GBP("GBP"), HKD("HKD"), HUF("HUF"), IDR("IDR"), ILS("ILS"), INR("INR"), JPY("JPY"),
+    KRW("KRW"), MXN("MXN"), MYR("MYR"), NOK("NOK"), NZD("NZD"), PHP("PHP"), PKR("PKR"), PLN("PLN"),
+    RUB("RUB"), SEK("SEK"), SGD("SGD"), THB("THB"), TRY("TRY"), TWD("TWD"), ZAR("ZAR"), USD("USD");
+
+    private String iso4217Code = "";
+
+    AvailableCurrency(String code) {
+        this.iso4217Code = code;
+    }
+
+    @Override
+    public String toString() {
+        return iso4217Code;
+    }
+
+    public String getFullDisplayName() {
+        StringBuilder sb = new StringBuilder();
+        return sb.append(getCurrencySymbol()).append(" ").append(getDisplayName()).toString();
+    }
+
+    public String getDisplayName() {
+        switch (iso4217Code) {
+            case "AUD":
+                return "Australian Dollar";
+            case "BRL":
+                return "Brazilian Real";
+            case "CAD":
+                return "Canadian Dollar";
+            case "CHF":
+                return "Swiss Franc";
+            case "CLP":
+                return "Chilean Peso";
+            case "CNY":
+                return "Chinese Yuan";
+            case "CZK":
+                return "Czech Koruna";
+            case "DKK":
+                return "Danish Krone";
+            case "EUR":
+                return "Euro";
+            case "GBP":
+                return "Great Britain Pound";
+            case "HKD":
+                return "Hong Kong Dollar";
+            case "HUF":
+                return "Hungarian Forint";
+            case "IDR":
+                return "Indonesian Rupiah";
+            case "ILS":
+                return "Israeli Shekel";
+            case "INR":
+                return "Indian Rupee";
+            case "JPY":
+                return "Japanese Yen";
+            case "KRW":
+                return "South Korean Won";
+            case "MXN":
+                return "Mexican Peso";
+            case "MYR":
+                return "Malaysian Ringgit";
+            case "NOK":
+                return "Norwegian Krone";
+            case "NZD":
+                return "New Zealand Dollar";
+            case "PHP":
+                return "Philippine Peso";
+            case "PKR":
+                return "Pakistani Rupee";
+            case "PLN":
+                return "Polish Zloty";
+            case "RUB":
+                return "Russian Ruble";
+            case "SEK":
+                return "Swedish Krona";
+            case "SGD":
+                return "Singapore Dollar";
+            case "THB":
+                return "Thai Baht";
+            case "TRY":
+                return "Turkish Lira";
+            case "TWD":
+                return "Taiwan New Dollar";
+            case "ZAR":
+                return "South African Rand";
+            case "USD":
+            default:
+                return "US Dollar";
+        }
+    }
+
+    public String getCurrencySymbol() {
+        switch (iso4217Code) {
+            case "AUD":
+                return "$";
+            case "BRL":
+                return "R$";
+            case "CAD":
+                return "$";
+            case "CHF":
+                return "CHF";
+            case "CLP":
+                return "$";
+            case "CNY":
+                return "¥";
+            case "CZK":
+                return "Kč";
+            case "DKK":
+                return "kr.";
+            case "EUR":
+                return "€";
+            case "GBP":
+                return "£";
+            case "HKD":
+                return "HK$";
+            case "HUF":
+                return "Ft";
+            case "IDR":
+                return "Rp";
+            case "ILS":
+                return "₪";
+            case "INR":
+                return "₹";
+            case "JPY":
+                return "¥";
+            case "KRW":
+                return "₩";
+            case "MXN":
+                return "$";
+            case "MYR":
+                return "RM";
+            case "NOK":
+                return "kr";
+            case "NZD":
+                return "$";
+            case "PHP":
+                return "₱";
+            case "PKR":
+                return "Rs";
+            case "PLN":
+                return "zł";
+            case "RUB":
+                return "\u20BD";
+            case "SEK":
+                return "kr";
+            case "SGD":
+                return "$";
+            case "THB":
+                return "THB";
+            case "TRY":
+                return "₺";
+            case "TWD":
+                return "NT$";
+            case "ZAR":
+                return "R$";
+            case "USD":
+            default:
+                return "$";
+        }
+    }
+}
