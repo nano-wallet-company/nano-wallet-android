@@ -8,6 +8,9 @@
         <variable
             name="wallet"
             type="co.nano.nanowallet.NanoWallet" />
+        <variable
+            name="localCurrency"
+            type="co.nano.nanowallet.model.AvailableCurrency" />
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -16,32 +19,32 @@
         android:background="@color/very_dark_blue">
 
         <TextView
-            android:id="@+id/amount_usd_symbol"
+            android:id="@+id/amount_local_currency_symbol"
             android:layout_width="10dp"
             android:layout_height="18dp"
             android:layout_marginEnd="3dp"
             android:layout_marginRight="3dp"
-            android:text="@string/symbol_usd"
+            android:text="@{localCurrency.currencySymbol}"
             android:textColor="@color/bright_white"
             android:fontFamily="@font/nunito_light"
-            app:layout_constraintEnd_toStartOf="@+id/amount_usd_title"
+            app:layout_constraintEnd_toStartOf="@+id/amount_local_currency_title"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/amount_usd_title"
+            android:id="@+id/amount_local_currency_title"
             style="@style/TextStyle12"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
             android:text="@{wallet.accountBalanceUsd}"
-            app:layout_constraintEnd_toStartOf="@+id/amount_usd_guideline_vert"
-            app:layout_constraintStart_toStartOf="@+id/amount_usd_guideline_vert"
+            app:layout_constraintEnd_toStartOf="@+id/amount_local_currency_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/amount_local_currency_guideline_vert"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed"
             tools:text="18024.12" />
 
         <android.support.constraint.Guideline
-            android:id="@+id/amount_usd_guideline_vert"
+            android:id="@+id/amount_local_currency_guideline_vert"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"

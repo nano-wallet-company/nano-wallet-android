@@ -8,6 +8,9 @@
         <variable
             name="wallet"
             type="co.nano.nanowallet.NanoWallet" />
+        <variable
+            name="localCurrency"
+            type="co.nano.nanowallet.model.AvailableCurrency" />
     </data>
 
     <android.support.constraint.ConstraintLayout

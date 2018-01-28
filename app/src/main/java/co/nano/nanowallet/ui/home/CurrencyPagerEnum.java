@@ -9,7 +9,7 @@ import co.nano.nanowallet.R;
 public enum CurrencyPagerEnum {
     NANO(R.layout.view_home_amount_nano),
     BTC(R.layout.view_home_amount_btc),
-    USD(R.layout.view_home_amount_usd);
+    LOCAL(R.layout.view_home_amount_local_currency);
 
     private int mLayoutResId;
 

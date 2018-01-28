@@ -21,10 +21,13 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
+import javax.inject.Inject;
+
 import co.nano.nanowallet.NanoWallet;
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentHomeBinding;
 import co.nano.nanowallet.model.Transaction;
+import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseDialogFragment;
 import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.FragmentUtility;
@@ -32,6 +35,7 @@ import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.receive.ReceiveDialogFragment;
 import co.nano.nanowallet.ui.send.SendFragment;
 import co.nano.nanowallet.ui.settings.SettingsDialogFragment;
+import co.nano.nanowallet.util.SharedPreferencesUtil;
 
 /**
  * Home Wallet Screen
@@ -45,7 +49,11 @@ import co.nano.nanowallet.ui.settings.SettingsDialogFragment;
 public class HomeFragment extends BaseFragment {
     private FragmentHomeBinding binding;
     private WalletController controller;
+    private NanoWallet wallet = new NanoWallet();
     public static String TAG = HomeFragment.class.getSimpleName();
+
+    @Inject
+    SharedPreferencesUtil sharedPreferencesUtil;
 
     /**
      * Create new instance of the fragment (handy pattern if any data needs to be passed to it)
@@ -86,7 +94,12 @@ public class HomeFragment extends BaseFragment {
                     ((WindowControl) getActivity()).getFragmentUtility().getFragmentManager().executePendingTransactions();
 
                     // reset status bar to blue when dialog is closed
-                    dialog.getDialog().setOnDismissListener(dialogInterface -> setStatusBarBlue());
+                    dialog.getDialog().setOnDismissListener(dialogInterface -> {
+                        setStatusBarBlue();
+                        if (binding.homeViewpager != null) {
+                            binding.homeViewpager.setAdapter(new CurrencyPagerAdapter(getContext(), wallet, sharedPreferencesUtil.getLocalCurrency()));
+                        }
+                    });
                 }
                 return true;
         }
@@ -97,6 +110,11 @@ public class HomeFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // init dependency injection
+        if (getActivity() instanceof ActivityWithComponent) {
+            ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
+        }
+
         // set status bar to blue
         setStatusBarBlue();
         setTitle("");
@@ -109,14 +127,14 @@ public class HomeFragment extends BaseFragment {
         View view = binding.getRoot();
 
         // bind data to view
-        NanoWallet wallet = new NanoWallet();
+        wallet = new NanoWallet();
         wallet.setAccountBalance(new BigDecimal("18024.12"));
 
         binding.setWallet(wallet);
         binding.setHandlers(new ClickHandlers());
 
         // initialize view pager (swipeable currency list)
-        binding.homeViewpager.setAdapter(new CurrencyPagerAdapter(getContext(), wallet));
+        binding.homeViewpager.setAdapter(new CurrencyPagerAdapter(getContext(), wallet, sharedPreferencesUtil.getLocalCurrency()));
         binding.homeTabs.setupWithViewPager(binding.homeViewpager, true);
 
         // initialize recyclerview (list of wallet transactions)

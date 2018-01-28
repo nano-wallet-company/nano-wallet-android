@@ -16,12 +16,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import javax.inject.Inject;
+
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentSendBinding;
 import co.nano.nanowallet.model.SendAmount;
+import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.UIUtil;
 import co.nano.nanowallet.ui.scan.ScanActivity;
+import co.nano.nanowallet.util.SharedPreferencesUtil;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -33,6 +37,9 @@ public class SendFragment extends BaseFragment {
     public static String TAG = SendFragment.class.getSimpleName();
     private SendAmount sendAmount = new SendAmount();
     private boolean localCurrencyActive = false;
+
+    @Inject
+    SharedPreferencesUtil sharedPreferencesUtil;
 
     /**
      * Create new instance of the fragment (handy pattern if any data needs to be passed to it)
@@ -73,6 +80,10 @@ public class SendFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        // init dependency injection
+        if (getActivity() instanceof ActivityWithComponent) {
+            ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
+        }
 
         // inflate the view
         binding = DataBindingUtil.inflate(
@@ -92,6 +103,7 @@ public class SendFragment extends BaseFragment {
         // set active and inactive states for edittext fields
         binding.sendAmountNano.setOnFocusChangeListener((view1, b) -> toggleFieldFocus((EditText) view1, b, false));
         binding.sendAmountLocalcurrency.setOnFocusChangeListener((view1, b) -> toggleFieldFocus((EditText) view1, b, true));
+        binding.sendAmountLocalcurrencySymbol.setText(sharedPreferencesUtil.getLocalCurrency().getCurrencySymbol());
 
         return view;
     }

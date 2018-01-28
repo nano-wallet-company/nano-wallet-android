@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import co.nano.nanowallet.NanoWallet;
 import co.nano.nanowallet.BR;
+import co.nano.nanowallet.model.AvailableCurrency;
 
 /**
  * ViewPager Adapter that is used for listing the wallet transactions on the home screen
@@ -19,10 +20,12 @@ public class CurrencyPagerAdapter extends PagerAdapter {
 
     private Context mContext;
     private NanoWallet mNanoWallet;
+    private AvailableCurrency mLocalCurrency;
 
-    public CurrencyPagerAdapter(Context context, NanoWallet wallet) {
+    public CurrencyPagerAdapter(Context context, NanoWallet wallet, AvailableCurrency localCurrency) {
         mContext = context;
         mNanoWallet = wallet;
+        mLocalCurrency = localCurrency;
     }
 
     @Override
@@ -32,6 +35,7 @@ public class CurrencyPagerAdapter extends PagerAdapter {
 
         ViewDataBinding layout = DataBindingUtil.inflate(inflater, customPagerEnum.getLayoutResId(), container, false);
         layout.setVariable(BR.wallet, mNanoWallet);
+        layout.setVariable(BR.localCurrency, mLocalCurrency);
 
         container.addView(layout.getRoot());
         return layout.getRoot();
