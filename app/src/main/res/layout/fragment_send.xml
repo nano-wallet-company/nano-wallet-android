@@ -5,9 +5,15 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="sendAmount"
             type="co.nano.nanowallet.model.SendAmount" />
+
+        <variable
+            name="showAmount"
+            type="Boolean" />
 
         <!-- Click Listeners -->
         <variable
@@ -18,6 +24,7 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
         android:background="@color/bright_white">
 
         <EditText
@@ -30,6 +37,8 @@
             android:layout_marginRight="37dp"
             android:layout_marginStart="37dp"
             android:layout_marginTop="16dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:hint="@string/send_address_hint"
             android:onTextChanged="@{handlers::onAddressTextChanged}"
             app:layout_constraintBottom_toTopOf="@+id/send_guideline_amounts_top"
@@ -41,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="@color/dark_sky_blue"
-            app:layout_constraintBottom_toTopOf="@+id/send_keyboard_background"
+            app:layout_constraintBottom_toTopOf="@+id/send_guideline_keyboard_top"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/send_guideline_amounts_top" />
 
@@ -102,7 +111,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/translucent_white"
-            app:layout_constraintBottom_toTopOf="@+id/send_keyboard_background"
+            app:layout_constraintBottom_toTopOf="@+id/send_guideline_keyboard_top"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/send_guideline_amounts_top" />
 
@@ -168,7 +177,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_weight="0.33"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/send_amounts_background" />
+            app:layout_constraintTop_toBottomOf="@+id/send_guideline_keyboard_top" />
 
         <!-- 2 -->
         <Button
@@ -182,7 +191,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_weight="0.33"
             app:layout_constraintStart_toEndOf="@+id/send_keyboard_one"
-            app:layout_constraintTop_toBottomOf="@+id/send_amounts_background" />
+            app:layout_constraintTop_toBottomOf="@+id/send_guideline_keyboard_top" />
 
         <!-- 3 -->
         <Button
@@ -198,7 +207,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_weight="0.33"
             app:layout_constraintStart_toEndOf="@+id/send_keyboard_two"
-            app:layout_constraintTop_toBottomOf="@+id/send_amounts_background" />
+            app:layout_constraintTop_toBottomOf="@+id/send_guideline_keyboard_top" />
 
         <!-- 4 -->
         <Button
@@ -348,7 +357,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.13" />
+            app:layout_constraintGuide_percent="@{showAmount != null &amp;&amp; showAmount ? 0.13f : 0.36f}"
+            tools:layout_constraintGuide_percent="0.13" />
 
         <android.support.constraint.Guideline
             android:id="@+id/send_guideline_keyboard_top"
@@ -356,6 +366,13 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.36" />
+
+        <android.support.constraint.Group
+            android:id="@+id/send_amount_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="@{showAmount != null &amp;&amp; showAmount ? View.VISIBLE : View.GONE}"
+            app:constraint_referenced_ids="send_amounts_background,send_max_button,send_amount_nano_symbol,send_amount_nano,send_amounts_divider,send_arrows,send_amount_localcurrency_symbol,send_amount_localcurrency" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>

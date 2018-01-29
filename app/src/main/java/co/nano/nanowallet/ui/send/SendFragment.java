@@ -1,9 +1,13 @@
 package co.nano.nanowallet.ui.send;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.Guideline;
 import android.support.v4.content.ContextCompat;
 import android.text.InputType;
 import android.util.TypedValue;
@@ -11,8 +15,11 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -40,6 +47,13 @@ public class SendFragment extends BaseFragment {
 
     @Inject
     SharedPreferencesUtil sharedPreferencesUtil;
+
+    @BindingAdapter("layout_constraintGuide_percent")
+    public static void setLayoutConstraintGuidePercent(Guideline guideline, float percent) {
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) guideline.getLayoutParams();
+        params.guidePercent = percent;
+        guideline.setLayoutParams(params);
+    }
 
     /**
      * Create new instance of the fragment (handy pattern if any data needs to be passed to it)
@@ -77,6 +91,44 @@ public class SendFragment extends BaseFragment {
         return false;
     }
 
+    public void hideSoftKeyboard() {
+        //Hides the SoftKeyboard
+        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        if (inputMethodManager != null) {
+            inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+        }
+        binding.setShowAmount(true);
+    }
+
+    public void setupUI(View view) {
+        String s = "inside";
+        //Set up touch listener for non-text box views to hide keyboard.
+        if (!(view instanceof EditText && view.getId() == R.id.send_address)) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    hideSoftKeyboard();
+                    return false;
+                }
+            });
+        } else {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    binding.setShowAmount(false);
+                    return false;
+                }
+            });
+        }
+
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View innerView = ((ViewGroup) view).getChildAt(i);
+                setupUI(innerView);
+            }
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -84,6 +136,9 @@ public class SendFragment extends BaseFragment {
         if (getActivity() instanceof ActivityWithComponent) {
             ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
         }
+
+        // change keyboard mode
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         // inflate the view
         binding = DataBindingUtil.inflate(
@@ -104,6 +159,13 @@ public class SendFragment extends BaseFragment {
         binding.sendAmountNano.setOnFocusChangeListener((view1, b) -> toggleFieldFocus((EditText) view1, b, false));
         binding.sendAmountLocalcurrency.setOnFocusChangeListener((view1, b) -> toggleFieldFocus((EditText) view1, b, true));
         binding.sendAmountLocalcurrencySymbol.setText(sharedPreferencesUtil.getLocalCurrency().getCurrencySymbol());
+        binding.setShowAmount(true);
+
+        binding.sendAddress.setOnFocusChangeListener((view12, hasFocus) -> {
+            binding.setShowAmount(!hasFocus);
+        });
+
+        setupUI(view);
 
         return view;
     }
@@ -148,6 +210,7 @@ public class SendFragment extends BaseFragment {
 
     /**
      * Update amount strings based on input processed
+     *
      * @param value String value of character pressed
      */
     private void updateAmount(CharSequence value) {

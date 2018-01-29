@@ -71,6 +71,7 @@ public class SettingsDialogFragment extends BaseDialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        // inject
         if (getActivity() instanceof ActivityWithComponent) {
             ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
         }
@@ -127,10 +128,11 @@ public class SettingsDialogFragment extends BaseDialogFragment {
 
     /**
      * Get list of all of the available currencies
+     *
      * @return
      */
     private List<StringWithTag> getAllCurrencies() {
-        List<StringWithTag> itemList = new ArrayList<StringWithTag>();
+        List<StringWithTag> itemList = new ArrayList<>();
         for (AvailableCurrency currency : AvailableCurrency.values()) {
             itemList.add(new StringWithTag(currency.getFullDisplayName(), currency));
         }
@@ -139,6 +141,7 @@ public class SettingsDialogFragment extends BaseDialogFragment {
 
     /**
      * Get list of all of the available currencies
+     *
      * @return
      */
     private int getIndexOf(AvailableCurrency currency, List<StringWithTag> availableCurrencies) {
