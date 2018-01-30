@@ -44,6 +44,8 @@ public class SettingsDialogFragment extends BaseDialogFragment {
 
     @Inject
     SharedPreferencesUtil sharedPreferencesUtil;
+    @Inject
+    Realm realm;
 
     @BindingAdapter("android:layout_marginTop")
     public static void setTopMargin(View view, float topMargin) {
@@ -204,7 +206,6 @@ public class SettingsDialogFragment extends BaseDialogFragment {
                         .setMessage(R.string.settings_logout_alert_message)
                         .setPositiveButton(R.string.settings_logout_alert_confirm_cta, (dialog, which) -> {
                             // delete user seed data before logging out
-                            Realm realm = Realm.getDefaultInstance();
                             final RealmResults<Credentials> results = realm.where(Credentials.class).findAll();
                             realm.executeTransaction(realm1 -> {
                                 results.deleteAllFromRealm();

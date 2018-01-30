@@ -6,10 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import javax.inject.Inject;
+
 import co.nano.nanowallet.BuildConfig;
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentIntroWelcomeBinding;
 import co.nano.nanowallet.model.Credentials;
+import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.common.WindowControl;
@@ -23,9 +26,17 @@ public class IntroWelcomeFragment extends BaseFragment {
     private FragmentIntroWelcomeBinding binding;
     public static String TAG = IntroWelcomeFragment.class.getSimpleName();
 
+    @Inject
+    Realm realm;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        // init dependency injection
+        if (getActivity() instanceof ActivityWithComponent) {
+            ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
+        }
         // inflate the view
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_intro_welcome, container, false);
@@ -75,7 +86,6 @@ public class IntroWelcomeFragment extends BaseFragment {
         // TODO: Create new wallet
 
         // store wallet seed
-        Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         Credentials credentials = realm.createObject(Credentials.class);
         credentials.setSeed("abcdabcd");

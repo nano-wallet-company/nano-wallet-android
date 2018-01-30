@@ -3,7 +3,7 @@ package co.nano.nanowallet.model;
 import io.realm.RealmObject;
 
 /**
- * Created by szeidner on 29/01/2018.
+ * Wallet seed used to store in Realm
  */
 
 public class Credentials extends RealmObject {

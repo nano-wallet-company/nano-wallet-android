@@ -20,6 +20,8 @@ import org.java_websocket.handshake.ServerHandshake;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.inject.Inject;
+
 import co.nano.nanowallet.di.activity.ActivityComponent;
 import co.nano.nanowallet.di.activity.DaggerActivityComponent;
 import co.nano.nanowallet.model.Credentials;
@@ -36,6 +38,9 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
     private Toolbar mToolbar;
     private TextView mToolbarTitle;
     protected ActivityComponent mActivityComponent;
+
+    @Inject
+    Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +85,6 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         }
 
         // get wallet seed if it exists
-        Realm realm = Realm.getDefaultInstance();
         Credentials credentials;
         try {
             credentials = realm.where(Credentials.class).findFirst();

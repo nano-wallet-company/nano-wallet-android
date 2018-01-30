@@ -3,6 +3,7 @@ package co.nano.nanowallet.di.activity;
 import co.nano.nanowallet.MainActivity;
 import co.nano.nanowallet.di.application.ApplicationComponent;
 import co.nano.nanowallet.ui.home.HomeFragment;
+import co.nano.nanowallet.ui.intro.IntroWelcomeFragment;
 import co.nano.nanowallet.ui.send.SendFragment;
 import co.nano.nanowallet.ui.settings.SettingsDialogFragment;
 import dagger.Component;
@@ -17,4 +18,6 @@ public interface ActivityComponent {
     void inject(HomeFragment homeFragment);
 
     void inject(SendFragment sendFragment);
+
+    void inject(IntroWelcomeFragment introWelcomeFragment);
 }
