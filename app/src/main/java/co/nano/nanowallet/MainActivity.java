@@ -1,7 +1,5 @@
 package co.nano.nanowallet;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -24,10 +22,13 @@ import java.net.URISyntaxException;
 
 import co.nano.nanowallet.di.activity.ActivityComponent;
 import co.nano.nanowallet.di.activity.DaggerActivityComponent;
+import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.common.WindowControl;
+import co.nano.nanowallet.ui.home.HomeFragment;
 import co.nano.nanowallet.ui.intro.IntroWelcomeFragment;
+import io.realm.Realm;
 
 public class MainActivity extends AppCompatActivity implements WindowControl, ActivityWithComponent {
     private WebSocketClient mWebSocketClient;
@@ -50,7 +51,6 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         mActivityComponent.inject(this);
 
         initUi();
-
     }
 
     @Override
@@ -79,13 +79,22 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
-        // set the intro welcome fragment as the first fragment
-        // TODO: Add logic to see if this is a first time user or not
-        SharedPreferences pref = this.getSharedPreferences("co.nano.nanowallet", Context.MODE_PRIVATE);
-        // if we dont have a wallet, start the intro
-        mFragmentUtility.replace(new IntroWelcomeFragment());
-        // if we do have a wallet, load and configure
-        //mFragmentUtility.replace(new HomeFragment());
+        // get wallet seed if it exists
+        Realm realm = Realm.getDefaultInstance();
+        Credentials credentials;
+        try {
+            credentials = realm.where(Credentials.class).findFirst();
+        } finally {
+            realm.close();
+        }
+
+        if (credentials == null) {
+            // if we dont have a wallet, start the intro
+            mFragmentUtility.replace(new IntroWelcomeFragment());
+        } else {
+            // if we do have a wallet, load and configure
+            mFragmentUtility.replace(new HomeFragment());
+        }
 
         connectWebSocket();
     }

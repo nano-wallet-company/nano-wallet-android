@@ -1,4 +1,4 @@
-package co.nano.nanowallet.model;
+package co.nano.nanowallet.ui.home;
 
 import android.graphics.Color;
 import android.text.Spannable;

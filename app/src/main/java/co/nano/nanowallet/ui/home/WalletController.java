@@ -5,7 +5,6 @@ import com.airbnb.epoxy.Typed2EpoxyController;
 import java.util.List;
 
 import co.nano.nanowallet.TransactionBindingModel_;
-import co.nano.nanowallet.model.Transaction;
 
 /**
  * Controller to handle adding and removing views on the wallet

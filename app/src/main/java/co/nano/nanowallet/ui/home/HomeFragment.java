@@ -26,7 +26,6 @@ import javax.inject.Inject;
 import co.nano.nanowallet.NanoWallet;
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentHomeBinding;
-import co.nano.nanowallet.model.Transaction;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseDialogFragment;
 import co.nano.nanowallet.ui.common.BaseFragment;

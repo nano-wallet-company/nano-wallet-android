@@ -1,4 +1,11 @@
+repositories {
+    maven {
+        url 'https://github.com/WickeDev/stetho-realm/raw/master/maven-repo'
+    }
+}
+
 apply plugin: 'com.android.application'
+apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 26
@@ -25,6 +32,9 @@ android {
 
     }
     buildTypes {
+        debug {
+
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -96,6 +106,7 @@ dependencies {
 
     // Stetho (for debugging only)
     implementation 'com.facebook.stetho:stetho:1.5.0'
+    implementation 'com.uphyca:stetho_realm:2.2.2'
 
     // Testing
     androidTestImplementation "com.android.support.test:runner:$TEST_RUNNER_VERSION"

@@ -9,9 +9,11 @@ import android.view.ViewGroup;
 import co.nano.nanowallet.BuildConfig;
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentIntroWelcomeBinding;
+import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.common.WindowControl;
+import io.realm.Realm;
 
 /**
  * The Intro Screen to the app
@@ -41,7 +43,7 @@ public class IntroWelcomeFragment extends BaseFragment {
 
     public class ClickHandlers {
         public void onClickNewWallet(View view) {
-            // TODO: Create new wallet
+            createAndStoreWallet();
 
             // go to home screen
             if (getActivity() instanceof WindowControl) {
@@ -67,6 +69,19 @@ public class IntroWelcomeFragment extends BaseFragment {
                 );
             }
         }
+    }
+
+    private void createAndStoreWallet() {
+        // TODO: Create new wallet
+
+        // store wallet seed
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        Credentials credentials = realm.createObject(Credentials.class);
+        credentials.setSeed("abcdabcd");
+        credentials.setPrivateKey("1231232");
+        realm.commitTransaction();
+        realm.close();
     }
 
 

@@ -7,7 +7,7 @@
         <!-- Data -->
         <variable
             name="transaction"
-            type="co.nano.nanowallet.model.Transaction" />
+            type="co.nano.nanowallet.ui.home.Transaction" />
         <variable
             name="currency"
             type="co.nano.nanowallet.ui.home.CurrencyPagerEnum" />
