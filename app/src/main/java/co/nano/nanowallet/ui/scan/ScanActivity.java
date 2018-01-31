@@ -11,7 +11,7 @@ import android.widget.Toast;
 import com.google.zxing.Result;
 
 import co.nano.nanowallet.R;
-import co.nano.nanowallet.model.Address;
+import co.nano.nanowallet.model.Credentials;
 import me.dm7.barcodescanner.core.IViewFinder;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -68,7 +68,7 @@ public class ScanActivity extends BaseScannerActivity implements ZXingScannerVie
     @Override
     public void handleResult(Result rawResult) {
         Bundle conData = new Bundle();
-        if (!isSeedOnlyScan || Address.isValidSeed(rawResult.getText())) {
+        if (!isSeedOnlyScan || Credentials.isValidSeed(rawResult.getText())) {
             conData.putString(QR_CODE_RESULT, rawResult.getText().toUpperCase());
             Intent intent = new Intent();
             intent.putExtras(conData);

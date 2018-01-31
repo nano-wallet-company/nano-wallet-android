@@ -6,15 +6,13 @@ package co.nano.nanowallet;
 
 import java.math.BigInteger;
 
-import android.util.Log;
-
 import co.nano.nanowallet.util.Blake2b;
 import co.nano.nanowallet.util.ED25519;
 
 
 //import blake2bjava.Blake2bHasher;
 
-class NanoUtil {
+public class NanoUtil {
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
     private final static String codeArray = "13456789abcdefghijkmnopqrstuwxyz";
     private final static char[] codeCharArray = codeArray.toCharArray();

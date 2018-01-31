@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Address {
     private String value;
-    public static final List<Character> VALID_SEED_CHARACTERS = Arrays.asList('a','b','c','d','e','f','0','1','2','3','4','5','6','7','8','9');
+
     public static final List<Character> VALID_ADDRESS_CHARACTERS = Arrays.asList('a','b','c','d','e','f','g','h','i','j','k','m','n','o','p','q','r','s','t','u','w','x','y','z','1','3','4','5','6','7','8','9','_');
 
     public Address() {
@@ -39,20 +39,6 @@ public class Address {
 
     public String getLongAddress() {
         return value;
-    }
-
-    public static boolean isValidSeed(String seed) {
-        if (seed.length() != 64) {
-            return false;
-        }
-        boolean isMatch = true;
-        for (int i = 0; i < seed.length() && isMatch; i++) {
-            char letter = seed.toLowerCase().charAt(i);
-            if (!VALID_SEED_CHARACTERS.contains(letter)) {
-                isMatch = false;
-            }
-        }
-        return isMatch;
     }
 
     public static boolean isValidAddress(String seed) {

@@ -89,7 +89,6 @@ public class IntroWelcomeFragment extends BaseFragment {
         realm.beginTransaction();
         Credentials credentials = realm.createObject(Credentials.class);
         credentials.setSeed("abcdabcd");
-        credentials.setPrivateKey("1231232");
         realm.commitTransaction();
         realm.close();
     }

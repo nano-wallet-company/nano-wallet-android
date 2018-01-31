@@ -23,11 +23,16 @@ import com.github.sumimakito.awesomeqr.AwesomeQRCode;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import javax.inject.Inject;
+
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.alarm.ClipboardAlarmReceiver;
 import co.nano.nanowallet.databinding.FragmentReceiveBinding;
+import co.nano.nanowallet.model.Credentials;
+import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseDialogFragment;
 import co.nano.nanowallet.ui.common.UIUtil;
+import io.realm.Realm;
 
 /**
  * Settings main screen
@@ -35,9 +40,12 @@ import co.nano.nanowallet.ui.common.UIUtil;
 public class ReceiveDialogFragment extends BaseDialogFragment {
     private FragmentReceiveBinding binding;
     public static String TAG = ReceiveDialogFragment.class.getSimpleName();
-    private String address;
-    private static final int QRCODE_SIZE = 200;
+    private static final int QRCODE_SIZE = 240;
     private final String TEMP_FILE_NAME = "nanoreceive.png";
+    private String address;
+
+    @Inject
+    Realm realm;
 
     /**
      * Create new instance of the dialog fragment (handy pattern if any data needs to be passed to it)
@@ -56,8 +64,21 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
         super.onCreate(savedInstanceState);
         setStyle(STYLE_NO_FRAME, R.style.AppTheme_Modal_Window);
 
-        // TODO: The receive address should be passed in or generated somewhere
-        address = "xrb_3gntuoguehi9d1mnhnar6ojx7jseeerwj5hesb4b4jga7oybbdbqyzap7ijg";
+        // init dependency injection
+        if (getActivity() instanceof ActivityWithComponent) {
+            ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
+        }
+
+        // get credentials
+        Credentials credentials = null;
+        try {
+            credentials = realm.where(Credentials.class).findFirst();
+            if (credentials != null) {
+                address = credentials.getPublicKey();
+            }
+        } finally {
+            realm.close();
+        }
     }
 
     @Nullable
@@ -76,7 +97,7 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
         // generate QR code
         new AwesomeQRCode.Renderer()
                 .contents(address)
-                .size((int) UIUtil.convertDpToPixel(240, getContext()))
+                .size((int) UIUtil.convertDpToPixel(QRCODE_SIZE, getContext()))
                 .margin((int) UIUtil.convertDpToPixel(20, getContext()))
                 .dotScale(0.55f)
                 .background(BitmapFactory.decodeResource(getResources(), R.drawable.qrbackground))

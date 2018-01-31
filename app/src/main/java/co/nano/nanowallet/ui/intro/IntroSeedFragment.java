@@ -14,7 +14,6 @@ import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentIntroSeedBinding;
-import co.nano.nanowallet.model.Address;
 import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseFragment;
@@ -43,11 +42,11 @@ public class IntroSeedFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         // init dependency injection
         if (getActivity() instanceof ActivityWithComponent) {
             ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
         }
+
         // inflate the view
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_intro_seed, container, false);
@@ -108,7 +107,7 @@ public class IntroSeedFragment extends BaseFragment {
     private void removeInvalidCharacters(Editable text) {
         for (int i = 0; i < text.length(); i++) {
             char letter = text.toString().toLowerCase().charAt(i);
-            if (!Address.VALID_SEED_CHARACTERS.contains(letter)) {
+            if (!Credentials.VALID_SEED_CHARACTERS.contains(letter)) {
                 text.delete(i, i+1);
             }
         }
@@ -133,7 +132,7 @@ public class IntroSeedFragment extends BaseFragment {
             }
 
             // validate input string and update styles if valid
-            if (Address.isValidSeed(s.toString())) {
+            if (Credentials.isValidSeed(s.toString())) {
                 currentStep = 2;
                 updateSteps();
                 binding.introSeedIconCheck.setVisibility(View.VISIBLE);
@@ -158,7 +157,7 @@ public class IntroSeedFragment extends BaseFragment {
          * @param view
          */
         public void onClickConfirm(View view) {
-
+            createAndStoreCredentials(binding.introSeedSeed.getText().toString());
 
             // go to home screen
             if (getActivity() instanceof WindowControl) {
@@ -181,8 +180,7 @@ public class IntroSeedFragment extends BaseFragment {
         }
     }
 
-    private void createAndStoreWallet(String seed) {
-        // store wallet seed
+    private void createAndStoreCredentials(String seed) {
         realm.beginTransaction();
         Credentials credentials = realm.createObject(Credentials.class);
         credentials.setSeed(seed);

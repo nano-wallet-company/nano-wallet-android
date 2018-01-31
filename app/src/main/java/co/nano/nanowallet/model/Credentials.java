@@ -1,5 +1,9 @@
 package co.nano.nanowallet.model;
 
+import java.util.Arrays;
+import java.util.List;
+
+import co.nano.nanowallet.NanoUtil;
 import co.nano.nanowallet.util.ExceptionHandler;
 import io.realm.RealmObject;
 
@@ -11,6 +15,8 @@ public class Credentials extends RealmObject {
     private String seed;
     private String privateKey;
 
+    public static final List<Character> VALID_SEED_CHARACTERS = Arrays.asList('a','b','c','d','e','f','0','1','2','3','4','5','6','7','8','9');
+
     public Credentials() {
     }
 
@@ -20,11 +26,13 @@ public class Credentials extends RealmObject {
 
     public void setSeed(String seed) {
         // validate seed length
-        if (seed.length() != 32) {
+        if (!isValidSeed(seed)) {
             ExceptionHandler.handle(new Throwable("Invalid Seed Length"));
             return;
         }
+
         this.seed = seed;
+        this.privateKey = NanoUtil.seedToPrivate(seed);
     }
 
     public String getPrivateKey() {
@@ -33,6 +41,28 @@ public class Credentials extends RealmObject {
 
     public void setPrivateKey(String privateKey) {
         this.privateKey = privateKey;
+    }
+
+    public String getPublicKey() {
+        return NanoUtil.privateToPublic(getPrivateKey());
+    }
+
+    public Address getAddress() {
+        return new Address(NanoUtil.privateToPublic(this.privateKey));
+    }
+
+    public static boolean isValidSeed(String seed) {
+        if (seed.length() != 64) {
+            return false;
+        }
+        boolean isMatch = true;
+        for (int i = 0; i < seed.length() && isMatch; i++) {
+            char letter = seed.toLowerCase().charAt(i);
+            if (!VALID_SEED_CHARACTERS.contains(letter)) {
+                isMatch = false;
+            }
+        }
+        return isMatch;
     }
 
     @Override

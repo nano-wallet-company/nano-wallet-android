@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         }
 
         // get wallet seed if it exists
-        Credentials credentials;
+        Credentials credentials = null;
         try {
             credentials = realm.where(Credentials.class).findFirst();
         } finally {

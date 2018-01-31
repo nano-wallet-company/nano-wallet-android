@@ -12,5 +12,6 @@ public interface ApplicationComponent {
     // persistence module
     SharedPreferencesUtil provideSharedPreferencesUtil();
 
+    // database
     Realm provideRealm();
 }
