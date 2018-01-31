@@ -80,7 +80,7 @@
             style="@style/TextStyle14"
             android:layout_width="match_parent"
             android:layout_height="54dp"
-            android:layout_marginTop="@{showCurrency != null &amp;&amp; showCurrency ? @dimen/margin_visible : @dimen/margin_gone}"
+            android:layout_marginTop="@{safeUnbox(showCurrency) ? @dimen/margin_visible : @dimen/margin_gone}"
             android:background="@drawable/bg_border_top_bottom_dark"
             android:gravity="center"
             android:onClick="@{handlers::onClickShowSeed}"
@@ -102,7 +102,7 @@
             android:id="@+id/settings_group_currency_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="@{showCurrency != null &amp;&amp; showCurrency ? View.VISIBLE : View.GONE}"
+            android:visibility="@{safeUnbox(showCurrency) ? View.VISIBLE : View.GONE}"
             app:constraint_referenced_ids="settings_local_currency_spinner, settings_local_currency_spinner_check, settings_local_currency_spinner_arrow" />
 
     </android.support.constraint.ConstraintLayout>

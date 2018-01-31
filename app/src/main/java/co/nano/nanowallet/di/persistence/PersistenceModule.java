@@ -1,7 +1,6 @@
 package co.nano.nanowallet.di.persistence;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -15,6 +14,7 @@ import dagger.Module;
 import dagger.Provides;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import timber.log.Timber;
 
 @Module
 public class PersistenceModule {
@@ -57,7 +57,7 @@ public class PersistenceModule {
         try {
             return KeyStore.getInstance("Nano");
         } catch (KeyStoreException e) {
-            Log.e("Persistance", e.getMessage());
+            Timber.e(e.getMessage());
         }
         return null;
     }

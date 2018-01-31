@@ -10,15 +10,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import javax.inject.Inject;
+
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentIntroSeedBinding;
 import co.nano.nanowallet.model.Address;
+import co.nano.nanowallet.model.Credentials;
+import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.common.UIUtil;
 import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.home.HomeFragment;
 import co.nano.nanowallet.ui.scan.ScanActivity;
+import io.realm.Realm;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -31,10 +36,18 @@ public class IntroSeedFragment extends BaseFragment {
     private int currentStep = 1;
     public static String TAG = IntroSeedFragment.class.getSimpleName();
 
+    @Inject
+    Realm realm;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        // init dependency injection
+        if (getActivity() instanceof ActivityWithComponent) {
+            ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
+        }
         // inflate the view
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_intro_seed, container, false);
@@ -145,7 +158,7 @@ public class IntroSeedFragment extends BaseFragment {
          * @param view
          */
         public void onClickConfirm(View view) {
-            // TODO: Create wallet from seed
+
 
             // go to home screen
             if (getActivity() instanceof WindowControl) {
@@ -166,6 +179,15 @@ public class IntroSeedFragment extends BaseFragment {
         public void onClickCamera(View view) {
             startScanActivity(getString(R.string.scan_instruction_label), true);
         }
+    }
+
+    private void createAndStoreWallet(String seed) {
+        // store wallet seed
+        realm.beginTransaction();
+        Credentials credentials = realm.createObject(Credentials.class);
+        credentials.setSeed(seed);
+        realm.commitTransaction();
+        realm.close();
     }
 
     /**

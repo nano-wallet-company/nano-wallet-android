@@ -357,7 +357,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="@{showAmount != null &amp;&amp; showAmount ? 0.13f : 0.36f}"
+            app:layout_constraintGuide_percent="@{safeUnbox(showAmount) ? 0.13f : 0.36f}"
             tools:layout_constraintGuide_percent="0.13" />
 
         <android.support.constraint.Guideline
@@ -371,7 +371,7 @@
             android:id="@+id/send_amount_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="@{showAmount != null &amp;&amp; showAmount ? View.VISIBLE : View.GONE}"
+            android:visibility="@{safeUnbox(showAmount) ? View.VISIBLE : View.GONE}"
             app:constraint_referenced_ids="send_amounts_background,send_max_button,send_amount_nano_symbol,send_amount_nano,send_amounts_divider,send_arrows,send_amount_localcurrency_symbol,send_amount_localcurrency" />
 
     </android.support.constraint.ConstraintLayout>

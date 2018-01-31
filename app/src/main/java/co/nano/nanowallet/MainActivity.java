@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +26,7 @@ import co.nano.nanowallet.websocket.RxWebSocket;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
+import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements WindowControl, ActivityWithComponent {
     private FragmentUtility mFragmentUtility;
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(socketOpenEvent -> {
-                    Log.i("Websocket", "Opened");
+                    Timber.i("Opened");
                     rxWebSocket.sendMessage("{\"action\":\"account_subscribe\",\"account\":\"xrb_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3\"}");
                     rxWebSocket.sendMessage("{\"action\":\"block_count\"}");
                     rxWebSocket.sendMessage("{\"action\":\"price_data\",\"currency\":\"usd\"}");
@@ -116,35 +116,35 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(socketClosedEvent -> {
-                    Log.i("Websocket", "Closed: " + socketClosedEvent.getReason());
+                    Timber.i("Closed: " + socketClosedEvent.getReason());
                 }, Throwable::printStackTrace);
 
         rxWebSocket.onClosing()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(socketClosingEvent -> {
-                    Log.i("Websocket", "Closing: " + socketClosingEvent.getReason());
+                    Timber.i("Closing: " + socketClosingEvent.getReason());
                 }, Throwable::printStackTrace);
 
         rxWebSocket.onTextMessage()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(socketMessageEvent -> {
-                    Log.i("Websocket", socketMessageEvent.getText());
+                    Timber.i(socketMessageEvent.getText());
                 }, Throwable::printStackTrace);
 
         rxWebSocket.onBinaryMessage()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(socketMessageEvent -> {
-                    Log.i("Websocket", socketMessageEvent.getText());
+                    Timber.i(socketMessageEvent.getText());
                 }, Throwable::printStackTrace);
 
         rxWebSocket.onFailure()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(socketFailureEvent -> {
-                    Log.i("Websocket", "Error: " + socketFailureEvent.getException().getMessage());
+                    Timber.i("Error: " + socketFailureEvent.getException().getMessage());
                 }, Throwable::printStackTrace);
 
         rxWebSocket.connect();

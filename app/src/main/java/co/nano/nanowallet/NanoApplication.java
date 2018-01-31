@@ -10,6 +10,7 @@ import co.nano.nanowallet.di.application.ApplicationComponent;
 import co.nano.nanowallet.di.application.ApplicationModule;
 import co.nano.nanowallet.di.application.DaggerApplicationComponent;
 import io.realm.Realm;
+import timber.log.Timber;
 
 /**
  * Any custom application logic can go here
@@ -26,11 +27,14 @@ public class NanoApplication extends Application {
         // initialize Realm database
         Realm.init(this);
 
-        Stetho.initialize(
-                Stetho.newInitializerBuilder(this)
-                        .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
-                        .enableWebKitInspector(RealmInspectorModulesProvider.builder(this).build())
-                        .build());
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
+            Stetho.initialize(
+                    Stetho.newInitializerBuilder(this)
+                            .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+                            .enableWebKitInspector(RealmInspectorModulesProvider.builder(this).build())
+                            .build());
+        }
 
         // create new instance of the application component (DI)
         mApplicationComponent = DaggerApplicationComponent

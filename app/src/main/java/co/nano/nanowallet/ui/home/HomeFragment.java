@@ -42,7 +42,7 @@ import co.nano.nanowallet.util.SharedPreferencesUtil;
 
 @BindingMethods({
         @BindingMethod(type = android.support.v7.widget.AppCompatImageView.class,
-                attribute = "app:srcCompat",
+                attribute = "srcCompat",
                 method = "setImageDrawable")
 })
 public class HomeFragment extends BaseFragment {

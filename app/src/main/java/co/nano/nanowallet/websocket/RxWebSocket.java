@@ -2,7 +2,6 @@ package co.nano.nanowallet.websocket;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -22,6 +21,7 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.WebSocket;
 import okio.ByteString;
+import timber.log.Timber;
 
 public class RxWebSocket {
 
@@ -43,8 +43,8 @@ public class RxWebSocket {
 
     private Flowable<SocketEvent> getEventSource() {
         return socketEventProcessor.onErrorResumeNext(throwable -> {
-            Log.e(TAG, "RxWebSocket EventSubject internal error occured.");
-            Log.e(TAG, throwable.getMessage());
+            Timber.e("RxWebSocket EventSubject internal error occured.");
+            Timber.e(throwable.getMessage());
             throwable.printStackTrace();
             socketEventProcessor = PublishProcessor.create();
             return socketEventProcessor;
@@ -99,7 +99,7 @@ public class RxWebSocket {
                 .subscribe(
                         socketOpenEvent -> webSocket = socketOpenEvent.getWebSocket(),
                         throwable -> {
-                            Log.e(TAG, throwable.getMessage());
+                            Timber.e(throwable.getMessage());
                             throwable.printStackTrace();
                         });
         Disposable connectionDisposable = Flowable.create(webSocketOnSubscribe, BackpressureStrategy.BUFFER)
@@ -108,7 +108,7 @@ public class RxWebSocket {
                 .subscribe(
                         event -> socketEventProcessor.onNext(event),
                         throwable -> {
-                            Log.e(TAG, throwable.getMessage());
+                            Timber.e(throwable.getMessage());
                             throwable.printStackTrace();
                         });
         connectionDisposables.add(webSocketInstanceDisposable);

@@ -1,12 +1,11 @@
 package co.nano.nanowallet.websocket;
 
 
-import android.util.Log;
-
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import co.nano.nanowallet.websocket.entities.SocketEvent;
+import timber.log.Timber;
 
 
 public class RxWebSocketLogger implements Subscriber<SocketEvent> {
@@ -19,24 +18,24 @@ public class RxWebSocketLogger implements Subscriber<SocketEvent> {
 
     @Override
     public void onComplete() {
-        Log.d(TAG, "Complete");
+        Timber.d("Complete");
     }
 
     @Override
     public void onError(Throwable e) {
-        Log.e(TAG, "Error");
-        Log.e(TAG, e.getMessage());
+        Timber.e("Error");
+        Timber.e(e.getMessage());
         e.printStackTrace();
     }
 
     @Override
     public void onSubscribe(Subscription s) {
-        Log.e(TAG, "Subscribe");
+        Timber.e("Subscribe");
     }
 
     @Override
     public void onNext(SocketEvent socketEvent) {
-        Log.d(TAG, "Next");
-        Log.d(TAG, socketEvent.toString());
+        Timber.d("Next");
+        Timber.d(socketEvent.toString());
     }
 }

@@ -1,5 +1,6 @@
 package co.nano.nanowallet.model;
 
+import co.nano.nanowallet.util.ExceptionHandler;
 import io.realm.RealmObject;
 
 /**
@@ -10,11 +11,19 @@ public class Credentials extends RealmObject {
     private String seed;
     private String privateKey;
 
+    public Credentials() {
+    }
+
     public String getSeed() {
         return seed;
     }
 
     public void setSeed(String seed) {
+        // validate seed length
+        if (seed.length() != 32) {
+            ExceptionHandler.handle(new Throwable("Invalid Seed Length"));
+            return;
+        }
         this.seed = seed;
     }
 
