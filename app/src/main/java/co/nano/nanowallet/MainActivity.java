@@ -11,14 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.TextView;
-
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.handshake.ServerHandshake;
-
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import javax.inject.Inject;
 
@@ -30,14 +23,17 @@ import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.home.HomeFragment;
 import co.nano.nanowallet.ui.intro.IntroWelcomeFragment;
+import co.nano.nanowallet.websocket.RxWebSocket;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 
 public class MainActivity extends AppCompatActivity implements WindowControl, ActivityWithComponent {
-    private WebSocketClient mWebSocketClient;
     private FragmentUtility mFragmentUtility;
     private Toolbar mToolbar;
     private TextView mToolbarTitle;
     protected ActivityComponent mActivityComponent;
+    private RxWebSocket rxWebSocket;
 
     @Inject
     Realm realm;
@@ -104,53 +100,54 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
     }
 
     private void connectWebSocket() {
-        URI uri;
-        try {
-            uri = new URI("wss://raicast.lightrai.com:443");
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-            return;
-        }
+        rxWebSocket = new RxWebSocket("wss://raicast.lightrai.com:443");
 
-        mWebSocketClient = new WebSocketClient(uri) {
-            @Override
-            public void onOpen(ServerHandshake serverHandshake) {
-                Log.i("Websocket", "Opened");
-                mWebSocketClient.send("{\"action\":\"account_subscribe\",\"account\":\"xrb_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3\"}");
-                mWebSocketClient.send("{\"action\":\"block_count\"}");
-                mWebSocketClient.send("{\"action\":\"price_data\",\"currency\":\"usd\"}");
-            }
+        rxWebSocket.onOpen()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(socketOpenEvent -> {
+                    Log.i("Websocket", "Opened");
+                    rxWebSocket.sendMessage("{\"action\":\"account_subscribe\",\"account\":\"xrb_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3\"}");
+                    rxWebSocket.sendMessage("{\"action\":\"block_count\"}");
+                    rxWebSocket.sendMessage("{\"action\":\"price_data\",\"currency\":\"usd\"}");
+                }, Throwable::printStackTrace);
 
-            @Override
-            public void onMessage(String s) {
-                final String message = s;
-                Log.i("Websocket", message);
-                //runOnUiThread(new Runnable() {
-                //    @Override
-                //    public void run() {
-                //        TextView textView = (TextView)findViewById(R.id.messages);
-                //        textView.setText(textView.getText() + "\n" + message);
-                //    }
-                //});
-            }
+        rxWebSocket.onClosed()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(socketClosedEvent -> {
+                    Log.i("Websocket", "Closed: " + socketClosedEvent.getReason());
+                }, Throwable::printStackTrace);
 
-            @Override
-            public void onClose(int i, String s, boolean b) {
-                Log.i("Websocket", "Closed " + s);
-            }
+        rxWebSocket.onClosing()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(socketClosingEvent -> {
+                    Log.i("Websocket", "Closing: " + socketClosingEvent.getReason());
+                }, Throwable::printStackTrace);
 
-            @Override
-            public void onError(Exception e) {
-                Log.i("Websocket", "Error " + e.getMessage());
-            }
-        };
-        mWebSocketClient.connect();
-    }
+        rxWebSocket.onTextMessage()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(socketMessageEvent -> {
+                    Log.i("Websocket", socketMessageEvent.getText());
+                }, Throwable::printStackTrace);
 
-    public void sendMessage(View view) {
-        EditText editText = (EditText) findViewById(R.id.message);
-        mWebSocketClient.send(editText.getText().toString());
-        editText.setText("");
+        rxWebSocket.onBinaryMessage()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(socketMessageEvent -> {
+                    Log.i("Websocket", socketMessageEvent.getText());
+                }, Throwable::printStackTrace);
+
+        rxWebSocket.onFailure()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(socketFailureEvent -> {
+                    Log.i("Websocket", "Error: " + socketFailureEvent.getException().getMessage());
+                }, Throwable::printStackTrace);
+
+        rxWebSocket.connect();
     }
 
     @Override
