@@ -74,7 +74,7 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
         try {
             credentials = realm.where(Credentials.class).findFirst();
             if (credentials != null) {
-                address = credentials.getPublicKey();
+                address = credentials.getAddressString();
             }
         } finally {
             realm.close();
