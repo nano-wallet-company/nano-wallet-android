@@ -23,11 +23,13 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import javax.inject.Inject;
 
-import co.nano.nanowallet.NanoWallet;
 import co.nano.nanowallet.R;
+import co.nano.nanowallet.bus.Logout;
+import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.databinding.FragmentHomeBinding;
 import co.nano.nanowallet.model.Address;
 import co.nano.nanowallet.model.Credentials;
+import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseDialogFragment;
 import co.nano.nanowallet.ui.common.BaseFragment;
@@ -91,11 +93,16 @@ public class HomeFragment extends BaseFragment {
         try {
             Credentials credentials = realm.where(Credentials.class).findFirst();
             if (credentials != null) {
-                Observable.just(credentials.getAddressString())
+                Credentials threadSafeCreds = realm.copyFromRealm(credentials);
+                Observable.fromCallable(threadSafeCreds::getAddressString)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(addressString -> {
-                            address = new Address(addressString);
+                            if (addressString.isEmpty()) {
+                                RxBus.get().post(new Logout());
+                            } else {
+                                address = new Address(addressString);
+                            }
                         }, ExceptionHandler::handle);
             }
         } finally {
@@ -231,6 +238,7 @@ public class HomeFragment extends BaseFragment {
         public void onClickReceive(View view) {
             if (getActivity() instanceof WindowControl) {
                 // show receive dialog
+                // TODO: Add countdown latch here to ensure that address is not null or just load address from receive dialog fragment?
                 ReceiveDialogFragment dialog = ReceiveDialogFragment.newInstance(address);
                 dialog.show(((WindowControl) getActivity()).getFragmentUtility().getFragmentManager(),
                         ReceiveDialogFragment.TAG);

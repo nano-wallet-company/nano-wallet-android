@@ -33,7 +33,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppOverlayTheme" />
 
-        <receiver android:name=".alarm.ClipboardAlarmReceiver">
+        <receiver android:name=".broadcastreceiver.ClipboardAlarmReceiver">
             <intent-filter>
                 <action android:name="co.nano.nanowallet.alarm" />
             </intent-filter>

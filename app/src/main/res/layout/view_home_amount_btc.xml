@@ -7,7 +7,7 @@
         <!-- Data -->
         <variable
             name="wallet"
-            type="co.nano.nanowallet.NanoWallet" />
+            type="co.nano.nanowallet.model.NanoWallet" />
         <variable
             name="localCurrency"
             type="co.nano.nanowallet.model.AvailableCurrency" />

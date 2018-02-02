@@ -5,6 +5,7 @@ package co.nano.nanowallet;
  */
 
 import java.math.BigInteger;
+import java.util.Random;
 
 import co.nano.nanowallet.util.Blake2b;
 import co.nano.nanowallet.util.ED25519;
@@ -19,7 +20,7 @@ public class NanoUtil {
 
     public static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
-        for ( int j = 0; j < bytes.length; j++ ) {
+        for (int j = 0; j < bytes.length; j++) {
             int v = bytes[j] & 0xFF;
             hexChars[j * 2] = hexArray[v >>> 4];
             hexChars[j * 2 + 1] = hexArray[v & 0x0F];
@@ -28,7 +29,7 @@ public class NanoUtil {
     }
 
     public static byte[] hexToBytes(String hex) {
-        hex = hex.length()%2 != 0?"0"+hex:hex;
+        hex = hex.length() % 2 != 0 ? "0" + hex : hex;
 
         byte[] b = new byte[hex.length() / 2];
 
@@ -38,6 +39,15 @@ public class NanoUtil {
             b[i] = (byte) v;
         }
         return b;
+    }
+
+    public static String generateSeed() {
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder();
+        while (sb.length() < 64) {
+            sb.append(Integer.toHexString(random.nextInt()));
+        }
+        return sb.toString().toUpperCase();
     }
 
     public static String seedToPrivate(String seed) {
@@ -59,7 +69,7 @@ public class NanoUtil {
         byte[] data = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {
             data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-                    + Character.digit(s.charAt(i+1), 16));
+                    + Character.digit(s.charAt(i + 1), 16));
         }
         return data;
     }
@@ -94,7 +104,7 @@ public class NanoUtil {
         reverse(check_b);
 
         StringBuilder resultAddress = new StringBuilder();
-        resultAddress.insert(0,"xrb_");
+        resultAddress.insert(0, "xrb_");
         resultAddress.append(encodedAddress);
         resultAddress.append(encode(NanoUtil.bytesToHex(check_b)));
 
@@ -104,8 +114,8 @@ public class NanoUtil {
 
     public static String addressToPublic(String encoded_address) {
         //xrb_34bmpi65zr967cdzy4uy4twu7mqs9nrm53r1penffmuex6ruqy8nxp7ms1h1 > 8933B4083FE0E42A97FF0B7E16B9B2CEF93D31318700B328D6CF6CE931BBF8D4
-        String data = encoded_address.substring(4,56);
-        String checksum = encoded_address.substring(56,encoded_address.length());
+        String data = encoded_address.substring(4, 56);
+        String checksum = encoded_address.substring(56, encoded_address.length());
         //Log.i("addressToPublic", "data "+data);
         //Log.i("addressToPublic", "checksum "+checksum);
 
@@ -127,16 +137,14 @@ public class NanoUtil {
     public static String encode(String hex_data) {
         StringBuilder bits = new StringBuilder();
         bits.insert(0, new BigInteger(hex_data, 16).toString(2));
-        while(bits.length() < hex_data.length()*4)
-        {
-            bits.insert(0,'0');
+        while (bits.length() < hex_data.length() * 4) {
+            bits.insert(0, '0');
         }
 
         StringBuilder data = new StringBuilder();
-        data.insert(0,bits.toString());
-        while (data.length() % 5 != 0)
-        {
-            data.insert(0,'0');
+        data.insert(0, bits.toString());
+        while (data.length() % 5 != 0) {
+            data.insert(0, '0');
         }
 
         //System.out.println(data.toString());
@@ -147,28 +155,27 @@ public class NanoUtil {
             //String binval = data.substring(this_slice*5,this_slice*5+5).toString();
             //int i = Integer.parseInt(binval,2);
             //System.out.println(codeArray[i]);
-            output.append(codeCharArray[Integer.parseInt(data.substring(this_slice*5,this_slice*5+5).toString(),2)]);
+            output.append(codeCharArray[Integer.parseInt(data.substring(this_slice * 5, this_slice * 5 + 5).toString(), 2)]);
         }
         return output.toString();
     }
 
     public static String decode(String data) {
         StringBuilder bits = new StringBuilder();
-        for (int i=0; i<data.length(); i++){
-            int index = codeArray.indexOf(data.substring(i,i+1).charAt(0));
+        for (int i = 0; i < data.length(); i++) {
+            int index = codeArray.indexOf(data.substring(i, i + 1).charAt(0));
             //System.out.println(data.substring(i,i+1).charAt(0));
             //System.out.println(Integer.toBinaryString(0x20 | index).substring(1));
             bits.append(Integer.toBinaryString(0x20 | index).substring(1));
         }
         //System.out.println(bits.toString());
-        return new BigInteger(bits.toString(),2).toString(16);
+        return new BigInteger(bits.toString(), 2).toString(16);
     }
 
     //public static encodeToBase32Custom(byte[] data)
     //{
     //
     //}
-
 
 
 }

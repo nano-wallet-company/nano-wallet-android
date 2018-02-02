@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import javax.inject.Inject;
 
 import co.nano.nanowallet.BuildConfig;
+import co.nano.nanowallet.NanoUtil;
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentIntroWelcomeBinding;
 import co.nano.nanowallet.model.Credentials;
@@ -83,12 +84,10 @@ public class IntroWelcomeFragment extends BaseFragment {
     }
 
     private void createAndStoreWallet() {
-        // TODO: Create new wallet
-
         // store wallet seed
         realm.beginTransaction();
         Credentials credentials = realm.createObject(Credentials.class);
-        credentials.setSeed("abcdabcd");
+        credentials.setSeed(NanoUtil.generateSeed());
         realm.commitTransaction();
         realm.close();
     }

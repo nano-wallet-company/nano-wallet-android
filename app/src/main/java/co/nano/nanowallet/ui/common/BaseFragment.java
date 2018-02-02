@@ -14,7 +14,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.View;
 
 import co.nano.nanowallet.R;
-import co.nano.nanowallet.alarm.ClipboardAlarmReceiver;
+import co.nano.nanowallet.broadcastreceiver.ClipboardAlarmReceiver;
 import co.nano.nanowallet.ui.scan.ScanActivity;
 
 /**

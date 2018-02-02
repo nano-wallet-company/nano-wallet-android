@@ -21,18 +21,16 @@ import java.util.List;
 import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
+import co.nano.nanowallet.bus.Logout;
+import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.databinding.FragmentSettingsBinding;
 import co.nano.nanowallet.model.AvailableCurrency;
-import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.model.StringWithTag;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseDialogFragment;
-import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.common.WindowControl;
-import co.nano.nanowallet.ui.intro.IntroWelcomeFragment;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
 import io.realm.Realm;
-import io.realm.RealmResults;
 
 /**
  * Settings main screen
@@ -205,16 +203,8 @@ public class SettingsDialogFragment extends BaseDialogFragment {
                 builder.setTitle(R.string.settings_logout_alert_title)
                         .setMessage(R.string.settings_logout_alert_message)
                         .setPositiveButton(R.string.settings_logout_alert_confirm_cta, (dialog, which) -> {
-                            // delete user seed data before logging out
-                            final RealmResults<Credentials> results = realm.where(Credentials.class).findAll();
-                            realm.executeTransaction(realm1 -> {
-                                results.deleteAllFromRealm();
-                            });
-                            realm.close();
-
+                            RxBus.get().post(new Logout());
                             dismiss();
-                            // go back to welcome fragment
-                            ((WindowControl) getActivity()).getFragmentUtility().replace(new IntroWelcomeFragment(), FragmentUtility.Animation.CROSSFADE);
                         })
                         .setNegativeButton(R.string.settings_logout_alert_cancel_cta, (dialog, which) -> {
                             // do nothing which dismisses the dialog

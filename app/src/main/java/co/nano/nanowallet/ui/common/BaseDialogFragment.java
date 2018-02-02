@@ -10,7 +10,7 @@ import android.support.v4.app.DialogFragment;
 import android.view.View;
 
 import co.nano.nanowallet.R;
-import co.nano.nanowallet.alarm.ClipboardAlarmReceiver;
+import co.nano.nanowallet.broadcastreceiver.ClipboardAlarmReceiver;
 
 /**
  * Created by szeidner on 12/01/2018.

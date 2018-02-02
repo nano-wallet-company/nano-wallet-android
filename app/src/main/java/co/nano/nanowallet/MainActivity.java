@@ -12,8 +12,12 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.hwangjr.rxbus.annotation.Subscribe;
+
 import javax.inject.Inject;
 
+import co.nano.nanowallet.bus.Logout;
+import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.di.activity.ActivityComponent;
 import co.nano.nanowallet.di.activity.DaggerActivityComponent;
 import co.nano.nanowallet.model.Credentials;
@@ -26,6 +30,7 @@ import co.nano.nanowallet.websocket.RxWebSocket;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
+import io.realm.RealmResults;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements WindowControl, ActivityWithComponent {
@@ -51,7 +56,19 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         // perform dagger injections
         mActivityComponent.inject(this);
 
+        // subscribe to bus
+        RxBus.get().register(this);
+
         initUi();
+    }
+
+    @Override
+    protected void onDestroy() {
+        // unregister from bus
+        RxBus.get().unregister(this);
+        realm.close();
+
+        super.onDestroy();
     }
 
     @Override
@@ -82,11 +99,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
 
         // get wallet seed if it exists
         Credentials credentials = null;
-        try {
-            credentials = realm.where(Credentials.class).findFirst();
-        } finally {
-            realm.close();
-        }
+        credentials = realm.where(Credentials.class).findFirst();
 
         if (credentials == null) {
             // if we dont have a wallet, start the intro
@@ -148,6 +161,19 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
                 }, Throwable::printStackTrace);
 
         rxWebSocket.connect();
+    }
+
+    @Subscribe
+    public void logOut(Logout logout) {
+        // delete user seed data before logging out
+        final RealmResults<Credentials> results = realm.where(Credentials.class).findAll();
+        realm.executeTransaction(realm1 -> {
+            results.deleteAllFromRealm();
+        });
+        realm.close();
+
+        // go back to welcome fragment
+        getFragmentUtility().replace(new IntroWelcomeFragment(), FragmentUtility.Animation.CROSSFADE);
     }
 
     @Override

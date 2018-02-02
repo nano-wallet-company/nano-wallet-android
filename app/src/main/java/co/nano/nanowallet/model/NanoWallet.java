@@ -1,4 +1,4 @@
-package co.nano.nanowallet;
+package co.nano.nanowallet.model;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

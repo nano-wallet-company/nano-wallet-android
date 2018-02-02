@@ -24,7 +24,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 import co.nano.nanowallet.R;
-import co.nano.nanowallet.alarm.ClipboardAlarmReceiver;
+import co.nano.nanowallet.broadcastreceiver.ClipboardAlarmReceiver;
 import co.nano.nanowallet.databinding.FragmentReceiveBinding;
 import co.nano.nanowallet.model.Address;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;

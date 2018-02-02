@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import co.nano.nanowallet.NanoWallet;
+import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.BR;
 import co.nano.nanowallet.model.AvailableCurrency;
 

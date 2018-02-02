@@ -52,6 +52,9 @@ public class Credentials extends RealmObject {
     }
 
     public String getAddressString() {
+        if (this.privateKey == null) {
+            return "";
+        }
         return NanoUtil.publicToAddress(NanoUtil.privateToPublic(this.privateKey));
     }
 

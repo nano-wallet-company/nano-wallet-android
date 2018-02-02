@@ -1,4 +1,4 @@
-package co.nano.nanowallet.alarm;
+package co.nano.nanowallet.broadcastreceiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

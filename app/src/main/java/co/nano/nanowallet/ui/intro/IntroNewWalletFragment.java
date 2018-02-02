@@ -10,13 +10,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import javax.inject.Inject;
+
 import co.nano.nanowallet.R;
-import co.nano.nanowallet.alarm.ClipboardAlarmReceiver;
+import co.nano.nanowallet.broadcastreceiver.ClipboardAlarmReceiver;
+import co.nano.nanowallet.bus.Logout;
 import co.nano.nanowallet.databinding.FragmentIntroNewWalletBinding;
+import co.nano.nanowallet.model.Credentials;
+import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.home.HomeFragment;
+import co.nano.nanowallet.bus.RxBus;
+import io.realm.Realm;
 
 /**
  * The Intro Screen to the app
@@ -26,6 +33,10 @@ public class IntroNewWalletFragment extends BaseFragment {
     private FragmentIntroNewWalletBinding binding;
     private int currentStep = 1;
     public static String TAG = IntroNewWalletFragment.class.getSimpleName();
+    private String seed;
+
+    @Inject
+    Realm realm;
 
     /**
      * Create new instance of the fragment (handy pattern if any data needs to be passed to it)
@@ -42,6 +53,11 @@ public class IntroNewWalletFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        // init dependency injection
+        if (getActivity() instanceof ActivityWithComponent) {
+            ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
+        }
         // inflate the view
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_intro_new_wallet, container, false);
@@ -50,8 +66,21 @@ public class IntroNewWalletFragment extends BaseFragment {
         setStatusBarWhite(view);
         hideToolbar();
 
-        // TODO: Get this from wallet
-        String seed = "a16z191230bfa1234152910af968171712918919581857151181910af19".toUpperCase();
+        // get wallet seed if it exists
+        Credentials credentials = null;
+        try {
+            credentials = realm.where(Credentials.class).findFirst();
+            if (credentials != null) {
+                seed = credentials.getSeed();
+                if (seed == null) {
+                    RxBus.get().post(new Logout());
+                }
+            } else {
+                RxBus.get().post(new Logout());
+            }
+        } finally {
+            realm.close();
+        }
 
         // bind data to view
         binding.setHandlers(new ClickHandlers());
@@ -105,7 +134,7 @@ public class IntroNewWalletFragment extends BaseFragment {
         public void onClickSeed(View view) {
             // copy address to clipboard
             android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-            android.content.ClipData clip = android.content.ClipData.newPlainText(ClipboardAlarmReceiver.CLIPBOARD_NAME, binding.getSeed());
+            android.content.ClipData clip = android.content.ClipData.newPlainText(ClipboardAlarmReceiver.CLIPBOARD_NAME, seed);
             if (clipboard != null) {
                 clipboard.setPrimaryClip(clip);
             }
