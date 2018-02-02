@@ -83,31 +83,6 @@ public class HomeFragment extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
-        // init dependency injection
-        if (getActivity() instanceof ActivityWithComponent) {
-            ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
-        }
-
-        // get address to store in memory (takes some time to retrieve so run on a background thread)
-        try {
-            Credentials credentials = realm.where(Credentials.class).findFirst();
-            if (credentials != null) {
-                Credentials threadSafeCreds = realm.copyFromRealm(credentials);
-                Observable.fromCallable(threadSafeCreds::getAddressString)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(addressString -> {
-                            if (addressString.isEmpty()) {
-                                RxBus.get().post(new Logout());
-                            } else {
-                                address = new Address(addressString);
-                            }
-                        }, ExceptionHandler::handle);
-            }
-        } finally {
-            realm.close();
-        }
     }
 
     @Override
@@ -148,6 +123,11 @@ public class HomeFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        // init dependency injection
+        if (getActivity() instanceof ActivityWithComponent) {
+            ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
+        }
+
         // set status bar to blue
         setStatusBarBlue();
         setTitle("");
@@ -158,6 +138,28 @@ public class HomeFragment extends BaseFragment {
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_home, container, false);
         View view = binding.getRoot();
+
+        binding.homeReceiveButton.setEnabled(false);
+        // get address to store in memory (takes some time to retrieve so run on a background thread)
+        try {
+            Credentials credentials = realm.where(Credentials.class).findFirst();
+            if (credentials != null) {
+                Credentials threadSafeCreds = realm.copyFromRealm(credentials);
+                Observable.fromCallable(threadSafeCreds::getAddressString)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(addressString -> {
+                            if (addressString.isEmpty()) {
+                                RxBus.get().post(new Logout());
+                            } else {
+                                address = new Address(addressString);
+                                binding.homeReceiveButton.setEnabled(true);
+                            }
+                        }, ExceptionHandler::handle);
+            }
+        } finally {
+            realm.close();
+        }
 
         // bind data to view
         wallet = new NanoWallet();
