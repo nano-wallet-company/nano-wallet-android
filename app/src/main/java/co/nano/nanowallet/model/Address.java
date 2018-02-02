@@ -1,5 +1,6 @@
 package co.nano.nanowallet.model;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -7,7 +8,7 @@ import java.util.List;
  * Address class
  */
 
-public class Address {
+public class Address implements Serializable {
     private String value;
 
     public static final List<Character> VALID_ADDRESS_CHARACTERS = Arrays.asList('a','b','c','d','e','f','g','h','i','j','k','m','n','o','p','q','r','s','t','u','w','x','y','z','1','3','4','5','6','7','8','9','_');

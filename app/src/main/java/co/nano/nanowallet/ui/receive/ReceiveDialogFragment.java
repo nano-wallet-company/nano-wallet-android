@@ -23,16 +23,13 @@ import com.github.sumimakito.awesomeqr.AwesomeQRCode;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import javax.inject.Inject;
-
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.alarm.ClipboardAlarmReceiver;
 import co.nano.nanowallet.databinding.FragmentReceiveBinding;
-import co.nano.nanowallet.model.Credentials;
+import co.nano.nanowallet.model.Address;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseDialogFragment;
 import co.nano.nanowallet.ui.common.UIUtil;
-import io.realm.Realm;
 
 /**
  * Settings main screen
@@ -41,19 +38,18 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
     private FragmentReceiveBinding binding;
     public static String TAG = ReceiveDialogFragment.class.getSimpleName();
     private static final int QRCODE_SIZE = 240;
-    private final String TEMP_FILE_NAME = "nanoreceive.png";
-    private String address;
-
-    @Inject
-    Realm realm;
+    private static final String TEMP_FILE_NAME = "nanoreceive.png";
+    private static final String ADDRESS_KEY = "co.nano.nanowallet.ui.receive.ReceiveDialogFragment.Address";
+    private Address address;
 
     /**
      * Create new instance of the dialog fragment (handy pattern if any data needs to be passed to it)
      *
      * @return
      */
-    public static ReceiveDialogFragment newInstance() {
+    public static ReceiveDialogFragment newInstance(Address address) {
         Bundle args = new Bundle();
+        args.putSerializable(ADDRESS_KEY, address);
         ReceiveDialogFragment fragment = new ReceiveDialogFragment();
         fragment.setArguments(args);
         return fragment;
@@ -64,20 +60,11 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
         super.onCreate(savedInstanceState);
         setStyle(STYLE_NO_FRAME, R.style.AppTheme_Modal_Window);
 
+        address = (Address) getArguments().getSerializable(ADDRESS_KEY);
+
         // init dependency injection
         if (getActivity() instanceof ActivityWithComponent) {
             ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
-        }
-
-        // get credentials
-        Credentials credentials = null;
-        try {
-            credentials = realm.where(Credentials.class).findFirst();
-            if (credentials != null) {
-                address = credentials.getAddressString();
-            }
-        } finally {
-            realm.close();
         }
     }
 
@@ -92,11 +79,11 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
         binding.setHandlers(new ClickHandlers());
 
         // colorize address text
-        binding.receiveAddress.setText(UIUtil.getColorizedSpannable(address, getContext()));
+        binding.receiveAddress.setText(UIUtil.getColorizedSpannable(address.getLongAddress(), getContext()));
 
         // generate QR code
         new AwesomeQRCode.Renderer()
-                .contents(address)
+                .contents(address.getLongAddress())
                 .size((int) UIUtil.convertDpToPixel(QRCODE_SIZE, getContext()))
                 .margin((int) UIUtil.convertDpToPixel(20, getContext()))
                 .dotScale(0.55f)
@@ -165,7 +152,7 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
             Uri imageUri = FileProvider.getUriForFile(getContext(), "co.nano.nanowallet.fileprovider", newFile);
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            shareIntent.putExtra(Intent.EXTRA_TEXT, address);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, address.getLongAddress());
             shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
             shareIntent.setDataAndType(imageUri, getActivity().getContentResolver().getType(imageUri));
             shareIntent.setType("image/*");
@@ -175,7 +162,7 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
         public void onClickCopy(View view) {
             // copy address to clipboard
             android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-            android.content.ClipData clip = android.content.ClipData.newPlainText(ClipboardAlarmReceiver.CLIPBOARD_NAME, address);
+            android.content.ClipData clip = android.content.ClipData.newPlainText(ClipboardAlarmReceiver.CLIPBOARD_NAME, address.getLongAddress());
             if (clipboard != null) {
                 clipboard.setPrimaryClip(clip);
             }

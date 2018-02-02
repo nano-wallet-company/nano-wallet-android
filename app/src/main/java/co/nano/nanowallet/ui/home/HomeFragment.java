@@ -26,6 +26,8 @@ import javax.inject.Inject;
 import co.nano.nanowallet.NanoWallet;
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentHomeBinding;
+import co.nano.nanowallet.model.Address;
+import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseDialogFragment;
 import co.nano.nanowallet.ui.common.BaseFragment;
@@ -34,7 +36,12 @@ import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.receive.ReceiveDialogFragment;
 import co.nano.nanowallet.ui.send.SendFragment;
 import co.nano.nanowallet.ui.settings.SettingsDialogFragment;
+import co.nano.nanowallet.util.ExceptionHandler;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import io.realm.Realm;
 
 /**
  * Home Wallet Screen
@@ -50,9 +57,13 @@ public class HomeFragment extends BaseFragment {
     private WalletController controller;
     private NanoWallet wallet = new NanoWallet();
     public static String TAG = HomeFragment.class.getSimpleName();
+    private Address address;
 
     @Inject
     SharedPreferencesUtil sharedPreferencesUtil;
+
+    @Inject
+    Realm realm;
 
     /**
      * Create new instance of the fragment (handy pattern if any data needs to be passed to it)
@@ -70,12 +81,32 @@ public class HomeFragment extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        // init dependency injection
+        if (getActivity() instanceof ActivityWithComponent) {
+            ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
+        }
+
+        // get address to store in memory (takes some time to retrieve so run on a background thread)
+        try {
+            Credentials credentials = realm.where(Credentials.class).findFirst();
+            if (credentials != null) {
+                Observable.just(credentials.getAddressString())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(addressString -> {
+                            address = new Address(addressString);
+                        }, ExceptionHandler::handle);
+            }
+        } finally {
+            realm.close();
+        }
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_home, menu);
-        super.onCreateOptionsMenu(menu,inflater);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -109,10 +140,6 @@ public class HomeFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // init dependency injection
-        if (getActivity() instanceof ActivityWithComponent) {
-            ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
-        }
 
         // set status bar to blue
         setStatusBarBlue();
@@ -204,7 +231,7 @@ public class HomeFragment extends BaseFragment {
         public void onClickReceive(View view) {
             if (getActivity() instanceof WindowControl) {
                 // show receive dialog
-                ReceiveDialogFragment dialog = ReceiveDialogFragment.newInstance();
+                ReceiveDialogFragment dialog = ReceiveDialogFragment.newInstance(address);
                 dialog.show(((WindowControl) getActivity()).getFragmentUtility().getFragmentManager(),
                         ReceiveDialogFragment.TAG);
 
@@ -227,6 +254,7 @@ public class HomeFragment extends BaseFragment {
         /**
          * Execute all pending transactions and set up a listener to set the status bar to
          * blue when the dialog is closed
+         *
          * @param dialog
          */
         private void resetStatusBar(BaseDialogFragment dialog) {
