@@ -42,12 +42,13 @@ public class NanoUtil {
     }
 
     public static String generateSeed() {
+        int numchars = 64;
         Random random = new Random();
         StringBuilder sb = new StringBuilder();
-        while (sb.length() < 64) {
+        while (sb.length() < numchars) {
             sb.append(Integer.toHexString(random.nextInt()));
         }
-        return sb.toString().toUpperCase();
+        return sb.toString().substring(0, numchars).toUpperCase();
     }
 
     public static String seedToPrivate(String seed) {

@@ -64,11 +64,11 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
+
         // unregister from bus
         RxBus.get().unregister(this);
         realm.close();
-
-        super.onDestroy();
     }
 
     @Override
@@ -167,10 +167,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
     public void logOut(Logout logout) {
         // delete user seed data before logging out
         final RealmResults<Credentials> results = realm.where(Credentials.class).findAll();
-        realm.executeTransaction(realm1 -> {
-            results.deleteAllFromRealm();
-        });
-        realm.close();
+        realm.executeTransaction(realm1 -> results.deleteAllFromRealm());
 
         // go back to welcome fragment
         getFragmentUtility().replace(new IntroWelcomeFragment(), FragmentUtility.Animation.CROSSFADE);

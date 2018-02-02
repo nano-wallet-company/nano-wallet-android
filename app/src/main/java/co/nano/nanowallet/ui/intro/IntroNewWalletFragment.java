@@ -12,9 +12,9 @@ import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
+import co.nano.nanowallet.NanoUtil;
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.broadcastreceiver.ClipboardAlarmReceiver;
-import co.nano.nanowallet.bus.Logout;
 import co.nano.nanowallet.databinding.FragmentIntroNewWalletBinding;
 import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
@@ -22,7 +22,6 @@ import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.home.HomeFragment;
-import co.nano.nanowallet.bus.RxBus;
 import io.realm.Realm;
 
 /**
@@ -66,21 +65,12 @@ public class IntroNewWalletFragment extends BaseFragment {
         setStatusBarWhite(view);
         hideToolbar();
 
-        // get wallet seed if it exists
-        Credentials credentials = null;
-        try {
-            credentials = realm.where(Credentials.class).findFirst();
-            if (credentials != null) {
-                seed = credentials.getSeed();
-                if (seed == null) {
-                    RxBus.get().post(new Logout());
-                }
-            } else {
-                RxBus.get().post(new Logout());
-            }
-        } finally {
-            realm.close();
-        }
+        // create wallet seed
+        realm.executeTransaction(realm -> {
+            Credentials credentials = realm.createObject(Credentials.class);
+            credentials.setSeed(NanoUtil.generateSeed());
+            seed = credentials.getSeed();
+        });
 
         // bind data to view
         binding.setHandlers(new ClickHandlers());
