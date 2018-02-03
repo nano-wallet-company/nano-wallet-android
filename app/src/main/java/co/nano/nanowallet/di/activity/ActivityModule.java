@@ -3,6 +3,7 @@ package co.nano.nanowallet.di.activity;
 import android.content.Context;
 
 import dagger.Module;
+import dagger.Provides;
 
 @Module
 public class ActivityModule {
@@ -12,4 +13,8 @@ public class ActivityModule {
         mContext = context;
     }
 
+    @Provides
+    Context providesActivityContext() {
+        return mContext;
+    }
 }

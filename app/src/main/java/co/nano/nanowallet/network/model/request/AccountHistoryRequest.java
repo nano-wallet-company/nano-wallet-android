@@ -3,12 +3,13 @@ package co.nano.nanowallet.network.model.request;
 import com.google.gson.annotations.SerializedName;
 
 import co.nano.nanowallet.network.Actions;
+import co.nano.nanowallet.network.model.BaseNetworkModel;
 
 /**
  * Retrieve account history
  */
 
-public class AccountHistoryRequest {
+public class AccountHistoryRequest extends BaseNetworkModel {
     @SerializedName("action")
     private String action;
 

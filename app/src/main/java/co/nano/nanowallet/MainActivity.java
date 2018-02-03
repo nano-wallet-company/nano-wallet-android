@@ -20,8 +20,10 @@ import co.nano.nanowallet.bus.CreatePK;
 import co.nano.nanowallet.bus.Logout;
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.di.activity.ActivityComponent;
+import co.nano.nanowallet.di.activity.ActivityModule;
 import co.nano.nanowallet.di.activity.DaggerActivityComponent;
 import co.nano.nanowallet.model.Credentials;
+import co.nano.nanowallet.network.AccountService;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.common.WindowControl;
@@ -34,7 +36,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import io.realm.RealmResults;
-import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements WindowControl, ActivityWithComponent {
     private FragmentUtility mFragmentUtility;
@@ -46,6 +47,9 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
     @Inject
     Realm realm;
 
+    @Inject
+    AccountService accountService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         mActivityComponent = DaggerActivityComponent
                 .builder()
                 .applicationComponent(NanoApplication.getApplication(this).getApplicationComponent())
+                .activityModule(new ActivityModule(this))
                 .build();
 
         // perform dagger injections
@@ -108,62 +113,12 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
             // if we dont have a wallet, start the intro
             mFragmentUtility.replace(new IntroWelcomeFragment());
         } else {
-            // if we do have a wallet, load and configure
+            // if we do have a wallet, initialize web socket
+            accountService.open();
+
+            // go to home screen
             mFragmentUtility.replace(new HomeFragment());
         }
-
-        connectWebSocket();
-    }
-
-    private void connectWebSocket() {
-        rxWebSocket = new RxWebSocket("wss://raicast.lightrai.com:443");
-
-        rxWebSocket.onOpen()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(socketOpenEvent -> {
-                    Timber.i("Opened");
-                    rxWebSocket.sendMessage("{\"action\":\"account_subscribe\",\"account\":\"xrb_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3\"}");
-                    rxWebSocket.sendMessage("{\"action\":\"block_count\"}");
-                    rxWebSocket.sendMessage("{\"action\":\"price_data\",\"currency\":\"usd\"}");
-                }, Throwable::printStackTrace);
-
-        rxWebSocket.onClosed()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(socketClosedEvent -> {
-                    Timber.i("Closed: " + socketClosedEvent.getReason());
-                }, Throwable::printStackTrace);
-
-        rxWebSocket.onClosing()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(socketClosingEvent -> {
-                    Timber.i("Closing: " + socketClosingEvent.getReason());
-                }, Throwable::printStackTrace);
-
-        rxWebSocket.onTextMessage()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(socketMessageEvent -> {
-                    Timber.i(socketMessageEvent.getText());
-                }, Throwable::printStackTrace);
-
-        rxWebSocket.onBinaryMessage()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(socketMessageEvent -> {
-                    Timber.i(socketMessageEvent.getText());
-                }, Throwable::printStackTrace);
-
-        rxWebSocket.onFailure()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(socketFailureEvent -> {
-                    Timber.i("Error: " + socketFailureEvent.getException().getMessage());
-                }, Throwable::printStackTrace);
-
-        rxWebSocket.connect();
     }
 
     @Subscribe
