@@ -14,6 +14,7 @@ import io.realm.RealmObject;
 public class Credentials extends RealmObject {
     private String seed;
     private String privateKey;
+    private String publicKey;
 
     public static final List<Character> VALID_SEED_CHARACTERS = Arrays.asList('a','b','c','d','e','f','0','1','2','3','4','5','6','7','8','9');
 
@@ -43,8 +44,12 @@ public class Credentials extends RealmObject {
         this.privateKey = privateKey;
     }
 
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
+    }
+
     public String getPublicKey() {
-        return NanoUtil.privateToPublic(getPrivateKey());
+        return publicKey;
     }
 
     public Address getAddress() {
@@ -52,10 +57,10 @@ public class Credentials extends RealmObject {
     }
 
     public String getAddressString() {
-        if (this.privateKey == null) {
+        if (this.publicKey == null) {
             return "";
         }
-        return NanoUtil.publicToAddress(NanoUtil.privateToPublic(this.privateKey));
+        return NanoUtil.publicToAddress(publicKey);
     }
 
     public static boolean isValidSeed(String seed) {

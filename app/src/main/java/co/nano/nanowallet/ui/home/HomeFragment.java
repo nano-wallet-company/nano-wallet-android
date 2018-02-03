@@ -24,11 +24,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
-import co.nano.nanowallet.bus.Logout;
-import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.databinding.FragmentHomeBinding;
 import co.nano.nanowallet.model.Address;
-import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseDialogFragment;
@@ -38,11 +35,7 @@ import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.receive.ReceiveDialogFragment;
 import co.nano.nanowallet.ui.send.SendFragment;
 import co.nano.nanowallet.ui.settings.SettingsDialogFragment;
-import co.nano.nanowallet.util.ExceptionHandler;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 
 /**
@@ -120,6 +113,12 @@ public class HomeFragment extends BaseFragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        realm.close();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
@@ -138,28 +137,6 @@ public class HomeFragment extends BaseFragment {
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_home, container, false);
         View view = binding.getRoot();
-
-        binding.homeReceiveButton.setEnabled(false);
-        // get address to store in memory (takes some time to retrieve so run on a background thread)
-        try {
-            Credentials credentials = realm.where(Credentials.class).findFirst();
-            if (credentials != null) {
-                Credentials threadSafeCreds = realm.copyFromRealm(credentials);
-                Observable.fromCallable(threadSafeCreds::getAddressString)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(addressString -> {
-                            if (addressString.isEmpty()) {
-                                RxBus.get().post(new Logout());
-                            } else {
-                                address = new Address(addressString);
-                                binding.homeReceiveButton.setEnabled(true);
-                            }
-                        }, ExceptionHandler::handle);
-            }
-        } finally {
-            realm.close();
-        }
 
         // bind data to view
         wallet = new NanoWallet();
@@ -240,8 +217,7 @@ public class HomeFragment extends BaseFragment {
         public void onClickReceive(View view) {
             if (getActivity() instanceof WindowControl) {
                 // show receive dialog
-                // TODO: Add countdown latch here to ensure that address is not null or just load address from receive dialog fragment?
-                ReceiveDialogFragment dialog = ReceiveDialogFragment.newInstance(address);
+                ReceiveDialogFragment dialog = ReceiveDialogFragment.newInstance();
                 dialog.show(((WindowControl) getActivity()).getFragmentUtility().getFragmentManager(),
                         ReceiveDialogFragment.TAG);
 

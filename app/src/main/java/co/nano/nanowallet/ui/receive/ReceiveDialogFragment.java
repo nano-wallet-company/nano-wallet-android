@@ -23,13 +23,17 @@ import com.github.sumimakito.awesomeqr.AwesomeQRCode;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import javax.inject.Inject;
+
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.broadcastreceiver.ClipboardAlarmReceiver;
 import co.nano.nanowallet.databinding.FragmentReceiveBinding;
 import co.nano.nanowallet.model.Address;
+import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseDialogFragment;
 import co.nano.nanowallet.ui.common.UIUtil;
+import io.realm.Realm;
 
 /**
  * Settings main screen
@@ -42,14 +46,16 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
     private static final String ADDRESS_KEY = "co.nano.nanowallet.ui.receive.ReceiveDialogFragment.Address";
     private Address address;
 
+    @Inject
+    Realm realm;
+
     /**
      * Create new instance of the dialog fragment (handy pattern if any data needs to be passed to it)
      *
      * @return
      */
-    public static ReceiveDialogFragment newInstance(Address address) {
+    public static ReceiveDialogFragment newInstance() {
         Bundle args = new Bundle();
-        args.putSerializable(ADDRESS_KEY, address);
         ReceiveDialogFragment fragment = new ReceiveDialogFragment();
         fragment.setArguments(args);
         return fragment;
@@ -59,18 +65,22 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(STYLE_NO_FRAME, R.style.AppTheme_Modal_Window);
-
-        address = (Address) getArguments().getSerializable(ADDRESS_KEY);
-
-        // init dependency injection
-        if (getActivity() instanceof ActivityWithComponent) {
-            ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
-        }
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        // init dependency injection
+        if (getActivity() instanceof ActivityWithComponent) {
+            ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
+        }
+
+        // get data
+        Credentials credentials = null;
+        credentials = realm.where(Credentials.class).findFirst();
+        if (credentials != null) {
+            address = new Address(credentials.getAddressString());
+        }
 
         // inflate the view
         binding = DataBindingUtil.inflate(
