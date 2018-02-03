@@ -7,13 +7,12 @@ import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+import co.nano.nanowallet.bus.RxBus;
+
+
 /**
- * Created by admin on 12/22/2017.
+ * Nano wallet that holds transactions and current prices
  */
-
-
-
-
 public class NanoWallet {
     public static final BigInteger baseOfDivider = new BigInteger("10");
     public static final BigInteger xrbDivider = baseOfDivider.pow(30);
@@ -29,6 +28,10 @@ public class NanoWallet {
     String seed;
     Integer seedIndex;
     String privateKey;
+
+    public NanoWallet() {
+        RxBus.get().register(this);
+    }
 
     public String getAccountBalanceNano() {
         return formatBalance(accountBalance);
@@ -52,5 +55,9 @@ public class NanoWallet {
 
     public void setAccountBalance(BigDecimal accountBalance) {
         this.accountBalance = accountBalance;
+    }
+
+    public void close() {
+        RxBus.get().unregister(this);
     }
 }

@@ -140,16 +140,12 @@ public class ED25519 {
 
     public static byte[] publickey(byte[] sk) {
         byte[] h = H(sk);
-        // System.out.println("publickey open with h=" + test.getHex(h));
         BigInteger a = BigInteger.valueOf(2).pow(b - 2);
         for (int i = 3; i < (b - 2); i++) {
             BigInteger apart = BigInteger.valueOf(2).pow(i).multiply(BigInteger.valueOf(bit(h, i)));
-            // System.out.println("publickey apart="+apart);
             a = a.add(apart);
         }
         BigInteger[] A = scalarmult(B, a);
-        // System.out.println("publickey close with A="+A[0]+","+A[1]+"
-        // out="+test.getHex(encodepoint(A)));
         return encodepoint(A);
     }
 

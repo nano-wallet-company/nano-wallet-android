@@ -179,6 +179,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
     @Subscribe
     public void generatePublicKey(CreatePK createPK) {
         // create public key on background thread
+        long lStartTime = System.nanoTime();
         Credentials credentials = realm.where(Credentials.class).findFirst();
         if (credentials != null) {
             Credentials pk = realm.copyFromRealm(credentials);
@@ -190,6 +191,9 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
                         realm.executeTransaction(realm -> {
                             credentials.setPublicKey(o);
                         });
+                        long lEndTime = System.nanoTime();
+                        long output = lEndTime - lStartTime;
+                        System.out.println("Private to Public: " + output / 1000000);
                     }, ExceptionHandler::handle);
         }
     }
