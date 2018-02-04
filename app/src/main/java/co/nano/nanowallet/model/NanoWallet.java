@@ -1,13 +1,24 @@
 package co.nano.nanowallet.model;
 
+import android.content.Context;
+
+import com.hwangjr.rxbus.annotation.Subscribe;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 import co.nano.nanowallet.bus.RxBus;
+import co.nano.nanowallet.bus.WalletHistoryUpdate;
+import co.nano.nanowallet.network.model.response.AccountHistoryResponse;
+import co.nano.nanowallet.network.model.response.AccountHistoryResponseItem;
+import co.nano.nanowallet.util.SharedPreferencesUtil;
 
 
 /**
@@ -29,10 +40,33 @@ public class NanoWallet {
     Integer seedIndex;
     String privateKey;
 
-    public NanoWallet() {
+
+    private Context context;
+    private List<AccountHistoryResponseItem> accountHistory;
+
+    @Inject
+    SharedPreferencesUtil sharedPreferencesUtil;
+
+    public NanoWallet(Context context) {
+        accountBalance = new BigDecimal("0.0");
         RxBus.get().register(this);
     }
 
+    /**
+     * Receive a history update
+     * @param accountHistoryResponse
+     */
+    @Subscribe
+    public void receiveHistory(AccountHistoryResponse accountHistoryResponse) {
+        accountHistory = accountHistoryResponse.getHistory();
+        RxBus.get().post(new WalletHistoryUpdate());
+    }
+
+    public List<AccountHistoryResponseItem> getAccountHistory() {
+        return accountHistory;
+    }
+
+    // old methods
     public String getAccountBalanceNano() {
         return formatBalance(accountBalance);
     }
@@ -59,5 +93,6 @@ public class NanoWallet {
 
     public void close() {
         RxBus.get().unregister(this);
+        context = null;
     }
 }

@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.model.Address;
 import co.nano.nanowallet.model.Credentials;
+import co.nano.nanowallet.network.model.Actions;
 import co.nano.nanowallet.network.model.BaseNetworkModel;
 import co.nano.nanowallet.network.model.request.AccountHistoryRequest;
 import co.nano.nanowallet.network.model.request.CurrentPriceRequest;
@@ -135,8 +136,8 @@ public class AccountService {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(socketMessageEvent -> {
-                    Timber.i(socketMessageEvent.getText());
                     try {
+                        // post whatever the response type is to the bus
                         RxBus.get().post(gson.fromJson(socketMessageEvent.getText(), BaseNetworkModel.class));
                     } catch (JsonSyntaxException e) {
                         ExceptionHandler.handle(e);
@@ -154,7 +155,7 @@ public class AccountService {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(socketFailureEvent -> {
-                    Timber.i("Error: " + socketFailureEvent.getException().getMessage());
+                    Timber.e("Error: " + socketFailureEvent.getException().getMessage());
                 }, Throwable::printStackTrace);
 
         rxWebSocket.connect();

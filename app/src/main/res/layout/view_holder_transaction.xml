@@ -6,8 +6,8 @@
     <data>
         <!-- Data -->
         <variable
-            name="transaction"
-            type="co.nano.nanowallet.ui.home.Transaction" />
+            name="accountHistoryItem"
+            type="co.nano.nanowallet.network.model.response.AccountHistoryResponseItem" />
         <variable
             name="currency"
             type="co.nano.nanowallet.ui.home.CurrencyPagerEnum" />
@@ -27,7 +27,7 @@
             app:layout_constraintBottom_toTopOf="@+id/home_transaction_guideline_horiz"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/home_transaction_guideline_horiz"
-            app:srcCompat="@{transaction.send ? @drawable/ic_send : @drawable/ic_receive}"
+            app:srcCompat="@{accountHistoryItem.isSend ? @drawable/ic_send : @drawable/ic_receive}"
             tools:ignore="UnusedAttribute" />
 
         <TextView
@@ -36,9 +36,9 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="17dp"
             android:layout_marginStart="17dp"
-            android:drawableLeft="@{transaction.send ? @drawable/ic_currency_nano_blue : @drawable/ic_currency_nano_gray}"
+            android:drawableLeft="@{accountHistoryItem.isSend ? @drawable/ic_currency_nano_blue : @drawable/ic_currency_nano_gray}"
             android:drawablePadding="3dp"
-            android:drawableStart="@{transaction.send ? @drawable/ic_currency_nano_blue : @drawable/ic_currency_nano_gray}"
+            android:drawableStart="@{accountHistoryItem.isSend ? @drawable/ic_currency_nano_blue : @drawable/ic_currency_nano_gray}"
             app:layout_constraintBottom_toTopOf="@+id/home_transaction_guideline_horiz"
             app:layout_constraintStart_toEndOf="@+id/transaction_type"
             app:layout_constraintTop_toTopOf="@+id/home_transaction_guideline_horiz" />
@@ -48,23 +48,23 @@
             style="@style/TextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{transaction.amount}"
+            android:text="@{accountHistoryItem.amount}"
             tools:text="2323.438"
             app:layout_constraintBottom_toTopOf="@+id/home_transaction_guideline_horiz"
             app:layout_constraintStart_toEndOf="@+id/transaction_symbol"
             app:layout_constraintTop_toTopOf="@+id/home_transaction_guideline_horiz"
             app:layout_constraintVertical_chainStyle="packed" />
 
-        <TextView
-            android:id="@+id/transaction_date"
-            style="@style/TextStyle13"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            android:text="@{transaction.timestamp}"
-            tools:text="1 min ago"
-            app:layout_constraintBottom_toTopOf="@+id/home_transaction_guideline_horiz"
-            app:layout_constraintStart_toEndOf="@+id/home_transaction_guideline_vert"
-            app:layout_constraintTop_toTopOf="@+id/home_transaction_guideline_horiz" />
+        <!--<TextView-->
+            <!--android:id="@+id/transaction_date"-->
+            <!--style="@style/TextStyle13"-->
+            <!--android:layout_width="70dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="@{transaction.timestamp}"-->
+            <!--tools:text="1 min ago"-->
+            <!--app:layout_constraintBottom_toTopOf="@+id/home_transaction_guideline_horiz"-->
+            <!--app:layout_constraintStart_toEndOf="@+id/home_transaction_guideline_vert"-->
+            <!--app:layout_constraintTop_toTopOf="@+id/home_transaction_guideline_horiz" />-->
 
         <TextView
             android:id="@+id/transaction_address"
@@ -73,10 +73,10 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
-            android:text="@{transaction.address}"
+            android:text="@{accountHistoryItem.addressShort}"
             tools:text="3gntu … p7ijg"
             app:layout_constraintBottom_toTopOf="@+id/home_transaction_guideline_horiz"
-            app:layout_constraintStart_toEndOf="@+id/transaction_date"
+            app:layout_constraintStart_toEndOf="@+id/transaction_amount"
             app:layout_constraintTop_toTopOf="@+id/home_transaction_guideline_horiz" />
 
         <android.support.constraint.Guideline

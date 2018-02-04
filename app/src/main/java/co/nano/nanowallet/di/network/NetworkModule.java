@@ -9,7 +9,6 @@ import dagger.Provides;
 
 @Module
 public class NetworkModule {
-
     @Provides
     @ActivityScope
     AccountService providesAccountService(Context context) {

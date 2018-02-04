@@ -3,12 +3,14 @@ package co.nano.nanowallet;
 import android.app.Application;
 import android.content.Context;
 
+import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.Stetho;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
 import co.nano.nanowallet.di.application.ApplicationComponent;
 import co.nano.nanowallet.di.application.ApplicationModule;
 import co.nano.nanowallet.di.application.DaggerApplicationComponent;
+import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
 import timber.log.Timber;
 
@@ -26,6 +28,9 @@ public class NanoApplication extends Application {
 
         // initialize Realm database
         Realm.init(this);
+
+        // initialize crashlytics
+        Fabric.with(this, new Crashlytics());
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());

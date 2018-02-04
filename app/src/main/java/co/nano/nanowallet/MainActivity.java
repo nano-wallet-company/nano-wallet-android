@@ -23,6 +23,7 @@ import co.nano.nanowallet.di.activity.ActivityComponent;
 import co.nano.nanowallet.di.activity.ActivityModule;
 import co.nano.nanowallet.di.activity.DaggerActivityComponent;
 import co.nano.nanowallet.model.Credentials;
+import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.network.AccountService;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.FragmentUtility;
@@ -49,6 +50,9 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
 
     @Inject
     AccountService accountService;
+
+    @Inject
+    NanoWallet nanoWallet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

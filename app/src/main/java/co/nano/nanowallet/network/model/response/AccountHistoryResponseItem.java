@@ -1,6 +1,13 @@
 package co.nano.nanowallet.network.model.response;
 
+import android.graphics.Color;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+
 import com.google.gson.annotations.SerializedName;
+
+import co.nano.nanowallet.network.model.BlockTypes;
 
 /**
  * Account History Item
@@ -47,6 +54,21 @@ public class AccountHistoryResponseItem {
         return account;
     }
 
+    public String getAddressShort() {
+        StringBuilder sb = new StringBuilder();
+        // take first 5 characters
+        // then an ellipsis
+        // then the last 5 characters of the address
+        sb.append(account.substring(0, 5));
+        sb.append(" … ");
+        sb.append(account.substring(account.length() - 5, account.length()));
+        Spannable s = new SpannableString(sb.toString());
+        s.setSpan(new ForegroundColorSpan(Color.parseColor("#4a90e2")), 0, 5, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        s.setSpan(new ForegroundColorSpan(Color.parseColor("#e1990e")), 8, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        return s.toString();
+    }
+
     public void setAccount(String account) {
         this.account = account;
     }
@@ -65,5 +87,9 @@ public class AccountHistoryResponseItem {
 
     public void setHash(String hash) {
         this.hash = hash;
+    }
+
+    public boolean isSend() {
+        return this.type.equals(BlockTypes.SEND.toString());
     }
 }
