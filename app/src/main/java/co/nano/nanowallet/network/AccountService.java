@@ -14,8 +14,6 @@ import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.network.model.Actions;
 import co.nano.nanowallet.network.model.BaseNetworkModel;
 import co.nano.nanowallet.network.model.request.AccountHistoryRequest;
-import co.nano.nanowallet.network.model.request.CurrentPriceRequest;
-import co.nano.nanowallet.network.model.request.SubscribeRequest;
 import co.nano.nanowallet.network.model.response.AccountHistoryResponse;
 import co.nano.nanowallet.network.model.response.CurrentPriceResponse;
 import co.nano.nanowallet.network.model.response.SubscribeResponse;
@@ -113,9 +111,9 @@ public class AccountService {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(socketOpenEvent -> {
                     Timber.i("Opened");
-                    rxWebSocket.sendMessage(gson, new SubscribeRequest(address.getLongAddress(), localCurrency)).subscribe();
-                    rxWebSocket.sendMessage(gson, new CurrentPriceRequest(localCurrency)).subscribe();
-                    rxWebSocket.sendMessage(gson, new AccountHistoryRequest(address.getLongAddress(), 10)).subscribe();
+//                    rxWebSocket.sendMessage(gson, new SubscribeRequest(address.getLongAddress(), localCurrency)).subscribe();
+//                    rxWebSocket.sendMessage(gson, new CurrentPriceRequest(localCurrency)).subscribe();
+//                    rxWebSocket.sendMessage(gson, new AccountHistoryRequest(address.getLongAddress(), 10)).subscribe();
                 }, ExceptionHandler::handle);
 
         rxWebSocket.onClosed()

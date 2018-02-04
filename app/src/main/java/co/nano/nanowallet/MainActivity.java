@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
     private TextView mToolbarTitle;
     protected ActivityComponent mActivityComponent;
     private RxWebSocket rxWebSocket;
+    private Credentials credentials = null;
 
     @Inject
     Realm realm;
@@ -81,7 +82,20 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         // unregister from bus
         RxBus.get().unregister(this);
         realm.close();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
         accountService.close();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (credentials != null) {
+            accountService.open();
+        }
     }
 
     @Override
