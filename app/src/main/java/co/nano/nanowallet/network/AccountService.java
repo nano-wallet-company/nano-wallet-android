@@ -116,21 +116,14 @@ public class AccountService {
                     rxWebSocket.sendMessage(gson, new SubscribeRequest(address.getLongAddress(), localCurrency)).subscribe();
                     rxWebSocket.sendMessage(gson, new CurrentPriceRequest(localCurrency)).subscribe();
                     rxWebSocket.sendMessage(gson, new AccountHistoryRequest(address.getLongAddress(), 10)).subscribe();
-                }, Throwable::printStackTrace);
+                }, ExceptionHandler::handle);
 
         rxWebSocket.onClosed()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(socketClosedEvent -> {
                     Timber.i("Closed: " + socketClosedEvent.getReason());
-                }, Throwable::printStackTrace);
-
-        rxWebSocket.onClosing()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(socketClosingEvent -> {
-                    Timber.i("Closing: " + socketClosingEvent.getReason());
-                }, Throwable::printStackTrace);
+                }, ExceptionHandler::handle);
 
         rxWebSocket.onTextMessage()
                 .subscribeOn(Schedulers.io())
@@ -142,21 +135,14 @@ public class AccountService {
                     } catch (JsonSyntaxException e) {
                         ExceptionHandler.handle(e);
                     }
-                }, Throwable::printStackTrace);
-
-        rxWebSocket.onBinaryMessage()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(socketMessageEvent -> {
-                    Timber.i(socketMessageEvent.getText());
-                }, Throwable::printStackTrace);
+                }, ExceptionHandler::handle);
 
         rxWebSocket.onFailure()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(socketFailureEvent -> {
                     Timber.e("Error: " + socketFailureEvent.getException().getMessage());
-                }, Throwable::printStackTrace);
+                }, ExceptionHandler::handle);
 
         rxWebSocket.connect();
     }

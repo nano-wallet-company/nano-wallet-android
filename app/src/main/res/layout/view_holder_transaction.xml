@@ -48,7 +48,7 @@
             style="@style/TextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{accountHistoryItem.amount}"
+            android:text="@{accountHistoryItem.formattedAmount}"
             tools:text="2323.438"
             app:layout_constraintBottom_toTopOf="@+id/home_transaction_guideline_horiz"
             app:layout_constraintStart_toEndOf="@+id/transaction_symbol"

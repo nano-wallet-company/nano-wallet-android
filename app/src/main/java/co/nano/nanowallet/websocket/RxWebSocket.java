@@ -43,7 +43,7 @@ public class RxWebSocket {
 
     private Flowable<SocketEvent> getEventSource() {
         return socketEventProcessor.onErrorResumeNext(throwable -> {
-            Timber.e("RxWebSocket EventSubject internal error occured.");
+            Timber.e("RxWebSocket EventSubject internal error occurred.");
             Timber.e(throwable.getMessage());
             throwable.printStackTrace();
             socketEventProcessor = PublishProcessor.create();

@@ -8,6 +8,7 @@ import android.text.style.ForegroundColorSpan;
 import com.google.gson.annotations.SerializedName;
 
 import co.nano.nanowallet.network.model.BlockTypes;
+import co.nano.nanowallet.util.NumberUtil;
 
 /**
  * Account History Item
@@ -54,7 +55,7 @@ public class AccountHistoryResponseItem {
         return account;
     }
 
-    public String getAddressShort() {
+    public Spannable getAddressShort() {
         StringBuilder sb = new StringBuilder();
         // take first 5 characters
         // then an ellipsis
@@ -63,10 +64,12 @@ public class AccountHistoryResponseItem {
         sb.append(" … ");
         sb.append(account.substring(account.length() - 5, account.length()));
         Spannable s = new SpannableString(sb.toString());
+
+        // colorize the string
         s.setSpan(new ForegroundColorSpan(Color.parseColor("#4a90e2")), 0, 5, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         s.setSpan(new ForegroundColorSpan(Color.parseColor("#e1990e")), 8, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        return s.toString();
+        return s;
     }
 
     public void setAccount(String account) {
@@ -75,6 +78,10 @@ public class AccountHistoryResponseItem {
 
     public String getAmount() {
         return amount;
+    }
+
+    public String getFormattedAmount() {
+        return NumberUtil.getRawAsUsableString(amount);
     }
 
     public void setAmount(String amount) {
