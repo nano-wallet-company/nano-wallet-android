@@ -2,15 +2,27 @@ package co.nano.nanowallet.network;
 
 import android.content.Context;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
+
 import javax.inject.Inject;
 
+import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.model.Address;
 import co.nano.nanowallet.model.Credentials;
+import co.nano.nanowallet.network.model.BaseNetworkModel;
+import co.nano.nanowallet.network.model.request.AccountHistoryRequest;
 import co.nano.nanowallet.network.model.request.CurrentPriceRequest;
 import co.nano.nanowallet.network.model.request.SubscribeRequest;
+import co.nano.nanowallet.network.model.response.AccountHistoryResponse;
+import co.nano.nanowallet.network.model.response.CurrentPriceResponse;
+import co.nano.nanowallet.network.model.response.SubscribeResponse;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
+import co.nano.nanowallet.util.ExceptionHandler;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
 import co.nano.nanowallet.websocket.RxWebSocket;
+import io.gsonfire.GsonFireBuilder;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
@@ -26,6 +38,9 @@ public class AccountService {
     private static final String CONNECTION_URL = "wss://raicast.lightrai.com:443";
     private Address address;
     private String localCurrency;
+    private Integer count;
+    private Gson gson;
+    private TypeToken<BaseNetworkModel> requestListTypeToken;
 
     @Inject
     Realm realm;
@@ -38,6 +53,41 @@ public class AccountService {
         if (context instanceof ActivityWithComponent) {
             ((ActivityWithComponent) context).getActivityComponent().inject(this);
         }
+
+        // configure gson to detect and set proper types
+        GsonFireBuilder builder = new GsonFireBuilder()
+                .registerPreProcessor(BaseNetworkModel.class, (clazz, src, gson) -> {
+                    // figure out the response type based on what fields are in the response
+                    if (src.isJsonObject() && src.getAsJsonObject().get("messageType") == null) {
+                        if (src.getAsJsonObject().get("frontier") != null) {
+                            // subscribe response
+                            src.getAsJsonObject().addProperty("messageType", Actions.SUBSCRIBE.toString());
+                        } else if (src.getAsJsonObject().get("history") != null) {
+                            // history response
+                            src.getAsJsonObject().addProperty("messageType", Actions.HISTORY.toString());
+                        } else if (src.getAsJsonObject().get("currency") != null) {
+                            // current price
+                            src.getAsJsonObject().addProperty("messageType", Actions.PRICE.toString());
+                        }
+                    }
+                }).registerTypeSelector(BaseNetworkModel.class, readElement -> {
+                    // return proper type based on the message type that was set
+                    if (readElement.isJsonObject() && readElement.getAsJsonObject().get("messageType") != null) {
+                        String kind = readElement.getAsJsonObject().get("messageType").getAsString();
+                        if (kind.equals(Actions.SUBSCRIBE.toString())) {
+                            return SubscribeResponse.class;
+                        } else if (kind.equals(Actions.HISTORY.toString())) {
+                            return AccountHistoryResponse.class;
+                        } else if (kind.equals(Actions.PRICE.toString())) {
+                            return CurrentPriceResponse.class;
+                        } else {
+                            return null; // returning null will trigger Gson's default behavior
+                        }
+                    } else {
+                        return null;
+                    }
+                });
+        gson = builder.createGson();
     }
 
     public void open() {
@@ -62,8 +112,9 @@ public class AccountService {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(socketOpenEvent -> {
                     Timber.i("Opened");
-                    rxWebSocket.sendMessage(new SubscribeRequest(address.getLongAddress(), localCurrency).serialize());
-                    rxWebSocket.sendMessage(new CurrentPriceRequest(localCurrency).serialize());
+                    rxWebSocket.sendMessage(gson, new SubscribeRequest(address.getLongAddress(), localCurrency)).subscribe();
+                    rxWebSocket.sendMessage(gson, new CurrentPriceRequest(localCurrency)).subscribe();
+                    rxWebSocket.sendMessage(gson, new AccountHistoryRequest(address.getLongAddress(), 10)).subscribe();
                 }, Throwable::printStackTrace);
 
         rxWebSocket.onClosed()
@@ -85,6 +136,11 @@ public class AccountService {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(socketMessageEvent -> {
                     Timber.i(socketMessageEvent.getText());
+                    try {
+                        RxBus.get().post(gson.fromJson(socketMessageEvent.getText(), BaseNetworkModel.class));
+                    } catch (JsonSyntaxException e) {
+                        ExceptionHandler.handle(e);
+                    }
                 }, Throwable::printStackTrace);
 
         rxWebSocket.onBinaryMessage()
@@ -105,6 +161,16 @@ public class AccountService {
     }
 
     /**
+     * Request the account history
+     */
+    public void requestHistory() {
+        if (address != null) {
+            rxWebSocket.sendMessage(gson, new AccountHistoryRequest(address.getLongAddress(), 10)).subscribe();
+        }
+    }
+
+
+    /**
      * Get credentials from realm and return address
      *
      * @return
@@ -117,14 +183,25 @@ public class AccountService {
 
     /**
      * Get local currency from shared preferences
+     *
      * @return
      */
     public String getLocalCurrency() {
         return sharedPreferencesUtil.getLocalCurrency().toString();
     }
 
+    /**
+     * Close the web socket
+     */
+    public void stop() {
+        rxWebSocket.close().subscribe();
+    }
+
+    /**
+     * Close the websocket and clear the context so this can be destroyed
+     */
     public void close() {
-        rxWebSocket.close();
+        stop();
         context = null;
     }
 }

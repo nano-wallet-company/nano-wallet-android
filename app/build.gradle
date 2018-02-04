@@ -53,6 +53,7 @@ dependencies {
     final CONSTRAINT_LAYOUT_VERSION = '1.1.0-beta4'
     final DAGGER_VERSION = '2.14.1'
     final ESPRESSO_VERSION = '3.0.1'
+    final GSON_FIRE_VERSION = '1.8.2'
     final GSON_VERSION = '2.8.2'
     final J_UNIT_VERSION = '4.12'
     final OKHTTP_VERSION = '3.9.1'
@@ -95,6 +96,7 @@ dependencies {
 
     // JSON Serialization
     implementation "com.google.code.gson:gson:$GSON_VERSION"
+    implementation "io.gsonfire:gson-fire:$GSON_FIRE_VERSION"
 
     // Event Bus
     implementation("com.hwangjr.rxbus:rxbus:$RXBUS_VERSION") {

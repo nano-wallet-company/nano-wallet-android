@@ -20,14 +20,14 @@ public class AccountHistoryRequest extends BaseNetworkModel {
     // value from when you subscribed, else the difference between the last block_count and
     // the current one, to save on data with the server
     @SerializedName("count")
-    private String count;
+    private Integer count;
 
     public AccountHistoryRequest() {
         this.action = Actions.HISTORY.toString();
     }
 
-    public AccountHistoryRequest(String account, String count) {
-        this.action = Actions.SUBSCRIBE.toString();
+    public AccountHistoryRequest(String account, Integer count) {
+        this.action = Actions.HISTORY.toString();
         this.account = account;
         this.count = count;
     }
@@ -48,11 +48,11 @@ public class AccountHistoryRequest extends BaseNetworkModel {
         this.account = account;
     }
 
-    public String getCount() {
+    public Integer getCount() {
         return count;
     }
 
-    public void setCount(String count) {
+    public void setCount(Integer count) {
         this.count = count;
     }
 }

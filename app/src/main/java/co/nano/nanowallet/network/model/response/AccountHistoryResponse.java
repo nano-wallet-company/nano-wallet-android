@@ -4,11 +4,13 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+import co.nano.nanowallet.network.model.BaseNetworkModel;
+
 /**
  * Account history
  */
 
-public class AccountHistoryResponse {
+public class AccountHistoryResponse extends BaseNetworkModel {
     // entries are sorted newest to oldest
     @SerializedName("history")
     private List<AccountHistoryResponseItem> history;

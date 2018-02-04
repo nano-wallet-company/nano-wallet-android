@@ -2,11 +2,13 @@ package co.nano.nanowallet.network.model.response;
 
 import com.google.gson.annotations.SerializedName;
 
+import co.nano.nanowallet.network.model.BaseNetworkModel;
+
 /**
  * Response from subscribe request
  */
 
-public class SubscribeResponse {
+public class SubscribeResponse extends BaseNetworkModel {
     // The frontier is the latest block for the account-chain
     @SerializedName("frontier")
     private String frontier;

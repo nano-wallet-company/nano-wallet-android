@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.hwangjr.rxbus.annotation.Subscribe;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,9 +26,13 @@ import java.util.concurrent.ThreadLocalRandom;
 import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
+import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.databinding.FragmentHomeBinding;
 import co.nano.nanowallet.model.Address;
+import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.model.NanoWallet;
+import co.nano.nanowallet.network.AccountService;
+import co.nano.nanowallet.network.model.response.AccountHistoryResponse;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseDialogFragment;
 import co.nano.nanowallet.ui.common.BaseFragment;
@@ -37,6 +43,7 @@ import co.nano.nanowallet.ui.send.SendFragment;
 import co.nano.nanowallet.ui.settings.SettingsDialogFragment;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
 import io.realm.Realm;
+import timber.log.Timber;
 
 /**
  * Home Wallet Screen
@@ -59,6 +66,9 @@ public class HomeFragment extends BaseFragment {
 
     @Inject
     Realm realm;
+
+    @Inject
+    AccountService accountService;
 
     /**
      * Create new instance of the fragment (handy pattern if any data needs to be passed to it)
@@ -116,6 +126,8 @@ public class HomeFragment extends BaseFragment {
     public void onDestroyView() {
         super.onDestroyView();
         realm.close();
+        // unregister from bus
+        RxBus.get().unregister(this);
     }
 
     @Override
@@ -127,11 +139,21 @@ public class HomeFragment extends BaseFragment {
             ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
         }
 
+        // subscribe to bus
+        RxBus.get().register(this);
+
         // set status bar to blue
         setStatusBarBlue();
         setTitle("");
         setTitleDrawable(R.drawable.ic_logo_toolbar);
         setBackEnabled(false);
+
+        // get data
+        Credentials credentials = null;
+        credentials = realm.where(Credentials.class).findFirst();
+        if (credentials != null) {
+            address = new Address(credentials.getAddressString());
+        }
 
         // inflate the view
         binding = DataBindingUtil.inflate(
@@ -157,11 +179,23 @@ public class HomeFragment extends BaseFragment {
         controller.setData(generateTestTransactions(), CurrencyPagerEnum.NANO);
 
         binding.homeSwiperefresh.setOnRefreshListener(() -> {
-            // TODO: Refresh wallet data
-            binding.homeSwiperefresh.setRefreshing(false);
+            sendHistoryRequest();
         });
 
         return view;
+    }
+
+    /**
+     * Send a request to update the wallet with latest history
+     */
+    private void sendHistoryRequest() {
+        accountService.requestHistory();
+    }
+
+    @Subscribe
+    public void receiveHistory(AccountHistoryResponse accountHistoryResponse) {
+        Timber.d(accountHistoryResponse.toString());
+        binding.homeSwiperefresh.setRefreshing(false);
     }
 
     /**

@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         // unregister from bus
         RxBus.get().unregister(this);
         realm.close();
+        accountService.close();
     }
 
     @Override
@@ -127,7 +128,10 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         final RealmResults<Credentials> results = realm.where(Credentials.class).findAll();
         realm.executeTransaction(realm1 -> results.deleteAllFromRealm());
 
-        // go back to welcome fragment
+        // stop the websocket
+        accountService.stop();
+
+        // go to the welcome fragment
         getFragmentUtility().replace(new IntroWelcomeFragment(), FragmentUtility.Animation.CROSSFADE);
     }
 
@@ -149,6 +153,9 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
                         long lEndTime = System.nanoTime();
                         long output = lEndTime - lStartTime;
                         System.out.println("Private to Public: " + output / 1000000);
+
+                        // start web socket
+                        accountService.open();
                     }, ExceptionHandler::handle);
         }
     }

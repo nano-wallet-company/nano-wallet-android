@@ -17,6 +17,7 @@ import dagger.Component;
 @ActivityScope
 public interface ActivityComponent {
     // network
+    @ActivityScope
     AccountService provideAccountService();
 
     void inject(MainActivity mainActivity);
