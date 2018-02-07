@@ -125,7 +125,6 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         }
 
         // get wallet seed if it exists
-        Credentials credentials = null;
         credentials = realm.where(Credentials.class).findFirst();
 
         if (credentials == null) {
@@ -147,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         realm.executeTransaction(realm1 -> results.deleteAllFromRealm());
 
         // stop the websocket
-        accountService.stop();
+        accountService.close();
 
         // go to the welcome fragment
         getFragmentUtility().replace(new IntroWelcomeFragment(), FragmentUtility.Animation.CROSSFADE);
