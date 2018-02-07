@@ -1,12 +1,10 @@
 package co.nano.nanowallet.network.model.response;
 
-import android.graphics.Color;
 import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 
 import com.google.gson.annotations.SerializedName;
 
+import co.nano.nanowallet.model.Address;
 import co.nano.nanowallet.network.model.BlockTypes;
 import co.nano.nanowallet.util.NumberUtil;
 
@@ -56,20 +54,7 @@ public class AccountHistoryResponseItem {
     }
 
     public Spannable getAddressShort() {
-        StringBuilder sb = new StringBuilder();
-        // take first 5 characters
-        // then an ellipsis
-        // then the last 5 characters of the address
-        sb.append(account.substring(0, 5));
-        sb.append(" … ");
-        sb.append(account.substring(account.length() - 5, account.length()));
-        Spannable s = new SpannableString(sb.toString());
-
-        // colorize the string
-        s.setSpan(new ForegroundColorSpan(Color.parseColor("#4a90e2")), 0, 5, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        s.setSpan(new ForegroundColorSpan(Color.parseColor("#e1990e")), 8, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        return s;
+        return new Address(account).getColorizedShortSpannable();
     }
 
     public void setAccount(String account) {

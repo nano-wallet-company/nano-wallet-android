@@ -71,12 +71,12 @@
             style="@style/TextStyle13"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginEnd="17dp"
+            android:layout_marginRight="17dp"
             android:text="@{accountHistoryItem.addressShort}"
             tools:text="3gntu … p7ijg"
             app:layout_constraintBottom_toTopOf="@+id/home_transaction_guideline_horiz"
-            app:layout_constraintStart_toEndOf="@+id/transaction_amount"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/home_transaction_guideline_horiz" />
 
         <android.support.constraint.Guideline

@@ -1,5 +1,10 @@
 package co.nano.nanowallet.model;
 
+import android.graphics.Color;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -36,6 +41,18 @@ public class Address implements Serializable {
         return sb.append(value.substring(frontStartIndex, frontEndIndex))
                 .append("...")
                 .append(value.substring(backStartIndex, value.length())).toString();
+    }
+
+    public Spannable getColorizedShortSpannable() {
+        Spannable s = new SpannableString(getShortString());
+        int frontStartIndex = 0;
+        int frontEndIndex = hasXrbAddressFormat() ? 9 : 10;
+        int backStartIndex = s.length() - 5;
+
+        // colorize the string
+        s.setSpan(new ForegroundColorSpan(Color.parseColor("#4a90e2")), frontStartIndex, frontEndIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        s.setSpan(new ForegroundColorSpan(Color.parseColor("#e1990e")), backStartIndex, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return s;
     }
 
     public String getLongAddress() {

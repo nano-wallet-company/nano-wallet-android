@@ -17,7 +17,7 @@ public class NumberUtil {
 
     public static BigDecimal getRawAsUsableAmount(String raw) {
         BigDecimal amount = new BigDecimal(raw);
-        return amount.divide(new BigDecimal(xrbDivider), RoundingMode.FLOOR);
+        return amount.divide(new BigDecimal(xrbDivider), 32, RoundingMode.FLOOR);
     }
 
     public static String getRawAsUsableString(String raw) {
