@@ -122,6 +122,10 @@ public class AccountService {
                     rxWebSocket.sendMessage(gson, new CurrentPriceRequest(localCurrency))
                             .subscribe(o -> {}, ExceptionHandler::handle);
 
+                    // price in bitcoin request
+                    rxWebSocket.sendMessage(gson, new CurrentPriceRequest("BTC"))
+                            .subscribe(o -> {}, ExceptionHandler::handle);
+
                     // account history request
                     rxWebSocket.sendMessage(gson, new AccountHistoryRequest(address.getLongAddress(), 10))
                             .subscribe(o -> {}, ExceptionHandler::handle);

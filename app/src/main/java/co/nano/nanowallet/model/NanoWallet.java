@@ -79,8 +79,16 @@ public class NanoWallet {
      */
     @Subscribe
     public void receiveCurrentPrice(CurrentPriceResponse currentPriceResponse) {
-        localCurrencyPrice = new BigDecimal(currentPriceResponse.getPrice());
-        btcPrice = currentPriceResponse.getBtc() != null ? new BigDecimal(currentPriceResponse.getBtc()) : btcPrice;
+        if (currentPriceResponse.getCurrency().equals("btc")) {
+            // we made a btc price request
+            btcPrice = new BigDecimal(currentPriceResponse.getPrice());
+        } else {
+            // local currency price
+            localCurrencyPrice = new BigDecimal(currentPriceResponse.getPrice());
+        }
+        if (currentPriceResponse.getBtc() != null) {
+            btcPrice = new BigDecimal(currentPriceResponse.getBtc());
+        }
         RxBus.get().post(new WalletPriceUpdate());
     }
 
