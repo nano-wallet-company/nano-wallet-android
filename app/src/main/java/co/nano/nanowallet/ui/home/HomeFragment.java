@@ -151,6 +151,9 @@ public class HomeFragment extends BaseFragment {
         binding.homeRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.homeRecyclerview.setAdapter(controller.getAdapter());
         binding.homeSwiperefresh.setOnRefreshListener(accountService::requestHistory);
+        if (wallet != null && wallet.getAccountHistory() != null) {
+            controller.setData(wallet.getAccountHistory());
+        }
 
         return view;
     }
