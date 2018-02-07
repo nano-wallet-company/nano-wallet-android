@@ -31,7 +31,7 @@ public class SubscribeResponse extends BaseNetworkModel {
 
     // number of blocks in the account chain. Store this and use it to reduce data requests on subsequent connections. see account_history for more
     @SerializedName("block_count")
-    private String block_count;
+    private Integer block_count;
 
     // if there are any pending blocks, this will be the total amount pending deposit
     @SerializedName("pending")
@@ -84,11 +84,11 @@ public class SubscribeResponse extends BaseNetworkModel {
         this.modified_timestamp = modified_timestamp;
     }
 
-    public String getBlock_count() {
+    public Integer getBlock_count() {
         return block_count;
     }
 
-    public void setBlock_count(String block_count) {
+    public void setBlock_count(Integer block_count) {
         this.block_count = block_count;
     }
 

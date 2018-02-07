@@ -8,10 +8,6 @@
         <variable
             name="handlers"
             type="co.nano.nanowallet.ui.home.HomeFragment.ClickHandlers" />
-        <!-- Data -->
-        <variable
-            name="wallet"
-            type="co.nano.nanowallet.model.NanoWallet" />
     </data>
 
     <android.support.constraint.ConstraintLayout

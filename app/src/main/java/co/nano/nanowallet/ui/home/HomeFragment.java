@@ -20,6 +20,8 @@ import javax.inject.Inject;
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.bus.WalletHistoryUpdate;
+import co.nano.nanowallet.bus.WalletPriceUpdate;
+import co.nano.nanowallet.bus.WalletSubscribeUpdate;
 import co.nano.nanowallet.databinding.FragmentHomeBinding;
 import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.network.AccountService;
@@ -138,7 +140,6 @@ public class HomeFragment extends BaseFragment {
                 inflater, R.layout.fragment_home, container, false);
         View view = binding.getRoot();
 
-        binding.setWallet(wallet);
         binding.setHandlers(new ClickHandlers());
 
         // initialize view pager (swipeable currency list)
@@ -149,8 +150,6 @@ public class HomeFragment extends BaseFragment {
         controller = new WalletController();
         binding.homeRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.homeRecyclerview.setAdapter(controller.getAdapter());
-        //controller.setData(wallet.getAccountHistory());
-
         binding.homeSwiperefresh.setOnRefreshListener(accountService::requestHistory);
 
         return view;
@@ -160,6 +159,22 @@ public class HomeFragment extends BaseFragment {
     public void receiveHistory(WalletHistoryUpdate walletHistoryUpdate) {
         controller.setData(wallet.getAccountHistory());
         binding.homeSwiperefresh.setRefreshing(false);
+    }
+
+    @Subscribe
+    public void receivePrice(WalletPriceUpdate walletPriceUpdate) {
+        updateAmounts();
+    }
+
+    @Subscribe
+    public void receiveSubscribe(WalletSubscribeUpdate walletSubscribeUpdate) {
+        updateAmounts();
+    }
+
+    private void updateAmounts() {
+        if (wallet != null) {
+            binding.homeViewpager.setAdapter(new CurrencyPagerAdapter(getContext(), wallet, sharedPreferencesUtil.getLocalCurrency()));
+        }
     }
 
     public class ClickHandlers {

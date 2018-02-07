@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         // unregister from bus
         RxBus.get().unregister(this);
         realm.close();
+        accountService.close();
     }
 
     @Override

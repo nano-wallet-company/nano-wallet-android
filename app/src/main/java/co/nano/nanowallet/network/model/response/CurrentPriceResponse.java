@@ -44,7 +44,8 @@ public class CurrentPriceResponse extends BaseNetworkModel {
     }
 
     public String getBtc() {
-        return btc;
+        // strip all unneeded characters
+        return btc != null ? btc.replaceAll("[^\\d.]", "") : null;
     }
 
     public void setBtc(String btc) {

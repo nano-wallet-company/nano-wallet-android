@@ -114,10 +114,15 @@ public class AccountService {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(socketOpenEvent -> {
                     Timber.i("Opened: " + socketOpenEvent);
+                    // account subscribe
                     rxWebSocket.sendMessage(gson, new SubscribeRequest(address.getLongAddress(), localCurrency))
                             .subscribe(o -> {}, ExceptionHandler::handle);
+
+                    // current price request
                     rxWebSocket.sendMessage(gson, new CurrentPriceRequest(localCurrency))
                             .subscribe(o -> {}, ExceptionHandler::handle);
+
+                    // account history request
                     rxWebSocket.sendMessage(gson, new AccountHistoryRequest(address.getLongAddress(), 10))
                             .subscribe(o -> {}, ExceptionHandler::handle);
                 }, ExceptionHandler::handle);
@@ -186,6 +191,8 @@ public class AccountService {
      * Close the web socket
      */
     public void close() {
-        rxWebSocket.close().subscribe(o -> rxWebSocket = null);
+        if (rxWebSocket != null) {
+            rxWebSocket.close().subscribe(o -> rxWebSocket = null);
+        }
     }
 }
