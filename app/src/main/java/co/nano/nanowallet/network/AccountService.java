@@ -37,8 +37,7 @@ public class AccountService {
     private RxWebSocket rxWebSocket;
     private static final String CONNECTION_URL = "wss://raicast.lightrai.com:443";
     private Address address;
-    private String localCurrency;
-    private Integer count;
+    private Integer blockCount;
     private Gson gson;
     private TypeToken<BaseNetworkModel> requestListTypeToken;
 
@@ -94,9 +93,6 @@ public class AccountService {
         // get user's address
         address = getAddress();
 
-        // get local currency
-        localCurrency = getLocalCurrency();
-
         // initialize the web socket
         if (rxWebSocket == null) {
             initWebSocket();
@@ -114,21 +110,7 @@ public class AccountService {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(socketOpenEvent -> {
                     Timber.i("Opened: " + socketOpenEvent);
-                    // account subscribe
-                    rxWebSocket.sendMessage(gson, new SubscribeRequest(address.getLongAddress(), localCurrency))
-                            .subscribe(o -> {}, ExceptionHandler::handle);
-
-                    // current price request
-                    rxWebSocket.sendMessage(gson, new CurrentPriceRequest(localCurrency))
-                            .subscribe(o -> {}, ExceptionHandler::handle);
-
-                    // price in bitcoin request
-                    rxWebSocket.sendMessage(gson, new CurrentPriceRequest("BTC"))
-                            .subscribe(o -> {}, ExceptionHandler::handle);
-
-                    // account history request
-                    rxWebSocket.sendMessage(gson, new AccountHistoryRequest(address.getLongAddress(), 10))
-                            .subscribe(o -> {}, ExceptionHandler::handle);
+                    requestUpdate();
                 }, ExceptionHandler::handle);
 
         rxWebSocket.onClosed()
@@ -143,8 +125,15 @@ public class AccountService {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(socketMessageEvent -> {
                     try {
+                        BaseNetworkModel event = gson.fromJson(socketMessageEvent.getText(), BaseNetworkModel.class);
+
+                        // keep track of current block count for more efficient requests
+                        if (event instanceof SubscribeResponse) {
+                            blockCount = ((SubscribeResponse) event).getBlock_count();
+                        }
+
                         // post whatever the response type is to the bus
-                        RxBus.get().post(gson.fromJson(socketMessageEvent.getText(), BaseNetworkModel.class));
+                        RxBus.get().post(event);
                     } catch (JsonSyntaxException e) {
                         ExceptionHandler.handle(e);
                     }
@@ -161,13 +150,24 @@ public class AccountService {
     }
 
     /**
-     * Request the account history
+     * Request all the account info
      */
     public void requestUpdate() {
         if (address != null) {
-            rxWebSocket.sendMessage(gson, new AccountHistoryRequest(address.getLongAddress(), 10))
+            // account subscribe
+            rxWebSocket.sendMessage(gson, new SubscribeRequest(address.getLongAddress(), getLocalCurrency()))
                     .subscribe(o -> {}, ExceptionHandler::handle);
-            rxWebSocket.sendMessage(gson, new CurrentPriceRequest(localCurrency))
+
+            // current price request
+            rxWebSocket.sendMessage(gson, new CurrentPriceRequest(getLocalCurrency()))
+                    .subscribe(o -> {}, ExceptionHandler::handle);
+
+            // price in bitcoin request
+            rxWebSocket.sendMessage(gson, new CurrentPriceRequest("BTC"))
+                    .subscribe(o -> {}, ExceptionHandler::handle);
+
+            // account history request
+            rxWebSocket.sendMessage(gson, new AccountHistoryRequest(address.getLongAddress(), blockCount != null ? blockCount : 10))
                     .subscribe(o -> {}, ExceptionHandler::handle);
         }
     }

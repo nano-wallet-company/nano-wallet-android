@@ -28,6 +28,12 @@ public class CurrencyPagerAdapter extends PagerAdapter {
         mLocalCurrency = localCurrency;
     }
 
+    public void updateData(NanoWallet wallet, AvailableCurrency localCurrency) {
+        mNanoWallet = wallet;
+        mLocalCurrency = localCurrency;
+        notifyDataSetChanged();
+    }
+
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         CurrencyPagerEnum customPagerEnum = CurrencyPagerEnum.values()[position];
@@ -59,6 +65,11 @@ public class CurrencyPagerAdapter extends PagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         return null;
+    }
+
+    @Override
+    public int getItemPosition(Object object){
+        return POSITION_NONE;
     }
 
 }

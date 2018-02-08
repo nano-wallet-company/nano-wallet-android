@@ -101,8 +101,9 @@ public class HomeFragment extends BaseFragment {
                     // reset status bar to blue when dialog is closed
                     dialog.getDialog().setOnDismissListener(dialogInterface -> {
                         setStatusBarBlue();
-                        if (binding.homeViewpager != null) {
-                            binding.homeViewpager.setAdapter(new CurrencyPagerAdapter(getContext(), wallet, sharedPreferencesUtil.getLocalCurrency()));
+                        if (binding.homeViewpager != null && accountService != null) {
+                            updateAmounts();
+                            accountService.requestUpdate();
                         }
                     });
                 }
@@ -178,7 +179,7 @@ public class HomeFragment extends BaseFragment {
 
     private void updateAmounts() {
         if (wallet != null) {
-            binding.homeViewpager.setAdapter(new CurrencyPagerAdapter(getContext(), wallet, sharedPreferencesUtil.getLocalCurrency()));
+            ((CurrencyPagerAdapter) binding.homeViewpager.getAdapter()).updateData(wallet, sharedPreferencesUtil.getLocalCurrency());
         }
     }
 
