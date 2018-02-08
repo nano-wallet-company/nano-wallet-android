@@ -25,6 +25,7 @@ import co.nano.nanowallet.bus.WalletSubscribeUpdate;
 import co.nano.nanowallet.databinding.FragmentHomeBinding;
 import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.network.AccountService;
+import co.nano.nanowallet.network.model.response.AccountHistoryResponseItem;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseDialogFragment;
 import co.nano.nanowallet.ui.common.BaseFragment;
@@ -33,6 +34,7 @@ import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.receive.ReceiveDialogFragment;
 import co.nano.nanowallet.ui.send.SendFragment;
 import co.nano.nanowallet.ui.settings.SettingsDialogFragment;
+import co.nano.nanowallet.ui.webview.WebViewDialogFragment;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
 
 /**
@@ -150,9 +152,9 @@ public class HomeFragment extends BaseFragment {
         controller = new WalletController();
         binding.homeRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.homeRecyclerview.setAdapter(controller.getAdapter());
-        binding.homeSwiperefresh.setOnRefreshListener(accountService::requestHistory);
+        binding.homeSwiperefresh.setOnRefreshListener(accountService::requestUpdate);
         if (wallet != null && wallet.getAccountHistory() != null) {
-            controller.setData(wallet.getAccountHistory());
+            controller.setData(wallet.getAccountHistory(), new ClickHandlers());
         }
 
         return view;
@@ -160,7 +162,7 @@ public class HomeFragment extends BaseFragment {
 
     @Subscribe
     public void receiveHistory(WalletHistoryUpdate walletHistoryUpdate) {
-        controller.setData(wallet.getAccountHistory());
+        controller.setData(wallet.getAccountHistory(), new ClickHandlers());
         binding.homeSwiperefresh.setRefreshing(false);
     }
 
@@ -201,6 +203,20 @@ public class HomeFragment extends BaseFragment {
                         FragmentUtility.Animation.ENTER_RIGHT_EXIT_LEFT,
                         SendFragment.TAG
                 );
+            }
+        }
+
+        public void onClickTransaction(View view) {
+            if (getActivity() instanceof WindowControl) {
+                AccountHistoryResponseItem accountHistoryItem = (AccountHistoryResponseItem) view.getTag();
+                if (accountHistoryItem != null) {
+                    // show webview dialog
+                    WebViewDialogFragment dialog = WebViewDialogFragment.newInstance(getString(R.string.home_explore_url, accountHistoryItem.getHash()), "");
+                    dialog.show(((WindowControl) getActivity()).getFragmentUtility().getFragmentManager(),
+                            WebViewDialogFragment.TAG);
+
+                    resetStatusBar(dialog);
+                }
             }
         }
 

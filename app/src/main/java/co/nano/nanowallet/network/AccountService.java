@@ -163,9 +163,11 @@ public class AccountService {
     /**
      * Request the account history
      */
-    public void requestHistory() {
+    public void requestUpdate() {
         if (address != null) {
             rxWebSocket.sendMessage(gson, new AccountHistoryRequest(address.getLongAddress(), 10))
+                    .subscribe(o -> {}, ExceptionHandler::handle);
+            rxWebSocket.sendMessage(gson, new CurrentPriceRequest(localCurrency))
                     .subscribe(o -> {}, ExceptionHandler::handle);
         }
     }

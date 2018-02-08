@@ -11,6 +11,9 @@
         <variable
             name="currency"
             type="co.nano.nanowallet.ui.home.CurrencyPagerEnum" />
+        <variable
+            name="handlers"
+            type="co.nano.nanowallet.ui.home.HomeFragment.ClickHandlers" />
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -18,7 +21,9 @@
         android:layout_height="54dp"
         android:background="@drawable/bg_border_bottom"
         android:paddingLeft="37dp"
-        android:paddingRight="37dp">
+        android:paddingRight="37dp"
+        android:tag="@{accountHistoryItem}"
+        android:onClick="@{handlers::onClickTransaction}">
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/transaction_type"

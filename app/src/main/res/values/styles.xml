@@ -44,6 +44,14 @@
         <item name="android:windowExitAnimation">@anim/exit_slide_down</item>
     </style>
 
+    <style name="AppTheme.ProgressBar.Horizontal" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/white</item>
+    </style>
+
+    <style name="AppTheme.ProgressBar.Dialog.Horizontal" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
     <!-- Button Styles -->
     <style name="LargeButton">
         <item name="android:background">@drawable/bg_large_button</item>

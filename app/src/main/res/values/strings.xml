@@ -31,6 +31,7 @@
     <string name="symbol_btc">\u20BF</string>
     <string name="symbol_usd">$</string>
     <string name="ellipsis">&#8230;</string>
+    <string name="home_explore_url">https://nano.org/en/explore/block/%s</string>
 
     <!-- Settings Screen -->
     <string name="settings_title">Settings</string>
