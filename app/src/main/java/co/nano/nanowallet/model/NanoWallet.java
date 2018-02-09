@@ -102,9 +102,12 @@ public class NanoWallet {
         return accountHistory;
     }
 
-    // old methods
     public String getAccountBalanceNano() {
         return NumberUtil.getRawAsUsableString(accountBalance.toString());
+    }
+
+    public String getLongerAccountBalanceNano() {
+        return NumberUtil.getRawAsLongerUsableString(accountBalance.toString());
     }
 
     public String getAccountBalanceLocalCurrency() {

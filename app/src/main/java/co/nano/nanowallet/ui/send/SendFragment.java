@@ -270,7 +270,8 @@ public class SendFragment extends BaseFragment {
         }
 
         public void onClickMax(View view) {
-            // TODO: Seed with max from wallet
+            sendAmount.setNanoAmount(wallet.getLongerAccountBalanceNano());
+            binding.setSendAmount(sendAmount);
         }
 
         public void onClickNumKeyboard(View view) {
