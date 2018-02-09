@@ -19,6 +19,7 @@ import co.nano.nanowallet.network.model.request.SubscribeRequest;
 import co.nano.nanowallet.network.model.response.AccountHistoryResponse;
 import co.nano.nanowallet.network.model.response.CurrentPriceResponse;
 import co.nano.nanowallet.network.model.response.SubscribeResponse;
+import co.nano.nanowallet.network.model.response.WorkResponse;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.util.ExceptionHandler;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
@@ -67,6 +68,9 @@ public class AccountService {
                         } else if (src.getAsJsonObject().get("currency") != null) {
                             // current price
                             src.getAsJsonObject().addProperty("messageType", Actions.PRICE.toString());
+                        } else if (src.getAsJsonObject().get("work") != null) {
+                            // work response
+                            src.getAsJsonObject().addProperty("messageType", Actions.WORK.toString());
                         }
                     }
                 }).registerTypeSelector(BaseNetworkModel.class, readElement -> {
@@ -79,6 +83,8 @@ public class AccountService {
                             return AccountHistoryResponse.class;
                         } else if (kind.equals(Actions.PRICE.toString())) {
                             return CurrentPriceResponse.class;
+                        } else if (kind.equals(Actions.WORK.toString())) {
+                            return WorkResponse.class;
                         } else {
                             return null; // returning null will trigger Gson's default behavior
                         }

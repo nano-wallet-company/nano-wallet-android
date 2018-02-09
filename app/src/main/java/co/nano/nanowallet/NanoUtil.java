@@ -65,6 +65,27 @@ public class NanoUtil {
         return bytesToHex(ED25519.publickey(hexToBytes(private_key)));
     }
 
+    /**
+     * Compute a hash to use with receive blocks
+     * @param previous
+     * @param source
+     * @return
+     */
+    public static String computeReceiveHash(String previous, String source) {
+        byte[] previous_b = hexToBytes(previous);
+        byte[] source_b = hexToBytes(source);
+
+        final Blake2b blake = Blake2b.Digest.newInstance(32);
+        blake.update(previous_b);
+        blake.update(source_b);
+
+        return bytesToHex(blake.digest());
+    }
+
+    public static String sign(String private_key, String data) {
+        return bytesToHex(ED25519.signature(hexToBytes(data), hexToBytes(generateSeed()), hexToBytes(private_key)));
+    }
+
     public static byte[] hexStringToByteArray(String s) {
         int len = s.length();
         byte[] data = new byte[len / 2];
