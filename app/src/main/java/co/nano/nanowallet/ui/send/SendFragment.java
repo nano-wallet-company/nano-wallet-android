@@ -27,12 +27,12 @@ import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentSendBinding;
+import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.model.SendAmount;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.UIUtil;
 import co.nano.nanowallet.ui.scan.ScanActivity;
-import co.nano.nanowallet.util.SharedPreferencesUtil;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -46,7 +46,7 @@ public class SendFragment extends BaseFragment {
     private boolean localCurrencyActive = false;
 
     @Inject
-    SharedPreferencesUtil sharedPreferencesUtil;
+    NanoWallet wallet;
 
     @BindingAdapter("layout_constraintGuide_percent")
     public static void setLayoutConstraintGuidePercent(Guideline guideline, float percent) {
@@ -158,7 +158,7 @@ public class SendFragment extends BaseFragment {
         // set active and inactive states for edittext fields
         binding.sendAmountNano.setOnFocusChangeListener((view1, b) -> toggleFieldFocus((EditText) view1, b, false));
         binding.sendAmountLocalcurrency.setOnFocusChangeListener((view1, b) -> toggleFieldFocus((EditText) view1, b, true));
-        binding.sendAmountLocalcurrencySymbol.setText(sharedPreferencesUtil.getLocalCurrency().getCurrencySymbol());
+        binding.sendAmountLocalcurrencySymbol.setText(wallet.getLocalCurrency().getCurrencySymbol());
         binding.setShowAmount(true);
 
         binding.sendAddress.setOnFocusChangeListener((view12, hasFocus) -> {

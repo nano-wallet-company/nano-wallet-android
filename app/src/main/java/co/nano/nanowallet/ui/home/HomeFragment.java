@@ -35,7 +35,6 @@ import co.nano.nanowallet.ui.receive.ReceiveDialogFragment;
 import co.nano.nanowallet.ui.send.SendFragment;
 import co.nano.nanowallet.ui.settings.SettingsDialogFragment;
 import co.nano.nanowallet.ui.webview.WebViewDialogFragment;
-import co.nano.nanowallet.util.SharedPreferencesUtil;
 
 /**
  * Home Wallet Screen
@@ -50,9 +49,6 @@ public class HomeFragment extends BaseFragment {
     private FragmentHomeBinding binding;
     private WalletController controller;
     public static String TAG = HomeFragment.class.getSimpleName();
-
-    @Inject
-    SharedPreferencesUtil sharedPreferencesUtil;
 
     @Inject
     AccountService accountService;
@@ -146,7 +142,7 @@ public class HomeFragment extends BaseFragment {
         binding.setHandlers(new ClickHandlers());
 
         // initialize view pager (swipeable currency list)
-        binding.homeViewpager.setAdapter(new CurrencyPagerAdapter(getContext(), wallet, sharedPreferencesUtil.getLocalCurrency()));
+        binding.homeViewpager.setAdapter(new CurrencyPagerAdapter(getContext(), wallet));
         binding.homeTabs.setupWithViewPager(binding.homeViewpager, true);
 
         // initialize recyclerview (list of wallet transactions)
@@ -179,7 +175,7 @@ public class HomeFragment extends BaseFragment {
 
     private void updateAmounts() {
         if (wallet != null) {
-            ((CurrencyPagerAdapter) binding.homeViewpager.getAdapter()).updateData(wallet, sharedPreferencesUtil.getLocalCurrency());
+            ((CurrencyPagerAdapter) binding.homeViewpager.getAdapter()).updateData(wallet);
         }
     }
 

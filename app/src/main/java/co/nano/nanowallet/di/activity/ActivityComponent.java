@@ -43,4 +43,6 @@ public interface ActivityComponent {
     void inject(IntroNewWalletFragment introNewWalletFragment);
 
     void inject(AccountService accountService);
+
+    void inject(NanoWallet nanoWallet);
 }

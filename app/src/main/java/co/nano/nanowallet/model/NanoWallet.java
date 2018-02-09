@@ -20,6 +20,7 @@ import co.nano.nanowallet.network.model.response.AccountHistoryResponse;
 import co.nano.nanowallet.network.model.response.AccountHistoryResponseItem;
 import co.nano.nanowallet.network.model.response.CurrentPriceResponse;
 import co.nano.nanowallet.network.model.response.SubscribeResponse;
+import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.util.NumberUtil;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
 
@@ -45,6 +46,11 @@ public class NanoWallet {
     SharedPreferencesUtil sharedPreferencesUtil;
 
     public NanoWallet(Context context) {
+        // init dependency injection
+        if (context instanceof ActivityWithComponent) {
+            ((ActivityWithComponent) context).getActivityComponent().inject(this);
+        }
+
         accountBalance = new BigDecimal("0.0");
         RxBus.get().register(this);
     }
@@ -124,6 +130,10 @@ public class NanoWallet {
 
     public void setAccountBalance(BigDecimal accountBalance) {
         this.accountBalance = accountBalance;
+    }
+
+    public AvailableCurrency getLocalCurrency() {
+        return sharedPreferencesUtil.getLocalCurrency();
     }
 
     public void close() {
