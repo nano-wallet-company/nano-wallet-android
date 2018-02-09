@@ -6,6 +6,8 @@ import com.hwangjr.rxbus.annotation.Subscribe;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
@@ -13,6 +15,7 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import co.nano.nanowallet.bus.RxBus;
+import co.nano.nanowallet.bus.SendInvalidAmount;
 import co.nano.nanowallet.bus.WalletHistoryUpdate;
 import co.nano.nanowallet.bus.WalletPriceUpdate;
 import co.nano.nanowallet.bus.WalletSubscribeUpdate;
@@ -21,6 +24,7 @@ import co.nano.nanowallet.network.model.response.AccountHistoryResponseItem;
 import co.nano.nanowallet.network.model.response.CurrentPriceResponse;
 import co.nano.nanowallet.network.model.response.SubscribeResponse;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
+import co.nano.nanowallet.util.ExceptionHandler;
 import co.nano.nanowallet.util.NumberUtil;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
 
@@ -29,18 +33,22 @@ import co.nano.nanowallet.util.SharedPreferencesUtil;
  * Nano wallet that holds transactions and current prices
  */
 public class NanoWallet {
-    BigDecimal accountBalance;
-    BigDecimal localCurrencyPrice;
-    BigDecimal btcPrice;
+    private BigDecimal accountBalance;
+    private BigDecimal localCurrencyPrice;
+    private BigDecimal btcPrice;
 
-    String accountAddress;
-    String representativeAddress;
-    String frontierBlock;
-    String openBlock;
+    private String accountAddress;
+    private String representativeAddress;
+    private String frontierBlock;
+    private String openBlock;
 
-    Integer blockCount;
+    private Integer blockCount;
 
     private List<AccountHistoryResponseItem> accountHistory;
+
+    // for sending
+    private String sendNanoAmount;
+    private String sendLocalCurrencyAmount;
 
     @Inject
     SharedPreferencesUtil sharedPreferencesUtil;
@@ -52,11 +60,14 @@ public class NanoWallet {
         }
 
         accountBalance = new BigDecimal("0.0");
+        sendNanoAmount = "";
+        sendLocalCurrencyAmount = "";
         RxBus.get().register(this);
     }
 
     /**
      * Receive account subscribe response
+     *
      * @param subscribeResponse
      */
     @Subscribe
@@ -71,6 +82,7 @@ public class NanoWallet {
 
     /**
      * Receive a history update
+     *
      * @param accountHistoryResponse
      */
     @Subscribe
@@ -81,6 +93,7 @@ public class NanoWallet {
 
     /**
      * Receive a current price response
+     *
      * @param currentPriceResponse
      */
     @Subscribe
@@ -137,6 +150,153 @@ public class NanoWallet {
 
     public AvailableCurrency getLocalCurrency() {
         return sharedPreferencesUtil.getLocalCurrency();
+    }
+
+    public void clearSendAmounts() {
+        sendNanoAmount = "";
+        sendLocalCurrencyAmount = "";
+    }
+
+    /**
+     * Get Nano amount entered
+     *
+     * @return String
+     */
+    public String getSendNanoAmount() {
+        return sendNanoAmount;
+    }
+
+    /**
+     * Return the currency formatted local currency amount as a string
+     *
+     * @return
+     */
+    public String getSendNanoAmountFormatted() {
+        if (sendNanoAmount.length() > 0) {
+            return nanoFormat(new BigDecimal(sendNanoAmount));
+        } else {
+            return "";
+        }
+    }
+
+
+    /**
+     * Set Nano amount which will also set the local currency amount
+     *
+     * @param nanoAmount String Nano Amount from input
+     */
+    public void setSendNanoAmount(String nanoAmount) {
+        this.sendNanoAmount = nanoAmount;
+        if (nanoAmount.length() > 0) {
+            if (this.sendNanoAmount.equals(".")) {
+                this.sendNanoAmount = "0.";
+            }
+            this.sendLocalCurrencyAmount = convertNanoToLocalCurrency(this.sendNanoAmount);
+        } else {
+            this.sendLocalCurrencyAmount = "";
+        }
+        validateSendAmount();
+    }
+
+    /**
+     * Convert a Nano string amount to a local currency String
+     *
+     * @param amount String amount of Nano
+     * @return String local currency amount
+     */
+    private String convertNanoToLocalCurrency(String amount) {
+        if (amount.equals("0.")) {
+            return amount;
+        } else {
+            return localCurrencyPrice != null ?
+                    formatLocalCurrency(new BigDecimal(amount).multiply(localCurrencyPrice, MathContext.DECIMAL64))
+                    : "0.0";
+        }
+    }
+
+    /**
+     * Return the  local currency amount as a string
+     *
+     * @return
+     */
+    public String getLocalCurrencyAmount() {
+        return sendLocalCurrencyAmount;
+    }
+
+    /**
+     * Return the currency formatted local currency amount as a string
+     *
+     * @return
+     */
+    public String getSendLocalCurrencyAmountFormatted() {
+        if (sendLocalCurrencyAmount.length() > 0) {
+            return currencyFormat(new BigDecimal(sendLocalCurrencyAmount));
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * Set the local currency amount and also update the nano amount to match
+     *
+     * @param localCurrencyAmount String of local currency amount from input
+     */
+    public void setLocalCurrencyAmount(String localCurrencyAmount) {
+        this.sendLocalCurrencyAmount = localCurrencyAmount;
+        if (localCurrencyAmount.length() > 0) {
+            if (localCurrencyAmount.equals(".")) {
+                this.sendLocalCurrencyAmount = "0.";
+            }
+            this.sendNanoAmount = convertLocalCurrencyToNano(this.sendLocalCurrencyAmount);
+        } else {
+            this.sendNanoAmount = "";
+        }
+        validateSendAmount();
+    }
+
+    /**
+     * Convert a local currency string to a Nano string
+     *
+     * @param amount Local currency amount from input
+     * @return String of Nano converted amount
+     */
+    private String convertLocalCurrencyToNano(String amount) {
+        if (amount.equals("0.")) {
+            return amount;
+        } else {
+            return localCurrencyPrice != null ? new BigDecimal(amount)
+                    .divide(localCurrencyPrice, RoundingMode.FLOOR).toString() : "0.0";
+        }
+    }
+
+    /**
+     * Convert local currency to properly formatted string for the currency
+     */
+    private String currencyFormat(BigDecimal amount) {
+        DecimalFormat df = new DecimalFormat("#,###.00");
+        return df.format(amount);
+    }
+
+    /**
+     * Convert local currency to properly formatted string for the currency
+     */
+    private String nanoFormat(BigDecimal amount) {
+        DecimalFormat df = new DecimalFormat("#,###.##########");
+        return df.format(amount);
+    }
+
+    /**
+     * Validate that the requested sned amount is not greater than the account balance
+     */
+    private void validateSendAmount() {
+        try {
+            new BigDecimal(sendNanoAmount);
+            if (new BigDecimal(sendNanoAmount).compareTo(new BigDecimal(NumberUtil.getRawAsLongerUsableString(accountBalance.toString()))) > 0) {
+                RxBus.get().post(new SendInvalidAmount());
+            }
+        } catch (NumberFormatException e) {
+            ExceptionHandler.handle(e);
+        }
     }
 
     public void close() {

@@ -26,10 +26,22 @@ public class NumberUtil {
         return numberFormat.format(getRawAsUsableAmount(raw));
     }
 
+    public static String getAmountAsUsableString(String amount) {
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.getDefault());
+        numberFormat.setMaximumFractionDigits(6);
+        return numberFormat.format(amount);
+    }
+
     public static String getRawAsLongerUsableString(String raw) {
         NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.getDefault());
         numberFormat.setMaximumFractionDigits(10);
         return numberFormat.format(Double.valueOf(getRawAsUsableAmount(raw).toString()));
+    }
+
+    public static String getAmountAsLongerUsableString(String amount) {
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.getDefault());
+        numberFormat.setMaximumFractionDigits(10);
+        return numberFormat.format(amount);
     }
 
     public static Double getRawAsDouble(String raw) {

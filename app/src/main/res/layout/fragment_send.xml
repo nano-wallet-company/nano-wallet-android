@@ -8,8 +8,8 @@
         <import type="android.view.View" />
 
         <variable
-            name="sendAmount"
-            type="co.nano.nanowallet.model.SendAmount" />
+            name="wallet"
+            type="co.nano.nanowallet.model.NanoWallet" />
 
         <variable
             name="showAmount"
@@ -95,7 +95,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="@string/send_nano_hint"
-            android:text="@{sendAmount.nanoAmountFormatted}"
+            android:text="@{wallet.sendNanoAmountFormatted}"
             android:textSize="20sp"
             app:layout_constraintBottom_toTopOf="@+id/send_arrows"
             app:layout_constraintEnd_toStartOf="@+id/send_guideline_vert"
@@ -146,7 +146,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="@string/send_localcurrency_hint"
-            android:text="@{sendAmount.localCurrencyAmountFormatted}"
+            android:text="@{wallet.sendLocalCurrencyAmountFormatted}"
             android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@+id/send_guideline_keyboard_top"
             app:layout_constraintEnd_toStartOf="@+id/send_guideline_vert"

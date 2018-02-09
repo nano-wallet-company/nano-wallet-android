@@ -1,9 +1,11 @@
 package co.nano.nanowallet.ui.send;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -23,12 +25,15 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.hwangjr.rxbus.annotation.Subscribe;
+
 import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
+import co.nano.nanowallet.bus.RxBus;
+import co.nano.nanowallet.bus.SendInvalidAmount;
 import co.nano.nanowallet.databinding.FragmentSendBinding;
 import co.nano.nanowallet.model.NanoWallet;
-import co.nano.nanowallet.model.SendAmount;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.UIUtil;
@@ -42,7 +47,6 @@ import static android.app.Activity.RESULT_OK;
 public class SendFragment extends BaseFragment {
     private FragmentSendBinding binding;
     public static String TAG = SendFragment.class.getSimpleName();
-    private SendAmount sendAmount = new SendAmount();
     private boolean localCurrencyActive = false;
 
     @Inject
@@ -137,6 +141,9 @@ public class SendFragment extends BaseFragment {
             ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
         }
 
+        // subscribe to bus
+        RxBus.get().register(this);
+
         // change keyboard mode
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
@@ -171,8 +178,15 @@ public class SendFragment extends BaseFragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // unregister from bus
+        RxBus.get().unregister(this);
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // Check which request we're responding to
+        // Check to make sure we are responding to camera result
         if (requestCode == SCAN_RESULT) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
@@ -183,6 +197,32 @@ public class SendFragment extends BaseFragment {
                 }
             }
         }
+    }
+
+    /**
+     * Event that occurs if an amount entered is invalid
+     *
+     * @param sendInvalidAmount
+     */
+    @Subscribe
+    public void receiveInvalidAmount(SendInvalidAmount sendInvalidAmount) {
+        // reset amount to max in wallet
+        wallet.setSendNanoAmount(wallet.getLongerAccountBalanceNano());
+        binding.setWallet(wallet);
+
+        // show alert with a message to the user letting them know the amount they entered
+
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(getContext(), android.R.style.Theme_Material_Light_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(getContext());
+        }
+        builder.setTitle(R.string.send_amount_too_large_alert_title)
+                .setMessage(R.string.send_amount_too_large_alert_message)
+                .setPositiveButton(R.string.send_amount_too_large_alert_cta, (dialog, which) -> {
+                })
+                .show();
     }
 
     /**
@@ -203,9 +243,8 @@ public class SendFragment extends BaseFragment {
                 ContextCompat.getColor(getContext(), R.color.bright_white) : ContextCompat.getColor(getContext(), R.color.semitranslucent_white));
 
         // clear amounts
-        // TODO: Should this be cleared every time?
-        sendAmount = new SendAmount();
-        binding.setSendAmount(sendAmount);
+        wallet.clearSendAmounts();
+        binding.setWallet(wallet);
     }
 
     /**
@@ -217,34 +256,34 @@ public class SendFragment extends BaseFragment {
         if (value.equals(getString(R.string.send_keyboard_delete))) {
             // delete last character
             if (localCurrencyActive) {
-                if (sendAmount.getLocalCurrencyAmount().length() > 0) {
-                    sendAmount.setLocalCurrencyAmount(sendAmount.getLocalCurrencyAmount().substring(0, sendAmount.getLocalCurrencyAmount().length() - 1));
+                if (wallet.getLocalCurrencyAmount().length() > 0) {
+                    wallet.setLocalCurrencyAmount(wallet.getLocalCurrencyAmount().substring(0, wallet.getLocalCurrencyAmount().length() - 1));
                 }
             } else {
-                if (sendAmount.getNanoAmount().length() > 0) {
-                    sendAmount.setNanoAmount(sendAmount.getNanoAmount().substring(0, sendAmount.getNanoAmount().length() - 1));
+                if (wallet.getSendNanoAmount().length() > 0) {
+                    wallet.setSendNanoAmount(wallet.getSendNanoAmount().substring(0, wallet.getSendNanoAmount().length() - 1));
                 }
             }
         } else if (value.equals(getString(R.string.send_keyboard_decimal))) {
             // decimal point
             if (localCurrencyActive) {
-                if (!sendAmount.getLocalCurrencyAmount().contains(value)) {
-                    sendAmount.setLocalCurrencyAmount(sendAmount.getLocalCurrencyAmount() + value);
+                if (!wallet.getLocalCurrencyAmount().contains(value)) {
+                    wallet.setLocalCurrencyAmount(wallet.getLocalCurrencyAmount() + value);
                 }
             } else {
-                if (!sendAmount.getNanoAmount().contains(value)) {
-                    sendAmount.setNanoAmount(sendAmount.getNanoAmount() + value);
+                if (!wallet.getSendNanoAmount().contains(value)) {
+                    wallet.setSendNanoAmount(wallet.getSendNanoAmount() + value);
                 }
             }
         } else {
             // digits
             if (localCurrencyActive) {
-                sendAmount.setLocalCurrencyAmount(sendAmount.getLocalCurrencyAmount() + value);
+                wallet.setLocalCurrencyAmount(wallet.getLocalCurrencyAmount() + value);
             } else {
-                sendAmount.setNanoAmount(sendAmount.getNanoAmount() + value);
+                wallet.setSendNanoAmount(wallet.getSendNanoAmount() + value);
             }
         }
-        binding.setSendAmount(sendAmount);
+        binding.setWallet(wallet);
     }
 
     public class ClickHandlers {
@@ -270,8 +309,8 @@ public class SendFragment extends BaseFragment {
         }
 
         public void onClickMax(View view) {
-            sendAmount.setNanoAmount(wallet.getLongerAccountBalanceNano());
-            binding.setSendAmount(sendAmount);
+            wallet.setSendNanoAmount(wallet.getLongerAccountBalanceNano());
+            binding.setWallet(wallet);
         }
 
         public void onClickNumKeyboard(View view) {

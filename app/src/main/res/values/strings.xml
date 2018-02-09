@@ -76,6 +76,9 @@
     <string name="send_camera">Camera</string>
     <string name="send_nano_hint">0</string>
     <string name="send_localcurrency_hint">0.00</string>
+    <string name="send_amount_too_large_alert_title">Amount too Large</string>
+    <string name="send_amount_too_large_alert_message">The amount you entered was larger than your Nano balance.\n\nWe\'ve filled the form with your full balance for sending.</string>
+    <string name="send_amount_too_large_alert_cta">Okay</string>
 
     <!-- Scan Screen -->
     <string name="scan_instruction_label">Scan a Nano or RaiBlocks\nwallet seed QR code to\nimport an existing wallet</string>
