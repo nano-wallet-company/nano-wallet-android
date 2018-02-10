@@ -104,6 +104,7 @@ public class AccountService {
                         return null;
                     }
                 });
+        //GsonBuilder gsonBuilder = builder.createGsonBuilder().setPrettyPrinting().disableHtmlEscaping();
         gson = builder.createGson();
     }
 
@@ -174,49 +175,59 @@ public class AccountService {
         if (address != null) {
             // account subscribe
             rxWebSocket.sendMessage(gson, new SubscribeRequest(address.getAddress(), getLocalCurrency()))
-                    .subscribe(o -> {}, ExceptionHandler::handle);
+                    .subscribe(o -> {
+                    }, ExceptionHandler::handle);
 
             // current price request
             rxWebSocket.sendMessage(gson, new CurrentPriceRequest(getLocalCurrency()))
-                    .subscribe(o -> {}, ExceptionHandler::handle);
+                    .subscribe(o -> {
+                    }, ExceptionHandler::handle);
 
             // price in bitcoin request
             rxWebSocket.sendMessage(gson, new CurrentPriceRequest("BTC"))
-                    .subscribe(o -> {}, ExceptionHandler::handle);
+                    .subscribe(o -> {
+                    }, ExceptionHandler::handle);
 
             // account history request
             rxWebSocket.sendMessage(gson, new AccountHistoryRequest(address.getAddress(), blockCount != null ? blockCount : 10))
-                    .subscribe(o -> {}, ExceptionHandler::handle);
+                    .subscribe(o -> {
+                    }, ExceptionHandler::handle);
         }
     }
 
     /**
      * Make a work request for a send
-     * @param previous the hash of the last block in our chain, our current frontier
+     *
+     * @param previous    the hash of the last block in our chain, our current frontier
      * @param destination destination address we are sending to
-     * @param balance balance amount to send
+     * @param balance     balance amount to send
      */
     public void requestWorkSend(String previous, Address destination, BigInteger balance) {
         // request work
         String hash = NanoUtil.computeSendHash(previous, destination.getAddress(), balance.toString(16));
         WorkRequest workRequest = new WorkRequest(hash);
         rxWebSocket.sendMessage(gson, workRequest)
-                .subscribe(o -> {}, ExceptionHandler::handle);
+                .subscribe(o -> {
+                }, ExceptionHandler::handle);
     }
 
     public void requestSend(String previous, Address destination, BigInteger balance, String work) {
         // create a send block string
         SendBlock sendBlock = new SendBlock(getPrivateKey(), getPublicKey(), previous, destination.getAddress(), balance.toString(), work);
+
+        // escape the block to match https://github.com/clemahieu/raiblocks/wiki/RPC-protocol#process-block
         String block = gson.toJson(sendBlock);
+        Timber.d(block);
 
         // create a new send request
         SendRequest sendRequest = new SendRequest(block);
-
-        Timber.d(sendRequest.toString());
+        String message = gson.toJson(sendRequest);
+        Timber.d(message);
 
         // send the send request
-        rxWebSocket.sendMessage(gson, sendRequest)
-                .subscribe(o -> {}, ExceptionHandler::handle);
+        rxWebSocket.sendMessage(message)
+                .subscribe(o -> {
+                }, ExceptionHandler::handle);
     }
 
 

@@ -41,4 +41,12 @@ public class SendRequest extends BaseNetworkModel {
     public void setBlock(String block) {
         this.block = block;
     }
+
+    @Override
+    public String toString() {
+        return "SendRequest{" +
+                "action='" + action + '\'' +
+                ", block='" + block + '\'' +
+                '}';
+    }
 }
