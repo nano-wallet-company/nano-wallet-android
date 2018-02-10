@@ -4,6 +4,9 @@ package co.nano.nanowallet;
  * Created by admin on 12/24/2017.
  */
 
+import org.libsodium.jni.NaCl;
+import org.libsodium.jni.Sodium;
+
 import java.math.BigInteger;
 import java.util.Random;
 
@@ -61,8 +64,36 @@ public class NanoUtil {
         return bytesToHex(blake.digest());
     }
 
+    public static String seedToPrivateNaCl(String seed) {
+        Sodium sodium = NaCl.sodium();
+        byte[] state = new byte[Sodium.crypto_generichash_statebytes()];
+        byte[] hash = new byte[Sodium.crypto_generichash_bytes()];
+        byte[] key = new byte[Sodium.crypto_generichash_keybytes()];
+
+        byte[] seed_b = NanoUtil.hexToBytes(seed);
+        byte[] index_b = {0x00, 0x00, 0x00, 0x00};
+        byte[] output = new byte[32];
+
+        Sodium.crypto_generichash_blake2b_init(state, key, 0, 32);
+        Sodium.crypto_generichash_blake2b_update(state, seed_b, seed_b.length);
+        Sodium.crypto_generichash_blake2b_update(state, index_b, index_b.length);
+        Sodium.crypto_generichash_blake2b_final(state, output, output.length);
+
+        return bytesToHex(output);
+    }
+
     public static String privateToPublic(String private_key) {
         return bytesToHex(ED25519.publickey(hexToBytes(private_key)));
+    }
+
+    public static String privateToPublicNaCl(String private_key) {
+        Sodium sodium = NaCl.sodium();
+        byte[] public_key_b = new byte[Sodium.crypto_generichash_blake2b_bytes()];
+        byte[] private_key_b = hexToBytes(private_key);
+
+        Sodium.crypto_sign_ed25519_sk_to_pk(public_key_b, private_key_b);
+
+        return bytesToHex(public_key_b);
     }
 
     /**

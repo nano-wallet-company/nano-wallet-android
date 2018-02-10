@@ -3,6 +3,9 @@ repositories {
         url 'https://github.com/WickeDev/stetho-realm/raw/master/maven-repo'
     }
     maven { url 'https://maven.fabric.io/public' }
+    flatDir {
+        dirs 'libs'
+    }
 }
 
 apply plugin: 'com.android.application'
@@ -107,7 +110,7 @@ dependencies {
 
     // Libsodium
     //implementation "com.github.joshjdevl.libsodiumjni:libsodium-jni:1.0.8"
-    //implementation project(':libsodium-jni-release') // custom built with forked libsodium to support blake2b hashing in ed25519 natively
+    compile project(':libsodium-jni-release') // custom built with forked libsodium to support blake2b hashing in ed25519 natively
     //implementation 'com.github.joshjdevl.libsodiumjni:libsodium-jni-aar:1.0.8@aar'
 
     // Stetho (for debugging only)

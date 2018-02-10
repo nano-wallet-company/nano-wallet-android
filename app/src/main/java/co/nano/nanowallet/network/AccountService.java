@@ -278,7 +278,7 @@ public class AccountService {
      */
     public void close() {
         if (rxWebSocket != null) {
-            rxWebSocket.close().subscribe(o -> rxWebSocket = null);
+            rxWebSocket.close().subscribe(o -> rxWebSocket = null, ExceptionHandler::handle);
         }
     }
 }

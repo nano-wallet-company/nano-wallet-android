@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         Credentials credentials = realm.where(Credentials.class).findFirst();
         if (credentials != null) {
             Credentials pk = realm.copyFromRealm(credentials);
-            Observable.fromCallable(() -> NanoUtil.privateToPublic(pk.getPrivateKey()))
+            Observable.fromCallable(() -> NanoUtil.privateToPublicNaCl(pk.getPrivateKey()))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(o -> {

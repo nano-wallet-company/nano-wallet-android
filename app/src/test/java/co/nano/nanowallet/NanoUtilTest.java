@@ -20,7 +20,6 @@ public class NanoUtilTest {
         long lEndTime = System.nanoTime();
         long output = lEndTime - lStartTime;
         System.out.println("Seed to Private: " + output / 1000000);
-
         assertEquals(privateKey, "C5469190B25E850CED298E57723258F716A4E1956AC2BC60DA023300476D1212");
     }
 
