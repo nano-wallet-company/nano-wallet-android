@@ -89,11 +89,11 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
         binding.setHandlers(new ClickHandlers());
 
         // colorize address text
-        binding.receiveAddress.setText(UIUtil.getColorizedSpannable(address.getLongAddress(), getContext()));
+        binding.receiveAddress.setText(UIUtil.getColorizedSpannable(address.getAddress(), getContext()));
 
         // generate QR code
         new AwesomeQRCode.Renderer()
-                .contents(address.getLongAddress())
+                .contents(address.getAddress())
                 .size((int) UIUtil.convertDpToPixel(QRCODE_SIZE, getContext()))
                 .margin((int) UIUtil.convertDpToPixel(20, getContext()))
                 .dotScale(0.55f)
@@ -162,7 +162,7 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
             Uri imageUri = FileProvider.getUriForFile(getContext(), "co.nano.nanowallet.fileprovider", newFile);
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            shareIntent.putExtra(Intent.EXTRA_TEXT, address.getLongAddress());
+            shareIntent.putExtra(Intent.EXTRA_TEXT, address.getAddress());
             shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
             shareIntent.setDataAndType(imageUri, getActivity().getContentResolver().getType(imageUri));
             shareIntent.setType("image/*");
@@ -172,7 +172,7 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
         public void onClickCopy(View view) {
             // copy address to clipboard
             android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-            android.content.ClipData clip = android.content.ClipData.newPlainText(ClipboardAlarmReceiver.CLIPBOARD_NAME, address.getLongAddress());
+            android.content.ClipData clip = android.content.ClipData.newPlainText(ClipboardAlarmReceiver.CLIPBOARD_NAME, address.getAddress());
             if (clipboard != null) {
                 clipboard.setPrimaryClip(clip);
             }

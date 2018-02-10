@@ -2,24 +2,28 @@ package co.nano.nanowallet.network.model.request;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.math.BigInteger;
+
 import co.nano.nanowallet.NanoUtil;
 import co.nano.nanowallet.network.model.BaseNetworkModel;
 import co.nano.nanowallet.network.model.BlockTypes;
 
 /**
- * Subscribe to websocket server for updates regarding the specified account.
- * First action to take when connecting when app opens or reconnects, IF a wallet already exists
+ * Send Block
  */
 
-public class ReceiveBlock extends BaseNetworkModel {
+public class SendBlock extends BaseNetworkModel {
     @SerializedName("type")
     private String type;
 
     @SerializedName("previous")
     private String previous;
 
-    @SerializedName("source")
-    private String source;
+    @SerializedName("destination")
+    private String destination;
+
+    @SerializedName("balance")
+    private String balance;
 
     @SerializedName("work")
     private String work;
@@ -27,15 +31,17 @@ public class ReceiveBlock extends BaseNetworkModel {
     @SerializedName("signature")
     private String signature;
 
-    public ReceiveBlock() {
-        this.type = BlockTypes.RECEIVE.toString();
+    public SendBlock() {
+        this.type = BlockTypes.SEND.toString();
     }
 
-    public ReceiveBlock(String private_key, String public_key, String previous, String source, String work) {
-        this.type = BlockTypes.RECEIVE.toString();
+    public SendBlock(String private_key, String public_key, String previous, String destination, String balance, String work) {
+        this.type = BlockTypes.SEND.toString();
         this.previous = previous;
-        this.source = source;
-        String hash = NanoUtil.computeReceiveHash(previous, source);
+        this.destination = destination;
+        this.balance = new BigInteger(balance).toString(16); // balance in hex
+        this.work = work;
+        String hash = NanoUtil.computeSendHash(previous, destination, this.balance);
         this.signature = NanoUtil.sign(private_key, public_key, hash);
     }
 
@@ -55,12 +61,20 @@ public class ReceiveBlock extends BaseNetworkModel {
         this.previous = previous;
     }
 
-    public String getSource() {
-        return source;
+    public String getDestination() {
+        return destination;
     }
 
-    public void setSource(String source) {
-        this.source = source;
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
+
+    public String getBalance() {
+        return balance;
+    }
+
+    public void setBalance(String balance) {
+        this.balance = balance;
     }
 
     public String getWork() {

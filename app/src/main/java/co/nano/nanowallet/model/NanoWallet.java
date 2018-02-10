@@ -65,58 +65,16 @@ public class NanoWallet {
         RxBus.get().register(this);
     }
 
-    /**
-     * Receive account subscribe response
-     *
-     * @param subscribeResponse
-     */
-    @Subscribe
-    public void receiveCurrentPrice(SubscribeResponse subscribeResponse) {
-        frontierBlock = subscribeResponse.getFrontier();
-        representativeAddress = subscribeResponse.getRepresentative_block();
-        openBlock = subscribeResponse.getOpen_block();
-        blockCount = subscribeResponse.getBlock_count();
-        accountBalance = new BigDecimal(subscribeResponse.getBalance());
-        RxBus.get().post(new WalletSubscribeUpdate());
-    }
-
-    /**
-     * Receive a history update
-     *
-     * @param accountHistoryResponse
-     */
-    @Subscribe
-    public void receiveHistory(AccountHistoryResponse accountHistoryResponse) {
-        accountHistory = accountHistoryResponse.getHistory();
-        RxBus.get().post(new WalletHistoryUpdate());
-    }
-
-    /**
-     * Receive a current price response
-     *
-     * @param currentPriceResponse
-     */
-    @Subscribe
-    public void receiveCurrentPrice(CurrentPriceResponse currentPriceResponse) {
-        if (currentPriceResponse.getCurrency().equals("btc")) {
-            // we made a btc price request
-            btcPrice = new BigDecimal(currentPriceResponse.getPrice());
-        } else {
-            // local currency price
-            localCurrencyPrice = new BigDecimal(currentPriceResponse.getPrice());
-        }
-        if (currentPriceResponse.getBtc() != null) {
-            btcPrice = new BigDecimal(currentPriceResponse.getBtc());
-        }
-        RxBus.get().post(new WalletPriceUpdate());
-    }
-
     public List<AccountHistoryResponseItem> getAccountHistory() {
         return accountHistory;
     }
 
     public String getAccountBalanceNano() {
         return NumberUtil.getRawAsUsableString(accountBalance.toString());
+    }
+
+    public BigDecimal getAccountBalanceNanoRaw() {
+        return accountBalance;
     }
 
     public String getLongerAccountBalanceNano() {
@@ -301,5 +259,61 @@ public class NanoWallet {
 
     public void close() {
         RxBus.get().unregister(this);
+    }
+
+    public String getFrontierBlock() {
+        return frontierBlock;
+    }
+
+    public void setFrontierBlock(String frontierBlock) {
+        this.frontierBlock = frontierBlock;
+    }
+
+    /* Bus Listeners */
+
+    /**
+     * Receive account subscribe response
+     *
+     * @param subscribeResponse
+     */
+    @Subscribe
+    public void receiveSubscribe(SubscribeResponse subscribeResponse) {
+        frontierBlock = subscribeResponse.getFrontier();
+        representativeAddress = subscribeResponse.getRepresentative_block();
+        openBlock = subscribeResponse.getOpen_block();
+        blockCount = subscribeResponse.getBlock_count();
+        accountBalance = new BigDecimal(subscribeResponse.getBalance());
+        RxBus.get().post(new WalletSubscribeUpdate());
+    }
+
+    /**
+     * Receive a history update
+     *
+     * @param accountHistoryResponse
+     */
+    @Subscribe
+    public void receiveHistory(AccountHistoryResponse accountHistoryResponse) {
+        accountHistory = accountHistoryResponse.getHistory();
+        RxBus.get().post(new WalletHistoryUpdate());
+    }
+
+    /**
+     * Receive a current price response
+     *
+     * @param currentPriceResponse
+     */
+    @Subscribe
+    public void receiveCurrentPrice(CurrentPriceResponse currentPriceResponse) {
+        if (currentPriceResponse.getCurrency().equals("btc")) {
+            // we made a btc price request
+            btcPrice = new BigDecimal(currentPriceResponse.getPrice());
+        } else {
+            // local currency price
+            localCurrencyPrice = new BigDecimal(currentPriceResponse.getPrice());
+        }
+        if (currentPriceResponse.getBtc() != null) {
+            btcPrice = new BigDecimal(currentPriceResponse.getBtc());
+        }
+        RxBus.get().post(new WalletPriceUpdate());
     }
 }

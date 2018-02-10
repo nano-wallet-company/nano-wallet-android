@@ -27,17 +27,24 @@ import android.widget.EditText;
 
 import com.hwangjr.rxbus.annotation.Subscribe;
 
+import java.math.BigInteger;
+
 import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.bus.SendInvalidAmount;
 import co.nano.nanowallet.databinding.FragmentSendBinding;
+import co.nano.nanowallet.model.Address;
 import co.nano.nanowallet.model.NanoWallet;
+import co.nano.nanowallet.network.AccountService;
+import co.nano.nanowallet.network.model.response.ErrorResponse;
+import co.nano.nanowallet.network.model.response.WorkResponse;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.UIUtil;
 import co.nano.nanowallet.ui.scan.ScanActivity;
+import co.nano.nanowallet.util.NumberUtil;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -51,6 +58,9 @@ public class SendFragment extends BaseFragment {
 
     @Inject
     NanoWallet wallet;
+
+    @Inject
+    AccountService accountService;
 
     @BindingAdapter("layout_constraintGuide_percent")
     public static void setLayoutConstraintGuidePercent(Guideline guideline, float percent) {
@@ -211,15 +221,85 @@ public class SendFragment extends BaseFragment {
         binding.setWallet(wallet);
 
         // show alert with a message to the user letting them know the amount they entered
+        showError(R.string.send_amount_too_large_alert_title, R.string.send_amount_too_large_alert_message);
+    }
 
+    /**
+     * Catch errors from the service
+     *
+     * @param errorResponse
+     */
+    @Subscribe
+    public void receiveServiceError(ErrorResponse errorResponse) {
+        // show alert with a message to the user letting them know the amount they entered
+        showError(R.string.send_error_alert_title, errorResponse.getError());
+    }
+
+    @Subscribe
+    public void receiveWorkResponse(WorkResponse workResponse) {
+        if (!validateRequest()) {
+            return;
+        }
+        Address destination = new Address(binding.sendAddress.getText().toString());
+        BigInteger sendAmount = NumberUtil.getAmountAsRawBigInteger(wallet.getSendNanoAmount());
+        BigInteger balance = wallet.getAccountBalanceNanoRaw().toBigInteger().subtract(sendAmount);
+
+        // make a send request now that we have work
+        accountService.requestSend(wallet.getFrontierBlock(), destination, balance, workResponse.getWork());
+
+        //goBack();
+    }
+
+    private boolean validateRequest() {
+        // check for valid address
+        Address destination = new Address(binding.sendAddress.getText().toString());
+        if (!destination.isValidAddress()) {
+            showError(R.string.send_error_alert_title, R.string.send_error_alert_message);
+            return false;
+        }
+
+        // check that amount being sent is less than or equal to account balance
+        if (wallet.getSendNanoAmount().isEmpty()) {
+            return false;
+        }
+        BigInteger balance = NumberUtil.getAmountAsRawBigInteger(wallet.getSendNanoAmount());
+        if (balance.compareTo(wallet.getAccountBalanceNanoRaw().toBigInteger()) > 0) {
+            showError(R.string.send_error_alert_title, R.string.send_error_alert_message);
+            return false;
+        }
+
+        // check that we have a frontier block
+        if (wallet.getFrontierBlock() == null) {
+            showError(R.string.send_error_alert_title, R.string.send_error_alert_message);
+            return false;
+        }
+
+        return true;
+    }
+
+    private void showError(int title, int message) {
         AlertDialog.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder = new AlertDialog.Builder(getContext(), android.R.style.Theme_Material_Light_Dialog_Alert);
         } else {
             builder = new AlertDialog.Builder(getContext());
         }
-        builder.setTitle(R.string.send_amount_too_large_alert_title)
-                .setMessage(R.string.send_amount_too_large_alert_message)
+        builder.setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(R.string.send_amount_too_large_alert_cta, (dialog, which) -> {
+                })
+                .show();
+    }
+
+    private void showError(int title, String message) {
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(getContext(), android.R.style.Theme_Material_Light_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(getContext());
+        }
+        builder.setTitle(title)
+                .setMessage(message)
                 .setPositiveButton(R.string.send_amount_too_large_alert_cta, (dialog, which) -> {
                 })
                 .show();
@@ -304,8 +384,15 @@ public class SendFragment extends BaseFragment {
         }
 
         public void onClickSend(View view) {
-            // TODO: Send money
-            goBack();
+            if (!validateRequest()) {
+                return;
+            }
+            Address destination = new Address(binding.sendAddress.getText().toString());
+            BigInteger sendAmount = NumberUtil.getAmountAsRawBigInteger(wallet.getSendNanoAmount());
+            BigInteger balance = wallet.getAccountBalanceNanoRaw().toBigInteger().subtract(sendAmount);
+
+            // make a work request
+            accountService.requestWorkSend(wallet.getFrontierBlock(), destination, balance);
         }
 
         public void onClickMax(View view) {

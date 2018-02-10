@@ -6,8 +6,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
+import java.math.BigInteger;
+
 import javax.inject.Inject;
 
+import co.nano.nanowallet.NanoUtil;
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.model.Address;
 import co.nano.nanowallet.model.Credentials;
@@ -15,9 +18,13 @@ import co.nano.nanowallet.network.model.Actions;
 import co.nano.nanowallet.network.model.BaseNetworkModel;
 import co.nano.nanowallet.network.model.request.AccountHistoryRequest;
 import co.nano.nanowallet.network.model.request.CurrentPriceRequest;
+import co.nano.nanowallet.network.model.request.SendBlock;
+import co.nano.nanowallet.network.model.request.SendRequest;
 import co.nano.nanowallet.network.model.request.SubscribeRequest;
+import co.nano.nanowallet.network.model.request.WorkRequest;
 import co.nano.nanowallet.network.model.response.AccountHistoryResponse;
 import co.nano.nanowallet.network.model.response.CurrentPriceResponse;
+import co.nano.nanowallet.network.model.response.ErrorResponse;
 import co.nano.nanowallet.network.model.response.SubscribeResponse;
 import co.nano.nanowallet.network.model.response.WorkResponse;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
@@ -71,6 +78,9 @@ public class AccountService {
                         } else if (src.getAsJsonObject().get("work") != null) {
                             // work response
                             src.getAsJsonObject().addProperty("messageType", Actions.WORK.toString());
+                        } else if (src.getAsJsonObject().get("error") != null) {
+                            // work response
+                            src.getAsJsonObject().addProperty("messageType", Actions.ERROR.toString());
                         }
                     }
                 }).registerTypeSelector(BaseNetworkModel.class, readElement -> {
@@ -85,6 +95,8 @@ public class AccountService {
                             return CurrentPriceResponse.class;
                         } else if (kind.equals(Actions.WORK.toString())) {
                             return WorkResponse.class;
+                        } else if (kind.equals(Actions.ERROR.toString())) {
+                            return ErrorResponse.class;
                         } else {
                             return null; // returning null will trigger Gson's default behavior
                         }
@@ -161,7 +173,7 @@ public class AccountService {
     public void requestUpdate() {
         if (address != null) {
             // account subscribe
-            rxWebSocket.sendMessage(gson, new SubscribeRequest(address.getLongAddress(), getLocalCurrency()))
+            rxWebSocket.sendMessage(gson, new SubscribeRequest(address.getAddress(), getLocalCurrency()))
                     .subscribe(o -> {}, ExceptionHandler::handle);
 
             // current price request
@@ -173,9 +185,38 @@ public class AccountService {
                     .subscribe(o -> {}, ExceptionHandler::handle);
 
             // account history request
-            rxWebSocket.sendMessage(gson, new AccountHistoryRequest(address.getLongAddress(), blockCount != null ? blockCount : 10))
+            rxWebSocket.sendMessage(gson, new AccountHistoryRequest(address.getAddress(), blockCount != null ? blockCount : 10))
                     .subscribe(o -> {}, ExceptionHandler::handle);
         }
+    }
+
+    /**
+     * Make a work request for a send
+     * @param previous the hash of the last block in our chain, our current frontier
+     * @param destination destination address we are sending to
+     * @param balance balance amount to send
+     */
+    public void requestWorkSend(String previous, Address destination, BigInteger balance) {
+        // request work
+        String hash = NanoUtil.computeSendHash(previous, destination.getAddress(), balance.toString(16));
+        WorkRequest workRequest = new WorkRequest(hash);
+        rxWebSocket.sendMessage(gson, workRequest)
+                .subscribe(o -> {}, ExceptionHandler::handle);
+    }
+
+    public void requestSend(String previous, Address destination, BigInteger balance, String work) {
+        // create a send block string
+        SendBlock sendBlock = new SendBlock(getPrivateKey(), getPublicKey(), previous, destination.getAddress(), balance.toString(), work);
+        String block = gson.toJson(sendBlock);
+
+        // create a new send request
+        SendRequest sendRequest = new SendRequest(block);
+
+        Timber.d(sendRequest.toString());
+
+        // send the send request
+        rxWebSocket.sendMessage(gson, sendRequest)
+                .subscribe(o -> {}, ExceptionHandler::handle);
     }
 
 
@@ -197,6 +238,28 @@ public class AccountService {
      */
     public String getLocalCurrency() {
         return sharedPreferencesUtil.getLocalCurrency().toString();
+    }
+
+    /**
+     * Get private key from realm
+     *
+     * @return
+     */
+    public String getPrivateKey() {
+        Credentials credentials = null;
+        credentials = realm.where(Credentials.class).findFirst();
+        return credentials.getPrivateKey();
+    }
+
+    /**
+     * Get public key from realm
+     *
+     * @return
+     */
+    public String getPublicKey() {
+        Credentials credentials = null;
+        credentials = realm.where(Credentials.class).findFirst();
+        return credentials.getPublicKey();
     }
 
     /**

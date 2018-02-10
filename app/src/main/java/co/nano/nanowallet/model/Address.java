@@ -55,14 +55,18 @@ public class Address implements Serializable {
         return s;
     }
 
-    public String getLongAddress() {
+    public String getAddress() {
         return value;
     }
 
-    public static boolean isValidAddress(String seed) {
+    public String getAddressWithoutPrefix() {
+        return value.replace("xrb_", "");
+    }
+
+    public boolean isValidAddress() {
         boolean isMatch = true;
-        for (int i = 0; i < seed.length() && isMatch; i++) {
-            char letter = seed.toLowerCase().charAt(i);
+        for (int i = 0; i < value.length() && isMatch; i++) {
+            char letter = value.toLowerCase().charAt(i);
             if (!VALID_ADDRESS_CHARACTERS.contains(letter)) {
                 isMatch = false;
             }

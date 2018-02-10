@@ -21,9 +21,9 @@ public class SendRequest extends BaseNetworkModel {
         this.action = Actions.PROCESS.toString();
     }
 
-    public SendRequest(String previous, String source) {
+    public SendRequest(String block) {
         this.action = Actions.PROCESS.toString();
-
+        this.block = block;
     }
 
     public String getAction() {

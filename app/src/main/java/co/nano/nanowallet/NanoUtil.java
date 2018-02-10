@@ -82,8 +82,29 @@ public class NanoUtil {
         return bytesToHex(blake.digest());
     }
 
-    public static String sign(String private_key, String data) {
-        return bytesToHex(ED25519.signature(hexToBytes(data), hexToBytes(generateSeed()), hexToBytes(private_key)));
+    /**
+     * Compute hash to use to generate a send work block
+     * @param previous Previous transation
+     * @param destination Destination address
+     * @param balance Raw NANO balance
+     * @return String of hash
+     */
+    public static String computeSendHash(String previous, String destination, String balance) {
+        byte[] previous_b = hexToBytes(previous);
+        byte[] destination_b = hexStringToByteArray(destination);
+        byte[] balance_b = hexToBytes(balance);
+
+        final Blake2b blake = Blake2b.Digest.newInstance(32);
+        blake.update(previous_b);
+        blake.update(destination_b);
+        blake.update(balance_b);
+
+        return bytesToHex(blake.digest());
+    }
+
+    public static String sign(String private_key, String public_key, String data) {
+
+        return bytesToHex(ED25519.signature(hexToBytes(data), hexToBytes(public_key), hexToBytes(private_key)));
     }
 
     public static byte[] hexStringToByteArray(String s) {
