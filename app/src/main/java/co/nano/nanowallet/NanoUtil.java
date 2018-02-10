@@ -36,7 +36,7 @@ public class NanoUtil {
      * @param seed Wallet seed
      * @return private key
      */
-    public static String seedToPrivateNaCl(String seed) {
+    public static String seedToPrivate(String seed) {
         Sodium sodium = NaCl.sodium();
         byte[] state = new byte[Sodium.crypto_generichash_statebytes()];
         byte[] key = new byte[Sodium.crypto_generichash_keybytes()];
@@ -59,7 +59,7 @@ public class NanoUtil {
      * @param private_key private key
      * @return public key
      */
-    public static String privateToPublicNaCl(String private_key) {
+    public static String privateToPublic(String private_key) {
         Sodium sodium = NaCl.sodium();
         byte[] public_key_b = new byte[Sodium.crypto_generichash_blake2b_bytes()];
         byte[] private_key_b = hexToBytes(private_key);

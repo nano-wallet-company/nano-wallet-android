@@ -37,7 +37,7 @@ public class LibSodiumTest extends InstrumentationTestCase {
     public void seedToPrivate() throws Exception {
         long lStartTime = System.nanoTime();
 
-        String privateKey = NanoUtil.seedToPrivateNaCl(seed);
+        String privateKey = NanoUtil.seedToPrivate(seed);
 
         long lEndTime = System.nanoTime();
         long output = lEndTime - lStartTime;
@@ -50,7 +50,7 @@ public class LibSodiumTest extends InstrumentationTestCase {
     public void privateToPublic() throws Exception {
         long lStartTime = System.nanoTime();
 
-        String publicKey = NanoUtil.privateToPublicNaCl(privateKey);
+        String publicKey = NanoUtil.privateToPublic(privateKey);
 
         long lEndTime = System.nanoTime();
         long output = lEndTime - lStartTime;

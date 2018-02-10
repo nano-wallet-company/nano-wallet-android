@@ -33,7 +33,7 @@ public class Credentials extends RealmObject {
         }
 
         this.seed = seed;
-        this.privateKey = NanoUtil.seedToPrivateNaCl(seed);
+        this.privateKey = NanoUtil.seedToPrivate(seed);
     }
 
     public String getPrivateKey() {
@@ -53,7 +53,7 @@ public class Credentials extends RealmObject {
     }
 
     public Address getAddress() {
-        return new Address(NanoUtil.privateToPublicNaCl(this.privateKey));
+        return new Address(NanoUtil.privateToPublic(this.privateKey));
     }
 
     public String getAddressString() {
