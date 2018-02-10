@@ -17,6 +17,7 @@ import co.nano.nanowallet.R;
 import co.nano.nanowallet.broadcastreceiver.ClipboardAlarmReceiver;
 import co.nano.nanowallet.databinding.FragmentIntroNewWalletBinding;
 import co.nano.nanowallet.model.Credentials;
+import co.nano.nanowallet.network.AccountService;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.FragmentUtility;
@@ -36,6 +37,9 @@ public class IntroNewWalletFragment extends BaseFragment {
 
     @Inject
     Realm realm;
+
+    @Inject
+    AccountService accountService;
 
     /**
      * Create new instance of the fragment (handy pattern if any data needs to be passed to it)
@@ -71,6 +75,8 @@ public class IntroNewWalletFragment extends BaseFragment {
             credentials.setSeed(NanoUtil.generateSeed());
             seed = credentials.getSeed();
         });
+
+        accountService.open();
 
         // bind data to view
         binding.setHandlers(new ClickHandlers());

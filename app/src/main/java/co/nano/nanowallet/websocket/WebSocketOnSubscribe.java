@@ -3,8 +3,11 @@ package co.nano.nanowallet.websocket;
 
 import android.support.annotation.NonNull;
 
+import com.facebook.stetho.okhttp3.StethoInterceptor;
+
 import java.util.concurrent.TimeUnit;
 
+import co.nano.nanowallet.BuildConfig;
 import co.nano.nanowallet.websocket.entities.SocketEvent;
 import io.reactivex.FlowableEmitter;
 import io.reactivex.FlowableOnSubscribe;
@@ -17,9 +20,16 @@ public class WebSocketOnSubscribe implements FlowableOnSubscribe<SocketEvent> {
     private final Request request;
 
     public WebSocketOnSubscribe(@NonNull String url) {
-        client = new OkHttpClient.Builder()
-                .readTimeout(0, TimeUnit.MILLISECONDS)
-                .build();
+        if (BuildConfig.DEBUG) {
+            client = new OkHttpClient.Builder()
+                    .readTimeout(0, TimeUnit.MILLISECONDS)
+                    .addNetworkInterceptor(new StethoInterceptor())
+                    .build();
+        } else {
+            client = new OkHttpClient.Builder()
+                    .readTimeout(0, TimeUnit.MILLISECONDS)
+                    .build();
+        }
 
         request = new Request.Builder()
                 .url(url)

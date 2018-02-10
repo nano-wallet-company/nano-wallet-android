@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentIntroSeedBinding;
 import co.nano.nanowallet.model.Credentials;
+import co.nano.nanowallet.network.AccountService;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.FragmentUtility;
@@ -38,6 +39,8 @@ public class IntroSeedFragment extends BaseFragment {
     @Inject
     Realm realm;
 
+    @Inject
+    AccountService accountService;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -158,6 +161,7 @@ public class IntroSeedFragment extends BaseFragment {
          */
         public void onClickConfirm(View view) {
             createAndStoreCredentials(binding.introSeedSeed.getText().toString());
+            accountService.open();
 
             // go to home screen
             if (getActivity() instanceof WindowControl) {
