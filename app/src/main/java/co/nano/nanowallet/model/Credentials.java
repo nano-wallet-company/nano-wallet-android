@@ -53,7 +53,7 @@ public class Credentials extends RealmObject {
     }
 
     public Address getAddress() {
-        return new Address(NanoUtil.privateToPublic(this.privateKey));
+        return new Address(NanoUtil.privateToPublicNaCl(this.privateKey));
     }
 
     public String getAddressString() {

@@ -35,14 +35,14 @@ public class SendBlock extends BaseNetworkModel {
         this.type = BlockTypes.SEND.toString();
     }
 
-    public SendBlock(String private_key, String public_key, String previous, String destination, String balance, String work) {
+    public SendBlock(String private_key, String previous, String destination, String balance, String work) {
         this.type = BlockTypes.SEND.toString();
         this.previous = previous;
         this.destination = destination;
         this.balance = new BigInteger(balance).toString(16); // balance in hex
         this.work = work;
         String hash = NanoUtil.computeSendHash(previous, destination, this.balance);
-        this.signature = NanoUtil.sign(private_key, public_key, hash);
+        this.signature = NanoUtil.sign(private_key, hash);
     }
 
     public String getType() {

@@ -213,7 +213,7 @@ public class AccountService {
 
     public void requestSend(String previous, Address destination, BigInteger balance, String work) {
         // create a send block string
-        SendBlock sendBlock = new SendBlock(getPrivateKey(), getPublicKey(), previous, destination.getAddress(), balance.toString(), work);
+        SendBlock sendBlock = new SendBlock(getPrivateKey(), previous, destination.getAddress(), balance.toString(), work);
 
         // escape the block to match https://github.com/clemahieu/raiblocks/wiki/RPC-protocol#process-block
         String block = gson.toJson(sendBlock);
@@ -260,17 +260,6 @@ public class AccountService {
         Credentials credentials = null;
         credentials = realm.where(Credentials.class).findFirst();
         return credentials.getPrivateKey();
-    }
-
-    /**
-     * Get public key from realm
-     *
-     * @return
-     */
-    public String getPublicKey() {
-        Credentials credentials = null;
-        credentials = realm.where(Credentials.class).findFirst();
-        return credentials.getPublicKey();
     }
 
     /**

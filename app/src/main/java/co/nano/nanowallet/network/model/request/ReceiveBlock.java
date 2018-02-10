@@ -2,7 +2,6 @@ package co.nano.nanowallet.network.model.request;
 
 import com.google.gson.annotations.SerializedName;
 
-import co.nano.nanowallet.NanoUtil;
 import co.nano.nanowallet.network.model.BaseNetworkModel;
 import co.nano.nanowallet.network.model.BlockTypes;
 
@@ -31,12 +30,12 @@ public class ReceiveBlock extends BaseNetworkModel {
         this.type = BlockTypes.RECEIVE.toString();
     }
 
-    public ReceiveBlock(String private_key, String public_key, String previous, String source, String work) {
+    public ReceiveBlock(String private_key, String previous, String source, String work) {
         this.type = BlockTypes.RECEIVE.toString();
         this.previous = previous;
         this.source = source;
-        String hash = NanoUtil.computeReceiveHash(previous, source);
-        this.signature = NanoUtil.sign(private_key, public_key, hash);
+        //String hash = NanoUtil.computeReceiveHash(previous, source);
+        //this.signature = NanoUtil.sign(private_key, hash);
     }
 
     public String getType() {
