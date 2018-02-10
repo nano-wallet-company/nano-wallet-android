@@ -16,7 +16,6 @@ import com.hwangjr.rxbus.annotation.Subscribe;
 
 import javax.inject.Inject;
 
-import co.nano.nanowallet.bus.CreatePK;
 import co.nano.nanowallet.bus.Logout;
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.di.activity.ActivityComponent;
@@ -30,11 +29,7 @@ import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.home.HomeFragment;
 import co.nano.nanowallet.ui.intro.IntroWelcomeFragment;
-import co.nano.nanowallet.util.ExceptionHandler;
 import co.nano.nanowallet.websocket.RxWebSocket;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -151,31 +146,6 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
 
         // go to the welcome fragment
         getFragmentUtility().replace(new IntroWelcomeFragment(), FragmentUtility.Animation.CROSSFADE);
-    }
-
-    @Subscribe
-    public void generatePublicKey(CreatePK createPK) {
-        // create public key on background thread
-        long lStartTime = System.nanoTime();
-        Credentials credentials = realm.where(Credentials.class).findFirst();
-        if (credentials != null) {
-            Credentials pk = realm.copyFromRealm(credentials);
-            Observable.fromCallable(() -> NanoUtil.privateToPublic(pk.getPrivateKey()))
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(o -> {
-                        // create wallet seed
-                        realm.executeTransaction(realm -> {
-                            credentials.setPublicKey(o);
-                        });
-                        long lEndTime = System.nanoTime();
-                        long output = lEndTime - lStartTime;
-                        System.out.println("Private to Public: " + output / 1000000);
-
-                        // start web socket
-                        accountService.open();
-                    }, ExceptionHandler::handle);
-        }
     }
 
     @Override

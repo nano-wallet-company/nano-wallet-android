@@ -13,8 +13,6 @@ import android.widget.EditText;
 import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
-import co.nano.nanowallet.bus.CreatePK;
-import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.databinding.FragmentIntroSeedBinding;
 import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
@@ -188,8 +186,6 @@ public class IntroSeedFragment extends BaseFragment {
         credentials.setSeed(seed);
         realm.commitTransaction();
         realm.close();
-
-        RxBus.get().post(new CreatePK());
     }
 
     /**

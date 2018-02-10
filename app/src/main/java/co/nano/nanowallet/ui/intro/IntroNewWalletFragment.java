@@ -15,8 +15,6 @@ import javax.inject.Inject;
 import co.nano.nanowallet.NanoUtil;
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.broadcastreceiver.ClipboardAlarmReceiver;
-import co.nano.nanowallet.bus.CreatePK;
-import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.databinding.FragmentIntroNewWalletBinding;
 import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
@@ -74,8 +72,6 @@ public class IntroNewWalletFragment extends BaseFragment {
             seed = credentials.getSeed();
         });
 
-        RxBus.get().post(new CreatePK());
-
         // bind data to view
         binding.setHandlers(new ClickHandlers());
         binding.setSeed(seed);
@@ -116,8 +112,6 @@ public class IntroNewWalletFragment extends BaseFragment {
 
                     })
                     .show();
-
-
         }
 
         /**
