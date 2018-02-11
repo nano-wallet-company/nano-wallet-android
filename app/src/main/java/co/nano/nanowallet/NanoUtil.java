@@ -107,11 +107,12 @@ public class NanoUtil {
         Sodium sodium = NaCl.sodium();
         byte[] data_b = hexToBytes(data);
         byte[] private_key_b = hexToBytes(private_key);
-        byte[] hash = new byte[Sodium.crypto_generichash_bytes()];
+        byte[] signature = new byte[Sodium.crypto_sign_bytes()];
+        int[] signature_len = new int[0];
 
-        Sodium.crypto_sign_ed25519_detached(hash, null, data_b, data_b.length, private_key_b);
+        Sodium.crypto_sign_detached(signature, signature_len, data_b, data_b.length, private_key_b);
 
-        return bytesToHex(hash);
+        return bytesToHex(signature);
     }
 
     /**

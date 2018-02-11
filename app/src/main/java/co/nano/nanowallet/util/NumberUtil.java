@@ -17,6 +17,7 @@ public class NumberUtil {
 
     /**
      * Go from 32-bit raw NANO to user readable bigdecimal
+     *
      * @param raw 1000000000000000000000000000000
      * @return BigDecimal value 1.000000000000000000000000000000
      */
@@ -27,6 +28,7 @@ public class NumberUtil {
 
     /**
      * Go from 32-bit raw NANO to user readable String with up to 6 decimal places
+     *
      * @param raw 1000000000000000000000000000000
      * @return String 1
      */
@@ -38,6 +40,7 @@ public class NumberUtil {
 
     /**
      * Go from readable NANO String to a raw BigDecimal
+     *
      * @param amount 1
      * @return BigInteger 1000000000000000000000000000000
      */
@@ -75,5 +78,18 @@ public class NumberUtil {
 
     public static String getAsRawString(String value) {
         return getAsRawValue(value).toString();
+    }
+
+    public static String getRawAsHex(String raw) {
+        // convert to hex
+        String hex = new BigInteger(raw).toString(16);
+
+        // left-pad with zeros to be 32 length
+        StringBuilder sb = new StringBuilder();
+        for (int toPrepend = 32 - hex.length(); toPrepend > 0; toPrepend--) {
+            sb.append('0');
+        }
+        sb.append(hex);
+        return sb.toString();
     }
 }

@@ -2,11 +2,10 @@ package co.nano.nanowallet.network.model.request;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.math.BigInteger;
-
 import co.nano.nanowallet.NanoUtil;
 import co.nano.nanowallet.network.model.BaseNetworkModel;
 import co.nano.nanowallet.network.model.BlockTypes;
+import co.nano.nanowallet.util.NumberUtil;
 
 /**
  * Send Block
@@ -39,7 +38,7 @@ public class SendBlock extends BaseNetworkModel {
         this.type = BlockTypes.SEND.toString();
         this.previous = previous;
         this.destination = destination;
-        this.balance = new BigInteger(balance).toString(16); // balance in hex
+        this.balance = NumberUtil.getRawAsHex(balance);
         this.work = work;
         String hash = NanoUtil.computeSendHash(previous, destination, this.balance);
         this.signature = NanoUtil.sign(private_key, hash);

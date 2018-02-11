@@ -29,6 +29,7 @@ import co.nano.nanowallet.network.model.response.SubscribeResponse;
 import co.nano.nanowallet.network.model.response.WorkResponse;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.util.ExceptionHandler;
+import co.nano.nanowallet.util.NumberUtil;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
 import co.nano.nanowallet.websocket.RxWebSocket;
 import io.gsonfire.GsonFireBuilder;
@@ -205,7 +206,7 @@ public class AccountService {
      */
     public void requestWorkSend(String previous, Address destination, BigInteger balance) {
         // request work
-        String hash = NanoUtil.computeSendHash(previous, destination.getAddress(), balance.toString(16));
+        String hash = NanoUtil.computeSendHash(previous, destination.getAddress(), NumberUtil.getRawAsHex(balance.toString()));
         WorkRequest workRequest = new WorkRequest(hash);
         rxWebSocket.sendMessage(gson, workRequest)
                 .subscribe(o -> {
