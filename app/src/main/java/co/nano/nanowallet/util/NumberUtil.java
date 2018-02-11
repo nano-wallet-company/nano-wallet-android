@@ -90,6 +90,6 @@ public class NumberUtil {
             sb.append('0');
         }
         sb.append(hex);
-        return sb.toString();
+        return sb.toString().toUpperCase();
     }
 }

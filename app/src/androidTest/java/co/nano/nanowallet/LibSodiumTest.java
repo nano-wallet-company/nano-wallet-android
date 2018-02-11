@@ -73,14 +73,31 @@ public class LibSodiumTest extends InstrumentationTestCase {
     }
 
     @Test
-    public void testSign() throws Exception {
-        String privateKey = "49FF617E9074857402411B346D92174572EB5DE02CC9469C22E9681D8565E6D5";
-        String signature = "0E5DC6C6CDBC96A9885B1DDB0E782BC04D9B2DCB107FDD4B8A3027695A3B3947BE8E6F413190AD304B8BC5129A50ECFB8DB918FAA3EEE2856C4449A329325E0A";
-        String blockHash = "B8C51B22BFE48B358C437BE5ACE3F203BD5938A5231F4F1C177488E879317B5E";
+    public void addressToPublic() throws Exception {
+        long lStartTime = System.nanoTime();
 
-        String sig = NanoUtil.sign(privateKey, blockHash);
-        assertEquals(sig, signature);
+        String publicKey = NanoUtil.addressToPublic(this.address);
+
+        long lEndTime = System.nanoTime();
+        long output = lEndTime - lStartTime;
+        Timber.d("Public to Address: " + output / 1000000);
+
+        assertEquals(publicKey, this.publicKey);
     }
+
+//    @Test
+//    public void testSign() throws Exception {
+//        String privateKey = "24888E558253E2BE282888874416101C1C42CD702F35F6544A8750768D3347EC";
+//        String signature = "F288B486A48E752D6F3902265BE8BCB9AB80B8E2E0DCB1B92EBF96C178C788FCBB1388B26A572958E153ED082E1B88CE349D431CEBCFB5C9662BCFF53F03A10B";
+//        String blockHash = NanoUtil.computeSendHash(
+//                "F288B486A48E752D6F3902265BE8BCB9AB80B8E2E0DCB1B92EBF96C178C788FCBB1388B26A572958E153ED082E1B88CE349D431CEBCFB5C9662BCFF53F03A10B",
+//                "xrb_3954bgqr76boy8k9i8twur5mtt7ra4g8xq9o6ynqxjzo5fxkt5w3mcx4io17",
+//                "0000018AE0E06FC3E4B96BDD74000000"
+//        );
+//
+//        String sig = NanoUtil.sign(privateKey, blockHash);
+//        assertEquals(sig, signature);
+//    }
 
     @After
     public void tearDown() throws Exception {

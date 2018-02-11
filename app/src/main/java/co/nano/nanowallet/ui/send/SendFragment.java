@@ -55,6 +55,7 @@ public class SendFragment extends BaseFragment {
     private FragmentSendBinding binding;
     public static String TAG = SendFragment.class.getSimpleName();
     private boolean localCurrencyActive = false;
+    private String work = null;
 
     @Inject
     NanoWallet wallet;
@@ -184,6 +185,9 @@ public class SendFragment extends BaseFragment {
 
         setupUI(view);
 
+        // make a work request
+        accountService.requestWorkSend(wallet.getFrontierBlock());
+
         return view;
     }
 
@@ -237,17 +241,7 @@ public class SendFragment extends BaseFragment {
 
     @Subscribe
     public void receiveWorkResponse(WorkResponse workResponse) {
-        if (!validateRequest()) {
-            return;
-        }
-        Address destination = new Address(binding.sendAddress.getText().toString());
-        BigInteger sendAmount = NumberUtil.getAmountAsRawBigInteger(wallet.getSendNanoAmount());
-        BigInteger balance = wallet.getAccountBalanceNanoRaw().toBigInteger().subtract(sendAmount);
-
-        // make a send request now that we have work
-        accountService.requestSend(wallet.getFrontierBlock(), destination, balance, workResponse.getWork());
-
-        //goBack();
+        work = workResponse.getWork();
     }
 
     private boolean validateRequest() {
@@ -270,6 +264,11 @@ public class SendFragment extends BaseFragment {
 
         // check that we have a frontier block
         if (wallet.getFrontierBlock() == null) {
+            showError(R.string.send_error_alert_title, R.string.send_error_alert_message);
+            return false;
+        }
+
+        if (work == null) {
             showError(R.string.send_error_alert_title, R.string.send_error_alert_message);
             return false;
         }
@@ -391,8 +390,7 @@ public class SendFragment extends BaseFragment {
             BigInteger sendAmount = NumberUtil.getAmountAsRawBigInteger(wallet.getSendNanoAmount());
             BigInteger balance = wallet.getAccountBalanceNanoRaw().toBigInteger().subtract(sendAmount);
 
-            // make a work request
-            accountService.requestWorkSend(wallet.getFrontierBlock(), destination, balance);
+            accountService.requestSend(wallet.getFrontierBlock(), destination, balance, work);
         }
 
         public void onClickMax(View view) {

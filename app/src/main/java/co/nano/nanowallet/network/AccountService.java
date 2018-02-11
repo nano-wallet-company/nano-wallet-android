@@ -10,7 +10,6 @@ import java.math.BigInteger;
 
 import javax.inject.Inject;
 
-import co.nano.nanowallet.NanoUtil;
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.model.Address;
 import co.nano.nanowallet.model.Credentials;
@@ -29,7 +28,6 @@ import co.nano.nanowallet.network.model.response.SubscribeResponse;
 import co.nano.nanowallet.network.model.response.WorkResponse;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.util.ExceptionHandler;
-import co.nano.nanowallet.util.NumberUtil;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
 import co.nano.nanowallet.websocket.RxWebSocket;
 import io.gsonfire.GsonFireBuilder;
@@ -201,13 +199,10 @@ public class AccountService {
      * Make a work request for a send
      *
      * @param previous    the hash of the last block in our chain, our current frontier
-     * @param destination destination address we are sending to
-     * @param balance     balance amount to send
      */
-    public void requestWorkSend(String previous, Address destination, BigInteger balance) {
+    public void requestWorkSend(String previous) {
         // request work
-        String hash = NanoUtil.computeSendHash(previous, destination.getAddress(), NumberUtil.getRawAsHex(balance.toString()));
-        WorkRequest workRequest = new WorkRequest(hash);
+        WorkRequest workRequest = new WorkRequest(previous);
         rxWebSocket.sendMessage(gson, workRequest)
                 .subscribe(o -> {
                 }, ExceptionHandler::handle);

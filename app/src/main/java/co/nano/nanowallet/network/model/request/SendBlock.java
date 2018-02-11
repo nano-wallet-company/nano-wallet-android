@@ -40,7 +40,7 @@ public class SendBlock extends BaseNetworkModel {
         this.destination = destination;
         this.balance = NumberUtil.getRawAsHex(balance);
         this.work = work;
-        String hash = NanoUtil.computeSendHash(previous, destination, this.balance);
+        String hash = NanoUtil.computeSendHash(previous, NanoUtil.addressToPublic(destination), this.balance);
         this.signature = NanoUtil.sign(private_key, hash);
     }
 

@@ -8,7 +8,10 @@ import org.libsodium.jni.NaCl;
 import org.libsodium.jni.Sodium;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Random;
+
+import co.nano.nanowallet.util.ExceptionHandler;
 
 public class NanoUtil {
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
@@ -83,7 +86,7 @@ public class NanoUtil {
         byte[] key = new byte[Sodium.crypto_generichash_keybytes()];
 
         byte[] previous_b = hexToBytes(previous);
-        byte[] destination_b = hexStringToByteArray(destination);
+        byte[] destination_b = hexToBytes(destination);
         byte[] balance_b = hexToBytes(balance);
         byte[] output = new byte[32];
 
@@ -107,12 +110,16 @@ public class NanoUtil {
         Sodium sodium = NaCl.sodium();
         byte[] data_b = hexToBytes(data);
         byte[] private_key_b = hexToBytes(private_key);
-        byte[] signature = new byte[Sodium.crypto_sign_bytes()];
+        if (private_key_b.length != Sodium.crypto_sign_bytes()) {
+            ExceptionHandler.handle(new Throwable("bad secret key size"));
+        }
+
+        byte[] signature = new byte[Sodium.crypto_sign_bytes() + data_b.length];
         int[] signature_len = new int[0];
 
-        Sodium.crypto_sign_detached(signature, signature_len, data_b, data_b.length, private_key_b);
+        Sodium.crypto_sign(signature, signature_len, data_b, data_b.length, private_key_b);
 
-        return bytesToHex(signature);
+        return bytesToHex(Arrays.copyOfRange(signature, 0, Sodium.crypto_sign_bytes()+1));
     }
 
     /**
