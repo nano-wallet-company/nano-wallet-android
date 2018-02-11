@@ -1,6 +1,7 @@
 package co.nano.nanowallet.network.model.request;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import co.nano.nanowallet.NanoUtil;
 import co.nano.nanowallet.network.model.BaseNetworkModel;
@@ -10,24 +11,31 @@ import co.nano.nanowallet.util.NumberUtil;
 /**
  * Send Block
  */
-
+@JsonPropertyOrder({
+        "type",
+        "previous",
+        "destination",
+        "balance",
+        "work",
+        "signature"
+})
 public class SendBlock extends BaseNetworkModel {
-    @SerializedName("type")
+    @JsonProperty("type")
     private String type;
 
-    @SerializedName("previous")
+    @JsonProperty("previous")
     private String previous;
 
-    @SerializedName("destination")
+    @JsonProperty("destination")
     private String destination;
 
-    @SerializedName("balance")
+    @JsonProperty("balance")
     private String balance;
 
-    @SerializedName("work")
+    @JsonProperty("work")
     private String work;
 
-    @SerializedName("signature")
+    @JsonProperty("signature")
     private String signature;
 
     public SendBlock() {

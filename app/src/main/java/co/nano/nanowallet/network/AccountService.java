@@ -2,6 +2,8 @@ package co.nano.nanowallet.network;
 
 import android.content.Context;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
@@ -213,7 +215,14 @@ public class AccountService {
         SendBlock sendBlock = new SendBlock(getPrivateKey(), previous, destination.getAddress(), balance.toString(), work);
 
         // escape the block to match https://github.com/clemahieu/raiblocks/wiki/RPC-protocol#process-block
-        String block = gson.toJson(sendBlock);
+        // use jackson here to maintain field order
+        ObjectMapper mapper = new ObjectMapper();
+        String block = "";
+        try {
+            block = mapper.writeValueAsString(sendBlock);
+        } catch (JsonProcessingException e) {
+            ExceptionHandler.handle(e);
+        }
         Timber.d(block);
 
         // create a new send request
