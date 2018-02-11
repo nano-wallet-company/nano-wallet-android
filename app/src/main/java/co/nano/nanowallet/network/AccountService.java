@@ -174,7 +174,7 @@ public class AccountService {
      * Request all the account info
      */
     public void requestUpdate() {
-        if (address != null) {
+        if (address != null && rxWebSocket != null) {
             // account subscribe
             rxWebSocket.sendMessage(gson, new SubscribeRequest(address.getAddress(), getLocalCurrency()))
                     .subscribe(o -> {
