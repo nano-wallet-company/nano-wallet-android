@@ -3,9 +3,6 @@ repositories {
         url 'https://github.com/WickeDev/stetho-realm/raw/master/maven-repo'
     }
     maven { url 'https://maven.fabric.io/public' }
-    flatDir {
-        dirs 'libs'
-    }
 }
 
 apply plugin: 'com.android.application'
