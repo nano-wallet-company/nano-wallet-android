@@ -44,6 +44,8 @@ public class SubscribeResponse extends BaseNetworkModel {
     public SubscribeResponse() {
     }
 
+
+
     public String getFrontier() {
         return frontier;
     }

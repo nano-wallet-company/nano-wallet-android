@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * Includes methods for serializing and deserializing
  */
 
-public abstract class BaseNetworkModel {
+public class BaseNetworkModel {
     @SerializedName("messageType")
     private String messageType;
 

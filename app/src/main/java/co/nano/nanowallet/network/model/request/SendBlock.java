@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import co.nano.nanowallet.NanoUtil;
-import co.nano.nanowallet.network.model.BaseNetworkModel;
 import co.nano.nanowallet.network.model.BlockTypes;
 import co.nano.nanowallet.util.NumberUtil;
 
@@ -19,7 +18,7 @@ import co.nano.nanowallet.util.NumberUtil;
         "work",
         "signature"
 })
-public class SendBlock extends BaseNetworkModel {
+public class SendBlock {
     @JsonProperty("type")
     private String type;
 

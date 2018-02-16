@@ -2,7 +2,6 @@ package co.nano.nanowallet.network.model.request;
 
 import com.google.gson.annotations.SerializedName;
 
-import co.nano.nanowallet.network.model.BaseNetworkModel;
 import co.nano.nanowallet.network.model.BlockTypes;
 
 /**
@@ -10,7 +9,7 @@ import co.nano.nanowallet.network.model.BlockTypes;
  * First action to take when connecting when app opens or reconnects, IF a wallet already exists
  */
 
-public class ReceiveBlock extends BaseNetworkModel {
+public class ReceiveBlock {
     @SerializedName("type")
     private String type;
 

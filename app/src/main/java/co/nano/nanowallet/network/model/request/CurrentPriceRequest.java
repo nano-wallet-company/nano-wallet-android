@@ -3,13 +3,12 @@ package co.nano.nanowallet.network.model.request;
 import com.google.gson.annotations.SerializedName;
 
 import co.nano.nanowallet.network.model.Actions;
-import co.nano.nanowallet.network.model.BaseNetworkModel;
 
 /**
  * Fetch current price data
  */
 
-public class CurrentPriceRequest extends BaseNetworkModel {
+public class CurrentPriceRequest {
     @SerializedName("action")
     private String action;
 

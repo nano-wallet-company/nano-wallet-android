@@ -3,13 +3,12 @@ package co.nano.nanowallet.network.model.request;
 import com.google.gson.annotations.SerializedName;
 
 import co.nano.nanowallet.network.model.Actions;
-import co.nano.nanowallet.network.model.BaseNetworkModel;
 
 /**
  * Retrieve pending transactions
  */
 
-public class PendingTransactionsRequest extends BaseNetworkModel {
+public class PendingTransactionsRequest {
     @SerializedName("action")
     private String action;
 

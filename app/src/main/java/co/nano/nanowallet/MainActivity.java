@@ -29,7 +29,6 @@ import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.home.HomeFragment;
 import co.nano.nanowallet.ui.intro.IntroWelcomeFragment;
-import co.nano.nanowallet.websocket.RxWebSocket;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -38,7 +37,6 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
     private Toolbar mToolbar;
     private TextView mToolbarTitle;
     protected ActivityComponent mActivityComponent;
-    private RxWebSocket rxWebSocket;
     private Credentials credentials = null;
 
     @Inject
