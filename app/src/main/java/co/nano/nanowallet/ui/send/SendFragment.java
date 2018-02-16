@@ -17,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -109,38 +108,16 @@ public class SendFragment extends BaseFragment {
     public void hideSoftKeyboard() {
         //Hides the SoftKeyboard
         InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-        if (inputMethodManager != null) {
+        if (inputMethodManager != null && getActivity().getCurrentFocus() != null) {
             inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
         }
-        binding.setShowAmount(true);
     }
 
-    public void setupUI(View view) {
-        String s = "inside";
-        //Set up touch listener for non-text box views to hide keyboard.
-        if (!(view instanceof EditText && view.getId() == R.id.send_address)) {
-            view.setOnTouchListener(new View.OnTouchListener() {
-                public boolean onTouch(View v, MotionEvent event) {
-                    hideSoftKeyboard();
-                    return false;
-                }
-            });
-        } else {
-            view.setOnTouchListener(new View.OnTouchListener() {
-                public boolean onTouch(View v, MotionEvent event) {
-                    binding.setShowAmount(false);
-                    return false;
-                }
-            });
-        }
-
-
-        //If a layout container, iterate over children and seed recursion.
-        if (view instanceof ViewGroup) {
-            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
-                View innerView = ((ViewGroup) view).getChildAt(i);
-                setupUI(innerView);
-            }
+    public void showSoftKeyboard() {
+        //Shows the SoftKeyboard
+        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        if (inputMethodManager != null && getActivity().getCurrentFocus() != null) {
+            inputMethodManager.showSoftInput(binding.sendAddress, InputMethodManager.SHOW_IMPLICIT);
         }
     }
 
@@ -182,8 +159,9 @@ public class SendFragment extends BaseFragment {
         binding.sendAddress.setOnFocusChangeListener((view12, hasFocus) -> {
             binding.setShowAmount(!hasFocus);
         });
-
-        setupUI(view);
+        binding.sendAddress.setText(getString(R.string.send_address_prefix));
+        binding.sendAddress.setBackgroundResource(binding.sendAddress.getText().length() > 0 ? R.drawable.bg_seed_input_active : R.drawable.bg_seed_input);
+        UIUtil.colorizeSpannable(binding.sendAddress.getText(), getContext());
 
         // make a work request
         accountService.requestWorkSend(wallet.getFrontierBlock());
@@ -208,6 +186,8 @@ public class SendFragment extends BaseFragment {
                 if (res != null) {
                     // set to scanned value
                     binding.sendAddress.setText(res.getString(ScanActivity.QR_CODE_RESULT));
+
+                    setShortAddress();
                 }
             }
         }
@@ -365,6 +345,18 @@ public class SendFragment extends BaseFragment {
         binding.setWallet(wallet);
     }
 
+    private void setShortAddress() {
+        // set short address if appropriate
+        Address address = new Address(binding.sendAddress.getText().toString());
+        if (address.isValidAddress()) {
+            binding.sendAddressDisplay.setText(address.getColorizedShortSpannable());
+            binding.sendAddressDisplay.setBackgroundResource(binding.sendAddressDisplay.length() > 0 ? R.drawable.bg_seed_input_active : R.drawable.bg_seed_input);
+        } else {
+            binding.sendAddressDisplay.setText("");
+            binding.sendAddressDisplay.setBackgroundResource(binding.sendAddressDisplay.length() > 0 ? R.drawable.bg_seed_input_active : R.drawable.bg_seed_input);
+        }
+    }
+
     public class ClickHandlers {
         /**
          * Listener for styling updates when text changes
@@ -380,6 +372,19 @@ public class SendFragment extends BaseFragment {
 
             // colorize input string
             UIUtil.colorizeSpannable(binding.sendAddress.getText(), getContext());
+        }
+
+        public void onAddressDisplayClicked(View view) {
+            binding.setShowAmount(false);
+            binding.sendAddress.setSelection(binding.sendAddress.getText().length());
+            showSoftKeyboard();
+        }
+
+        public void onClickConfirm(View view) {
+            binding.setShowAmount(true);
+            setShortAddress();
+            hideSoftKeyboard();
+            binding.sendAmountNano.requestFocus();
         }
 
         public void onClickSend(View view) {

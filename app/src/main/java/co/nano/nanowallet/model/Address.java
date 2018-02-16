@@ -64,6 +64,9 @@ public class Address implements Serializable {
     }
 
     public boolean isValidAddress() {
+        if (getAddress().length() != 64) {
+            return false;
+        }
         boolean isMatch = true;
         for (int i = 0; i < value.length() && isMatch; i++) {
             char letter = value.toLowerCase().charAt(i);
