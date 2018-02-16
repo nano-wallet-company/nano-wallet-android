@@ -15,6 +15,7 @@ import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.model.Address;
 import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.network.model.BaseNetworkModel;
+import co.nano.nanowallet.network.model.request.AccountCheckRequest;
 import co.nano.nanowallet.network.model.request.AccountHistoryRequest;
 import co.nano.nanowallet.network.model.request.CurrentPriceRequest;
 import co.nano.nanowallet.network.model.request.SendBlock;
@@ -123,6 +124,19 @@ public class AccountService {
         // post whatever the response type is to the bus
         if (event != null) {
             RxBus.get().post(event);
+        }
+    }
+
+    /**
+     * Request check to see if account is ready
+     */
+    public void requestAccountCheck() {
+        if (websocket != null && address != null) {
+            // account subscribe
+            websocket.send(new AccountCheckRequest(address.getAddress()))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(event -> {
+                    }, this::handleError);
         }
     }
 

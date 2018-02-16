@@ -25,6 +25,7 @@ import co.nano.nanowallet.bus.WalletSubscribeUpdate;
 import co.nano.nanowallet.databinding.FragmentHomeBinding;
 import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.network.AccountService;
+import co.nano.nanowallet.network.model.response.AccountCheckResponse;
 import co.nano.nanowallet.network.model.response.AccountHistoryResponseItem;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseDialogFragment;
@@ -154,6 +155,9 @@ public class HomeFragment extends BaseFragment {
             controller.setData(wallet.getAccountHistory(), new ClickHandlers());
         }
 
+        // check to see if account is ready
+        accountService.requestAccountCheck();
+
         // get update from service
         if (accountService != null) {
             accountService.requestUpdate();
@@ -176,6 +180,13 @@ public class HomeFragment extends BaseFragment {
     @Subscribe
     public void receiveSubscribe(WalletSubscribeUpdate walletSubscribeUpdate) {
         updateAmounts();
+    }
+
+    @Subscribe
+    public void receiveAccountCheck(AccountCheckResponse accountCheckResponse) {
+        if (!accountCheckResponse.getReady()) {
+            // account is not yet ready on the network, so send a pending request
+        }
     }
 
     private void updateAmounts() {

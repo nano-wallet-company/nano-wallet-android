@@ -12,6 +12,7 @@ import co.nano.nanowallet.network.converters.GsonRequestConvertor;
 import co.nano.nanowallet.network.converters.GsonResponseConvertor;
 import co.nano.nanowallet.network.model.Actions;
 import co.nano.nanowallet.network.model.BaseNetworkModel;
+import co.nano.nanowallet.network.model.response.AccountCheckResponse;
 import co.nano.nanowallet.network.model.response.AccountHistoryResponse;
 import co.nano.nanowallet.network.model.response.CurrentPriceResponse;
 import co.nano.nanowallet.network.model.response.ErrorResponse;
@@ -43,8 +44,11 @@ public final class WebSocketConverterFactory extends WebSocketConverter.Factory 
                             // work response
                             src.getAsJsonObject().addProperty("messageType", Actions.WORK.toString());
                         } else if (src.getAsJsonObject().get("error") != null) {
-                            // work response
+                            // error response
                             src.getAsJsonObject().addProperty("messageType", Actions.ERROR.toString());
+                        } else if (src.getAsJsonObject().get("ready") != null) {
+                            // account check response
+                            src.getAsJsonObject().addProperty("messageType", Actions.CHECK.toString());
                         }
                     }
                 }).registerTypeSelector(BaseNetworkModel.class, readElement -> {
@@ -61,6 +65,8 @@ public final class WebSocketConverterFactory extends WebSocketConverter.Factory 
                             return WorkResponse.class;
                         } else if (kind.equals(Actions.ERROR.toString())) {
                             return ErrorResponse.class;
+                        } else if (kind.equals(Actions.CHECK.toString())) {
+                            return AccountCheckResponse.class;
                         } else {
                             return null; // returning null will trigger Gson's default behavior
                         }

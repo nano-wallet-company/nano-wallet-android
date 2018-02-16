@@ -1,20 +1,17 @@
 package co.nano.nanowallet.di.persistence;
 
 import android.content.Context;
-
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.SecureRandom;
+import android.util.Base64;
 
 import javax.inject.Named;
 
 import co.nano.nanowallet.di.application.ApplicationScope;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
+import co.nano.nanowallet.util.Vault;
 import dagger.Module;
 import dagger.Provides;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import timber.log.Timber;
 
 @Module
 public class PersistenceModule {
@@ -27,13 +24,18 @@ public class PersistenceModule {
 
     @Provides
     Realm providesRealmInstance(@Named("encryption_key") byte[] key) {
-        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()
-                .name("nano.realm")
-                .schemaVersion(1)
-                .build();
+        if (key != null) {
+            RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()
+                    .name("nano.realm")
+                    .encryptionKey(key)
+                    .schemaVersion(1)
+                    .build();
 
-        // Open the Realm with encryption enabled
-        return Realm.getInstance(realmConfiguration);
+            // Open the Realm with encryption enabled
+            return Realm.getInstance(realmConfiguration);
+        } else {
+            return null;
+        }
     }
 
     @Provides
@@ -45,20 +47,14 @@ public class PersistenceModule {
 
     @Provides
     @Named("encryption_key")
-    byte[] providesKeyPair() {
-        byte[] key = new byte[64];
-        new SecureRandom().nextBytes(key);
-        return key;
-    }
-
-    @Provides
-    @ApplicationScope
-    KeyStore providesKeystore() {
-        try {
-            return KeyStore.getInstance("Nano");
-        } catch (KeyStoreException e) {
-            Timber.e(e.getMessage());
+    byte[] providesEncryptionKey() {
+        if (Vault.getVault().getString(Vault.ENCRYPTION_KEY_NAME, null) == null) {
+            Vault.getVault()
+                    .edit()
+                    .putString(Vault.ENCRYPTION_KEY_NAME,
+                            Base64.encodeToString(Vault.generateKey(), Base64.DEFAULT))
+                    .apply();
         }
-        return null;
+        return Base64.decode(Vault.getVault().getString(Vault.ENCRYPTION_KEY_NAME, null), Base64.DEFAULT);
     }
 }
