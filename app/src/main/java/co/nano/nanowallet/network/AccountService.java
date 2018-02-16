@@ -81,26 +81,31 @@ public class AccountService {
                         requestUpdate();
                     } else if (event instanceof RxWebsocket.Closed) {
                         Timber.d("DISCONNECTED");
-
                     } else if (event instanceof RxWebsocket.QueuedMessage) {
                         Timber.d("[MESSAGE QUEUED]:%s", ((RxWebsocket.QueuedMessage) event).message().toString());
                     } else if (event instanceof RxWebsocket.Message) {
+                        Timber.d("[MESSAGE RECEIVED]:%s", ((RxWebsocket.Message) event).data());
                         handleEvent((RxWebsocket.Message) event);
                     }
                 })
                 .subscribe(event -> {
-                }, ExceptionHandler::handle);
+                }, this::handleError);
 
-        // connect to web socket
-        websocket.connect()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        event -> Timber.d(event.toString()),
-                        ExceptionHandler::handle
-                );
 
-        websocket.connect();
     }
+
+    private void connect() {
+        if (websocket != null) {
+            // connect to web socket
+            websocket.connect()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            event -> Timber.d(event.toString()),
+                            ExceptionHandler::handle
+                    );
+        }
+    }
+
 
     private void handleEvent(RxWebsocket.Message message) {
         BaseNetworkModel event = null;
@@ -125,20 +130,30 @@ public class AccountService {
      * Request all the account info
      */
     public void requestUpdate() {
-        if (websocket == null) {
-            initWebSocket();
-        } else if (address != null) {
+        if (websocket != null && address != null) {
             // account subscribe
-            websocket.send(new SubscribeRequest(address.getAddress(), getLocalCurrency())).subscribe();
+            websocket.send(new SubscribeRequest(address.getAddress(), getLocalCurrency()))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(event -> {
+                    }, this::handleError);
 
             // current price request
-            websocket.send(new CurrentPriceRequest(getLocalCurrency())).subscribe();
+            websocket.send(new CurrentPriceRequest(getLocalCurrency()))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(event -> {
+                    }, this::handleError);
 
             // price in bitcoin request
-            websocket.send(new CurrentPriceRequest("BTC")).subscribe();
+            websocket.send(new CurrentPriceRequest("BTC"))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(event -> {
+                    }, this::handleError);
 
             // account history request
-            websocket.send(new AccountHistoryRequest(address.getAddress(), blockCount != null ? blockCount : 10)).subscribe();
+            websocket.send(new AccountHistoryRequest(address.getAddress(), blockCount != null ? blockCount : 10))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(event -> {
+                    }, this::handleError);
         }
     }
 
@@ -148,8 +163,13 @@ public class AccountService {
      * @param previous the hash of the last block in our chain, our current frontier
      */
     public void requestWorkSend(String previous) {
-        // request work
-        websocket.send(new WorkRequest(previous));
+        if (websocket != null) {
+            // request work
+            websocket.send(new WorkRequest(previous))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(event -> {
+                    }, this::handleError);
+        }
     }
 
     public void requestSend(String previous, Address destination, BigInteger balance, String work) {
@@ -167,8 +187,21 @@ public class AccountService {
         }
         Timber.d(block);
 
-        // send the send request
-        websocket.send(new SendRequest(block));
+        if (websocket != null) {
+            // send the send request
+            websocket.send(new SendRequest(block))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(event -> {
+                    }, this::handleError);
+        }
+    }
+
+    public void handleError(Throwable error) {
+        if (error instanceof IllegalStateException) {
+            connect();
+        } else {
+            ExceptionHandler.handle(error);
+        }
     }
 
 
@@ -208,7 +241,7 @@ public class AccountService {
      */
     public void close() {
         if (websocket != null) {
-            websocket.disconnect(1, "App closed socket");
+            websocket.disconnect(1000, "Disconnect");
         }
     }
 }

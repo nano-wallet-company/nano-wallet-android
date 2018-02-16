@@ -1,6 +1,7 @@
 package co.nano.nanowallet.network;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
 import com.navin.flintstones.rxwebsocket.WebSocketConverter;
@@ -31,6 +32,10 @@ public final class WebSocketConverterFactory extends WebSocketConverter.Factory 
                         } else if (src.getAsJsonObject().get("history") != null) {
                             // history response
                             src.getAsJsonObject().addProperty("messageType", Actions.HISTORY.toString());
+                            // if history is an empty string, make it an array instead
+                            if (!src.getAsJsonObject().get("history").isJsonArray()) {
+                                src.getAsJsonObject().add("history", new JsonArray());
+                            }
                         } else if (src.getAsJsonObject().get("currency") != null) {
                             // current price
                             src.getAsJsonObject().addProperty("messageType", Actions.PRICE.toString());

@@ -150,6 +150,29 @@ public class FragmentUtility {
     }
 
     /**
+     * Clear the entire stack
+     */
+    public void clearStack() {
+        //Here we are clearing back stack fragment entries
+        int backStackEntry = mFragmentManager.getBackStackEntryCount();
+        if (backStackEntry > 0) {
+            for (int i = 0; i < backStackEntry; i++) {
+                mFragmentManager.popBackStackImmediate();
+            }
+        }
+
+        //Here we are removing all the fragment that are shown here
+        if (mFragmentManager.getFragments() != null && mFragmentManager.getFragments().size() > 0) {
+            for (int i = 0; i < mFragmentManager.getFragments().size(); i++) {
+                Fragment mFragment = mFragmentManager.getFragments().get(i);
+                if (mFragment != null) {
+                    mFragmentManager.beginTransaction().remove(mFragment).commit();
+                }
+            }
+        }
+    }
+
+    /**
      * Performs a fragment addition transaction with all of the necessary animations and tags.
      */
     public void performAddTransaction(Fragment fragment,

@@ -18,6 +18,7 @@ import javax.inject.Inject;
 
 import co.nano.nanowallet.bus.Logout;
 import co.nano.nanowallet.bus.RxBus;
+import co.nano.nanowallet.bus.WalletClear;
 import co.nano.nanowallet.di.activity.ActivityComponent;
 import co.nano.nanowallet.di.activity.ActivityModule;
 import co.nano.nanowallet.di.activity.DaggerActivityComponent;
@@ -74,8 +75,15 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
 
         // unregister from bus
         RxBus.get().unregister(this);
-        realm.close();
-        accountService.close();
+        if (realm != null) {
+            realm.close();
+        }
+        if (accountService != null) {
+            accountService.close();
+        }
+        if (nanoWallet != null) {
+            nanoWallet.close();
+        }
     }
 
     @Override
@@ -142,7 +150,10 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         // stop the websocket
         accountService.close();
 
+        RxBus.get().post(new WalletClear());
+
         // go to the welcome fragment
+        getFragmentUtility().clearStack();
         getFragmentUtility().replace(new IntroWelcomeFragment(), FragmentUtility.Animation.CROSSFADE);
     }
 

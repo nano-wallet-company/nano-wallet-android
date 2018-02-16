@@ -154,6 +154,11 @@ public class HomeFragment extends BaseFragment {
             controller.setData(wallet.getAccountHistory(), new ClickHandlers());
         }
 
+        // get update from service
+        if (accountService != null) {
+            accountService.requestUpdate();
+        }
+
         return view;
     }
 

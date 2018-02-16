@@ -9,6 +9,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -16,6 +17,7 @@ import javax.inject.Inject;
 
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.bus.SendInvalidAmount;
+import co.nano.nanowallet.bus.WalletClear;
 import co.nano.nanowallet.bus.WalletHistoryUpdate;
 import co.nano.nanowallet.bus.WalletPriceUpdate;
 import co.nano.nanowallet.bus.WalletSubscribeUpdate;
@@ -27,6 +29,7 @@ import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.util.ExceptionHandler;
 import co.nano.nanowallet.util.NumberUtil;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
+import io.realm.Realm;
 
 
 /**
@@ -53,15 +56,16 @@ public class NanoWallet {
     @Inject
     SharedPreferencesUtil sharedPreferencesUtil;
 
+    @Inject
+    Realm realm;
+
     public NanoWallet(Context context) {
         // init dependency injection
         if (context instanceof ActivityWithComponent) {
             ((ActivityWithComponent) context).getActivityComponent().inject(this);
         }
 
-        accountBalance = new BigDecimal("0.0");
-        sendNanoAmount = "";
-        sendLocalCurrencyAmount = "";
+        clear();
         RxBus.get().register(this);
     }
 
@@ -261,8 +265,32 @@ public class NanoWallet {
         RxBus.get().unregister(this);
     }
 
+    public void clear() {
+        accountBalance = new BigDecimal("0.0");
+        localCurrencyPrice = null;
+        btcPrice = null;
+
+        accountAddress = null;
+        representativeAddress = null;
+        frontierBlock = null;
+        openBlock = null;
+
+        blockCount = null;
+
+        accountHistory = new ArrayList<>();
+
+        // for sending
+        sendNanoAmount = "";
+        sendLocalCurrencyAmount = "";
+    }
+
     public String getFrontierBlock() {
-        return frontierBlock;
+        if (frontierBlock == null && realm != null) {
+            Credentials credentials = realm.where(Credentials.class).findFirst();
+            return credentials.getPublicKey();
+        } else {
+            return frontierBlock;
+        }
     }
 
     public void setFrontierBlock(String frontierBlock) {
@@ -315,5 +343,15 @@ public class NanoWallet {
             btcPrice = new BigDecimal(currentPriceResponse.getBtc());
         }
         RxBus.get().post(new WalletPriceUpdate());
+    }
+
+    /**
+     * Receive clear wallet
+     *
+     * @param walletClear
+     */
+    @Subscribe
+    public void receiveClear(WalletClear walletClear) {
+        clear();
     }
 }
