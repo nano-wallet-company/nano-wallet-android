@@ -12,8 +12,8 @@ import co.nano.nanowallet.network.model.BlockTypes;
  */
 @JsonPropertyOrder({
         "type",
-        "previous",
         "source",
+        "previous",
         "work",
         "signature"
 })

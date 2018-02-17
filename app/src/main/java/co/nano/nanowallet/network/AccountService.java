@@ -16,17 +16,20 @@ import javax.inject.Inject;
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.model.Address;
 import co.nano.nanowallet.model.Credentials;
+import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.network.model.BaseNetworkModel;
 import co.nano.nanowallet.network.model.request.AccountCheckRequest;
 import co.nano.nanowallet.network.model.request.AccountHistoryRequest;
 import co.nano.nanowallet.network.model.request.CurrentPriceRequest;
 import co.nano.nanowallet.network.model.request.PendingTransactionsRequest;
+import co.nano.nanowallet.network.model.request.ReceiveBlock;
 import co.nano.nanowallet.network.model.request.SendBlock;
-import co.nano.nanowallet.network.model.request.SendRequest;
+import co.nano.nanowallet.network.model.request.ProcessRequest;
 import co.nano.nanowallet.network.model.request.SubscribeRequest;
 import co.nano.nanowallet.network.model.request.WorkRequest;
 import co.nano.nanowallet.network.model.response.PendingTransactionResponseItem;
 import co.nano.nanowallet.network.model.response.SubscribeResponse;
+import co.nano.nanowallet.network.model.response.WorkResponse;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.util.ExceptionHandler;
 import co.nano.nanowallet.util.ObservableQueue;
@@ -53,6 +56,9 @@ public class AccountService {
 
     @Inject
     SharedPreferencesUtil sharedPreferencesUtil;
+
+    @Inject
+    NanoWallet wallet;
 
     public AccountService(Context context) {
         // init dependency injection
@@ -194,17 +200,82 @@ public class AccountService {
      * Process the queue of pending transactions
      */
     private void consumePendingTransactions() {
-        pendingTransactionQueue
-                .observe()
+        pendingTransactionQueue.observe()
                 .observeOn(Schedulers.io())
-                .forEach(item ->
-                        Timber.d("Processed: %s", item.toString())
+                .forEach(this::processReceiveTransaction);
+    }
+
+    /**
+     * Process receive transactions
+     * Create a new socket for every process receive transaction in order to keep track of the work
+     * that comes back.
+     * @param pendingTransactionResponseItem Pending Transaction Response Item
+     */
+    private void processReceiveTransaction(PendingTransactionResponseItem pendingTransactionResponseItem) {
+        RxWebsocket transactionSocket = new RxWebsocket.Builder()
+                .addConverterFactory(WebSocketConverterFactory.create())
+                .build(CONNECTION_URL);
+        // set up event stream handling
+        transactionSocket.eventStream()
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(event -> {
+                    if (event instanceof RxWebsocket.Open) {
+                        transactionSocket.send(new WorkRequest(wallet.getFrontierBlock()))
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(event2 -> {
+                                }, this::handleError);
+                    } else if (event instanceof RxWebsocket.Message) {
+                        BaseNetworkModel model = null;
+                        try {
+                            model = ((RxWebsocket.Message) event).data(BaseNetworkModel.class);
+                        } catch (Throwable throwable) {
+                            ExceptionHandler.handle(throwable);
+                        }
+
+                        if (model != null && model instanceof WorkResponse) {
+                            // create a receive block string
+                            ReceiveBlock receiveBlock = new ReceiveBlock(
+                                    getPrivateKey(),
+                                    wallet.getFrontierBlock(),
+                                    pendingTransactionResponseItem.getHash(),
+                                    ((WorkResponse) model).getWork());
+
+                            // escape the block to match https://github.com/clemahieu/raiblocks/wiki/RPC-protocol#process-block
+                            // use jackson here to maintain field order
+                            ObjectMapper mapper = new ObjectMapper();
+                            String block = "";
+                            try {
+                                block = mapper.writeValueAsString(receiveBlock);
+                            } catch (JsonProcessingException e) {
+                                ExceptionHandler.handle(e);
+                            }
+                            Timber.d(block);
+
+                            if (websocket != null) {
+                                // send the send request
+                                websocket.send(new ProcessRequest(block))
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(event3 -> {
+                                        }, this::handleError);
+                            }
+                        }
+                        transactionSocket.disconnect(1000, "Disconnect");
+                    }
+                })
+                .subscribe(event -> {
+                }, this::handleError);
+        transactionSocket.connect()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        event -> Timber.d(event.toString()),
+                        ExceptionHandler::handle
                 );
     }
 
     /**
      * Request check to see if account is ready
      */
+
     public void requestAccountCheck() {
         if (websocket != null && address != null) {
             // account subscribe
@@ -277,7 +348,8 @@ public class AccountService {
         }
     }
 
-    public void requestSend(String previous, Address destination, BigInteger balance, String work) {
+    public void requestSend(String previous, Address destination, BigInteger balance, String
+            work) {
         // create a send block string
         SendBlock sendBlock = new SendBlock(getPrivateKey(), previous, destination.getAddress(), balance.toString(), work);
 
@@ -294,7 +366,7 @@ public class AccountService {
 
         if (websocket != null) {
             // send the send request
-            websocket.send(new SendRequest(block))
+            websocket.send(new ProcessRequest(block))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(event -> {
                     }, this::handleError);

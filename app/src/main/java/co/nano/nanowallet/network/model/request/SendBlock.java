@@ -41,17 +41,6 @@ public class SendBlock {
         this.type = BlockTypes.SEND.toString();
     }
 
-    public SendBlock(String private_key, String previous, String destination, String balance) {
-        this.type = BlockTypes.SEND.toString();
-        this.previous = previous;
-        this.destination = destination;
-        this.balance = NumberUtil.getRawAsHex(balance);
-        String hash = NanoUtil.computeSendHash(previous, NanoUtil.addressToPublic(destination), this.balance);
-        this.signature = NanoUtil.sign(private_key, hash);
-
-        // kick off work response
-    }
-
     public SendBlock(String private_key, String previous, String destination, String balance, String work) {
         this.type = BlockTypes.SEND.toString();
         this.previous = previous;

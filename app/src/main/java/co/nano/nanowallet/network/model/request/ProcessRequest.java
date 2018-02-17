@@ -9,18 +9,18 @@ import co.nano.nanowallet.network.model.Actions;
  * First action to take when connecting when app opens or reconnects, IF a wallet already exists
  */
 
-public class SendRequest {
+public class ProcessRequest {
     @SerializedName("action")
     private String action;
 
     @SerializedName("block")
     private String block;
 
-    public SendRequest() {
+    public ProcessRequest() {
         this.action = Actions.PROCESS.toString();
     }
 
-    public SendRequest(String block) {
+    public ProcessRequest(String block) {
         this.action = Actions.PROCESS.toString();
         this.block = block;
     }
@@ -43,7 +43,7 @@ public class SendRequest {
 
     @Override
     public String toString() {
-        return "SendRequest{" +
+        return "ProcessRequest{" +
                 "action='" + action + '\'' +
                 ", block='" + block + '\'' +
                 '}';
