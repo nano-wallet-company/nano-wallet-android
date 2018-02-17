@@ -87,20 +87,6 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        accountService.close();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (credentials != null) {
-            accountService.open();
-        }
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
     }

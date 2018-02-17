@@ -10,8 +10,6 @@ import org.libsodium.jni.Sodium;
 import java.math.BigInteger;
 import java.util.Random;
 
-import co.nano.nanowallet.util.ED25519;
-
 public class NanoUtil {
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
     private final static String codeArray = "13456789abcdefghijkmnopqrstuwxyz";
@@ -135,12 +133,13 @@ public class NanoUtil {
         byte[] private_key_b = hexToBytes(private_key);
 
         byte[] signature = new byte[Sodium.crypto_sign_bytes()];
-        int[] signature_len = new int[0];
+        int[] signature_len = new int[1];
 
-        //Sodium.crypto_sign(signature, signature_len, data_b, data_b.length, private_key_b);
-        //return bytesToHex(signature);
 
-        return bytesToHex(ED25519.signature(data_b, private_key_b, hexToBytes(NanoUtil.privateToPublic(private_key))));
+        Sodium.crypto_sign_detached(signature, signature_len, data_b, data_b.length, private_key_b);
+        return bytesToHex(signature);
+
+        //return bytesToHex(ED25519.signature(data_b, private_key_b, hexToBytes(NanoUtil.privateToPublic(private_key))));
     }
 
     /**
@@ -211,7 +210,7 @@ public class NanoUtil {
         return new String(hexChars);
     }
 
-    private static byte[] hexToBytes(String hex) {
+    public static byte[] hexToBytes(String hex) {
         hex = hex.length() % 2 != 0 ? "0" + hex : hex;
 
         byte[] b = new byte[hex.length() / 2];

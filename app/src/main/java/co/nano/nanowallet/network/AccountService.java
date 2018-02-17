@@ -22,9 +22,9 @@ import co.nano.nanowallet.network.model.request.AccountCheckRequest;
 import co.nano.nanowallet.network.model.request.AccountHistoryRequest;
 import co.nano.nanowallet.network.model.request.CurrentPriceRequest;
 import co.nano.nanowallet.network.model.request.PendingTransactionsRequest;
+import co.nano.nanowallet.network.model.request.ProcessRequest;
 import co.nano.nanowallet.network.model.request.ReceiveBlock;
 import co.nano.nanowallet.network.model.request.SendBlock;
-import co.nano.nanowallet.network.model.request.ProcessRequest;
 import co.nano.nanowallet.network.model.request.SubscribeRequest;
 import co.nano.nanowallet.network.model.request.WorkRequest;
 import co.nano.nanowallet.network.model.response.PendingTransactionResponseItem;
@@ -96,7 +96,9 @@ public class AccountService {
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(event -> {
                     if (event instanceof RxWebsocket.Open) {
+                        Timber.d("OPENED");
                         requestUpdate();
+                        requestAccountCheck();
                     } else if (event instanceof RxWebsocket.Closed) {
                         Timber.d("DISCONNECTED");
                     } else if (event instanceof RxWebsocket.QueuedMessage) {
@@ -208,7 +210,9 @@ public class AccountService {
     /**
      * Process receive transactions
      * Create a new socket for every process receive transaction in order to keep track of the work
-     * that comes back.
+     * that comes back so it is all on this single socket. Although, maybe that doesn't matter?
+     * TODO: Investigate whether additional sockets are actually necessary here
+     *
      * @param pendingTransactionResponseItem Pending Transaction Response Item
      */
     private void processReceiveTransaction(PendingTransactionResponseItem pendingTransactionResponseItem) {
@@ -310,9 +314,8 @@ public class AccountService {
             // account subscribe
             websocket.send(new SubscribeRequest(address.getAddress(), getLocalCurrency()))
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(event -> {
+                    .subscribe(event2 -> {
                     }, this::handleError);
-
             // current price request
             websocket.send(new CurrentPriceRequest(getLocalCurrency()))
                     .observeOn(AndroidSchedulers.mainThread())

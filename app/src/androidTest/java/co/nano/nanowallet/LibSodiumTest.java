@@ -7,6 +7,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.libsodium.jni.NaCl;
+import org.libsodium.jni.Sodium;
 
 import timber.log.Timber;
 
@@ -85,19 +87,30 @@ public class LibSodiumTest extends InstrumentationTestCase {
         assertEquals(publicKey, this.publicKey);
     }
 
-//    @Test
-//    public void testSign() throws Exception {
-//        String privateKey = "24888E558253E2BE282888874416101C1C42CD702F35F6544A8750768D3347EC";
-//        String signature = "F288B486A48E752D6F3902265BE8BCB9AB80B8E2E0DCB1B92EBF96C178C788FCBB1388B26A572958E153ED082E1B88CE349D431CEBCFB5C9662BCFF53F03A10B";
-//        String blockHash = NanoUtil.computeSendHash(
-//                "F288B486A48E752D6F3902265BE8BCB9AB80B8E2E0DCB1B92EBF96C178C788FCBB1388B26A572958E153ED082E1B88CE349D431CEBCFB5C9662BCFF53F03A10B",
-//                "xrb_3954bgqr76boy8k9i8twur5mtt7ra4g8xq9o6ynqxjzo5fxkt5w3mcx4io17",
-//                "0000018AE0E06FC3E4B96BDD74000000"
-//        );
-//
-//        String sig = NanoUtil.sign(privateKey, blockHash);
-//        assertEquals(sig, signature);
-//    }
+    @Test
+    public void testSign() throws Exception {
+        String signature = "CE9B22F06E01EAE0D003E87A513F389F2B6B5165F1A309E0616A59F6CC385255C6433C9DDBA1208D3BF9041C580050CDD86B13CCA197455C0DF83FDE624F7600";
+        String blockHash = NanoUtil.computeSendHash(
+                "8434FDE3B9C7535A72048B7CA111DF6E1759C73AD7E16FD6D9C562B7C5D90581",
+                NanoUtil.addressToPublic("xrb_3ugkt5gexef4ffotr839bwfrfux6pp1g7k8cbtk8ocnq99yc3pfdn11cr1ft"),
+                "00000000000000000000000000000000"
+        );
+        byte[] blockhash_b = NanoUtil.hexToBytes(blockHash);
+        String sig = NanoUtil.sign(NanoUtil.seedToPrivate("133637C920D51BFD095086128A2DFBF33AA173F0641A8DEE2F6826F87A23760B"), blockHash);
+
+        Sodium sodium = NaCl.sodium();
+//        assertEquals(0, Sodium.crypto_sign_verify_detached(
+//                NanoUtil.hexToBytes(sig),
+//                blockhash_b,
+//                blockhash_b.length,
+//                NanoUtil.hexToBytes(
+//                        NanoUtil.privateToPublic(
+//                                NanoUtil.seedToPrivate("133637C920D51BFD095086128A2DFBF33AA173F0641A8DEE2F6826F87A23760B"))
+//                )
+//        ));
+
+        assertEquals(signature, sig);
+    }
 
     @After
     public void tearDown() throws Exception {

@@ -159,11 +159,6 @@ public class HomeFragment extends BaseFragment {
         // check to see if account is ready
         accountService.requestAccountCheck();
 
-        // get update from service
-        if (accountService != null) {
-            accountService.requestUpdate();
-        }
-
         return view;
     }
 
