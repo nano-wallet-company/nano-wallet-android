@@ -15,6 +15,12 @@
         android:layout_height="match_parent"
         android:background="@color/bright_white">
 
+        <include
+            android:id="@+id/receive_card"
+            layout="@layout/view_receive_card"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/receive_close"
             android:layout_width="wrap_content"
@@ -123,8 +129,8 @@
             android:id="@+id/imageView"
             android:layout_width="13dp"
             android:layout_height="13dp"
-            android:layout_marginStart="20dp"
             android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="32dp"
             app:layout_constraintStart_toStartOf="@+id/receive_address"
             app:layout_constraintTop_toTopOf="@+id/receive_address"

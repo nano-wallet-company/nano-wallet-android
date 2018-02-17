@@ -45,6 +45,7 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
     private static final String TEMP_FILE_NAME = "nanoreceive.png";
     private static final String ADDRESS_KEY = "co.nano.nanowallet.ui.receive.ReceiveDialogFragment.Address";
     private Address address;
+    private String fileName;
 
     @Inject
     Realm realm;
@@ -90,6 +91,7 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
 
         // colorize address text
         binding.receiveAddress.setText(UIUtil.getColorizedSpannable(address.getAddress(), getContext()));
+        binding.receiveCard.cardAddress.setText(UIUtil.getColorizedSpannable(address.getAddress(), getContext()));
 
         // generate QR code
         new AwesomeQRCode.Renderer()
@@ -101,7 +103,10 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
                 .renderAsync(new AwesomeQRCode.Callback() {
                     @Override
                     public void onRendered(AwesomeQRCode.Renderer renderer, final Bitmap bitmap) {
-                        getActivity().runOnUiThread(() -> binding.receiveBarcode.setImageBitmap(bitmap));
+                        getActivity().runOnUiThread(() -> {
+                            binding.receiveBarcode.setImageBitmap(bitmap);
+                            binding.receiveCard.cardBarcode.setImageBitmap(bitmap);
+                        });
                     }
 
                     @Override
@@ -140,7 +145,9 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
             File cachePath = new File(getContext().getCacheDir(), "images");
             cachePath.mkdirs();
             FileOutputStream outputStream;
-            outputStream = new FileOutputStream(new File(cachePath + "/" + TEMP_FILE_NAME), true);
+            fileName = System.currentTimeMillis() + "_" + TEMP_FILE_NAME;
+            File file = new File(cachePath + "/" + fileName);
+            outputStream = new FileOutputStream(file, true);
             finalBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
             outputStream.flush();
             outputStream.close();
@@ -156,9 +163,10 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
         }
 
         public void onClickShare(View view) {
-            saveImage(setViewToBitmapImage(binding.receiveBarcode));
+            binding.receiveCard.cardLayout.setVisibility(View.VISIBLE);
+            saveImage(setViewToBitmapImage(binding.receiveCard.cardLayout));
             File imagePath = new File(getContext().getCacheDir(), "images");
-            File newFile = new File(imagePath, TEMP_FILE_NAME);
+            File newFile = new File(imagePath, fileName);
             Uri imageUri = FileProvider.getUriForFile(getContext(), "co.nano.nanowallet.fileprovider", newFile);
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -167,6 +175,7 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
             shareIntent.setDataAndType(imageUri, getActivity().getContentResolver().getType(imageUri));
             shareIntent.setType("image/*");
             startActivity(Intent.createChooser(shareIntent, getString(R.string.receive_share_title)));
+            binding.receiveCard.cardLayout.setVisibility(View.INVISIBLE);
         }
 
         public void onClickCopy(View view) {

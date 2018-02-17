@@ -55,6 +55,8 @@
     <string name="receive_copy_message"><![CDATA[<font color=\"#ffffff\">Your Nano Address has been copied.<br>Share it with a friend to receive Nano!</font>]]></string>
     <string name="receive_copy_done">Done</string>
     <string name="receive_share_title">Share via…</string>
+    <string name="receive_card_label">$nano\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020nano.co</string>
+    <string name="receive_card_title">Nano</string>
 
     <!-- Send Screen -->
     <string name="send_title">Send To</string>
