@@ -1,14 +1,22 @@
 package co.nano.nanowallet.network.model.request;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.google.gson.annotations.SerializedName;
 
+import co.nano.nanowallet.NanoUtil;
 import co.nano.nanowallet.network.model.BlockTypes;
 
 /**
  * Subscribe to websocket server for updates regarding the specified account.
  * First action to take when connecting when app opens or reconnects, IF a wallet already exists
  */
-
+@JsonPropertyOrder({
+        "type",
+        "previous",
+        "source",
+        "work",
+        "signature"
+})
 public class ReceiveBlock {
     @SerializedName("type")
     private String type;
@@ -33,8 +41,9 @@ public class ReceiveBlock {
         this.type = BlockTypes.RECEIVE.toString();
         this.previous = previous;
         this.source = source;
-        //String hash = NanoUtil.computeReceiveHash(previous, source);
-        //this.signature = NanoUtil.sign(private_key, hash);
+        this.work = work;
+        String hash = NanoUtil.computeReceiveHash(previous, source);
+        this.signature = NanoUtil.sign(private_key, hash);
     }
 
     public String getType() {

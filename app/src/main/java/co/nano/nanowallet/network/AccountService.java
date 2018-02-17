@@ -4,10 +4,12 @@ import android.content.Context;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
 import com.navin.flintstones.rxwebsocket.RxWebsocket;
 
 import java.math.BigInteger;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -18,15 +20,19 @@ import co.nano.nanowallet.network.model.BaseNetworkModel;
 import co.nano.nanowallet.network.model.request.AccountCheckRequest;
 import co.nano.nanowallet.network.model.request.AccountHistoryRequest;
 import co.nano.nanowallet.network.model.request.CurrentPriceRequest;
+import co.nano.nanowallet.network.model.request.PendingTransactionsRequest;
 import co.nano.nanowallet.network.model.request.SendBlock;
 import co.nano.nanowallet.network.model.request.SendRequest;
 import co.nano.nanowallet.network.model.request.SubscribeRequest;
 import co.nano.nanowallet.network.model.request.WorkRequest;
+import co.nano.nanowallet.network.model.response.PendingTransactionResponseItem;
 import co.nano.nanowallet.network.model.response.SubscribeResponse;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.util.ExceptionHandler;
+import co.nano.nanowallet.util.ObservableQueue;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import timber.log.Timber;
 
@@ -40,7 +46,7 @@ public class AccountService {
     //private static final String CONNECTION_URL = "wss://light.nano.org:443";
     private Address address;
     private Integer blockCount;
-    private TypeToken<BaseNetworkModel> requestListTypeToken;
+    private ObservableQueue<PendingTransactionResponseItem> pendingTransactionQueue;
 
     @Inject
     Realm realm;
@@ -59,14 +65,19 @@ public class AccountService {
         // get user's address
         address = getAddress();
 
+        // initialize pending transaction queue
+        pendingTransactionQueue = new ObservableQueue<>();
+
         // initialize the web socket
         if (websocket == null) {
             initWebSocket();
         }
+
+        consumePendingTransactions();
     }
 
     /**
-     * Initialize websocket and all listeners
+     * Initialize websocket and event listeners
      */
     private void initWebSocket() {
         // create websocket
@@ -83,18 +94,19 @@ public class AccountService {
                     } else if (event instanceof RxWebsocket.Closed) {
                         Timber.d("DISCONNECTED");
                     } else if (event instanceof RxWebsocket.QueuedMessage) {
-                        Timber.d("[MESSAGE QUEUED]:%s", ((RxWebsocket.QueuedMessage) event).message().toString());
+                        Timber.d("[MESSAGE QUEUED]:%s", ((RxWebsocket.QueuedMessage) event).message());
                     } else if (event instanceof RxWebsocket.Message) {
                         Timber.d("[MESSAGE RECEIVED]:%s", ((RxWebsocket.Message) event).data());
-                        handleEvent((RxWebsocket.Message) event);
+                        handleMessage((RxWebsocket.Message) event);
                     }
                 })
                 .subscribe(event -> {
                 }, this::handleError);
-
-
     }
 
+    /**
+     * Connect to the web socket
+     */
     private void connect() {
         if (websocket != null) {
             // connect to web socket
@@ -107,8 +119,12 @@ public class AccountService {
         }
     }
 
-
-    private void handleEvent(RxWebsocket.Message message) {
+    /**
+     * Generic message hander. Convert to an object and process or post to bus.
+     *
+     * @param message Websocket Message
+     */
+    private void handleMessage(RxWebsocket.Message message) {
         BaseNetworkModel event = null;
         try {
             event = message.data(BaseNetworkModel.class);
@@ -116,15 +132,74 @@ public class AccountService {
             ExceptionHandler.handle(throwable);
         }
 
-        // keep track of current block count for more efficient requests
-        if (event instanceof SubscribeResponse) {
-            blockCount = ((SubscribeResponse) event).getBlock_count();
-        }
+        if (event != null && event.getMessageType() == null) {
+            // try parsing to a linked tree map object if event type is null
+            handleNullMessageTypes(message);
+        } else {
+            // keep track of current block count for more efficient requests
+            if (event instanceof SubscribeResponse) {
+                blockCount = ((SubscribeResponse) event).getBlock_count();
+            }
 
-        // post whatever the response type is to the bus
-        if (event != null) {
-            RxBus.get().post(event);
+            // post whatever the response type is to the bus
+            if (event != null) {
+                RxBus.get().post(event);
+            }
         }
+    }
+
+    /**
+     * Objects that are not mapped to a known response can be processed here
+     *
+     * @param message Websocket Message
+     */
+    private void handleNullMessageTypes(RxWebsocket.Message message) {
+        try {
+            Object o = message.data(Object.class);
+            if (o instanceof LinkedTreeMap) {
+                processLinkedTreeMap((LinkedTreeMap) o);
+            }
+        } catch (Throwable throwable) {
+            ExceptionHandler.handle(throwable);
+        }
+    }
+
+    /**
+     * Process a linked tree map to see if there are pending blocks
+     * Producer of the queue
+     *
+     * @param linkedTreeMap Linked Tree Map
+     */
+    private void processLinkedTreeMap(LinkedTreeMap linkedTreeMap) {
+        if (linkedTreeMap.containsKey("blocks")) {
+            // this is a set of blocks
+            Object blocks = linkedTreeMap.get("blocks");
+            if (blocks instanceof LinkedTreeMap) {
+                // blocks is not empty
+                Set keys = ((LinkedTreeMap) blocks).keySet();
+                for (Object key : keys) {
+                    try {
+                        PendingTransactionResponseItem pendingTransactionResponseItem = new Gson().fromJson(String.valueOf(((LinkedTreeMap) blocks).get(key)), PendingTransactionResponseItem.class);
+                        pendingTransactionResponseItem.setHash(key.toString());
+                        pendingTransactionQueue.put(pendingTransactionResponseItem);
+                    } catch (Throwable throwable) {
+                        ExceptionHandler.handle(throwable);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Process the queue of pending transactions
+     */
+    private void consumePendingTransactions() {
+        pendingTransactionQueue
+                .observe()
+                .observeOn(Schedulers.io())
+                .forEach(item ->
+                        Timber.d("Processed: %s", item.toString())
+                );
     }
 
     /**
@@ -134,6 +209,22 @@ public class AccountService {
         if (websocket != null && address != null) {
             // account subscribe
             websocket.send(new AccountCheckRequest(address.getAddress()))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(event -> {
+                    }, this::handleError);
+        }
+    }
+
+    /**
+     * Request Pending Blocks
+     */
+    public void requestPending() {
+        if (websocket != null && address != null) {
+            // account subscribe
+            websocket.send(new PendingTransactionsRequest(
+                    address.getAddress(),
+                    true,
+                    blockCount))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(event -> {
                     }, this::handleError);
@@ -210,7 +301,7 @@ public class AccountService {
         }
     }
 
-    public void handleError(Throwable error) {
+    private void handleError(Throwable error) {
         if (error instanceof IllegalStateException) {
             connect();
         } else {
@@ -222,18 +313,21 @@ public class AccountService {
     /**
      * Get credentials from realm and return address
      *
-     * @return
+     * @return Address object
      */
     private Address getAddress() {
-        Credentials credentials = null;
-        credentials = realm.where(Credentials.class).findFirst();
-        return new Address(credentials.getAddressString());
+        Credentials credentials = realm.where(Credentials.class).findFirst();
+        if (credentials == null) {
+            return null;
+        } else {
+            return new Address(credentials.getAddressString());
+        }
     }
 
     /**
      * Get local currency from shared preferences
      *
-     * @return
+     * @return Local Currency
      */
     public String getLocalCurrency() {
         return sharedPreferencesUtil.getLocalCurrency().toString();
@@ -242,12 +336,15 @@ public class AccountService {
     /**
      * Get private key from realm
      *
-     * @return
+     * @return Private Key
      */
-    public String getPrivateKey() {
-        Credentials credentials = null;
-        credentials = realm.where(Credentials.class).findFirst();
-        return credentials.getPrivateKey();
+    private String getPrivateKey() {
+        Credentials credentials = realm.where(Credentials.class).findFirst();
+        if (credentials == null) {
+            return null;
+        } else {
+            return credentials.getPrivateKey();
+        }
     }
 
     /**

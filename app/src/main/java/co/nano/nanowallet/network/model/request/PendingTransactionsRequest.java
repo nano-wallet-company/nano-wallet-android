@@ -12,8 +12,11 @@ public class PendingTransactionsRequest {
     @SerializedName("action")
     private String action;
 
+    @SerializedName("account")
+    private String account;
+
     @SerializedName("source")
-    private String source;
+    private Boolean source;
 
     @SerializedName("count")
     private Integer count;
@@ -22,8 +25,9 @@ public class PendingTransactionsRequest {
         this.action = Actions.PENDING.toString();
     }
 
-    public PendingTransactionsRequest(String source, Integer count) {
+    public PendingTransactionsRequest(String account, Boolean source, Integer count) {
         this.action = Actions.PENDING.toString();
+        this.account = account;
         this.source = source;
         this.count = count;
     }
@@ -36,11 +40,19 @@ public class PendingTransactionsRequest {
         this.action = action;
     }
 
-    public String getSource() {
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
+    }
+
+    public Boolean getSource() {
         return source;
     }
 
-    public void setSource(String source) {
+    public void setSource(Boolean source) {
         this.source = source;
     }
 

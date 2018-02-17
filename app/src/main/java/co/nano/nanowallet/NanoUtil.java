@@ -72,6 +72,30 @@ public class NanoUtil {
     }
 
     /**
+     * Compute hash to use to generate a receive work block
+     *
+     * @param previous    Previous transation
+     * @param source      Source address
+     * @return String of hash
+     */
+    public static String computeReceiveHash(String previous, String source) {
+        Sodium sodium = NaCl.sodium();
+        byte[] state = new byte[Sodium.crypto_generichash_statebytes()];
+        byte[] key = new byte[Sodium.crypto_generichash_keybytes()];
+
+        byte[] previous_b = hexToBytes(previous);
+        byte[] source_b = hexToBytes(source);
+        byte[] output = new byte[32];
+
+        Sodium.crypto_generichash_blake2b_init(state, key, 0, 32);
+        Sodium.crypto_generichash_blake2b_update(state, previous_b, previous_b.length);
+        Sodium.crypto_generichash_blake2b_update(state, source_b, source_b.length);
+        Sodium.crypto_generichash_blake2b_final(state, output, output.length);
+
+        return bytesToHex(output);
+    }
+
+    /**
      * Compute hash to use to generate a send work block
      *
      * @param previous    Previous transation
@@ -110,13 +134,11 @@ public class NanoUtil {
         byte[] data_b = hexToBytes(data);
         byte[] private_key_b = hexToBytes(private_key);
 
-//        byte[] signature = new byte[Sodium.crypto_sign_bytes()];
-//        int[] signature_len = new int[0];
-//
-//        Sodium.crypto_sign_detached(signature, signature_len, data_b, data_b.length, private_key_b);
-//        return bytesToHex(signature);
+        byte[] signature = new byte[Sodium.crypto_sign_bytes()];
+        int[] signature_len = new int[0];
 
-
+        //Sodium.crypto_sign(signature, signature_len, data_b, data_b.length, private_key_b);
+        //return bytesToHex(signature);
 
         return bytesToHex(ED25519.signature(data_b, private_key_b, hexToBytes(NanoUtil.privateToPublic(private_key))));
     }

@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.gson.internal.LinkedTreeMap;
 import com.hwangjr.rxbus.annotation.Subscribe;
 
 import javax.inject.Inject;
@@ -184,9 +185,15 @@ public class HomeFragment extends BaseFragment {
 
     @Subscribe
     public void receiveAccountCheck(AccountCheckResponse accountCheckResponse) {
-        if (!accountCheckResponse.getReady()) {
-            // account is not yet ready on the network, so send a pending request
+        if (accountCheckResponse.getReady()) {
+            // account is on the network, so send a pending request
+            accountService.requestPending();
         }
+    }
+
+    @Subscribe
+    public void receivePendingBlocks(LinkedTreeMap pendingBlocks) {
+
     }
 
     private void updateAmounts() {

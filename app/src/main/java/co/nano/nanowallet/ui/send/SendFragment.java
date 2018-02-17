@@ -38,6 +38,7 @@ import co.nano.nanowallet.model.Address;
 import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.network.AccountService;
 import co.nano.nanowallet.network.model.response.ErrorResponse;
+import co.nano.nanowallet.network.model.response.ProcessResponse;
 import co.nano.nanowallet.network.model.response.WorkResponse;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseFragment;
@@ -219,9 +220,22 @@ public class SendFragment extends BaseFragment {
         showError(R.string.send_error_alert_title, errorResponse.getError());
     }
 
+    /**
+     * Received a work response
+     * @param workResponse Work Response
+     */
     @Subscribe
     public void receiveWorkResponse(WorkResponse workResponse) {
         work = workResponse.getWork();
+    }
+
+    /**
+     * Received a successful send response so go back
+     * @param processResponse Process Response
+     */
+    @Subscribe
+    public void receiveProcessResponse(ProcessResponse processResponse) {
+        goBack();
     }
 
     private boolean validateRequest() {

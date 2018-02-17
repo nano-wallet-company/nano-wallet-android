@@ -16,6 +16,7 @@ import co.nano.nanowallet.network.model.response.AccountCheckResponse;
 import co.nano.nanowallet.network.model.response.AccountHistoryResponse;
 import co.nano.nanowallet.network.model.response.CurrentPriceResponse;
 import co.nano.nanowallet.network.model.response.ErrorResponse;
+import co.nano.nanowallet.network.model.response.ProcessResponse;
 import co.nano.nanowallet.network.model.response.SubscribeResponse;
 import co.nano.nanowallet.network.model.response.WorkResponse;
 import io.gsonfire.GsonFireBuilder;
@@ -49,6 +50,12 @@ public final class WebSocketConverterFactory extends WebSocketConverter.Factory 
                         } else if (src.getAsJsonObject().get("ready") != null) {
                             // account check response
                             src.getAsJsonObject().addProperty("messageType", Actions.CHECK.toString());
+                        } else if (src.getAsJsonObject().get("hash") != null) {
+                            // account check response
+                            src.getAsJsonObject().addProperty("messageType", Actions.PROCESS.toString());
+                        } else if (src.getAsJsonObject().get("block") != null) {
+                            // account check response
+                            src.getAsJsonObject().addProperty("messageType", "block");
                         }
                     }
                 }).registerTypeSelector(BaseNetworkModel.class, readElement -> {
@@ -67,6 +74,8 @@ public final class WebSocketConverterFactory extends WebSocketConverter.Factory 
                             return ErrorResponse.class;
                         } else if (kind.equals(Actions.CHECK.toString())) {
                             return AccountCheckResponse.class;
+                        } else if (kind.equals(Actions.PROCESS.toString())) {
+                            return ProcessResponse.class;
                         } else {
                             return null; // returning null will trigger Gson's default behavior
                         }

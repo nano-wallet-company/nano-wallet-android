@@ -163,18 +163,13 @@ public class ED25519 {
     //pk = publickey
     public static byte[] signature(byte[] m, byte[] sk, byte[] pk) {
         byte[] h = H(sk);
-        // System.out.println("signature open with m="+test.getHex(m)+"
-        // h="+test.getHex(h)+" pk="+test.getHex(pk));
         BigInteger a = BigInteger.valueOf(2).pow(b - 2);
         for (int i = 3; i < (b - 2); i++) {
             a = a.add(BigInteger.valueOf(2).pow(i).multiply(BigInteger.valueOf(bit(h, i))));
         }
-        // System.out.println("signature a="+a);
         ByteBuffer rsub = ByteBuffer.allocate((b / 8) + m.length);
         rsub.put(h, b / 8, b / 4 - b / 8).put(m);
-        // System.out.println("signature rsub="+test.getHex(rsub.array()));
         BigInteger r = Hint(rsub.array());
-        // System.out.println("signature r="+r);
         BigInteger[] R = scalarmult(B, r);
         ByteBuffer Stemp = ByteBuffer.allocate(32 + pk.length + m.length);
         Stemp.put(encodepoint(R)).put(pk).put(m);
