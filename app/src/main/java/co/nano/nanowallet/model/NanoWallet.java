@@ -135,7 +135,7 @@ public class NanoWallet {
      */
     public String getSendNanoAmountFormatted() {
         if (sendNanoAmount.length() > 0) {
-            return nanoFormat(new BigDecimal(sendNanoAmount));
+            return nanoFormat(sendNanoAmount);
         } else {
             return "";
         }
@@ -242,9 +242,13 @@ public class NanoWallet {
     /**
      * Convert local currency to properly formatted string for the currency
      */
-    private String nanoFormat(BigDecimal amount) {
-        DecimalFormat df = new DecimalFormat("#,###.##########");
-        return df.format(amount);
+    private String nanoFormat(String amount) {
+        if (new BigDecimal(amount).doubleValue() == 0) {
+            return amount;
+        } else {
+            DecimalFormat df = new DecimalFormat("#,###.##########");
+            return df.format(new BigDecimal(amount));
+        }
     }
 
     /**
