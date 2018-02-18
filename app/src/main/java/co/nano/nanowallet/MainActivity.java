@@ -18,10 +18,10 @@ import javax.inject.Inject;
 
 import co.nano.nanowallet.bus.Logout;
 import co.nano.nanowallet.bus.RxBus;
-import co.nano.nanowallet.bus.WalletClear;
 import co.nano.nanowallet.di.activity.ActivityComponent;
 import co.nano.nanowallet.di.activity.ActivityModule;
 import co.nano.nanowallet.di.activity.DaggerActivityComponent;
+import co.nano.nanowallet.di.application.ApplicationComponent;
 import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.network.AccountService;
@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
     private TextView mToolbarTitle;
     protected ActivityComponent mActivityComponent;
     private Credentials credentials = null;
+
 
     @Inject
     Realm realm;
@@ -136,7 +137,11 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         // stop the websocket
         accountService.close();
 
-        RxBus.get().post(new WalletClear());
+        // clear wallet
+        nanoWallet.clear();
+
+        // null out component
+        mActivityComponent = null;
 
         // go to the welcome fragment
         getFragmentUtility().clearStack();
@@ -230,8 +235,14 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
             mActivityComponent = DaggerActivityComponent
                     .builder()
                     .applicationComponent(NanoApplication.getApplication(this).getApplicationComponent())
+                    .activityModule(new ActivityModule(this))
                     .build();
         }
         return mActivityComponent;
+    }
+
+    @Override
+    public ApplicationComponent getApplicationComponent() {
+        return NanoApplication.getApplication(this).getApplicationComponent();
     }
 }

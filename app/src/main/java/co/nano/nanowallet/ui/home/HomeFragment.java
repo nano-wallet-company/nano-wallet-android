@@ -16,6 +16,8 @@ import android.view.ViewGroup;
 import com.google.gson.internal.LinkedTreeMap;
 import com.hwangjr.rxbus.annotation.Subscribe;
 
+import java.math.BigDecimal;
+
 import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
@@ -159,6 +161,8 @@ public class HomeFragment extends BaseFragment {
         // check to see if account is ready
         accountService.requestAccountCheck();
 
+        updateAmounts();
+
         return view;
     }
 
@@ -194,6 +198,13 @@ public class HomeFragment extends BaseFragment {
     private void updateAmounts() {
         if (wallet != null) {
             ((CurrencyPagerAdapter) binding.homeViewpager.getAdapter()).updateData(wallet);
+            if (wallet.getAccountBalanceNanoRaw() != null &&
+                    wallet.getAccountBalanceNanoRaw().compareTo(new BigDecimal(0)) == 1) {
+                // if balance > 0, enable send button
+                binding.homeSendButton.setEnabled(true);
+            } else {
+                binding.homeSendButton.setEnabled(false);
+            }
         }
     }
 

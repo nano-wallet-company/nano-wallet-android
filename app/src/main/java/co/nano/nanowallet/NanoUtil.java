@@ -132,12 +132,12 @@ public class NanoUtil {
         byte[] data_b = hexToBytes(data);
         byte[] private_key_b = hexToBytes(private_key);
 
-        byte[] signature = new byte[Sodium.crypto_sign_bytes()];
+        byte[] signature = new byte[Sodium.crypto_sign_bytes()]; //+ data_b.length];
         int[] signature_len = new int[1];
 
 
         Sodium.crypto_sign_detached(signature, signature_len, data_b, data_b.length, private_key_b);
-        return bytesToHex(signature);
+        return bytesToHex(signature);//Arrays.copyOfRange(signature, 0, Sodium.crypto_sign_bytes()));
 
         //return bytesToHex(ED25519.signature(data_b, private_key_b, hexToBytes(NanoUtil.privateToPublic(private_key))));
     }
