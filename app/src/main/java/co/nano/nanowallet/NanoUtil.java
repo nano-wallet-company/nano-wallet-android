@@ -136,7 +136,7 @@ public class NanoUtil {
         int[] signature_len = new int[1];
 
 
-        Sodium.crypto_sign_detached(signature, signature_len, data_b, data_b.length, private_key_b);
+        Sodium.crypto_sign_ed25519_detached(signature, signature_len, data_b, data_b.length, private_key_b);
         return bytesToHex(signature);//Arrays.copyOfRange(signature, 0, Sodium.crypto_sign_bytes()));
 
         //return bytesToHex(ED25519.signature(data_b, private_key_b, hexToBytes(NanoUtil.privateToPublic(private_key))));
