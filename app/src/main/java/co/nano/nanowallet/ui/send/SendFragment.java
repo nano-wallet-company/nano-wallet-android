@@ -37,6 +37,7 @@ import co.nano.nanowallet.databinding.FragmentSendBinding;
 import co.nano.nanowallet.model.Address;
 import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.network.AccountService;
+import co.nano.nanowallet.network.model.BlockTypes;
 import co.nano.nanowallet.network.model.response.ErrorResponse;
 import co.nano.nanowallet.network.model.response.ProcessResponse;
 import co.nano.nanowallet.network.model.response.WorkResponse;
@@ -165,7 +166,7 @@ public class SendFragment extends BaseFragment {
         UIUtil.colorizeSpannable(binding.sendAddress.getText(), getContext());
 
         // make a work request
-        accountService.requestWorkSend(wallet.getFrontierBlock());
+        accountService.requestWorkSend(wallet.getFrontierBlock(), BlockTypes.SEND);
 
         return view;
     }

@@ -111,6 +111,7 @@ public class AccountService {
                 })
                 .subscribe(event -> {
                 }, this::handleError);
+        connect();
     }
 
     /**
@@ -120,7 +121,6 @@ public class AccountService {
         if (websocket != null) {
             // connect to web socket
             websocket.connect()
-                    .flatMapPublisher(open -> open.client().listen())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             event -> Timber.d(event.toString()),
@@ -252,12 +252,7 @@ public class AccountService {
      * @param pendingTransactionResponseItem Pending Transaction Response Item
      */
     private void requestReceiveTransaction(PendingTransactionResponseItem pendingTransactionResponseItem) {
-        requestWorkSend(wallet.getFrontierBlock(), pendingTransactionResponseItem.g);
-
-        websocket.send(new WorkRequest(wallet.getFrontierBlock())) // TODO: this is not always the case
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(event2 -> {
-                }, this::handleError);
+        requestWorkSend(wallet.getFrontierBlock(), BlockTypes.RECEIVE);
     }
 
     /**
