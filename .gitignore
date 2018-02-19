@@ -37,3 +37,5 @@ local.properties
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+fabric.properties
