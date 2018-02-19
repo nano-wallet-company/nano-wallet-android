@@ -70,6 +70,32 @@ public class NanoUtil {
     }
 
     /**
+     * Compute hash to use to generate an open work block
+     * @param source Source address
+     * @param representative Representative address
+     * @param account Account address
+     * @return
+     */
+    public static String computeOpenHash(String source, String representative, String account) {
+        Sodium sodium = NaCl.sodium();
+        byte[] state = new byte[Sodium.crypto_generichash_statebytes()];
+        byte[] key = new byte[Sodium.crypto_generichash_keybytes()];
+
+        byte[] source_b = hexToBytes(source);
+        byte[] representative_b = hexToBytes(representative);
+        byte[] account_b = hexToBytes(account);
+        byte[] output = new byte[32];
+
+        Sodium.crypto_generichash_blake2b_init(state, key, 0, 32);
+        Sodium.crypto_generichash_blake2b_update(state, source_b, source_b.length);
+        Sodium.crypto_generichash_blake2b_update(state, representative_b, representative_b.length);
+        Sodium.crypto_generichash_blake2b_update(state, account_b, account_b.length);
+        Sodium.crypto_generichash_blake2b_final(state, output, output.length);
+
+        return bytesToHex(output);
+    }
+
+    /**
      * Compute hash to use to generate a receive work block
      *
      * @param previous    Previous transation

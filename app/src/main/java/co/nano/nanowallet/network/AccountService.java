@@ -18,6 +18,7 @@ import co.nano.nanowallet.model.Address;
 import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.network.model.BaseNetworkModel;
+import co.nano.nanowallet.network.model.BlockTypes;
 import co.nano.nanowallet.network.model.request.AccountCheckRequest;
 import co.nano.nanowallet.network.model.request.AccountHistoryRequest;
 import co.nano.nanowallet.network.model.request.CurrentPriceRequest;
@@ -50,6 +51,7 @@ public class AccountService {
     private Address address;
     private Integer blockCount;
     private ObservableQueue<PendingTransactionResponseItem> pendingTransactionQueue;
+    private BlockTypes recentWorkRequestType;
 
     @Inject
     Realm realm;
@@ -98,7 +100,6 @@ public class AccountService {
                     if (event instanceof RxWebsocket.Open) {
                         Timber.d("OPENED");
                         requestUpdate();
-                        requestAccountCheck();
                     } else if (event instanceof RxWebsocket.Closed) {
                         Timber.d("DISCONNECTED");
                     } else if (event instanceof RxWebsocket.QueuedMessage) {
@@ -119,6 +120,7 @@ public class AccountService {
         if (websocket != null) {
             // connect to web socket
             websocket.connect()
+                    .flatMapPublisher(open -> open.client().listen())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             event -> Timber.d(event.toString()),
@@ -143,7 +145,9 @@ public class AccountService {
         if (event != null && event.getMessageType() == null) {
             // try parsing to a linked tree map object if event type is null
             handleNullMessageTypes(message);
-        } else {
+        } else if (event != null && event instanceof WorkResponse) {
+            processWork((WorkResponse) event);
+        }  else {
             // keep track of current block count for more efficient requests
             if (event instanceof SubscribeResponse) {
                 blockCount = ((SubscribeResponse) event).getBlock_count();
@@ -153,6 +157,41 @@ public class AccountService {
             if (event != null) {
                 RxBus.get().post(event);
             }
+        }
+    }
+
+    private void processWork(WorkResponse workResponse) {
+        // process work responses
+        if (recentWorkRequestType != null && recentWorkRequestType.toString().equals(BlockTypes.OPEN.toString())) {
+            // create open block
+        } else if (recentWorkRequestType != null && recentWorkRequestType.toString().equals(BlockTypes.RECEIVE.toString())) {
+            // create a receive block string
+            ReceiveBlock receiveBlock = new ReceiveBlock(
+                    getPrivateKey(),
+                    wallet.getFrontierBlock(),
+                    "", // TODO: get this pendingTransactionResponseItem.getHash(),
+                    workResponse.getWork());
+
+            // escape the block to match https://github.com/clemahieu/raiblocks/wiki/RPC-protocol#process-block
+            // use jackson here to maintain field order
+            ObjectMapper mapper = new ObjectMapper();
+            String block = "";
+            try {
+                block = mapper.writeValueAsString(receiveBlock);
+            } catch (JsonProcessingException e) {
+                ExceptionHandler.handle(e);
+            }
+            Timber.d(block);
+
+            if (websocket != null) {
+                // send the send request
+                websocket.send(new ProcessRequest(block))
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(event3 -> {
+                        }, this::handleError);
+            }
+        } else if (recentWorkRequestType != null && recentWorkRequestType.toString().equals(BlockTypes.SEND.toString())) {
+            RxBus.get().post(workResponse);
         }
     }
 
@@ -204,76 +243,21 @@ public class AccountService {
     private void consumePendingTransactions() {
         pendingTransactionQueue.observe()
                 .observeOn(Schedulers.io())
-                .forEach(this::processReceiveTransaction);
+                .forEach(this::requestReceiveTransaction);
     }
 
     /**
      * Process receive transactions
-     * Create a new socket for every process receive transaction in order to keep track of the work
-     * that comes back so it is all on this single socket. Although, maybe that doesn't matter?
-     * TODO: Investigate whether additional sockets are actually necessary here
      *
      * @param pendingTransactionResponseItem Pending Transaction Response Item
      */
-    private void processReceiveTransaction(PendingTransactionResponseItem pendingTransactionResponseItem) {
-        RxWebsocket transactionSocket = new RxWebsocket.Builder()
-                .addConverterFactory(WebSocketConverterFactory.create())
-                .build(CONNECTION_URL);
-        // set up event stream handling
-        transactionSocket.eventStream()
+    private void requestReceiveTransaction(PendingTransactionResponseItem pendingTransactionResponseItem) {
+        requestWorkSend(wallet.getFrontierBlock(), pendingTransactionResponseItem.g);
+
+        websocket.send(new WorkRequest(wallet.getFrontierBlock())) // TODO: this is not always the case
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(event -> {
-                    if (event instanceof RxWebsocket.Open) {
-                        transactionSocket.send(new WorkRequest(wallet.getFrontierBlock()))
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(event2 -> {
-                                }, this::handleError);
-                    } else if (event instanceof RxWebsocket.Message) {
-                        BaseNetworkModel model = null;
-                        try {
-                            model = ((RxWebsocket.Message) event).data(BaseNetworkModel.class);
-                        } catch (Throwable throwable) {
-                            ExceptionHandler.handle(throwable);
-                        }
-
-                        if (model != null && model instanceof WorkResponse) {
-                            // create a receive block string
-                            ReceiveBlock receiveBlock = new ReceiveBlock(
-                                    getPrivateKey(),
-                                    wallet.getFrontierBlock(),
-                                    pendingTransactionResponseItem.getHash(),
-                                    ((WorkResponse) model).getWork());
-
-                            // escape the block to match https://github.com/clemahieu/raiblocks/wiki/RPC-protocol#process-block
-                            // use jackson here to maintain field order
-                            ObjectMapper mapper = new ObjectMapper();
-                            String block = "";
-                            try {
-                                block = mapper.writeValueAsString(receiveBlock);
-                            } catch (JsonProcessingException e) {
-                                ExceptionHandler.handle(e);
-                            }
-                            Timber.d(block);
-
-                            if (websocket != null) {
-                                // send the send request
-                                websocket.send(new ProcessRequest(block))
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe(event3 -> {
-                                        }, this::handleError);
-                            }
-                        }
-                        transactionSocket.disconnect(1000, "Disconnect");
-                    }
-                })
-                .subscribe(event -> {
+                .subscribe(event2 -> {
                 }, this::handleError);
-        transactionSocket.connect()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        event -> Timber.d(event.toString()),
-                        ExceptionHandler::handle
-                );
     }
 
     /**
@@ -333,6 +317,8 @@ public class AccountService {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(event -> {
                     }, this::handleError);
+
+            requestPending();
         }
     }
 
@@ -341,8 +327,10 @@ public class AccountService {
      *
      * @param previous the hash of the last block in our chain, our current frontier
      */
-    public void requestWorkSend(String previous) {
+    public void requestWorkSend(String previous, BlockTypes type) {
         if (websocket != null) {
+            recentWorkRequestType = type;
+
             // request work
             websocket.send(new WorkRequest(previous))
                     .observeOn(AndroidSchedulers.mainThread())

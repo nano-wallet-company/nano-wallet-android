@@ -30,6 +30,8 @@ android {
         // Enabling multidex support.
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
+
+        resValue "string", "representative", 'xrb_16k5pimotz9zehjk795wa4qcx54mtusk8hc5mdsjgy57gnhbj3hj6zaib4ic'
     }
     buildTypes {
         debug {

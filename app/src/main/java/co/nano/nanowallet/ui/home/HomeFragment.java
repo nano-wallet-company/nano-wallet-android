@@ -158,9 +158,6 @@ public class HomeFragment extends BaseFragment {
             controller.setData(wallet.getAccountHistory(), new ClickHandlers());
         }
 
-        // check to see if account is ready
-        accountService.requestAccountCheck();
-
         updateAmounts();
 
         return view;
