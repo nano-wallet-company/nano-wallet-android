@@ -244,6 +244,9 @@ public class AccountService {
         if (recentWorkRequestType != null &&
                 (recentWorkRequestType.toString().equals(BlockTypes.OPEN.toString()) ||
                 recentWorkRequestType.toString().equals(BlockTypes.RECEIVE.toString()))) {
+            recentPendingTransactionResponseItem.setComplete(true);
+            wallet.getPendingTransactions().remove();
+            wallet.setFrontierBlock(processResponse.getHash());
 
             if (recentWorkRequestType.toString().equals(BlockTypes.OPEN.toString())) {
                 blockCount = 1;
@@ -263,9 +266,6 @@ public class AccountService {
                     .subscribe(event -> {
                     }, this::handleError);
 
-            wallet.setFrontierBlock(processResponse.getHash());
-            recentPendingTransactionResponseItem.setComplete(true);
-            wallet.getPendingTransactions().remove();
             processNextTransaction();
         } else if (recentWorkRequestType != null &&
                 (recentWorkRequestType.toString().equals(BlockTypes.SEND.toString()))) {
