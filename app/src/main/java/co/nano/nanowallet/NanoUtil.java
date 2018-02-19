@@ -208,10 +208,8 @@ public class NanoUtil {
     public static String addressToPublic(String encoded_address) {
         Sodium sodium = NaCl.sodium();
         String data = encoded_address.substring(4, 56);
-        String checksum = encoded_address.substring(56, encoded_address.length());
 
         byte[] data_b = NanoUtil.hexStringToByteArray(decode(data));
-        byte[] checksum_b = NanoUtil.hexStringToByteArray(decode(checksum));
 
         byte[] state = new byte[Sodium.crypto_generichash_statebytes()];
         byte[] key = new byte[Sodium.crypto_generichash_keybytes()];

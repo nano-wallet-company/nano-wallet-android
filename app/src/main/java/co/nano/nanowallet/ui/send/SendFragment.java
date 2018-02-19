@@ -236,6 +236,7 @@ public class SendFragment extends BaseFragment {
      */
     @Subscribe
     public void receiveProcessResponse(ProcessResponse processResponse) {
+        accountService.requestUpdate();
         goBack();
     }
 

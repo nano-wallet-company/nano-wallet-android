@@ -8,7 +8,7 @@ import co.nano.nanowallet.network.model.BlockTypes;
 import co.nano.nanowallet.util.NumberUtil;
 
 /**
- * Send Block
+ * Send BlockItem
  */
 @JsonPropertyOrder({
         "type",

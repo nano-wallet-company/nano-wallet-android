@@ -22,6 +22,7 @@ import co.nano.nanowallet.network.model.BlockTypes;
 import co.nano.nanowallet.network.model.request.AccountCheckRequest;
 import co.nano.nanowallet.network.model.request.AccountHistoryRequest;
 import co.nano.nanowallet.network.model.request.CurrentPriceRequest;
+import co.nano.nanowallet.network.model.request.OpenBlock;
 import co.nano.nanowallet.network.model.request.PendingTransactionsRequest;
 import co.nano.nanowallet.network.model.request.ProcessRequest;
 import co.nano.nanowallet.network.model.request.ReceiveBlock;
@@ -29,14 +30,14 @@ import co.nano.nanowallet.network.model.request.SendBlock;
 import co.nano.nanowallet.network.model.request.SubscribeRequest;
 import co.nano.nanowallet.network.model.request.WorkRequest;
 import co.nano.nanowallet.network.model.response.PendingTransactionResponseItem;
+import co.nano.nanowallet.network.model.response.ProcessResponse;
 import co.nano.nanowallet.network.model.response.SubscribeResponse;
+import co.nano.nanowallet.network.model.response.TransactionResponse;
 import co.nano.nanowallet.network.model.response.WorkResponse;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.util.ExceptionHandler;
-import co.nano.nanowallet.util.ObservableQueue;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import timber.log.Timber;
 
@@ -50,8 +51,8 @@ public class AccountService {
     //private static final String CONNECTION_URL = "wss://light.nano.org:443";
     private Address address;
     private Integer blockCount;
-    private ObservableQueue<PendingTransactionResponseItem> pendingTransactionQueue;
     private BlockTypes recentWorkRequestType;
+    private PendingTransactionResponseItem recentPendingTransactionResponseItem;
 
     @Inject
     Realm realm;
@@ -73,15 +74,14 @@ public class AccountService {
         // get user's address
         address = getAddress();
 
-        // initialize pending transaction queue
-        pendingTransactionQueue = new ObservableQueue<>();
+        blockCount = -1;
 
         // initialize the web socket
         if (websocket == null) {
             initWebSocket();
         }
 
-        consumePendingTransactions();
+        processNextTransaction();
     }
 
     /**
@@ -130,7 +130,7 @@ public class AccountService {
     }
 
     /**
-     * Generic message hander. Convert to an object and process or post to bus.
+     * Generic message hand'er. Convert to an object and process or post to bus.
      *
      * @param message Websocket Message
      */
@@ -144,10 +144,21 @@ public class AccountService {
 
         if (event != null && event.getMessageType() == null) {
             // try parsing to a linked tree map object if event type is null
+            // for now, these are the blocks that come back from a pending request
             handleNullMessageTypes(message);
         } else if (event != null && event instanceof WorkResponse) {
+            // process a work response
             processWork((WorkResponse) event);
-        }  else {
+        } else if (event != null && event instanceof TransactionResponse) {
+            // a transaction was pushed to the app, so push onto pending transaction queue
+            TransactionResponse transactionResponse = (TransactionResponse) event;
+            PendingTransactionResponseItem pendingTransactionResponseItem = new PendingTransactionResponseItem(
+                    transactionResponse.getAccount(), transactionResponse.getAmount(), transactionResponse.getHash());
+            wallet.getPendingTransactions().add(pendingTransactionResponseItem);
+            processNextTransaction();
+        } else if (event != null && event instanceof ProcessResponse) {
+            handleProcessResponse((ProcessResponse) event);
+        } else {
             // keep track of current block count for more efficient requests
             if (event instanceof SubscribeResponse) {
                 blockCount = ((SubscribeResponse) event).getBlock_count();
@@ -160,16 +171,44 @@ public class AccountService {
         }
     }
 
+    /**
+     * Here is where we handle any work response that comes back
+     *
+     * @param workResponse Work response
+     */
     private void processWork(WorkResponse workResponse) {
-        // process work responses
         if (recentWorkRequestType != null && recentWorkRequestType.toString().equals(BlockTypes.OPEN.toString())) {
             // create open block
+            OpenBlock openBlock = new OpenBlock(
+                    getPrivateKey(),
+                    recentPendingTransactionResponseItem.getHash(),
+                    "xrb_16k5pimotz9zehjk795wa4qcx54mtusk8hc5mdsjgy57gnhbj3hj6zaib4ic",
+                    workResponse.getWork()
+            );
+            // escape the block to match https://github.com/clemahieu/raiblocks/wiki/RPC-protocol#process-block
+            // use jackson here to maintain field order
+            ObjectMapper mapper = new ObjectMapper();
+            String block = "";
+            try {
+                block = mapper.writeValueAsString(openBlock);
+            } catch (JsonProcessingException e) {
+                ExceptionHandler.handle(e);
+            }
+            Timber.d(block);
+
+            if (websocket != null) {
+                // send the send request
+                websocket.send(new ProcessRequest(block))
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(event3 -> {
+                        }, this::handleError);
+            }
         } else if (recentWorkRequestType != null && recentWorkRequestType.toString().equals(BlockTypes.RECEIVE.toString())) {
             // create a receive block string
             ReceiveBlock receiveBlock = new ReceiveBlock(
                     getPrivateKey(),
                     wallet.getFrontierBlock(),
-                    "", // TODO: get this pendingTransactionResponseItem.getHash(),
+                    recentPendingTransactionResponseItem.getHash(),
                     workResponse.getWork());
 
             // escape the block to match https://github.com/clemahieu/raiblocks/wiki/RPC-protocol#process-block
@@ -191,7 +230,47 @@ public class AccountService {
                         }, this::handleError);
             }
         } else if (recentWorkRequestType != null && recentWorkRequestType.toString().equals(BlockTypes.SEND.toString())) {
+            // send work so post to bus
+            // this could probably all be handled here
             RxBus.get().post(workResponse);
+        }
+    }
+
+    /**
+     * When an OPEN, SEND, or RECEIVE block comes back successfully with a hash
+     * @param processResponse Process Response
+     */
+    private void handleProcessResponse(ProcessResponse processResponse) {
+        if (recentWorkRequestType != null &&
+                (recentWorkRequestType.toString().equals(BlockTypes.OPEN.toString()) ||
+                recentWorkRequestType.toString().equals(BlockTypes.RECEIVE.toString()))) {
+
+            if (recentWorkRequestType.toString().equals(BlockTypes.OPEN.toString())) {
+                blockCount = 1;
+            } else {
+                blockCount++;
+            }
+
+            // account subscribe
+            websocket.send(new SubscribeRequest(address.getAddress(), getLocalCurrency()))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(event2 -> {
+                    }, this::handleError);
+
+            // account history request
+            websocket.send(new AccountHistoryRequest(address.getAddress(), blockCount != null ? blockCount : 10))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(event -> {
+                    }, this::handleError);
+
+            wallet.setFrontierBlock(processResponse.getHash());
+            recentPendingTransactionResponseItem.setComplete(true);
+            wallet.getPendingTransactions().remove();
+            processNextTransaction();
+        } else if (recentWorkRequestType != null &&
+                (recentWorkRequestType.toString().equals(BlockTypes.SEND.toString()))) {
+            blockCount++;
+            RxBus.get().post(processResponse);
         }
     }
 
@@ -224,35 +303,48 @@ public class AccountService {
             if (blocks instanceof LinkedTreeMap) {
                 // blocks is not empty
                 Set keys = ((LinkedTreeMap) blocks).keySet();
+                wallet.getPendingTransactions().clear();
                 for (Object key : keys) {
                     try {
                         PendingTransactionResponseItem pendingTransactionResponseItem = new Gson().fromJson(String.valueOf(((LinkedTreeMap) blocks).get(key)), PendingTransactionResponseItem.class);
                         pendingTransactionResponseItem.setHash(key.toString());
-                        pendingTransactionQueue.put(pendingTransactionResponseItem);
+                        wallet.getPendingTransactions().add(pendingTransactionResponseItem);
                     } catch (Throwable throwable) {
                         ExceptionHandler.handle(throwable);
                     }
                 }
+                processNextTransaction();
             }
         }
     }
 
-    /**
-     * Process the queue of pending transactions
-     */
-    private void consumePendingTransactions() {
-        pendingTransactionQueue.observe()
-                .observeOn(Schedulers.io())
-                .forEach(this::requestReceiveTransaction);
-    }
+    private void processNextTransaction() {
+        if (wallet.getPendingTransactions().size() > 0) {
+            // peek at first item
+            PendingTransactionResponseItem item = wallet.getPendingTransactions().element();
 
-    /**
-     * Process receive transactions
-     *
-     * @param pendingTransactionResponseItem Pending Transaction Response Item
-     */
-    private void requestReceiveTransaction(PendingTransactionResponseItem pendingTransactionResponseItem) {
-        requestWorkSend(wallet.getFrontierBlock(), BlockTypes.RECEIVE);
+            if (item.isComplete()) {
+                // pending transaction has been completed
+                wallet.getPendingTransactions().remove();
+                processNextTransaction();
+            } else if (!item.isInProgress()) {
+                // no item is in progress
+                item.setInProgress(true);
+
+                // keep track of which item we are processing
+                recentPendingTransactionResponseItem = item;
+
+                if (blockCount <= 0) {
+                    // process open block
+                    requestWorkSend(wallet.getFrontierBlock(), BlockTypes.OPEN);
+                } else {
+                    // process receive otherwise
+                    requestWorkSend(wallet.getFrontierBlock(), BlockTypes.RECEIVE);
+                }
+            }
+
+
+        }
     }
 
     /**
@@ -274,7 +366,7 @@ public class AccountService {
      */
     public void requestPending() {
         if (websocket != null && address != null) {
-            // account subscribe
+            // account pending
             websocket.send(new PendingTransactionsRequest(
                     address.getAddress(),
                     true,

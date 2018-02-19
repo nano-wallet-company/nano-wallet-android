@@ -14,6 +14,7 @@ import co.nano.nanowallet.network.model.Actions;
 import co.nano.nanowallet.network.model.BaseNetworkModel;
 import co.nano.nanowallet.network.model.response.AccountCheckResponse;
 import co.nano.nanowallet.network.model.response.AccountHistoryResponse;
+import co.nano.nanowallet.network.model.response.TransactionResponse;
 import co.nano.nanowallet.network.model.response.CurrentPriceResponse;
 import co.nano.nanowallet.network.model.response.ErrorResponse;
 import co.nano.nanowallet.network.model.response.ProcessResponse;
@@ -47,15 +48,16 @@ public final class WebSocketConverterFactory extends WebSocketConverter.Factory 
                         } else if (src.getAsJsonObject().get("error") != null) {
                             // error response
                             src.getAsJsonObject().addProperty("messageType", Actions.ERROR.toString());
+                        } else if (src.getAsJsonObject().get("block") != null && src.getAsJsonObject().get("account") != null
+                                && src.getAsJsonObject().get("hash") != null) {
+                            // block response
+                            src.getAsJsonObject().addProperty("messageType", "block");
                         } else if (src.getAsJsonObject().get("ready") != null) {
                             // account check response
                             src.getAsJsonObject().addProperty("messageType", Actions.CHECK.toString());
                         } else if (src.getAsJsonObject().get("hash") != null) {
                             // account check response
                             src.getAsJsonObject().addProperty("messageType", Actions.PROCESS.toString());
-                        } else if (src.getAsJsonObject().get("block") != null) {
-                            // account check response
-                            src.getAsJsonObject().addProperty("messageType", "block");
                         }
                     }
                 }).registerTypeSelector(BaseNetworkModel.class, readElement -> {
@@ -76,6 +78,8 @@ public final class WebSocketConverterFactory extends WebSocketConverter.Factory 
                             return AccountCheckResponse.class;
                         } else if (kind.equals(Actions.PROCESS.toString())) {
                             return ProcessResponse.class;
+                        } else if (kind.equals("block")) {
+                            return TransactionResponse.class;
                         } else {
                             return null; // returning null will trigger Gson's default behavior
                         }

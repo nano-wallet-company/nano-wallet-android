@@ -10,8 +10,10 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Queue;
 
 import javax.inject.Inject;
 
@@ -24,6 +26,7 @@ import co.nano.nanowallet.bus.WalletSubscribeUpdate;
 import co.nano.nanowallet.network.model.response.AccountHistoryResponse;
 import co.nano.nanowallet.network.model.response.AccountHistoryResponseItem;
 import co.nano.nanowallet.network.model.response.CurrentPriceResponse;
+import co.nano.nanowallet.network.model.response.PendingTransactionResponseItem;
 import co.nano.nanowallet.network.model.response.SubscribeResponse;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.util.ExceptionHandler;
@@ -48,6 +51,8 @@ public class NanoWallet {
     private Integer blockCount;
 
     private List<AccountHistoryResponseItem> accountHistory;
+
+    private Queue<PendingTransactionResponseItem> pendingTransactions = new LinkedList<>();
 
     // for sending
     private String sendNanoAmount;
@@ -83,6 +88,14 @@ public class NanoWallet {
 
     public String getLongerAccountBalanceNano() {
         return NumberUtil.getRawAsLongerUsableString(accountBalance.toString());
+    }
+
+    public Queue<PendingTransactionResponseItem> getPendingTransactions() {
+        return pendingTransactions;
+    }
+
+    public void setPendingTransactions(Queue<PendingTransactionResponseItem> pendingTransactions) {
+        this.pendingTransactions = pendingTransactions;
     }
 
     public String getAccountBalanceLocalCurrency() {

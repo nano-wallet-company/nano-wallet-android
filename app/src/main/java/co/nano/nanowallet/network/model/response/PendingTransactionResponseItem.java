@@ -22,6 +22,9 @@ public class PendingTransactionResponseItem {
     @SerializedName("hash")
     private String hash;
 
+    private boolean inProgress;
+    private boolean complete;
+
     public PendingTransactionResponseItem() {
     }
 
@@ -57,5 +60,21 @@ public class PendingTransactionResponseItem {
 
     public void setHash(String hash) {
         this.hash = hash;
+    }
+
+    public boolean isInProgress() {
+        return inProgress;
+    }
+
+    public void setInProgress(boolean inProgress) {
+        this.inProgress = inProgress;
+    }
+
+    public boolean isComplete() {
+        return complete;
+    }
+
+    public void setComplete(boolean complete) {
+        this.complete = complete;
     }
 }
