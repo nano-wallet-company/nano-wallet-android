@@ -207,7 +207,7 @@ public class NanoWallet {
      */
     public String getSendLocalCurrencyAmountFormatted() {
         if (sendLocalCurrencyAmount.length() > 0) {
-            return currencyFormat(new BigDecimal(sendLocalCurrencyAmount));
+            return currencyFormat(new BigDecimal(sendLocalCurrencyAmount.replace(",","")));
         } else {
             return "";
         }
