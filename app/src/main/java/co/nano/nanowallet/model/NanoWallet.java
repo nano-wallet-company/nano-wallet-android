@@ -328,6 +328,8 @@ public class NanoWallet {
         openBlock = subscribeResponse.getOpen_block();
         blockCount = subscribeResponse.getBlock_count();
         accountBalance = new BigDecimal(subscribeResponse.getBalance());
+        localCurrencyPrice = new BigDecimal(subscribeResponse.getPrice());
+        btcPrice = new BigDecimal(subscribeResponse.getBtc());
         RxBus.get().post(new WalletSubscribeUpdate());
     }
 

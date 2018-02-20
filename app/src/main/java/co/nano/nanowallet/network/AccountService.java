@@ -21,7 +21,6 @@ import co.nano.nanowallet.network.model.BaseNetworkModel;
 import co.nano.nanowallet.network.model.BlockTypes;
 import co.nano.nanowallet.network.model.request.AccountCheckRequest;
 import co.nano.nanowallet.network.model.request.AccountHistoryRequest;
-import co.nano.nanowallet.network.model.request.CurrentPriceRequest;
 import co.nano.nanowallet.network.model.request.OpenBlock;
 import co.nano.nanowallet.network.model.request.PendingTransactionsRequest;
 import co.nano.nanowallet.network.model.request.ProcessRequest;
@@ -47,8 +46,7 @@ import timber.log.Timber;
 
 public class AccountService {
     private RxWebsocket websocket;
-    private static final String CONNECTION_URL = "wss://raicast.lightrai.com:443";
-    //private static final String CONNECTION_URL = "wss://light.nano.org:443";
+    private static final String CONNECTION_URL = "wss://light.nano.org:443";
     private Address address;
     private Integer blockCount;
     private BlockTypes recentWorkRequestType;
@@ -386,17 +384,6 @@ public class AccountService {
             websocket.send(new SubscribeRequest(address.getAddress(), getLocalCurrency()))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(event2 -> {
-                    }, this::handleError);
-            // current price request
-            websocket.send(new CurrentPriceRequest(getLocalCurrency()))
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(event -> {
-                    }, this::handleError);
-
-            // price in bitcoin request
-            websocket.send(new CurrentPriceRequest("BTC"))
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(event -> {
                     }, this::handleError);
 
             // account history request

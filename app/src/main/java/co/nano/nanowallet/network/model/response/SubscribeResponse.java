@@ -41,6 +41,12 @@ public class SubscribeResponse extends BaseNetworkModel {
     @SerializedName("uuid")
     private String uuid;
 
+    @SerializedName("price")
+    private String price;
+
+    @SerializedName("btc")
+    private String btc;
+
     public SubscribeResponse() {
     }
 
@@ -108,5 +114,21 @@ public class SubscribeResponse extends BaseNetworkModel {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public String getBtc() {
+        return btc;
+    }
+
+    public void setBtc(String btc) {
+        this.btc = btc;
     }
 }
