@@ -6,7 +6,6 @@ import com.hwangjr.rxbus.annotation.Subscribe;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -240,7 +239,7 @@ public class NanoWallet {
             return amount;
         } else {
             return localCurrencyPrice != null ? new BigDecimal(amount)
-                    .divide(localCurrencyPrice, RoundingMode.FLOOR).toString() : "0.0";
+                    .divide(localCurrencyPrice, 10, BigDecimal.ROUND_HALF_UP).toString() : "0.0";
         }
     }
 
