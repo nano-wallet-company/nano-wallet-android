@@ -165,6 +165,9 @@ public class NanoWallet {
             if (this.sendNanoAmount.equals(".")) {
                 this.sendNanoAmount = "0.";
             }
+            if (this.sendNanoAmount.equals("00")) {
+                this.sendNanoAmount = "0";
+            }
             this.sendLocalCurrencyAmount = convertNanoToLocalCurrency(this.sendNanoAmount);
         } else {
             this.sendLocalCurrencyAmount = "";
