@@ -17,6 +17,7 @@ import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.model.Address;
 import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.model.NanoWallet;
+import co.nano.nanowallet.model.PreconfiguredRepresentatives;
 import co.nano.nanowallet.network.model.BaseNetworkModel;
 import co.nano.nanowallet.network.model.BlockTypes;
 import co.nano.nanowallet.network.model.request.AccountCheckRequest;
@@ -180,7 +181,7 @@ public class AccountService {
             OpenBlock openBlock = new OpenBlock(
                     getPrivateKey(),
                     recentPendingTransactionResponseItem.getHash(),
-                    "xrb_16k5pimotz9zehjk795wa4qcx54mtusk8hc5mdsjgy57gnhbj3hj6zaib4ic",
+                    PreconfiguredRepresentatives.getRepresentative(),
                     workResponse.getWork()
             );
             // escape the block to match https://github.com/clemahieu/raiblocks/wiki/RPC-protocol#process-block
