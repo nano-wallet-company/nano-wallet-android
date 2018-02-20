@@ -12,6 +12,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.hwangjr.rxbus.annotation.Subscribe;
 
 import javax.inject.Inject;
@@ -130,6 +132,8 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
 
     @Subscribe
     public void logOut(Logout logout) {
+        Answers.getInstance().logCustom(new CustomEvent("User Logged Out"));
+
         // delete user seed data before logging out
         final RealmResults<Credentials> results = realm.where(Credentials.class).findAll();
         realm.executeTransaction(realm1 -> results.deleteAllFromRealm());

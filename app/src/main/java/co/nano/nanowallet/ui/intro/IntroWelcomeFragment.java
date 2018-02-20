@@ -6,6 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
+
 import javax.inject.Inject;
 
 import co.nano.nanowallet.BuildConfig;
@@ -31,6 +34,7 @@ public class IntroWelcomeFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Answers.getInstance().logCustom(new CustomEvent("Welcome VC Viewed"));
 
         // init dependency injection
         if (getActivity() instanceof ActivityWithComponent) {

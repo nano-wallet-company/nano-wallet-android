@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.Base64;
 
 import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.answers.Answers;
 import com.facebook.stetho.Stetho;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
@@ -33,6 +34,8 @@ public class NanoApplication extends Application {
 
         // initialize crashlytics
         Fabric.with(this, new Crashlytics());
+        // initialize answers
+        Fabric.with(this, new Answers());
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());

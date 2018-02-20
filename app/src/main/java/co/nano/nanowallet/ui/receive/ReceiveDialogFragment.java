@@ -18,6 +18,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.github.sumimakito.awesomeqr.AwesomeQRCode;
 
 import java.io.File;
@@ -71,6 +73,8 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Answers.getInstance().logCustom(new CustomEvent("Received VC Viewed"));
+
         // init dependency injection
         if (getActivity() instanceof ActivityWithComponent) {
             ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
@@ -163,6 +167,7 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
         }
 
         public void onClickShare(View view) {
+            Answers.getInstance().logCustom(new CustomEvent("Share Dialog Viewed"));
             binding.receiveCard.cardLayout.setVisibility(View.VISIBLE);
             saveImage(setViewToBitmapImage(binding.receiveCard.cardLayout));
             File imagePath = new File(getContext().getCacheDir(), "images");
@@ -179,6 +184,7 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
         }
 
         public void onClickCopy(View view) {
+            Answers.getInstance().logCustom(new CustomEvent("Nano Address Copied"));
             // copy address to clipboard
             android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
             android.content.ClipData clip = android.content.ClipData.newPlainText(ClipboardAlarmReceiver.CLIPBOARD_NAME, address.getAddress());

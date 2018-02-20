@@ -10,6 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
+
 import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
@@ -180,6 +183,7 @@ public class IntroSeedFragment extends BaseFragment {
          * @param view
          */
         public void onClickCamera(View view) {
+            Answers.getInstance().logCustom(new CustomEvent("Seed Scan Camera View Viewed"));
             startScanActivity(getString(R.string.scan_instruction_label), true);
         }
     }

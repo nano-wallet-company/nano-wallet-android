@@ -10,6 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
+
 import javax.inject.Inject;
 
 import co.nano.nanowallet.NanoUtil;
@@ -57,6 +60,8 @@ public class IntroNewWalletFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        Answers.getInstance().logCustom(new CustomEvent("Seed Confirmation VC Viewed"));
+
         // init dependency injection
         if (getActivity() instanceof ActivityWithComponent) {
             ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
@@ -94,6 +99,7 @@ public class IntroNewWalletFragment extends BaseFragment {
          * @param view
          */
         public void onClickConfirm(View view) {
+            Answers.getInstance().logCustom(new CustomEvent("Seed Confirmation Continue Button Pressed"));
             // show the copy seed dialog
             AlertDialog.Builder builder;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -126,6 +132,7 @@ public class IntroNewWalletFragment extends BaseFragment {
          * @param view
          */
         public void onClickSeed(View view) {
+            Answers.getInstance().logCustom(new CustomEvent("Seed Copied").putCustomAttribute("location", "seed confirmation"));
             // copy address to clipboard
             android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
             android.content.ClipData clip = android.content.ClipData.newPlainText(ClipboardAlarmReceiver.CLIPBOARD_NAME, seed);

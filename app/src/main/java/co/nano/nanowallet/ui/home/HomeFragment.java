@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.google.gson.internal.LinkedTreeMap;
 import com.hwangjr.rxbus.annotation.Subscribe;
 
@@ -123,6 +125,7 @@ public class HomeFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Answers.getInstance().logCustom(new CustomEvent("Home VC Viewed"));
 
         // init dependency injection
         if (getActivity() instanceof ActivityWithComponent) {

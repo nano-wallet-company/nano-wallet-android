@@ -24,6 +24,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.hwangjr.rxbus.annotation.Subscribe;
 
 import java.math.BigInteger;
@@ -100,6 +102,7 @@ public class SendFragment extends BaseFragment {
         int id = item.getItemId();
         switch (id) {
             case R.id.send_camera:
+                Answers.getInstance().logCustom(new CustomEvent("Address Scan Camera View Used"));
                 startScanActivity(getString(R.string.scan_send_instruction_label), false);
                 return true;
         }
@@ -126,6 +129,8 @@ public class SendFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Answers.getInstance().logCustom(new CustomEvent("Send VC Viewed"));
+
         // init dependency injection
         if (getActivity() instanceof ActivityWithComponent) {
             ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
@@ -237,6 +242,7 @@ public class SendFragment extends BaseFragment {
     @Subscribe
     public void receiveProcessResponse(ProcessResponse processResponse) {
         accountService.requestUpdate();
+        Answers.getInstance().logCustom(new CustomEvent("Send Nano Finished"));
         goBack();
     }
 
@@ -412,9 +418,11 @@ public class SendFragment extends BaseFragment {
             BigInteger balance = wallet.getAccountBalanceNanoRaw().toBigInteger().subtract(sendAmount);
 
             accountService.requestSend(wallet.getFrontierBlock(), destination, balance, work);
+            Answers.getInstance().logCustom(new CustomEvent("Send Nano Began"));
         }
 
         public void onClickMax(View view) {
+            Answers.getInstance().logCustom(new CustomEvent("Send: Max Amount Used"));
             wallet.setSendNanoAmount(wallet.getLongerAccountBalanceNano());
             binding.setWallet(wallet);
         }

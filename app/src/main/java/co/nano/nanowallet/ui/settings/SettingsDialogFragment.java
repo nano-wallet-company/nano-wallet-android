@@ -15,6 +15,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,6 +77,8 @@ public class SettingsDialogFragment extends BaseDialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Answers.getInstance().logCustom(new CustomEvent("Settings VC Viewed"));
+
         // inject
         if (getActivity() instanceof ActivityWithComponent) {
             ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
@@ -105,6 +110,7 @@ public class SettingsDialogFragment extends BaseDialogFragment {
                 AvailableCurrency key = (AvailableCurrency) swt.tag;
                 if (key != null) {
                     sharedPreferencesUtil.setLocalCurrency(key);
+                    Answers.getInstance().logCustom(new CustomEvent("Local Currency Selected").putCustomAttribute("currency", key.toString()));
                 }
             }
 
@@ -175,6 +181,7 @@ public class SettingsDialogFragment extends BaseDialogFragment {
             builder.setTitle(R.string.settings_seed_alert_title)
                     .setMessage(R.string.settings_seed_alert_message)
                     .setPositiveButton(R.string.settings_seed_alert_confirm_cta, (dialog, which) -> {
+                        Answers.getInstance().logCustom(new CustomEvent("Seed Copied"));
                         // copy seed to clipboard
                         android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
                         android.content.ClipData clip = android.content.ClipData.newPlainText("seed", "my seed"); // TODO: Set real seed here
