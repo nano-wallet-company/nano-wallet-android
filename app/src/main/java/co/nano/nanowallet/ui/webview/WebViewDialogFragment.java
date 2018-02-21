@@ -1,14 +1,12 @@
 package co.nano.nanowallet.ui.webview;
 
 import android.databinding.DataBindingUtil;
-import android.net.http.SslError;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -96,7 +94,7 @@ public class WebViewDialogFragment extends BaseDialogFragment {
             binding.dialogAppBarProgress.setIndeterminate(true);
         }
 
-        binding.webviewWebview.setWebViewClient(new WebViewClient() {@Override public void onReceivedSslError(WebView v, SslErrorHandler handler, SslError er){ handler.proceed(); }});
+        binding.webviewWebview.setWebViewClient(new WebViewClient() {});
         binding.webviewWebview.setWebChromeClient(mWebChromeClient);
         binding.webviewWebview.getSettings().setDomStorageEnabled(true);
 

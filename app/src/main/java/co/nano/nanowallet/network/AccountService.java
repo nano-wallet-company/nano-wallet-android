@@ -48,6 +48,7 @@ import timber.log.Timber;
 public class AccountService {
     private RxWebsocket websocket;
     private static final String CONNECTION_URL = "wss://light.nano.org:443";
+    //private static final String CONNECTION_URL = "wss://raicast.lightrai.com:443";
     private Address address;
     private Integer blockCount;
     private BlockTypes recentWorkRequestType;
@@ -73,7 +74,7 @@ public class AccountService {
         // get user's address
         address = getAddress();
 
-        blockCount = -1;
+        blockCount = 16;
 
         // initialize the web socket
         if (websocket == null) {
