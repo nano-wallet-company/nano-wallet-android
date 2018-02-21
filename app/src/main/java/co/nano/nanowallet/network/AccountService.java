@@ -74,7 +74,7 @@ public class AccountService {
         // get user's address
         address = getAddress();
 
-        blockCount = 16;
+        blockCount = -1;
 
         // initialize the web socket
         if (websocket == null) {
