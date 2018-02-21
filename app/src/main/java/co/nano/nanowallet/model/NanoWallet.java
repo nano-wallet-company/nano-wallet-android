@@ -186,7 +186,7 @@ public class NanoWallet {
             return amount;
         } else {
             return localCurrencyPrice != null ?
-                    formatLocalCurrency(new BigDecimal(amount).multiply(localCurrencyPrice, MathContext.DECIMAL64))
+                    formatLocalCurrency(new BigDecimal(amount.replace(",","")).multiply(localCurrencyPrice, MathContext.DECIMAL64))
                     : "0.0";
         }
     }
@@ -207,7 +207,7 @@ public class NanoWallet {
      */
     public String getSendLocalCurrencyAmountFormatted() {
         if (sendLocalCurrencyAmount.length() > 0) {
-            return currencyFormat(new BigDecimal(sendLocalCurrencyAmount.replace(",","")));
+            return currencyFormat(new BigDecimal(sendLocalCurrencyAmount.replace(",","").replace(" ","")));
         } else {
             return "";
         }
@@ -241,7 +241,7 @@ public class NanoWallet {
         if (amount.equals("0.")) {
             return amount;
         } else {
-            return localCurrencyPrice != null ? new BigDecimal(amount)
+            return localCurrencyPrice != null ? new BigDecimal(amount.replace(",","").replace(" ",""))
                     .divide(localCurrencyPrice, 10, BigDecimal.ROUND_HALF_UP).toString() : "0.0";
         }
     }
@@ -258,11 +258,11 @@ public class NanoWallet {
      * Convert local currency to properly formatted string for the currency
      */
     private String nanoFormat(String amount) {
-        if (new BigDecimal(amount).doubleValue() == 0) {
+        if (new BigDecimal(amount.replace(",","").replace(" ","")).doubleValue() == 0) {
             return amount;
         } else {
             DecimalFormat df = new DecimalFormat("#,###.##########");
-            return df.format(new BigDecimal(amount));
+            return df.format(new BigDecimal(amount.replace(",","").replace(" ","")));
         }
     }
 
@@ -272,7 +272,7 @@ public class NanoWallet {
     private void validateSendAmount() {
         try {
             new BigDecimal(sendNanoAmount);
-            if (new BigDecimal(sendNanoAmount).compareTo(new BigDecimal(NumberUtil.getRawAsLongerUsableString(accountBalance.toString()))) > 0) {
+            if (new BigDecimal(sendNanoAmount.replace(",","").replace(" ","")).compareTo(new BigDecimal(NumberUtil.getRawAsLongerUsableString(accountBalance.toString()))) > 0) {
                 RxBus.get().post(new SendInvalidAmount());
             }
         } catch (NumberFormatException e) {
