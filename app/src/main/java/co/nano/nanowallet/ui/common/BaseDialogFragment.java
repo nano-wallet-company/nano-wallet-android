@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.SystemClock;
 import android.support.v4.app.DialogFragment;
+import android.view.KeyEvent;
 import android.view.View;
 
 import co.nano.nanowallet.R;
@@ -17,6 +18,25 @@ import co.nano.nanowallet.broadcastreceiver.ClipboardAlarmReceiver;
  */
 
 public class BaseDialogFragment extends DialogFragment {
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        getDialog().setOnKeyListener((dialog, keyCode, event) -> {
+
+            if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+                //This is the filter
+                if (event.getAction() != KeyEvent.ACTION_DOWN)
+                    return true;
+                else {
+                    dismiss();
+                    return true; // pretend we've processed it
+                }
+            } else
+                return false; // pass on to be processed as normal
+        });
+    }
 
     /**
      * Set status bar color to dark blue
