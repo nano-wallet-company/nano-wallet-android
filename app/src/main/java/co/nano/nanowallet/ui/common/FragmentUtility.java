@@ -8,6 +8,7 @@ import android.support.v4.view.ViewCompat;
 import android.view.View;
 
 import co.nano.nanowallet.R;
+import co.nano.nanowallet.util.ExceptionHandler;
 
 /**
  * Utility methods for adding and replacing fragment transitions and animations
@@ -166,7 +167,11 @@ public class FragmentUtility {
             for (int i = 0; i < mFragmentManager.getFragments().size(); i++) {
                 Fragment mFragment = mFragmentManager.getFragments().get(i);
                 if (mFragment != null) {
-                    mFragmentManager.beginTransaction().remove(mFragment).commit();
+                    try {
+                        mFragmentManager.beginTransaction().remove(mFragment).commit();
+                    } catch(Exception e) {
+                        ExceptionHandler.handle(e);
+                    }
                 }
             }
         }
