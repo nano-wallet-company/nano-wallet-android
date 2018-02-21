@@ -28,6 +28,7 @@ import co.nano.nanowallet.bus.Logout;
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.databinding.FragmentSettingsBinding;
 import co.nano.nanowallet.model.AvailableCurrency;
+import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.model.StringWithTag;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseDialogFragment;
@@ -178,13 +179,16 @@ public class SettingsDialogFragment extends BaseDialogFragment {
             } else {
                 builder = new AlertDialog.Builder(getContext());
             }
+
+            Credentials credentials = realm.where(Credentials.class).findFirst();
+
             builder.setTitle(R.string.settings_seed_alert_title)
                     .setMessage(R.string.settings_seed_alert_message)
                     .setPositiveButton(R.string.settings_seed_alert_confirm_cta, (dialog, which) -> {
                         Answers.getInstance().logCustom(new CustomEvent("Seed Copied"));
                         // copy seed to clipboard
                         android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-                        android.content.ClipData clip = android.content.ClipData.newPlainText("seed", "my seed"); // TODO: Set real seed here
+                        android.content.ClipData clip = android.content.ClipData.newPlainText("seed", credentials.getSeed());
                         if (clipboard != null) {
                             clipboard.setPrimaryClip(clip);
                         }
