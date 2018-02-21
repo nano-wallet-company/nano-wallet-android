@@ -168,6 +168,7 @@ public class IntroSeedFragment extends BaseFragment {
 
             // go to home screen
             if (getActivity() instanceof WindowControl) {
+                ((WindowControl) getActivity()).getFragmentUtility().clearStack();
                 ((WindowControl) getActivity()).getFragmentUtility().replace(
                         new HomeFragment(),
                         FragmentUtility.Animation.ENTER_LEFT_EXIT_RIGHT,

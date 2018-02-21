@@ -120,12 +120,14 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
 
         if (credentials == null) {
             // if we dont have a wallet, start the intro
+            mFragmentUtility.clearStack();
             mFragmentUtility.replace(new IntroWelcomeFragment());
         } else {
             // if we do have a wallet, initialize web socket
             accountService.open();
 
             // go to home screen
+            mFragmentUtility.clearStack();
             mFragmentUtility.replace(new HomeFragment());
         }
     }
