@@ -5,7 +5,6 @@ import android.net.http.SslError;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,19 +32,6 @@ public class WebViewDialogFragment extends BaseDialogFragment {
 
     private static final String ARG_URL = "argUrl";
     private static final String ARG_TITLE = "argTitle";
-
-    private View.OnKeyListener keyListener = new View.OnKeyListener() {
-        @Override
-        public boolean onKey(View v, int keyCode, KeyEvent event) {
-            if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
-                if (binding.webviewWebview.canGoBack()) {
-                    binding.webviewWebview.goBack();
-                    return true;
-                }
-            }
-            return false;
-        }
-    };
 
     private final WebChromeClient mWebChromeClient = new WebChromeClient() {
         public void onProgressChanged(WebView view, int progress) {
@@ -96,7 +82,6 @@ public class WebViewDialogFragment extends BaseDialogFragment {
 
         setStatusBarWhite(view);
 
-        binding.webviewWebview.setOnKeyListener(keyListener);
         binding.webviewSwiperefresh.setOnRefreshListener(mSwipeRefreshListener);
 
         // set the listener for Navigation
