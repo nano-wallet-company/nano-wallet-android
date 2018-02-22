@@ -11,6 +11,7 @@ import co.nano.nanowallet.model.AvailableCurrency;
  */
 public class SharedPreferencesUtil {
     private static final String LOCAL_CURRENCY = "local_currency";
+    private static final String CONFIRMED_SEED_BACKEDUP = "confirmed_seed_backedup";
 
     private final SharedPreferences mPrefs;
 
@@ -64,6 +65,22 @@ public class SharedPreferencesUtil {
 
     public void clearLocalCurrency() {
         set(LOCAL_CURRENCY, null);
+    }
+
+    public boolean hasConfirmedSeedBackedUp() {
+        return has(CONFIRMED_SEED_BACKEDUP);
+    }
+
+    public Boolean getConfirmedSeedBackedUp() {
+        return get(CONFIRMED_SEED_BACKEDUP, false);
+    }
+
+    public void setConfirmedSeedBackedUp(Boolean confirmedSeedBackedUp) {
+        set(CONFIRMED_SEED_BACKEDUP, confirmedSeedBackedUp);
+    }
+
+    public void clearConfirmedSeedBackedUp() {
+        set(CONFIRMED_SEED_BACKEDUP, false);
     }
 
     public void clearAll() {

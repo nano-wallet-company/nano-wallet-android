@@ -31,7 +31,9 @@ import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.home.HomeFragment;
+import co.nano.nanowallet.ui.intro.IntroNewWalletFragment;
 import co.nano.nanowallet.ui.intro.IntroWelcomeFragment;
+import co.nano.nanowallet.util.SharedPreferencesUtil;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -51,6 +53,9 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
 
     @Inject
     NanoWallet nanoWallet;
+
+    @Inject
+    SharedPreferencesUtil sharedPreferencesUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,9 +131,15 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
             // if we do have a wallet, initialize web socket
             accountService.open();
 
-            // go to home screen
-            mFragmentUtility.clearStack();
-            mFragmentUtility.replace(new HomeFragment());
+            if (sharedPreferencesUtil.getConfirmedSeedBackedUp()) {
+                // go to home screen
+                mFragmentUtility.clearStack();
+                mFragmentUtility.replace(new HomeFragment());
+            } else {
+                // go to
+                mFragmentUtility.clearStack();
+                mFragmentUtility.replace(new IntroNewWalletFragment());
+            }
         }
     }
 
@@ -148,6 +159,8 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
 
         // null out component
         mActivityComponent = null;
+
+        sharedPreferencesUtil.setConfirmedSeedBackedUp(false);
 
         // go to the welcome fragment
         getFragmentUtility().clearStack();

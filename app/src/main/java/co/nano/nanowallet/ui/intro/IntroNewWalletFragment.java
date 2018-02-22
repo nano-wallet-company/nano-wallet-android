@@ -26,6 +26,7 @@ import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.home.HomeFragment;
+import co.nano.nanowallet.util.SharedPreferencesUtil;
 import io.realm.Realm;
 
 /**
@@ -43,6 +44,9 @@ public class IntroNewWalletFragment extends BaseFragment {
 
     @Inject
     AccountService accountService;
+
+    @Inject
+    SharedPreferencesUtil sharedPreferencesUtil;
 
     /**
      * Create new instance of the fragment (handy pattern if any data needs to be passed to it)
@@ -110,6 +114,9 @@ public class IntroNewWalletFragment extends BaseFragment {
             builder.setTitle(R.string.intro_new_wallet_continue_title)
                     .setMessage(R.string.intro_new_wallet_continue_message)
                     .setPositiveButton(R.string.intro_new_wallet_continue_positive, (dialog, which) -> {
+                        // set confirm flag
+                        sharedPreferencesUtil.setConfirmedSeedBackedUp(true);
+
                         // go to home screen
                         if (getActivity() instanceof WindowControl) {
                             ((WindowControl) getActivity()).getFragmentUtility().replace(
