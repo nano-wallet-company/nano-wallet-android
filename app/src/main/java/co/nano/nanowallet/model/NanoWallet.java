@@ -152,12 +152,21 @@ public class NanoWallet {
     }
 
     /**
-     * Remove commas and spaces from string to better convert to
+     * Remove any non-currency characters
      * @param amount
      * @return
      */
     public String sanitize(String amount) {
         return amount.replaceAll("[^\\d.,]", "");
+    }
+
+    /**
+     * Remove all but digits and decimals
+     * @param amount
+     * @return
+     */
+    public String sanitizeNoCommas(String amount) {
+        return amount.replaceAll("[^\\d.]", "");
     }
 
 
@@ -193,7 +202,7 @@ public class NanoWallet {
             return amount;
         } else {
             return localCurrencyPrice != null ?
-                    formatLocalCurrency(new BigDecimal(sanitize(amount))
+                    formatLocalCurrency(new BigDecimal(sanitizeNoCommas(amount))
                             .multiply(localCurrencyPrice, MathContext.DECIMAL64)) : "0.0";
         }
     }
