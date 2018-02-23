@@ -16,6 +16,7 @@ import android.view.View;
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.broadcastreceiver.ClipboardAlarmReceiver;
 import co.nano.nanowallet.ui.scan.ScanActivity;
+import co.nano.nanowallet.util.ExceptionHandler;
 
 /**
  * Helper methods used by all fragments
@@ -108,7 +109,11 @@ public class BaseFragment extends Fragment {
      */
     protected void goBack() {
         if (getActivity() instanceof WindowControl) {
-            ((WindowControl) getActivity()).getFragmentUtility().pop();
+            try {
+                ((WindowControl) getActivity()).getFragmentUtility().pop();
+            } catch (Exception e) {
+                ExceptionHandler.handle(e);
+            }
         }
     }
 

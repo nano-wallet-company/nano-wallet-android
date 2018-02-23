@@ -170,6 +170,7 @@ public class HomeFragment extends BaseFragment {
     public void receiveHistory(WalletHistoryUpdate walletHistoryUpdate) {
         controller.setData(wallet.getAccountHistory(), new ClickHandlers());
         binding.homeSwiperefresh.setRefreshing(false);
+        binding.homeRecyclerview.getLayoutManager().scrollToPosition(0);
     }
 
     @Subscribe

@@ -71,9 +71,10 @@ public class NanoUtil {
 
     /**
      * Compute hash to use to generate an open work block
-     * @param source Source address
+     *
+     * @param source         Source address
      * @param representative Representative address
-     * @param account Account address
+     * @param account        Account address
      * @return
      */
     public static String computeOpenHash(String source, String representative, String account) {
@@ -98,8 +99,8 @@ public class NanoUtil {
     /**
      * Compute hash to use to generate a receive work block
      *
-     * @param previous    Previous transation
-     * @param source      Source address
+     * @param previous Previous transation
+     * @param source   Source address
      * @return String of hash
      */
     public static String computeReceiveHash(String previous, String source) {
@@ -163,9 +164,7 @@ public class NanoUtil {
 
 
         Sodium.crypto_sign_ed25519_detached(signature, signature_len, data_b, data_b.length, private_key_b);
-        return bytesToHex(signature);//Arrays.copyOfRange(signature, 0, Sodium.crypto_sign_bytes()));
-
-        //return bytesToHex(ED25519.signature(data_b, private_key_b, hexToBytes(NanoUtil.privateToPublic(private_key))));
+        return bytesToHex(signature);
     }
 
     /**
@@ -176,8 +175,7 @@ public class NanoUtil {
      */
     public static String publicToAddress(String public_key) {
         Sodium sodium = NaCl.sodium();
-        byte[] bytePublic = new byte[32];
-        bytePublic = NanoUtil.hexStringToByteArray(public_key);
+        byte[] bytePublic = NanoUtil.hexStringToByteArray(public_key);
         String encodedAddress = encode(public_key);
 
         byte[] state = new byte[Sodium.crypto_generichash_statebytes()];
@@ -249,6 +247,10 @@ public class NanoUtil {
 
     private static byte[] hexStringToByteArray(String s) {
         int len = s.length();
+        // length of string must be divisible by 2
+        if (len % 2 > 0) {
+            s = "0" + s;
+        }
         byte[] data = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {
             data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)

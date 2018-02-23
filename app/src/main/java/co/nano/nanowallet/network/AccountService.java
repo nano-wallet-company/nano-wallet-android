@@ -244,8 +244,6 @@ public class AccountService {
         if (recentWorkRequestType != null &&
                 (recentWorkRequestType.toString().equals(BlockTypes.OPEN.toString()) ||
                 recentWorkRequestType.toString().equals(BlockTypes.RECEIVE.toString()))) {
-            recentPendingTransactionResponseItem.setComplete(true);
-            wallet.getPendingTransactions().remove();
             wallet.setFrontierBlock(processResponse.getHash());
 
             if (recentWorkRequestType.toString().equals(BlockTypes.OPEN.toString())) {
@@ -253,6 +251,8 @@ public class AccountService {
             } else {
                 blockCount++;
             }
+
+            recentPendingTransactionResponseItem.setComplete(true);
 
             // account subscribe
             websocket.send(new SubscribeRequest(address.getAddress(), getLocalCurrency()))
@@ -303,14 +303,13 @@ public class AccountService {
             if (blocks instanceof LinkedTreeMap) {
                 // blocks is not empty
                 Set keys = ((LinkedTreeMap) blocks).keySet();
-                wallet.getPendingTransactions().clear();
                 for (Object key : keys) {
                     try {
                         PendingTransactionResponseItem pendingTransactionResponseItem = new Gson().fromJson(String.valueOf(((LinkedTreeMap) blocks).get(key)), PendingTransactionResponseItem.class);
                         pendingTransactionResponseItem.setHash(key.toString());
                         wallet.getPendingTransactions().add(pendingTransactionResponseItem);
-                    } catch (Throwable throwable) {
-                        ExceptionHandler.handle(throwable);
+                    } catch (Exception e) {
+                        ExceptionHandler.handle(e);
                     }
                 }
                 processNextTransaction();
@@ -322,10 +321,9 @@ public class AccountService {
         if (wallet.getPendingTransactions().size() > 0) {
             // peek at first item
             PendingTransactionResponseItem item = wallet.getPendingTransactions().element();
-
-            if (item.isComplete()) {
+            if (item.isComplete() || wallet.getFrontierBlock().equals(item.getHash())) {
                 // pending transaction has been completed
-                wallet.getPendingTransactions().remove();
+                wallet.getPendingTransactions().poll();
                 processNextTransaction();
             } else if (!item.isInProgress()) {
                 // no item is in progress

@@ -34,7 +34,6 @@
                 android:layout_height="44dp"
                 android:layout_marginBottom="52dp"
                 android:contentDescription="@string/app_name"
-                android:transitionName="@string/intro_logo_transition"
                 app:layout_constraintBottom_toTopOf="@+id/intro_seed_seed"
                 app:layout_constraintEnd_toStartOf="@+id/intro_seed_guideline_vert"
                 app:layout_constraintStart_toStartOf="@+id/intro_seed_guideline_vert"

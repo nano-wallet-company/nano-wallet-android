@@ -26,14 +26,12 @@
             android:layout_width="104dp"
             android:layout_height="44dp"
             android:contentDescription="@string/app_name"
-            android:transitionName="@string/intro_logo_transition"
             app:layout_constraintBottom_toTopOf="@+id/intro_welcome_title"
             app:layout_constraintEnd_toStartOf="@+id/intro_welcome_guideline_vert"
             app:layout_constraintStart_toStartOf="@+id/intro_welcome_guideline_vert"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed"
-            app:srcCompat="@drawable/ic_logo"
-            tools:ignore="UnusedAttribute" />
+            app:srcCompat="@drawable/ic_logo" />
 
         <TextView
             android:id="@+id/intro_welcome_title"

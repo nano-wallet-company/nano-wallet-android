@@ -207,7 +207,9 @@ public class IntroSeedFragment extends BaseFragment {
      * Update the step count string
      */
     private void updateSteps() {
-        binding.setSteps(getString(R.string.intro_seed_steps, currentStep));
+        if (isAdded()) {
+            binding.setSteps(getString(R.string.intro_seed_steps, currentStep));
+        }
     }
 
 }

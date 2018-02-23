@@ -45,10 +45,14 @@ public class NumberUtil {
      * @return BigInteger 1000000000000000000000000000000
      */
     public static BigInteger getAmountAsRawBigInteger(String amount) {
-        BigDecimal raw = new BigDecimal(amount);
-        return raw.multiply(new BigDecimal(xrbDivider.toString())).toBigInteger();
+        try {
+            BigDecimal raw = new BigDecimal(amount);
+            return raw.multiply(new BigDecimal(xrbDivider.toString())).toBigInteger();
+        } catch(Exception e) {
+            ExceptionHandler.handle(e);
+        }
+        return new BigInteger("0");
     }
-
 
     public static String getAmountAsUsableString(String amount) {
         NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.getDefault());

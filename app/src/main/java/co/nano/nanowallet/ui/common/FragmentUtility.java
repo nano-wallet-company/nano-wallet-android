@@ -4,7 +4,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewCompat;
 import android.view.View;
 
 import co.nano.nanowallet.R;
@@ -199,10 +198,6 @@ public class FragmentUtility {
             transaction.addToBackStack(tag);
         }
 
-        if (sharedElement != null) {
-            transaction.addSharedElement(sharedElement, ViewCompat.getTransitionName(sharedElement));
-        }
-
         transaction.commitAllowingStateLoss();
     }
 
@@ -234,10 +229,6 @@ public class FragmentUtility {
                             pushAnimations.getExit()
                     )
                     .replace(mContainerViewId, fragment, tag);
-        }
-
-        if (sharedElement != null) {
-            transaction.addSharedElement(sharedElement, ViewCompat.getTransitionName(sharedElement));
         }
 
         if (addToBackStack) {

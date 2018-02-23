@@ -395,7 +395,7 @@
             android:layout_height="wrap_content"
             android:visibility="@{safeUnbox(showAmount) ? View.VISIBLE : View.GONE}"
             tools:visibility="gone"
-            app:constraint_referenced_ids="send_amounts_background,send_max_button,send_amount_nano_symbol,send_amount_nano,send_amounts_divider,send_arrows,send_amount_localcurrency_symbol,send_amount_localcurrency" />
+            app:constraint_referenced_ids="send_amounts_background,send_max_button,send_amount_nano_symbol,send_amount_nano,send_amounts_divider,send_arrows,send_amount_localcurrency" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>
