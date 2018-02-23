@@ -61,7 +61,7 @@ public class NumberUtil {
     }
 
     public static String getRawAsLongerUsableString(String raw) {
-        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.getDefault());
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
         numberFormat.setMaximumFractionDigits(10);
         return numberFormat.format(Double.valueOf(getRawAsUsableAmount(raw).toString()));
     }

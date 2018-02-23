@@ -4,6 +4,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.annotation.UiThreadTest;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.InstrumentationTestCase;
+import android.util.Log;
 
 import org.junit.After;
 import org.junit.Before;
@@ -55,11 +56,13 @@ public class NanoWalletTest extends InstrumentationTestCase {
     @UiThreadTest
     public void setLocalCurrencyAmount() throws Exception {
         testActivityComponent.inject(nanoWallet);
-        nanoWallet.setLocalCurrencyPrice(new BigDecimal("12.5266"));
+        nanoWallet.setLocalCurrencyPrice(new BigDecimal("11.0402274899"));
         for (AvailableCurrency currency : AvailableCurrency.values()) {
             // set each potential currency
             sharedPreferencesUtil.setLocalCurrency(currency);
-            nanoWallet.setLocalCurrencyAmount("5,555,555.33");
+            nanoWallet.setAccountBalance(new BigDecimal("123414233000000000000000000000000000000"));
+            nanoWallet.setSendNanoAmount(nanoWallet.getLongerAccountBalanceNano());
+            Log.d("NanoWalletTest", currency.getLocale().toString() + " " + nanoWallet.getSendNanoAmountFormatted() + " " + nanoWallet.getSendLocalCurrencyAmountFormatted());
         }
     }
 

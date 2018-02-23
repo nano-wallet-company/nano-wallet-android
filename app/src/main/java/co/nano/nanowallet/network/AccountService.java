@@ -135,7 +135,7 @@ public class AccountService {
             public void onClosed(WebSocket webSocket, int code, String reason) {
                 super.onClosed(webSocket, code, reason);
                 Timber.d("CLOSED");
-
+                AccountService.this.websocket = null;
             }
 
             @Override

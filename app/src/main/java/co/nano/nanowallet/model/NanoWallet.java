@@ -210,7 +210,7 @@ public class NanoWallet {
             return amount;
         } else {
             return localCurrencyPrice != null ?
-                    formatLocalCurrency(new BigDecimal(sanitize(amount))
+                    formatLocalCurrency(new BigDecimal(sanitizeNoCommas(amount))
                             .multiply(localCurrencyPrice, MathContext.DECIMAL64)) : "0.0";
         }
     }
@@ -297,11 +297,11 @@ public class NanoWallet {
      * Convert local currency to properly formatted string for the currency
      */
     private String nanoFormat(String amount) {
-        if (new BigDecimal(sanitize(amount)).compareTo(new BigDecimal(0)) == 0) {
+        if (new BigDecimal(sanitizeNoCommas(amount)).compareTo(new BigDecimal(0)) == 0) {
             return amount;
         } else {
             DecimalFormat df = new DecimalFormat("#,###.##########");
-            return df.format(new BigDecimal(sanitize(amount)));
+            return df.format(new BigDecimal(sanitizeNoCommas(amount)));
         }
     }
 
@@ -310,8 +310,8 @@ public class NanoWallet {
      */
     private void validateSendAmount() {
         try {
-            new BigDecimal(sendNanoAmount);
-            if (new BigDecimal(sanitize(sendNanoAmount)).compareTo(new BigDecimal(NumberUtil.getRawAsLongerUsableString(accountBalance.toString()))) > 0) {
+            if (new BigDecimal(sanitizeNoCommas(sendNanoAmount))
+                    .compareTo(new BigDecimal(sanitizeNoCommas(NumberUtil.getRawAsLongerUsableString(accountBalance.toString())))) > 0) {
                 RxBus.get().post(new SendInvalidAmount());
             }
         } catch (NumberFormatException e) {
