@@ -162,21 +162,6 @@
             app:layout_constraintTop_toBottomOf="@+id/send_guideline_amounts_top"
             app:srcCompat="@drawable/ic_arrows" />
 
-        <TextView
-            android:id="@+id/send_amount_localcurrency_symbol"
-            style="@style/SendAmountInput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginEnd="3dp"
-            android:layout_marginRight="3dp"
-            android:text="@string/symbol_usd"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toTopOf="@+id/send_guideline_keyboard_top"
-            app:layout_constraintEnd_toStartOf="@+id/send_amount_localcurrency"
-            app:layout_constraintTop_toBottomOf="@+id/send_arrows"
-            tools:text="@string/symbol_usd" />
-
         <EditText
             android:id="@+id/send_amount_localcurrency"
             style="@style/SendAmountInput"

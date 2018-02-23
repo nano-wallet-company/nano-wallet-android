@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.Guideline;
-import android.support.v4.content.ContextCompat;
 import android.text.InputType;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -29,6 +28,7 @@ import com.crashlytics.android.answers.CustomEvent;
 import com.hwangjr.rxbus.annotation.Subscribe;
 
 import java.math.BigInteger;
+import java.text.NumberFormat;
 
 import javax.inject.Inject;
 
@@ -37,6 +37,7 @@ import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.bus.SendInvalidAmount;
 import co.nano.nanowallet.databinding.FragmentSendBinding;
 import co.nano.nanowallet.model.Address;
+import co.nano.nanowallet.model.AvailableCurrency;
 import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.network.AccountService;
 import co.nano.nanowallet.network.model.BlockTypes;
@@ -48,6 +49,7 @@ import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.UIUtil;
 import co.nano.nanowallet.ui.scan.ScanActivity;
 import co.nano.nanowallet.util.NumberUtil;
+import co.nano.nanowallet.util.SharedPreferencesUtil;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -65,6 +67,9 @@ public class SendFragment extends BaseFragment {
 
     @Inject
     AccountService accountService;
+
+    @Inject
+    SharedPreferencesUtil sharedPreferencesUtil;
 
     @BindingAdapter("layout_constraintGuide_percent")
     public static void setLayoutConstraintGuidePercent(Guideline guideline, float percent) {
@@ -160,7 +165,7 @@ public class SendFragment extends BaseFragment {
         // set active and inactive states for edittext fields
         binding.sendAmountNano.setOnFocusChangeListener((view1, b) -> toggleFieldFocus((EditText) view1, b, false));
         binding.sendAmountLocalcurrency.setOnFocusChangeListener((view1, b) -> toggleFieldFocus((EditText) view1, b, true));
-        binding.sendAmountLocalcurrencySymbol.setText(wallet.getLocalCurrency().getCurrencySymbol());
+        binding.sendAmountLocalcurrency.setHint(NumberFormat.getCurrencyInstance(getLocalCurrency().getLocale()).format(0));
         binding.setShowAmount(true);
 
         binding.sendAddress.setOnFocusChangeListener((view12, hasFocus) -> {
@@ -198,6 +203,10 @@ public class SendFragment extends BaseFragment {
                 }
             }
         }
+    }
+
+    public AvailableCurrency getLocalCurrency() {
+        return sharedPreferencesUtil.getLocalCurrency();
     }
 
     /**
@@ -319,9 +328,6 @@ public class SendFragment extends BaseFragment {
         v.setTextSize(TypedValue.COMPLEX_UNIT_SP, hasFocus ? 20f : 16f);
         binding.sendAmountNanoSymbol.setTextSize(TypedValue.COMPLEX_UNIT_SP, hasFocus && isLocalCurrency ? 16f : 14f);
         binding.sendAmountNanoSymbol.setAlpha(hasFocus && !isLocalCurrency ? 1.0f : 0.5f);
-        binding.sendAmountLocalcurrencySymbol.setTextSize(TypedValue.COMPLEX_UNIT_SP, hasFocus && isLocalCurrency ? 16f : 14f);
-        binding.sendAmountLocalcurrencySymbol.setTextColor(hasFocus && isLocalCurrency ?
-                ContextCompat.getColor(getContext(), R.color.bright_white) : ContextCompat.getColor(getContext(), R.color.semitranslucent_white));
 
         // clear amounts
         wallet.clearSendAmounts();

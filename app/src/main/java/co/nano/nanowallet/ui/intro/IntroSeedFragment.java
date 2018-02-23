@@ -26,6 +26,7 @@ import co.nano.nanowallet.ui.common.UIUtil;
 import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.home.HomeFragment;
 import co.nano.nanowallet.ui.scan.ScanActivity;
+import co.nano.nanowallet.util.SharedPreferencesUtil;
 import io.realm.Realm;
 
 import static android.app.Activity.RESULT_OK;
@@ -44,6 +45,9 @@ public class IntroSeedFragment extends BaseFragment {
 
     @Inject
     AccountService accountService;
+
+    @Inject
+    SharedPreferencesUtil sharedPreferencesUtil;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -165,6 +169,8 @@ public class IntroSeedFragment extends BaseFragment {
         public void onClickConfirm(View view) {
             createAndStoreCredentials(binding.introSeedSeed.getText().toString());
             accountService.open();
+
+            sharedPreferencesUtil.setConfirmedSeedBackedUp(true);
 
             // go to home screen
             if (getActivity() instanceof WindowControl) {

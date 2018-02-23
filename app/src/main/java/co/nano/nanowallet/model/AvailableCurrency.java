@@ -1,5 +1,7 @@
 package co.nano.nanowallet.model;
 
+import java.util.Locale;
+
 /**
  * Class to define all of the available currency options
  * This is a custom currency implementation because:
@@ -166,6 +168,76 @@ public enum AvailableCurrency {
             case "USD":
             default:
                 return "$";
+        }
+    }
+
+    public Locale getLocale() {
+        switch (iso4217Code) {
+            case "AUD":
+                return new Locale("en", "US");
+            case "BRL":
+                return new Locale("en", "BR");
+            case "CAD":
+                return new Locale("en", "US");
+            case "CHF":
+                return new Locale("en", "CH");
+            case "CLP":
+                return new Locale("en", "US");
+            case "CNY":
+                return new Locale("yue", "CN", "Hans");
+            case "CZK":
+                return new Locale("cs", "CZ");
+            case "DKK":
+                return new Locale("en", "DK");
+            case "EUR":
+                return new Locale("en", "EU");
+            case "GBP":
+                return new Locale("en", "GB");
+            case "HKD":
+                return new Locale("zh", "HK", "Hans");
+            case "HUF":
+                return new Locale("hu", "HU");
+            case "IDR":
+                return new Locale("id", "ID");
+            case "ILS":
+                return new Locale("en", "IL");
+            case "INR":
+                return new Locale("en", "IN");
+            case "JPY":
+                return new Locale("ja", "JP");
+            case "KRW":
+                return new Locale("ko", "KR");
+            case "MXN":
+                return new Locale("es", "MX");
+            case "MYR":
+                return new Locale("ta", "MY");
+            case "NOK":
+                return new Locale("nn", "NO");
+            case "NZD":
+                return new Locale("en", "NZ");
+            case "PHP":
+                return new Locale("fil", "PH");
+            case "PKR":
+                return new Locale("en", "MU");
+            case "PLN":
+                return new Locale("pl", "PL");
+            case "RUB":
+                return new Locale("ru", "RU");
+            case "SEK":
+                return new Locale("en", "SE");
+            case "SGD":
+                return new Locale("en", "US");
+            case "THB":
+                return new Locale("th", "TH");
+            case "TRY":
+                return new Locale("tr", "TR");
+            case "TWD":
+                return new Locale("en", "TW");
+            case "ZAR":
+                return new Locale("pt", "BR");
+            case "USD":
+            default:
+                return new Locale("en", "US");
         }
     }
 }

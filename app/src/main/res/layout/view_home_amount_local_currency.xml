@@ -19,18 +19,6 @@
         android:background="@color/very_dark_blue">
 
         <TextView
-            android:id="@+id/amount_local_currency_symbol"
-            android:layout_width="10dp"
-            android:layout_height="18dp"
-            android:layout_marginEnd="3dp"
-            android:layout_marginRight="3dp"
-            android:text="@{localCurrency.currencySymbol}"
-            android:textColor="@color/bright_white"
-            android:fontFamily="@font/nunito_light"
-            app:layout_constraintEnd_toStartOf="@+id/amount_local_currency_title"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
             android:id="@+id/amount_local_currency_title"
             style="@style/TextStyle12"
             android:layout_width="wrap_content"
