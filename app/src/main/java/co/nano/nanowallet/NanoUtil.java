@@ -245,11 +245,12 @@ public class NanoUtil {
         return b;
     }
 
-    private static byte[] hexStringToByteArray(String s) {
+    public static byte[] hexStringToByteArray(String s) {
         int len = s.length();
         // length of string must be divisible by 2
         if (len % 2 > 0) {
             s = "0" + s;
+            len = s.length();
         }
         byte[] data = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {
