@@ -126,6 +126,8 @@ dependencies {
     implementation "com.jakewharton.timber:timber:$TIMBER_VERSION"
 
     // Testing
+    testAnnotationProcessor("com.google.dagger:dagger-compiler:$DAGGER_VERSION")
+    androidTestAnnotationProcessor("com.google.dagger:dagger-compiler:$DAGGER_VERSION")
     androidTestImplementation "com.android.support.test:runner:$TEST_RUNNER_VERSION"
     androidTestImplementation("com.android.support.test.espresso:espresso-core:$ESPRESSO_VERSION", {
         exclude group: 'com.android.support', module: 'support-annotations'

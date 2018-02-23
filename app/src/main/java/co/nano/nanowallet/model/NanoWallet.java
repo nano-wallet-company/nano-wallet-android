@@ -74,6 +74,14 @@ public class NanoWallet {
         RxBus.get().register(this);
     }
 
+    public BigDecimal getLocalCurrencyPrice() {
+        return localCurrencyPrice;
+    }
+
+    public void setLocalCurrencyPrice(BigDecimal localCurrencyPrice) {
+        this.localCurrencyPrice = localCurrencyPrice;
+    }
+
     public List<AccountHistoryResponseItem> getAccountHistory() {
         return accountHistory;
     }
@@ -202,7 +210,7 @@ public class NanoWallet {
             return amount;
         } else {
             return localCurrencyPrice != null ?
-                    formatLocalCurrency(new BigDecimal(sanitizeNoCommas(amount))
+                    formatLocalCurrency(new BigDecimal(sanitize(amount))
                             .multiply(localCurrencyPrice, MathContext.DECIMAL64)) : "0.0";
         }
     }
