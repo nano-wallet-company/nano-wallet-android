@@ -1,19 +1,25 @@
 package co.nano.nanowallet.network;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.internal.LinkedTreeMap;
-import com.navin.flintstones.rxwebsocket.RxWebsocket;
 
 import java.math.BigInteger;
+import java.net.UnknownHostException;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import co.nano.nanowallet.bus.RxBus;
+import co.nano.nanowallet.bus.SocketError;
 import co.nano.nanowallet.model.Address;
 import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.model.NanoWallet;
@@ -37,8 +43,12 @@ import co.nano.nanowallet.network.model.response.WorkResponse;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.util.ExceptionHandler;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.realm.Realm;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
 import timber.log.Timber;
 
 /**
@@ -46,13 +56,16 @@ import timber.log.Timber;
  */
 
 public class AccountService {
-    private RxWebsocket websocket;
+    private WebSocket websocket;
+    private OkHttpClient client;
     private static final String CONNECTION_URL = "wss://light.nano.org:443";
     //private static final String CONNECTION_URL = "wss://raicast.lightrai.com:443";
     private Address address;
     private Integer blockCount;
     private BlockTypes recentWorkRequestType;
     private PendingTransactionResponseItem recentPendingTransactionResponseItem;
+    private int errorCount;
+    private static final int MAX_ERROR_COUNT = 3;
 
     @Inject
     Realm realm;
@@ -62,6 +75,9 @@ public class AccountService {
 
     @Inject
     NanoWallet wallet;
+
+    @Inject
+    Gson gson;
 
     public AccountService(Context context) {
         // init dependency injection
@@ -89,57 +105,65 @@ public class AccountService {
      */
     private void initWebSocket() {
         // create websocket
-        websocket = new RxWebsocket.Builder()
-                .addConverterFactory(WebSocketConverterFactory.create())
-                .build(CONNECTION_URL);
+        client = new OkHttpClient.Builder()
+                .readTimeout(3000, TimeUnit.MILLISECONDS)
+                .writeTimeout(3000, TimeUnit.MILLISECONDS)
+                .connectTimeout(3000, TimeUnit.MILLISECONDS).build();
+        Request request = new Request.Builder().url(CONNECTION_URL).build();
+        WebSocketListener listener = new WebSocketListener() {
+            @Override
+            public void onOpen(WebSocket webSocket, Response response) {
+                super.onOpen(webSocket, response);
+                Timber.d("OPENED");
+                requestUpdate();
+            }
 
-        // set up event stream handling
-        websocket.eventStream()
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(event -> {
-                    if (event instanceof RxWebsocket.Open) {
-                        Timber.d("OPENED");
-                        requestUpdate();
-                    } else if (event instanceof RxWebsocket.Closed) {
-                        Timber.d("DISCONNECTED");
-                    } else if (event instanceof RxWebsocket.QueuedMessage) {
-                        Timber.d("[MESSAGE QUEUED]:%s", ((RxWebsocket.QueuedMessage) event).message());
-                    } else if (event instanceof RxWebsocket.Message) {
-                        Timber.d("[MESSAGE RECEIVED]:%s", ((RxWebsocket.Message) event).data());
-                        handleMessage((RxWebsocket.Message) event);
-                    }
-                })
-                .subscribe(event -> {
-                }, this::handleError);
-        connect();
-    }
+            @Override
+            public void onMessage(WebSocket webSocket, String text) {
+                super.onMessage(webSocket, text);
+                Timber.d("RECEIVED %s", text);
+                handleMessage(text);
+            }
 
-    /**
-     * Connect to the web socket
-     */
-    private void connect() {
-        if (websocket != null) {
-            // connect to web socket
-            websocket.connect()
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            event -> Timber.d(event.toString()),
-                            ExceptionHandler::handle
-                    );
-        }
+            @Override
+            public void onClosing(WebSocket webSocket, int code, String reason) {
+                super.onClosing(webSocket, code, reason);
+                Timber.d("CLOSING");
+            }
+
+            @Override
+            public void onClosed(WebSocket webSocket, int code, String reason) {
+                super.onClosed(webSocket, code, reason);
+                Timber.d("CLOSED");
+
+            }
+
+            @Override
+            public void onFailure(WebSocket webSocket, Throwable t, @Nullable Response response) {
+                super.onFailure(webSocket, t, response);
+                ExceptionHandler.handle(t);
+                webSocket.cancel();
+                AccountService.this.websocket = null;
+                post(new SocketError(t));
+            }
+        };
+
+        websocket = client.newWebSocket(request, listener);
+
+        client.dispatcher().executorService().shutdown();
     }
 
     /**
      * Generic message hand'er. Convert to an object and process or post to bus.
      *
-     * @param message Websocket Message
+     * @param message String message
      */
-    private void handleMessage(RxWebsocket.Message message) {
+    private void handleMessage(String message) {
         BaseNetworkModel event = null;
         try {
-            event = message.data(BaseNetworkModel.class);
-        } catch (Throwable throwable) {
-            ExceptionHandler.handle(throwable);
+            event = gson.fromJson(message, BaseNetworkModel.class);
+        } catch (JsonSyntaxException e) {
+            ExceptionHandler.handle(e);
         }
 
         if (event != null && event.getMessageType() == null) {
@@ -166,10 +190,21 @@ public class AccountService {
 
             // post whatever the response type is to the bus
             if (event != null) {
-                RxBus.get().post(event);
+                post(event);
             }
         }
     }
+
+    /**
+     * Post event to bus on UI thread
+     *
+     * @param event Object to post to bus
+     */
+    private void post(Object event) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(() -> RxBus.get().post(event));
+    }
+
 
     /**
      * Here is where we handle any work response that comes back
@@ -196,13 +231,9 @@ public class AccountService {
             }
             Timber.d(block);
 
-            if (websocket != null) {
-                // send the send request
-                websocket.send(new ProcessRequest(block))
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(event3 -> {
-                        }, this::handleError);
-            }
+            checkState();
+            // send the send request
+            websocket.send(gson.toJson(new ProcessRequest(block)));
         } else if (recentWorkRequestType != null && recentWorkRequestType.toString().equals(BlockTypes.RECEIVE.toString())) {
             // create a receive block string
             ReceiveBlock receiveBlock = new ReceiveBlock(
@@ -222,28 +253,27 @@ public class AccountService {
             }
             Timber.d(block);
 
-            if (websocket != null) {
-                // send the send request
-                websocket.send(new ProcessRequest(block))
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(event3 -> {
-                        }, this::handleError);
-            }
+
+            checkState();
+            // send the send request
+            websocket.send(gson.toJson(new ProcessRequest(block)));
+
         } else if (recentWorkRequestType != null && recentWorkRequestType.toString().equals(BlockTypes.SEND.toString())) {
             // send work so post to bus
             // this could probably all be handled here
-            RxBus.get().post(workResponse);
+            post(workResponse);
         }
     }
 
     /**
      * When an OPEN, SEND, or RECEIVE block comes back successfully with a hash
+     *
      * @param processResponse Process Response
      */
     private void handleProcessResponse(ProcessResponse processResponse) {
         if (recentWorkRequestType != null &&
                 (recentWorkRequestType.toString().equals(BlockTypes.OPEN.toString()) ||
-                recentWorkRequestType.toString().equals(BlockTypes.RECEIVE.toString()))) {
+                        recentWorkRequestType.toString().equals(BlockTypes.RECEIVE.toString()))) {
             wallet.setFrontierBlock(processResponse.getHash());
 
             if (recentWorkRequestType.toString().equals(BlockTypes.OPEN.toString())) {
@@ -255,22 +285,17 @@ public class AccountService {
             recentPendingTransactionResponseItem.setComplete(true);
 
             // account subscribe
-            websocket.send(new SubscribeRequest(address.getAddress(), getLocalCurrency()))
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(event2 -> {
-                    }, this::handleError);
+            websocket.send(gson.toJson(new SubscribeRequest(address.getAddress(), getLocalCurrency())));
+
 
             // account history request
-            websocket.send(new AccountHistoryRequest(address.getAddress(), blockCount != null ? blockCount : 10))
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(event -> {
-                    }, this::handleError);
+            websocket.send(gson.toJson(new AccountHistoryRequest(address.getAddress(), blockCount != null ? blockCount : 10)));
 
             processNextTransaction();
         } else if (recentWorkRequestType != null &&
                 (recentWorkRequestType.toString().equals(BlockTypes.SEND.toString()))) {
             blockCount++;
-            RxBus.get().post(processResponse);
+            post(processResponse);
         }
     }
 
@@ -279,14 +304,14 @@ public class AccountService {
      *
      * @param message Websocket Message
      */
-    private void handleNullMessageTypes(RxWebsocket.Message message) {
+    private void handleNullMessageTypes(String message) {
         try {
-            Object o = message.data(Object.class);
+            Object o = gson.fromJson(message, Object.class);
             if (o instanceof LinkedTreeMap) {
                 processLinkedTreeMap((LinkedTreeMap) o);
             }
-        } catch (Throwable throwable) {
-            ExceptionHandler.handle(throwable);
+        } catch (JsonSyntaxException e) {
+            ExceptionHandler.handle(e);
         }
     }
 
@@ -350,12 +375,10 @@ public class AccountService {
      */
 
     public void requestAccountCheck() {
-        if (websocket != null && address != null) {
+        if (address != null) {
+            checkState();
             // account subscribe
-            websocket.send(new AccountCheckRequest(address.getAddress()))
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(event -> {
-                    }, this::handleError);
+            websocket.send(gson.toJson(new AccountCheckRequest(address.getAddress())));
         }
     }
 
@@ -363,15 +386,10 @@ public class AccountService {
      * Request Pending Blocks
      */
     public void requestPending() {
-        if (websocket != null && address != null) {
+        if (address != null) {
+            checkState();
             // account pending
-            websocket.send(new PendingTransactionsRequest(
-                    address.getAddress(),
-                    true,
-                    blockCount))
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(event -> {
-                    }, this::handleError);
+            websocket.send(gson.toJson(new PendingTransactionsRequest(address.getAddress(), true, blockCount)));
         }
     }
 
@@ -379,18 +397,13 @@ public class AccountService {
      * Request all the account info
      */
     public void requestUpdate() {
-        if (websocket != null && address != null) {
+        if (address != null) {
+            checkState();
             // account subscribe
-            websocket.send(new SubscribeRequest(address.getAddress(), getLocalCurrency()))
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(event2 -> {
-                    }, this::handleError);
+            websocket.send(gson.toJson(new SubscribeRequest(address.getAddress(), getLocalCurrency())));
 
             // account history request
-            websocket.send(new AccountHistoryRequest(address.getAddress(), blockCount != null ? blockCount : 10))
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(event -> {
-                    }, this::handleError);
+            websocket.send(gson.toJson(new AccountHistoryRequest(address.getAddress(), blockCount != null ? blockCount : 10)));
 
             requestPending();
         }
@@ -402,15 +415,11 @@ public class AccountService {
      * @param previous the hash of the last block in our chain, our current frontier
      */
     public void requestWorkSend(String previous, BlockTypes type) {
-        if (websocket != null) {
-            recentWorkRequestType = type;
+        checkState();
+        recentWorkRequestType = type;
 
-            // request work
-            websocket.send(new WorkRequest(previous))
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(event -> {
-                    }, this::handleError);
-        }
+        // request work
+        websocket.send(gson.toJson(new WorkRequest(previous)));
     }
 
     public void requestSend(String previous, Address destination, BigInteger balance, String
@@ -429,20 +438,20 @@ public class AccountService {
         }
         Timber.d(block);
 
-        if (websocket != null) {
-            // send the send request
-            websocket.send(new ProcessRequest(block))
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(event -> {
-                    }, this::handleError);
-        }
+        checkState();
+        // send the send request
+        websocket.send(gson.toJson(new ProcessRequest(block)));
     }
 
     private void handleError(Throwable error) {
-        if (error instanceof IllegalStateException) {
-            connect();
+        if ((error instanceof IllegalStateException || error instanceof UnknownHostException) &&
+                errorCount < MAX_ERROR_COUNT) {
+            errorCount++;
+            initWebSocket();
         } else {
+            post(new SocketError(error));
             ExceptionHandler.handle(error);
+            errorCount = 0;
         }
     }
 
@@ -489,7 +498,14 @@ public class AccountService {
      */
     public void close() {
         if (websocket != null) {
-            websocket.disconnect(1000, "Disconnect");
+            websocket.close(1000, "Closed");
+            websocket = null;
+        }
+    }
+
+    private void checkState() {
+        if (websocket == null) {
+            initWebSocket();
         }
     }
 }

@@ -1,5 +1,7 @@
 package co.nano.nanowallet.di.activity;
 
+import com.google.gson.Gson;
+
 import co.nano.nanowallet.MainActivity;
 import co.nano.nanowallet.di.application.ApplicationComponent;
 import co.nano.nanowallet.model.NanoWallet;
@@ -22,6 +24,9 @@ public interface ActivityComponent {
 
     // wallet
     NanoWallet provideNanoWallet();
+
+    @ActivityScope
+    Gson provideGson();
 
     void inject(MainActivity mainActivity);
 

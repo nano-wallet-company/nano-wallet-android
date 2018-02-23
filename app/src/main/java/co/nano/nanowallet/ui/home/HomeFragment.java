@@ -4,6 +4,7 @@ import android.databinding.BindingMethod;
 import android.databinding.BindingMethods;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
@@ -24,6 +26,7 @@ import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.bus.RxBus;
+import co.nano.nanowallet.bus.SocketError;
 import co.nano.nanowallet.bus.WalletHistoryUpdate;
 import co.nano.nanowallet.bus.WalletPriceUpdate;
 import co.nano.nanowallet.bus.WalletSubscribeUpdate;
@@ -156,7 +159,10 @@ public class HomeFragment extends BaseFragment {
         controller = new WalletController();
         binding.homeRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.homeRecyclerview.setAdapter(controller.getAdapter());
-        binding.homeSwiperefresh.setOnRefreshListener(accountService::requestUpdate);
+        binding.homeSwiperefresh.setOnRefreshListener(() -> {
+            accountService.requestUpdate();
+            new Handler().postDelayed(() -> binding.homeSwiperefresh.setRefreshing(false), 5000);
+        });
         if (wallet != null && wallet.getAccountHistory() != null) {
             controller.setData(wallet.getAccountHistory(), new ClickHandlers());
         }
@@ -194,6 +200,15 @@ public class HomeFragment extends BaseFragment {
     @Subscribe
     public void receivePendingBlocks(LinkedTreeMap pendingBlocks) {
 
+    }
+
+    @Subscribe
+    public void receiveError(SocketError error) {
+        binding.homeSwiperefresh.setRefreshing(false);
+        Toast.makeText(getContext(),
+                getString(R.string.error_message),
+                Toast.LENGTH_SHORT)
+                .show();
     }
 
     private void updateAmounts() {
