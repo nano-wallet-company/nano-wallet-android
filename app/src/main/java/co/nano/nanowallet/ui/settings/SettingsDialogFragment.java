@@ -204,6 +204,7 @@ public class SettingsDialogFragment extends BaseDialogFragment {
 
         public void onClickLogOut(View view) {
             if (getActivity() instanceof WindowControl) {
+
                 // show the logout are-you-sure dialog
                 AlertDialog.Builder builder;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

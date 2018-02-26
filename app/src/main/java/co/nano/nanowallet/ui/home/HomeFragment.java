@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
+import co.nano.nanowallet.bus.Logout;
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.bus.SocketError;
 import co.nano.nanowallet.bus.WalletHistoryUpdate;
@@ -57,6 +58,7 @@ public class HomeFragment extends BaseFragment {
     private FragmentHomeBinding binding;
     private WalletController controller;
     public static String TAG = HomeFragment.class.getSimpleName();
+    private boolean logoutClicked = false;
 
     @Inject
     AccountService accountService;
@@ -88,6 +90,9 @@ public class HomeFragment extends BaseFragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -104,10 +109,12 @@ public class HomeFragment extends BaseFragment {
 
                     // reset status bar to blue when dialog is closed
                     dialog.getDialog().setOnDismissListener(dialogInterface -> {
-                        setStatusBarBlue();
-                        if (binding.homeViewpager != null && accountService != null) {
-                            updateAmounts();
-                            accountService.requestUpdate();
+                        if (!logoutClicked) {
+                            setStatusBarBlue();
+                            if (binding.homeViewpager != null && accountService != null) {
+                                updateAmounts();
+                                accountService.requestUpdate();
+                            }
                         }
                     });
                 }
@@ -208,6 +215,11 @@ public class HomeFragment extends BaseFragment {
 //                getString(R.string.error_message),
 //                Toast.LENGTH_SHORT)
 //                .show();
+    }
+
+    @Subscribe
+    public void logOut(Logout logout) {
+        logoutClicked = true;
     }
 
     private void updateAmounts() {

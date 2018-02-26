@@ -404,13 +404,15 @@ public class AccountService {
     public void requestUpdate() {
         if (address != null) {
             checkState();
-            // account subscribe
-            websocket.send(gson.toJson(new SubscribeRequest(address.getAddress(), getLocalCurrency())));
+            if (websocket != null) {
+                // account subscribe
+                websocket.send(gson.toJson(new SubscribeRequest(address.getAddress(), getLocalCurrency())));
 
-            // account history request
-            websocket.send(gson.toJson(new AccountHistoryRequest(address.getAddress(), blockCount != null ? blockCount : 10)));
+                // account history request
+                websocket.send(gson.toJson(new AccountHistoryRequest(address.getAddress(), blockCount != null ? blockCount : 10)));
 
-            requestPending();
+                requestPending();
+            }
         }
     }
 

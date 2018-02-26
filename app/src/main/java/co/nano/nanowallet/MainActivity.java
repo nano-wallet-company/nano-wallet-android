@@ -78,17 +78,36 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        // stop websocket on pause
+        if (accountService != null) {
+            accountService.close();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // start websocket on resume
+        if (accountService != null && realm != null && realm.where(Credentials.class).findFirst() != null) {
+            accountService.open();
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
 
         // unregister from bus
         RxBus.get().unregister(this);
+
+        // close realm connection
         if (realm != null) {
             realm.close();
         }
-        if (accountService != null) {
-            accountService.close();
-        }
+
+        // close wallet so app can clean up
         if (nanoWallet != null) {
             nanoWallet.close();
         }
@@ -128,9 +147,6 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
             mFragmentUtility.clearStack();
             mFragmentUtility.replace(new IntroWelcomeFragment());
         } else {
-            // if we do have a wallet, initialize web socket
-            accountService.open();
-
             if (sharedPreferencesUtil.getConfirmedSeedBackedUp()) {
                 // go to home screen
                 mFragmentUtility.clearStack();
