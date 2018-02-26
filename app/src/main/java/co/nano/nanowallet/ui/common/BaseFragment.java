@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.SystemClock;
-import android.support.v4.app.ActivityCompat;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
@@ -25,6 +25,9 @@ import co.nano.nanowallet.util.ExceptionHandler;
 public class BaseFragment extends Fragment {
     private static final int ZXING_CAMERA_PERMISSION = 1;
     protected static final int SCAN_RESULT = 2;
+
+    private String scanActivityTitle;
+    private boolean isSeedScanner;
 
     /**
      * Set status bar color to dark blue
@@ -117,21 +120,40 @@ public class BaseFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case ZXING_CAMERA_PERMISSION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted
+                    Intent intent = new Intent(getActivity(), ScanActivity.class);
+                    intent.putExtra(ScanActivity.EXTRA_TITLE, scanActivityTitle);
+                    intent.putExtra(ScanActivity.EXTRA_IS_SEED, isSeedScanner);
+                    startActivityForResult(intent, SCAN_RESULT);
+                }
+            }
+        }
+    }
+
     /**
      * Start the scanner activity
      *
      * @param title Title that should be displayed above the viewfinder
      */
     protected void startScanActivity(String title, boolean isSeedScanner) {
+        this.scanActivityTitle = title;
+        this.isSeedScanner = isSeedScanner;
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             // check first to see if camera permission has been granted
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.CAMERA}, ZXING_CAMERA_PERMISSION);
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, ZXING_CAMERA_PERMISSION);
         } else {
             Intent intent = new Intent(getActivity(), ScanActivity.class);
-            intent.putExtra(ScanActivity.EXTRA_TITLE, title);
-            intent.putExtra(ScanActivity.EXTRA_IS_SEED, isSeedScanner);
+            intent.putExtra(ScanActivity.EXTRA_TITLE, this.scanActivityTitle);
+            intent.putExtra(ScanActivity.EXTRA_IS_SEED, this.isSeedScanner);
             startActivityForResult(intent, SCAN_RESULT);
         }
     }
