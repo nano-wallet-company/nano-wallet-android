@@ -13,7 +13,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
@@ -205,10 +204,10 @@ public class HomeFragment extends BaseFragment {
     @Subscribe
     public void receiveError(SocketError error) {
         binding.homeSwiperefresh.setRefreshing(false);
-        Toast.makeText(getContext(),
-                getString(R.string.error_message),
-                Toast.LENGTH_SHORT)
-                .show();
+//        Toast.makeText(getContext(),
+//                getString(R.string.error_message),
+//                Toast.LENGTH_SHORT)
+//                .show();
     }
 
     private void updateAmounts() {

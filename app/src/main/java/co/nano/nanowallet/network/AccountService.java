@@ -212,57 +212,60 @@ public class AccountService {
      * @param workResponse Work response
      */
     private void processWork(WorkResponse workResponse) {
-        if (recentWorkRequestType != null && recentWorkRequestType.toString().equals(BlockTypes.OPEN.toString())) {
-            // create open block
-            OpenBlock openBlock = new OpenBlock(
-                    getPrivateKey(),
-                    recentPendingTransactionResponseItem.getHash(),
-                    PreconfiguredRepresentatives.getRepresentative(),
-                    workResponse.getWork()
-            );
-            // escape the block to match https://github.com/clemahieu/raiblocks/wiki/RPC-protocol#process-block
-            // use jackson here to maintain field order
-            ObjectMapper mapper = new ObjectMapper();
-            String block = "";
-            try {
-                block = mapper.writeValueAsString(openBlock);
-            } catch (JsonProcessingException e) {
-                ExceptionHandler.handle(e);
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(() -> {
+            if (recentWorkRequestType != null && recentWorkRequestType.toString().equals(BlockTypes.OPEN.toString())) {
+                // create open block
+                OpenBlock openBlock = new OpenBlock(
+                        getPrivateKey(),
+                        recentPendingTransactionResponseItem.getHash(),
+                        PreconfiguredRepresentatives.getRepresentative(),
+                        workResponse.getWork()
+                );
+                // escape the block to match https://github.com/clemahieu/raiblocks/wiki/RPC-protocol#process-block
+                // use jackson here to maintain field order
+                ObjectMapper mapper = new ObjectMapper();
+                String block = "";
+                try {
+                    block = mapper.writeValueAsString(openBlock);
+                } catch (JsonProcessingException e) {
+                    ExceptionHandler.handle(e);
+                }
+                Timber.d(block);
+
+                checkState();
+                // send the send request
+                websocket.send(gson.toJson(new ProcessRequest(block)));
+            } else if (recentWorkRequestType != null && recentWorkRequestType.toString().equals(BlockTypes.RECEIVE.toString())) {
+                // create a receive block string
+                ReceiveBlock receiveBlock = new ReceiveBlock(
+                        getPrivateKey(),
+                        wallet.getFrontierBlock(),
+                        recentPendingTransactionResponseItem.getHash(),
+                        workResponse.getWork());
+
+                // escape the block to match https://github.com/clemahieu/raiblocks/wiki/RPC-protocol#process-block
+                // use jackson here to maintain field order
+                ObjectMapper mapper = new ObjectMapper();
+                String block = "";
+                try {
+                    block = mapper.writeValueAsString(receiveBlock);
+                } catch (JsonProcessingException e) {
+                    ExceptionHandler.handle(e);
+                }
+                Timber.d(block);
+
+
+                checkState();
+                // send the send request
+                websocket.send(gson.toJson(new ProcessRequest(block)));
+
+            } else if (recentWorkRequestType != null && recentWorkRequestType.toString().equals(BlockTypes.SEND.toString())) {
+                // send work so post to bus
+                // this could probably all be handled here
+                post(workResponse);
             }
-            Timber.d(block);
-
-            checkState();
-            // send the send request
-            websocket.send(gson.toJson(new ProcessRequest(block)));
-        } else if (recentWorkRequestType != null && recentWorkRequestType.toString().equals(BlockTypes.RECEIVE.toString())) {
-            // create a receive block string
-            ReceiveBlock receiveBlock = new ReceiveBlock(
-                    getPrivateKey(),
-                    wallet.getFrontierBlock(),
-                    recentPendingTransactionResponseItem.getHash(),
-                    workResponse.getWork());
-
-            // escape the block to match https://github.com/clemahieu/raiblocks/wiki/RPC-protocol#process-block
-            // use jackson here to maintain field order
-            ObjectMapper mapper = new ObjectMapper();
-            String block = "";
-            try {
-                block = mapper.writeValueAsString(receiveBlock);
-            } catch (JsonProcessingException e) {
-                ExceptionHandler.handle(e);
-            }
-            Timber.d(block);
-
-
-            checkState();
-            // send the send request
-            websocket.send(gson.toJson(new ProcessRequest(block)));
-
-        } else if (recentWorkRequestType != null && recentWorkRequestType.toString().equals(BlockTypes.SEND.toString())) {
-            // send work so post to bus
-            // this could probably all be handled here
-            post(workResponse);
-        }
+        });
     }
 
     /**
@@ -271,32 +274,34 @@ public class AccountService {
      * @param processResponse Process Response
      */
     private void handleProcessResponse(ProcessResponse processResponse) {
-        if (recentWorkRequestType != null &&
-                (recentWorkRequestType.toString().equals(BlockTypes.OPEN.toString()) ||
-                        recentWorkRequestType.toString().equals(BlockTypes.RECEIVE.toString()))) {
-            wallet.setFrontierBlock(processResponse.getHash());
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(() -> {
+            if (recentWorkRequestType != null &&
+                    (recentWorkRequestType.toString().equals(BlockTypes.OPEN.toString()) ||
+                            recentWorkRequestType.toString().equals(BlockTypes.RECEIVE.toString()))) {
+                wallet.setFrontierBlock(processResponse.getHash());
 
-            if (recentWorkRequestType.toString().equals(BlockTypes.OPEN.toString())) {
-                blockCount = 1;
-            } else {
+                if (recentWorkRequestType.toString().equals(BlockTypes.OPEN.toString())) {
+                    blockCount = 1;
+                } else {
+                    blockCount++;
+                }
+
+                recentPendingTransactionResponseItem.setComplete(true);
+
+                // account subscribe
+                websocket.send(gson.toJson(new SubscribeRequest(address.getAddress(), getLocalCurrency())));
+
+                // account history request
+                websocket.send(gson.toJson(new AccountHistoryRequest(address.getAddress(), blockCount != null ? blockCount : 10)));
+
+                processNextTransaction();
+            } else if (recentWorkRequestType != null &&
+                    (recentWorkRequestType.toString().equals(BlockTypes.SEND.toString()))) {
                 blockCount++;
+                post(processResponse);
             }
-
-            recentPendingTransactionResponseItem.setComplete(true);
-
-            // account subscribe
-            websocket.send(gson.toJson(new SubscribeRequest(address.getAddress(), getLocalCurrency())));
-
-
-            // account history request
-            websocket.send(gson.toJson(new AccountHistoryRequest(address.getAddress(), blockCount != null ? blockCount : 10)));
-
-            processNextTransaction();
-        } else if (recentWorkRequestType != null &&
-                (recentWorkRequestType.toString().equals(BlockTypes.SEND.toString()))) {
-            blockCount++;
-            post(processResponse);
-        }
+        });
     }
 
     /**
@@ -424,23 +429,26 @@ public class AccountService {
 
     public void requestSend(String previous, Address destination, BigInteger balance, String
             work) {
-        // create a send block string
-        SendBlock sendBlock = new SendBlock(getPrivateKey(), previous, destination.getAddress(), balance.toString(), work);
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(() -> {
+            // create a send block string
+            SendBlock sendBlock = new SendBlock(getPrivateKey(), previous, destination.getAddress(), balance.toString(), work);
 
-        // escape the block to match https://github.com/clemahieu/raiblocks/wiki/RPC-protocol#process-block
-        // use jackson here to maintain field order
-        ObjectMapper mapper = new ObjectMapper();
-        String block = "";
-        try {
-            block = mapper.writeValueAsString(sendBlock);
-        } catch (JsonProcessingException e) {
-            ExceptionHandler.handle(e);
-        }
-        Timber.d(block);
+            // escape the block to match https://github.com/clemahieu/raiblocks/wiki/RPC-protocol#process-block
+            // use jackson here to maintain field order
+            ObjectMapper mapper = new ObjectMapper();
+            String block = "";
+            try {
+                block = mapper.writeValueAsString(sendBlock);
+            } catch (JsonProcessingException e) {
+                ExceptionHandler.handle(e);
+            }
+            Timber.d(block);
 
-        checkState();
-        // send the send request
-        websocket.send(gson.toJson(new ProcessRequest(block)));
+            checkState();
+            // send the send request
+            websocket.send(gson.toJson(new ProcessRequest(block)));
+        });
     }
 
     private void handleError(Throwable error) {

@@ -71,4 +71,3 @@ public class NanoWalletTest extends InstrumentationTestCase {
     public void tearDown() throws Exception {
     }
 }
-
