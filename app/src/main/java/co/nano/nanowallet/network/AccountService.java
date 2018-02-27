@@ -66,6 +66,7 @@ public class AccountService {
     private PendingTransactionResponseItem recentPendingTransactionResponseItem;
     private int errorCount;
     private static final int MAX_ERROR_COUNT = 3;
+    private static final int TIMEOUT_MILLISECONDS = 3000;
 
     @Inject
     Realm realm;
@@ -106,9 +107,9 @@ public class AccountService {
     private void initWebSocket() {
         // create websocket
         client = new OkHttpClient.Builder()
-                .readTimeout(3000, TimeUnit.MILLISECONDS)
-                .writeTimeout(3000, TimeUnit.MILLISECONDS)
-                .connectTimeout(3000, TimeUnit.MILLISECONDS).build();
+                .readTimeout(TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS)
+                .writeTimeout(TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS)
+                .connectTimeout(TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS).build();
         Request request = new Request.Builder().url(CONNECTION_URL).build();
         WebSocketListener listener = new WebSocketListener() {
             @Override
