@@ -15,7 +15,6 @@ import com.crashlytics.android.answers.CustomEvent;
 
 import javax.inject.Inject;
 
-import co.nano.nanowallet.NanoUtil;
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.broadcastreceiver.ClipboardAlarmReceiver;
 import co.nano.nanowallet.databinding.FragmentIntroNewWalletBinding;
@@ -78,14 +77,9 @@ public class IntroNewWalletFragment extends BaseFragment {
         setStatusBarWhite(view);
         hideToolbar();
 
-        // create wallet seed
-        realm.executeTransaction(realm -> {
-            Credentials credentials = realm.createObject(Credentials.class);
-            credentials.setSeed(NanoUtil.generateSeed());
-            seed = credentials.getSeed();
-        });
-
-        accountService.open();
+        // get seed from storage
+        Credentials credentials = realm.where(Credentials.class).findFirst();
+        seed = credentials.getSeed();
 
         // bind data to view
         binding.setHandlers(new ClickHandlers());

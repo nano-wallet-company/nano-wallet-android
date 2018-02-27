@@ -12,8 +12,10 @@ import com.crashlytics.android.answers.CustomEvent;
 import javax.inject.Inject;
 
 import co.nano.nanowallet.BuildConfig;
+import co.nano.nanowallet.NanoUtil;
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.databinding.FragmentIntroWelcomeBinding;
+import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.FragmentUtility;
@@ -66,6 +68,12 @@ public class IntroWelcomeFragment extends BaseFragment {
         public void onClickNewWallet(View view) {
             // go to interstitial
             if (getActivity() instanceof WindowControl) {
+                // create wallet seed
+                realm.executeTransaction(realm -> {
+                    Credentials credentials = realm.createObject(Credentials.class);
+                    credentials.setSeed(NanoUtil.generateSeed());
+                });
+
                 ((WindowControl) getActivity()).getFragmentUtility().replace(
                         IntroNewWalletFragment.newInstance(),
                         FragmentUtility.Animation.ENTER_LEFT_EXIT_RIGHT,

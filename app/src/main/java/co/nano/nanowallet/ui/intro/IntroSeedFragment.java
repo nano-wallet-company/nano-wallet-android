@@ -92,8 +92,6 @@ public class IntroSeedFragment extends BaseFragment {
             if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is perhaps enough to determine keypad height.
                 binding.introSeedScrollview.smoothScrollTo(0, (int) (binding.introSeedScrollview.getMaxScrollAmount()));
             }
-            else {
-            }
         });
 
         return view;
