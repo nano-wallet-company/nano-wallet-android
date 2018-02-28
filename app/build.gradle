@@ -1,7 +1,4 @@
 repositories {
-    maven {
-        url 'https://github.com/WickeDev/stetho-realm/raw/master/maven-repo'
-    }
     maven { url 'https://maven.fabric.io/public' }
 }
 
@@ -65,7 +62,7 @@ dependencies {
     final TEST_RUNNER_VERSION = '1.0.1'
     final TIMBER_VERSION = '4.6.0'
     final VAULT_VERSION = '1.4.0'
-    final OKHTTP_VERSION = '3.9.1'
+    final OKHTTP_VERSION = '3.10.0'
     final ZXING_VERSION = '1.9'
 
     compile 'com.android.support:multidex:1.0.2'
@@ -114,11 +111,6 @@ dependencies {
 
     // Secure storage
     implementation "com.bottlerocketstudios:vault:$VAULT_VERSION"
-
-    // Stetho (for debugging only)
-    implementation 'com.facebook.stetho:stetho:1.5.0'
-    implementation 'com.facebook.stetho:stetho-okhttp3:1.5.0'
-    implementation 'com.uphyca:stetho_realm:2.2.2'
 
     // Logging
     implementation "com.jakewharton.timber:timber:$TIMBER_VERSION"

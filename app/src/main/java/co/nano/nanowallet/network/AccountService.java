@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.bus.SocketError;
@@ -45,6 +46,7 @@ import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.util.ExceptionHandler;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -58,13 +60,13 @@ import timber.log.Timber;
 
 public class AccountService {
     private static final String CONNECTION_URL = "wss://light.nano.org:443";
-    private static final int TIMEOUT_MILLISECONDS = 10000;
+    private static final int TIMEOUT_MILLISECONDS = 3000;
 
     private WebSocket websocket;
+    private boolean connected = false;
     private Queue<RequestItem> requestQueue = new LinkedList<>();
-
-    @Inject
-    Realm realm;
+    private String private_key;
+    private Address address;
 
     @Inject
     SharedPreferencesUtil sharedPreferencesUtil;
@@ -74,6 +76,13 @@ public class AccountService {
 
     @Inject
     Gson gson;
+
+    @Inject
+    Realm realm;
+
+    @Inject
+    @Named("encryption_key")
+    byte[] encryption_key;
 
     public AccountService(Context context) {
         // init dependency injection
@@ -86,11 +95,13 @@ public class AccountService {
         wallet.setBlockCount(-1);
 
         // initialize the web socket
-        if (websocket == null) {
+        if (!connected) {
             initWebSocket();
         }
 
-        processQueue();
+        private_key = getPrivateKey();
+        address = getAddress();
+
     }
 
     /**
@@ -99,9 +110,12 @@ public class AccountService {
     private void initWebSocket() {
         // create websocket
         OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS)
                 .readTimeout(TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS)
                 .writeTimeout(TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS)
-                .connectTimeout(TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS).build();
+                .retryOnConnectionFailure(true)
+                .pingInterval(TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS)
+                .build();
 
         Request request = new Request.Builder().url(CONNECTION_URL).build();
 
@@ -109,8 +123,11 @@ public class AccountService {
             @Override
             public void onOpen(WebSocket webSocket, Response response) {
                 super.onOpen(webSocket, response);
-                Timber.d("OPENED");
-                requestUpdate();
+                if (response.code() == 101) {
+                    Timber.d("OPENED");
+                    connected = true;
+                    requestUpdate();
+                }
             }
 
             @Override
@@ -129,25 +146,40 @@ public class AccountService {
             @Override
             public void onClosed(WebSocket webSocket, int code, String reason) {
                 super.onClosed(webSocket, code, reason);
-                Timber.d("CLOSED");
-                AccountService.this.websocket = null;
+                connected = false;
+                switch (code) {
+                    case 1000:    // CLOSE_NORMAL
+                        Timber.d("CLOSED");
+                        break;
+                    default:    // Abnormal closure
+                        checkState();
+                        break;
+                }
             }
 
             @Override
             public void onFailure(WebSocket webSocket, Throwable t, @Nullable Response response) {
                 super.onFailure(webSocket, t, response);
                 ExceptionHandler.handle(t);
-                webSocket.cancel();
-                AccountService.this.websocket = null;
-                post(new SocketError(t));
+                if (connected) {
+                    close();
+                    checkState();
+                } else {
+                    if (requestQueue != null) {
+                        requestQueue.clear();
+                    }
+                    post(new SocketError(t));
+                }
             }
         };
 
         // create websocket with listeners
         websocket = client.newWebSocket(request, listener);
 
-        // shutdown the client dispatcher
+        // trigger shutdown of the dispatcher's executor so this process can exit cleanly.
         client.dispatcher().executorService().shutdown();
+
+        processQueue();
     }
 
     /**
@@ -349,6 +381,7 @@ public class AccountService {
                     }
 
                     checkState();
+                    Timber.d("SEND: %s", gson.toJson(new ProcessRequest(block)));
                     websocket.send(gson.toJson(new ProcessRequest(block)));
                 } else {
                     checkState();
@@ -363,54 +396,42 @@ public class AccountService {
      * Request all the account info
      */
     public void requestUpdate() {
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(() -> {
-            if (getAddress() != null && getAddress().getAddress() != null) {
-                requestQueue.add(new RequestItem<>(new SubscribeRequest(getAddress().getAddress(), getLocalCurrency())));
-                requestQueue.add(new RequestItem<>(new AccountHistoryRequest(getAddress().getAddress(), wallet.getBlockCount() != null ? wallet.getBlockCount() : 10)));
-                requestQueue.add(new RequestItem<>(new PendingTransactionsRequest(getAddress().getAddress(), true, wallet.getBlockCount())));
-                processQueue();
-            }
-        });
+        if (address != null && address.getAddress() != null) {
+            requestQueue.add(new RequestItem<>(new SubscribeRequest(address.getAddress(), getLocalCurrency())));
+            requestQueue.add(new RequestItem<>(new AccountHistoryRequest(address.getAddress(), wallet.getBlockCount() != null ? wallet.getBlockCount() : 10)));
+            requestQueue.add(new RequestItem<>(new PendingTransactionsRequest(address.getAddress(), true, wallet.getBlockCount())));
+            processQueue();
+        }
     }
 
     /**
      * Request subscribe
      */
     public void requestSubscribe() {
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(() -> {
-            if (getAddress() != null && getAddress().getAddress() != null) {
-                requestQueue.add(new RequestItem<>(new SubscribeRequest(getAddress().getAddress(), getLocalCurrency())));
-                processQueue();
-            }
-        });
+        if (address != null && address.getAddress() != null) {
+            requestQueue.add(new RequestItem<>(new SubscribeRequest(address.getAddress(), getLocalCurrency())));
+            processQueue();
+        }
     }
 
     /**
      * Request Pending Blocks
      */
     public void requestPending() {
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(() -> {
-            if (getAddress() != null && getAddress().getAddress() != null) {
-                requestQueue.add(new RequestItem<>(new PendingTransactionsRequest(getAddress().getAddress(), true, wallet.getBlockCount())));
-                processQueue();
-            }
-        });
+        if (address != null && address.getAddress() != null) {
+            requestQueue.add(new RequestItem<>(new PendingTransactionsRequest(address.getAddress(), true, wallet.getBlockCount())));
+            processQueue();
+        }
     }
 
     /**
      * Request AccountHistory
      */
     public void requestAccountHistory() {
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(() -> {
-            if (getAddress() != null && getAddress().getAddress() != null) {
-                requestQueue.add(new RequestItem<>(new AccountHistoryRequest(getAddress().getAddress(), wallet.getBlockCount() != null ? wallet.getBlockCount() : 10)));
-                processQueue();
-            }
-        });
+        if (address != null && address.getAddress() != null) {
+            requestQueue.add(new RequestItem<>(new AccountHistoryRequest(address.getAddress(), wallet.getBlockCount() != null ? wallet.getBlockCount() : 10)));
+            processQueue();
+        }
     }
 
     /**
@@ -419,19 +440,16 @@ public class AccountService {
      * @param source Source
      */
     private void requestOpen(String source) {
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(() -> {
-            // create a work block
-            requestQueue.add(new RequestItem<>(new WorkRequest(wallet.getFrontierBlock())));
+        // create a work block
+        requestQueue.add(new RequestItem<>(new WorkRequest(wallet.getFrontierBlock())));
 
-            // create an open block
-            requestQueue.add(new RequestItem<>(new OpenBlock(
-                    getPrivateKey(),
-                    source,
-                    PreconfiguredRepresentatives.getRepresentative()))
-            );
-            processQueue();
-        });
+        // create an open block
+        requestQueue.add(new RequestItem<>(new OpenBlock(
+                private_key,
+                source,
+                PreconfiguredRepresentatives.getRepresentative()))
+        );
+        processQueue();
     }
 
     /**
@@ -440,19 +458,16 @@ public class AccountService {
      * @param source Source
      */
     private void requestReceive(String source) {
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(() -> {
-            // create a work block
-            requestQueue.add(new RequestItem<>(new WorkRequest(wallet.getFrontierBlock())));
+        // create a work block
+        requestQueue.add(new RequestItem<>(new WorkRequest(wallet.getFrontierBlock())));
 
-            // create an open block
-            requestQueue.add(new RequestItem<>(new ReceiveBlock(
-                    getPrivateKey(),
-                    wallet.getFrontierBlock(),
-                    source))
-            );
-            processQueue();
-        });
+        // create an open block
+        requestQueue.add(new RequestItem<>(new ReceiveBlock(
+                private_key,
+                wallet.getFrontierBlock(),
+                source))
+        );
+        processQueue();
     }
 
     /**
@@ -463,20 +478,17 @@ public class AccountService {
      * @param balance     Remaining balance after a send
      */
     public void requestSend(String previous, Address destination, BigInteger balance) {
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(() -> {
-            // create a work block
-            requestQueue.add(new RequestItem<>(new WorkRequest(previous)));
+        // create a work block
+        requestQueue.add(new RequestItem<>(new WorkRequest(previous)));
 
-            // create a send block
-            requestQueue.add(new RequestItem<>(new SendBlock(
-                    getPrivateKey(),
-                    previous,
-                    destination.getAddress(),
-                    balance.toString()))
-            );
-            processQueue();
-        });
+        // create a send block
+        requestQueue.add(new RequestItem<>(new SendBlock(
+                private_key,
+                previous,
+                destination.getAddress(),
+                balance.toString()))
+        );
+        processQueue();
     }
 
 
@@ -486,10 +498,11 @@ public class AccountService {
      * @return Address object
      */
     private Address getAddress() {
-        Credentials credentials = realm.where(Credentials.class).findFirst();
-        if (credentials == null) {
+        Credentials _credentials = realm.where(Credentials.class).findFirst();
+        if (_credentials == null) {
             return null;
         } else {
+            Credentials credentials = realm.copyFromRealm(_credentials);
             return new Address(credentials.getAddressString());
         }
     }
@@ -509,12 +522,24 @@ public class AccountService {
      * @return Private Key
      */
     private String getPrivateKey() {
-        Credentials credentials = realm.where(Credentials.class).findFirst();
-        if (credentials == null) {
+        Credentials _credentials = realm.where(Credentials.class).findFirst();
+        if (_credentials == null) {
             return null;
         } else {
+            Credentials credentials = realm.copyFromRealm(_credentials);
             return credentials.getPrivateKey();
         }
+    }
+
+    private Realm getRealmInstance(byte[] key) {
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()
+                .name("nano.realm")
+                .encryptionKey(key)
+                .schemaVersion(1)
+                .build();
+
+        // Open the Realm with encryption enabled
+        return Realm.getInstance(realmConfiguration);
     }
 
     /**
@@ -575,14 +600,20 @@ public class AccountService {
      * Close the web socket
      */
     public void close() {
-        if (websocket != null) {
+        if (!connected) {
+            return;
+        }
+        try {
             websocket.close(1000, "Closed");
-            websocket = null;
+            connected = false;
+        } catch (IllegalStateException e) {
+            connected = false;
+            ExceptionHandler.handle(e);
         }
     }
 
     private void checkState() {
-        if (websocket == null) {
+        if (!connected) {
             initWebSocket();
         }
     }

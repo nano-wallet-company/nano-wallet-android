@@ -57,12 +57,6 @@ public class IntroWelcomeFragment extends BaseFragment {
         return view;
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        realm.close();
-    }
-
 
     public class ClickHandlers {
         public void onClickNewWallet(View view) {

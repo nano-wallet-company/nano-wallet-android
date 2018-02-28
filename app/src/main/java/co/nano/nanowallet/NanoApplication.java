@@ -6,8 +6,6 @@ import android.util.Base64;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
-import com.facebook.stetho.Stetho;
-import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
 import co.nano.nanowallet.di.application.ApplicationComponent;
 import co.nano.nanowallet.di.application.ApplicationModule;
@@ -39,11 +37,6 @@ public class NanoApplication extends Application {
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
-            Stetho.initialize(
-                    Stetho.newInitializerBuilder(this)
-                            .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
-                            .enableWebKitInspector(RealmInspectorModulesProvider.builder(this).build())
-                            .build());
         }
 
         // create new instance of the application component (DI)

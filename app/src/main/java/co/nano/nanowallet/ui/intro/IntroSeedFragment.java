@@ -198,7 +198,6 @@ public class IntroSeedFragment extends BaseFragment {
         Credentials credentials = realm.createObject(Credentials.class);
         credentials.setSeed(seed);
         realm.commitTransaction();
-        realm.close();
     }
 
     /**
