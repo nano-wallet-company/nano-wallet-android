@@ -23,7 +23,6 @@ public class PersistenceModule {
     }
 
     @Provides
-    @ApplicationScope
     Realm providesRealmInstance(@Named("encryption_key") byte[] key) {
         if (key != null) {
             RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()

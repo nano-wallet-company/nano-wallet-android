@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
     protected void onResume() {
         super.onResume();
         // start websocket on resume
-        if (accountService != null && realm != null && realm.where(Credentials.class).findFirst() != null) {
+        if (accountService != null && realm != null && !realm.isClosed() && realm.where(Credentials.class).findFirst() != null) {
             accountService.open();
         }
     }
@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         // close realm connection
         if (realm != null) {
             realm.close();
+            realm = null;
         }
 
         // close wallet so app can clean up

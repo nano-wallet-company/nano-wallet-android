@@ -68,7 +68,7 @@ public class NanoWallet {
         clear();
         RxBus.get().register(this);
 
-        if (realm != null) {
+        if (realm != null && !realm.isClosed()) {
             Credentials credentials = realm.where(Credentials.class).findFirst();
             if (credentials != null) {
                 publicKey = credentials.getPublicKey();
