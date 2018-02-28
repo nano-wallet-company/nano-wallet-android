@@ -70,8 +70,18 @@ public class NanoWallet {
 
         if (realm != null) {
             Credentials credentials = realm.where(Credentials.class).findFirst();
-            publicKey = credentials.getPublicKey();
+            if (credentials != null) {
+                publicKey = credentials.getPublicKey();
+            }
         }
+    }
+
+    public String getPublicKey() {
+        return publicKey;
+    }
+
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
     }
 
     public String getOpenBlock() {

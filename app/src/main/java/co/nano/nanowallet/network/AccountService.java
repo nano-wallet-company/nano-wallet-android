@@ -102,7 +102,7 @@ public class AccountService {
 
         private_key = getPrivateKey();
         address = getAddress();
-
+        wallet.setPublicKey(getPublicKey());
     }
 
     /**
@@ -539,6 +539,21 @@ public class AccountService {
         } else {
             Credentials credentials = realm.copyFromRealm(_credentials);
             return credentials.getPrivateKey();
+        }
+    }
+
+    /**
+     * Get private key from realm
+     *
+     * @return Private Key
+     */
+    private String getPublicKey() {
+        Credentials _credentials = realm.where(Credentials.class).findFirst();
+        if (_credentials == null) {
+            return null;
+        } else {
+            Credentials credentials = realm.copyFromRealm(_credentials);
+            return credentials.getPublicKey();
         }
     }
 
