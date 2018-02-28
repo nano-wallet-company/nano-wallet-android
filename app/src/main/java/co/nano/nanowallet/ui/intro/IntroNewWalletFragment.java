@@ -86,6 +86,8 @@ public class IntroNewWalletFragment extends BaseFragment {
         binding.setSeed(seed);
         binding.introNewWalletMessage.setText(Html.fromHtml(getString(R.string.intro_new_wallet_message)));
 
+        accountService.open();
+
         return view;
     }
 

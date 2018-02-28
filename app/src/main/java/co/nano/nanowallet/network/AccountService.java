@@ -58,7 +58,7 @@ import timber.log.Timber;
 
 public class AccountService {
     private static final String CONNECTION_URL = "wss://light.nano.org:443";
-    private static final int TIMEOUT_MILLISECONDS = 3000;
+    private static final int TIMEOUT_MILLISECONDS = 10000;
 
     private WebSocket websocket;
     private Queue<RequestItem> requestQueue = new LinkedList<>();
@@ -266,7 +266,8 @@ public class AccountService {
                         updateBlockCount(wallet.getBlockCount() + 1);
                         post(processResponse);
                     }
-                    // put a request in the queue to get the account history if one isn't already in there
+
+                    requestSubscribe();
                     requestAccountHistory();
                 } else {
                     // something is out of sync if this wasn't a block - should never happen
@@ -348,9 +349,10 @@ public class AccountService {
                     }
 
                     checkState();
-                    // send the send request
                     websocket.send(gson.toJson(new ProcessRequest(block)));
                 } else {
+                    checkState();
+                    Timber.d("SEND: %s", gson.toJson(requestItem.getRequest()));
                     websocket.send(gson.toJson(requestItem.getRequest()));
                 }
             }
@@ -533,23 +535,6 @@ public class AccountService {
     }
 
     /**
-     * Check to see if queue already contains an account history request
-     *
-     * @return true if queue has an account history block in it already
-     */
-    private boolean queueContainsAccountHistory() {
-        if (requestQueue == null) {
-            return false;
-        }
-        for (RequestItem item : requestQueue) {
-            if (item.getRequest() instanceof AccountHistoryRequest) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Update block count in wallet and on pending requests
      *
      * @param blockCount Block count
@@ -558,9 +543,9 @@ public class AccountService {
         wallet.setBlockCount(blockCount);
         if (requestQueue != null) {
             for (RequestItem item : requestQueue) {
-                if (item.getRequest() instanceof AccountHistoryRequest) {
+                if (item.getRequest() instanceof AccountHistoryRequest && !item.isProcessing()) {
                     ((AccountHistoryRequest) item.getRequest()).setCount(blockCount);
-                } else if (item.getRequest() instanceof PendingTransactionsRequest) {
+                } else if (item.getRequest() instanceof PendingTransactionsRequest && !item.isProcessing()) {
                     ((PendingTransactionsRequest) item.getRequest()).setCount(blockCount);
                 }
             }
@@ -577,9 +562,9 @@ public class AccountService {
         wallet.setFrontierBlock(frontier);
         if (requestQueue != null) {
             for (RequestItem item : requestQueue) {
-                if (item.getRequest() instanceof ReceiveBlock) {
+                if (item.getRequest() instanceof ReceiveBlock && !item.isProcessing()) {
                     ((ReceiveBlock) item.getRequest()).setPrevious(frontier);
-                } else if (item.getRequest() instanceof WorkRequest) {
+                } else if (item.getRequest() instanceof WorkRequest && !item.isProcessing()) {
                     ((WorkRequest) item.getRequest()).setHash(frontier);
                 }
             }
