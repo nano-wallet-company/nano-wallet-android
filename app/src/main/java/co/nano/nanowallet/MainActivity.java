@@ -61,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        disableScreenCapture();
+
         // build the activity component
         mActivityComponent = DaggerActivityComponent
                 .builder()
@@ -75,6 +77,10 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         RxBus.get().register(this);
 
         initUi();
+    }
+
+    private void disableScreenCapture() {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
     }
 
     @Override
