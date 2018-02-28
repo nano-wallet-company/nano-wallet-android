@@ -1,4 +1,4 @@
-package co.nano.nanowallet.network.model.request;
+package co.nano.nanowallet.network.model.request.block;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -18,7 +18,7 @@ import co.nano.nanowallet.util.NumberUtil;
         "work",
         "signature"
 })
-public class SendBlock {
+public class SendBlock extends Block {
     @JsonProperty("type")
     private String type;
 
@@ -31,9 +31,6 @@ public class SendBlock {
     @JsonProperty("balance")
     private String balance;
 
-    @JsonProperty("work")
-    private String work;
-
     @JsonProperty("signature")
     private String signature;
 
@@ -41,12 +38,11 @@ public class SendBlock {
         this.type = BlockTypes.SEND.toString();
     }
 
-    public SendBlock(String private_key, String previous, String destination, String balance, String work) {
+    public SendBlock(String private_key, String previous, String destination, String balance) {
         this.type = BlockTypes.SEND.toString();
         this.previous = previous;
         this.destination = destination;
         this.balance = NumberUtil.getRawAsHex(balance);
-        this.work = work;
         String hash = NanoUtil.computeSendHash(previous, NanoUtil.addressToPublic(destination), this.balance);
         this.signature = NanoUtil.sign(private_key, hash);
     }
@@ -81,14 +77,6 @@ public class SendBlock {
 
     public void setBalance(String balance) {
         this.balance = balance;
-    }
-
-    public String getWork() {
-        return work;
-    }
-
-    public void setWork(String work) {
-        this.work = work;
     }
 
     public String getSignature() {

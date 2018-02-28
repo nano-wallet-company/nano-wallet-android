@@ -1,4 +1,4 @@
-package co.nano.nanowallet.network.model.request;
+package co.nano.nanowallet.network.model.request.block;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.google.gson.annotations.SerializedName;
@@ -18,7 +18,7 @@ import co.nano.nanowallet.network.model.BlockTypes;
         "work",
         "signature"
 })
-public class OpenBlock {
+public class OpenBlock extends Block {
     @SerializedName("type")
     private String type;
 
@@ -31,9 +31,6 @@ public class OpenBlock {
     @SerializedName("account")
     private String account;
 
-    @SerializedName("work")
-    private String work;
-
     @SerializedName("signature")
     private String signature;
 
@@ -42,12 +39,11 @@ public class OpenBlock {
     }
 
     public OpenBlock(String private_key, String source,
-                     String representative, String work) {
+                     String representative) {
         this.type = BlockTypes.OPEN.toString();
         this.representative = representative;
         this.account = NanoUtil.publicToAddress(NanoUtil.privateToPublic(private_key));
         this.source = source;
-        this.work = work;
         String hash = NanoUtil.computeOpenHash(source, NanoUtil.addressToPublic(representative), NanoUtil.addressToPublic(this.account));
         this.signature = NanoUtil.sign(private_key, hash);
     }
@@ -82,14 +78,6 @@ public class OpenBlock {
 
     public void setAccount(String account) {
         this.account = account;
-    }
-
-    public String getWork() {
-        return work;
-    }
-
-    public void setWork(String work) {
-        this.work = work;
     }
 
     public String getSignature() {

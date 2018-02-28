@@ -10,10 +10,8 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Queue;
 
 import javax.inject.Inject;
 
@@ -26,7 +24,6 @@ import co.nano.nanowallet.bus.WalletSubscribeUpdate;
 import co.nano.nanowallet.network.model.response.AccountHistoryResponse;
 import co.nano.nanowallet.network.model.response.AccountHistoryResponseItem;
 import co.nano.nanowallet.network.model.response.CurrentPriceResponse;
-import co.nano.nanowallet.network.model.response.PendingTransactionResponseItem;
 import co.nano.nanowallet.network.model.response.SubscribeResponse;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.util.ExceptionHandler;
@@ -43,7 +40,6 @@ public class NanoWallet {
     private BigDecimal localCurrencyPrice;
     private BigDecimal btcPrice;
 
-    private String accountAddress;
     private String representativeAddress;
     private String frontierBlock;
     private String openBlock;
@@ -51,8 +47,6 @@ public class NanoWallet {
     private Integer blockCount;
 
     private List<AccountHistoryResponseItem> accountHistory;
-
-    private Queue<PendingTransactionResponseItem> pendingTransactions = new LinkedList<>();
 
     // for sending
     private String sendNanoAmount;
@@ -72,6 +66,22 @@ public class NanoWallet {
 
         clear();
         RxBus.get().register(this);
+    }
+
+    public String getOpenBlock() {
+        return openBlock;
+    }
+
+    public void setOpenBlock(String openBlock) {
+        this.openBlock = openBlock;
+    }
+
+    public Integer getBlockCount() {
+        return blockCount;
+    }
+
+    public void setBlockCount(Integer blockCount) {
+        this.blockCount = blockCount;
     }
 
     public BigDecimal getLocalCurrencyPrice() {
@@ -96,14 +106,6 @@ public class NanoWallet {
 
     public String getLongerAccountBalanceNano() {
         return NumberUtil.getRawAsLongerUsableString(accountBalance.toString());
-    }
-
-    public Queue<PendingTransactionResponseItem> getPendingTransactions() {
-        return pendingTransactions;
-    }
-
-    public void setPendingTransactions(Queue<PendingTransactionResponseItem> pendingTransactions) {
-        this.pendingTransactions = pendingTransactions;
     }
 
     public String getAccountBalanceLocalCurrency() {
@@ -328,7 +330,6 @@ public class NanoWallet {
         localCurrencyPrice = null;
         btcPrice = null;
 
-        accountAddress = null;
         representativeAddress = null;
         frontierBlock = null;
         openBlock = null;

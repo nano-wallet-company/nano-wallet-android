@@ -2,13 +2,13 @@ package co.nano.nanowallet.network.model.response;
 
 import com.google.gson.annotations.SerializedName;
 
-import co.nano.nanowallet.network.model.BaseNetworkModel;
+import co.nano.nanowallet.network.model.BaseResponse;
 
 /**
  * Error response from service
  */
 
-public class AccountCheckResponse extends BaseNetworkModel{
+public class AccountCheckResponse extends BaseResponse {
     @SerializedName("ready")
     private Boolean ready;
 

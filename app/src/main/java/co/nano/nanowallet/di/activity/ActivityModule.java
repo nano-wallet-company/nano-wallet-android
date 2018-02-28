@@ -8,7 +8,7 @@ import com.google.gson.JsonArray;
 import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.network.AccountService;
 import co.nano.nanowallet.network.model.Actions;
-import co.nano.nanowallet.network.model.BaseNetworkModel;
+import co.nano.nanowallet.network.model.BaseResponse;
 import co.nano.nanowallet.network.model.response.AccountCheckResponse;
 import co.nano.nanowallet.network.model.response.AccountHistoryResponse;
 import co.nano.nanowallet.network.model.response.CurrentPriceResponse;
@@ -54,7 +54,7 @@ public class ActivityModule {
     Gson providesGson() {
         // configure gson to detect and set proper types
         GsonFireBuilder builder = new GsonFireBuilder()
-                .registerPreProcessor(BaseNetworkModel.class, (clazz, src, gson) -> {
+                .registerPreProcessor(BaseResponse.class, (clazz, src, gson) -> {
                     // figure out the response type based on what fields are in the response
                     if (src.isJsonObject() && src.getAsJsonObject().get("messageType") == null) {
                         if (src.getAsJsonObject().get("frontier") != null) {
@@ -88,7 +88,7 @@ public class ActivityModule {
                             src.getAsJsonObject().addProperty("messageType", Actions.PROCESS.toString());
                         }
                     }
-                }).registerTypeSelector(BaseNetworkModel.class, readElement -> {
+                }).registerTypeSelector(BaseResponse.class, readElement -> {
                     // return proper type based on the message type that was set
                     if (readElement.isJsonObject() && readElement.getAsJsonObject().get("messageType") != null) {
                         String kind = readElement.getAsJsonObject().get("messageType").getAsString();

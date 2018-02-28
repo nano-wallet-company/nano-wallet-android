@@ -3,12 +3,13 @@ package co.nano.nanowallet.network.model.request;
 import com.google.gson.annotations.SerializedName;
 
 import co.nano.nanowallet.network.model.Actions;
+import co.nano.nanowallet.network.model.BaseRequest;
 
 /**
  * Fetch work for a transaction
  */
 
-public class WorkRequest {
+public class WorkRequest extends BaseRequest {
     @SerializedName("action")
     private String action;
 

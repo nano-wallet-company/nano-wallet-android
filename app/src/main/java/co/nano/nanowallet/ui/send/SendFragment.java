@@ -40,10 +40,8 @@ import co.nano.nanowallet.model.Address;
 import co.nano.nanowallet.model.AvailableCurrency;
 import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.network.AccountService;
-import co.nano.nanowallet.network.model.BlockTypes;
 import co.nano.nanowallet.network.model.response.ErrorResponse;
 import co.nano.nanowallet.network.model.response.ProcessResponse;
-import co.nano.nanowallet.network.model.response.WorkResponse;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.UIUtil;
@@ -60,7 +58,6 @@ public class SendFragment extends BaseFragment {
     private FragmentSendBinding binding;
     public static String TAG = SendFragment.class.getSimpleName();
     private boolean localCurrencyActive = false;
-    private String work = null;
 
     @Inject
     NanoWallet wallet;
@@ -175,9 +172,6 @@ public class SendFragment extends BaseFragment {
         binding.sendAddress.setBackgroundResource(binding.sendAddress.getText().length() > 0 ? R.drawable.bg_seed_input_active : R.drawable.bg_seed_input);
         UIUtil.colorizeSpannable(binding.sendAddress.getText(), getContext());
 
-        // make a work request
-        accountService.requestWorkSend(wallet.getFrontierBlock(), BlockTypes.SEND);
-
         return view;
     }
 
@@ -236,15 +230,6 @@ public class SendFragment extends BaseFragment {
     }
 
     /**
-     * Received a work response
-     * @param workResponse Work Response
-     */
-    @Subscribe
-    public void receiveWorkResponse(WorkResponse workResponse) {
-        work = workResponse.getWork();
-    }
-
-    /**
      * Received a successful send response so go back
      * @param processResponse Process Response
      */
@@ -275,11 +260,6 @@ public class SendFragment extends BaseFragment {
 
         // check that we have a frontier block
         if (wallet.getFrontierBlock() == null) {
-            showError(R.string.send_error_alert_title, R.string.send_error_alert_message);
-            return false;
-        }
-
-        if (work == null) {
             showError(R.string.send_error_alert_title, R.string.send_error_alert_message);
             return false;
         }
@@ -423,7 +403,7 @@ public class SendFragment extends BaseFragment {
             BigInteger sendAmount = NumberUtil.getAmountAsRawBigInteger(wallet.getSendNanoAmount());
             BigInteger balance = wallet.getAccountBalanceNanoRaw().toBigInteger().subtract(sendAmount);
 
-            accountService.requestSend(wallet.getFrontierBlock(), destination, balance, work);
+            accountService.requestSend(wallet.getFrontierBlock(), destination, balance);
             Answers.getInstance().logCustom(new CustomEvent("Send Nano Began"));
         }
 

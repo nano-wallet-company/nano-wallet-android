@@ -6,14 +6,14 @@ import com.google.gson.annotations.SerializedName;
  * Includes methods for serializing and deserializing
  */
 
-public class BaseNetworkModel {
+public class BaseResponse {
     @SerializedName("messageType")
     private String messageType;
 
-    public BaseNetworkModel() {
+    public BaseResponse() {
     }
 
-    public BaseNetworkModel(String messageType) {
+    public BaseResponse(String messageType) {
         this.messageType = messageType;
     }
 

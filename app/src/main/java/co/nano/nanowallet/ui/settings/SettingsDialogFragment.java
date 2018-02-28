@@ -30,6 +30,7 @@ import co.nano.nanowallet.databinding.FragmentSettingsBinding;
 import co.nano.nanowallet.model.AvailableCurrency;
 import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.model.StringWithTag;
+import co.nano.nanowallet.network.AccountService;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseDialogFragment;
 import co.nano.nanowallet.ui.common.WindowControl;
@@ -48,6 +49,8 @@ public class SettingsDialogFragment extends BaseDialogFragment {
     SharedPreferencesUtil sharedPreferencesUtil;
     @Inject
     Realm realm;
+    @Inject
+    AccountService accountService;
 
     @BindingAdapter("android:layout_marginTop")
     public static void setTopMargin(View view, float topMargin) {
@@ -112,6 +115,8 @@ public class SettingsDialogFragment extends BaseDialogFragment {
                 if (key != null) {
                     sharedPreferencesUtil.setLocalCurrency(key);
                     Answers.getInstance().logCustom(new CustomEvent("Local Currency Selected").putCustomAttribute("currency", key.toString()));
+                    // update currency amounts
+                    accountService.requestSubscribe();
                 }
             }
 

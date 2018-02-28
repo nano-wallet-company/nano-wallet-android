@@ -1,4 +1,4 @@
-package co.nano.nanowallet.network.model.request;
+package co.nano.nanowallet.network.model.request.block;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.google.gson.annotations.SerializedName;
@@ -17,7 +17,7 @@ import co.nano.nanowallet.network.model.BlockTypes;
         "work",
         "signature"
 })
-public class ReceiveBlock {
+public class ReceiveBlock extends Block {
     @SerializedName("type")
     private String type;
 
@@ -27,21 +27,20 @@ public class ReceiveBlock {
     @SerializedName("source")
     private String source;
 
-    @SerializedName("work")
-    private String work;
-
     @SerializedName("signature")
     private String signature;
+
+    private String private_key;
 
     public ReceiveBlock() {
         this.type = BlockTypes.RECEIVE.toString();
     }
 
-    public ReceiveBlock(String private_key, String previous, String source, String work) {
+    public ReceiveBlock(String private_key, String previous, String source) {
+        this.private_key = private_key;
         this.type = BlockTypes.RECEIVE.toString();
         this.previous = previous;
         this.source = source;
-        this.work = work;
         String hash = NanoUtil.computeReceiveHash(previous, source);
         this.signature = NanoUtil.sign(private_key, hash);
     }
@@ -60,6 +59,8 @@ public class ReceiveBlock {
 
     public void setPrevious(String previous) {
         this.previous = previous;
+        String hash = NanoUtil.computeReceiveHash(previous, this.source);
+        this.signature = NanoUtil.sign(this.private_key, hash);
     }
 
     public String getSource() {
@@ -68,14 +69,6 @@ public class ReceiveBlock {
 
     public void setSource(String source) {
         this.source = source;
-    }
-
-    public String getWork() {
-        return work;
-    }
-
-    public void setWork(String work) {
-        this.work = work;
     }
 
     public String getSignature() {

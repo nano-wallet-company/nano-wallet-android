@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
@@ -24,7 +25,6 @@ import java.math.BigDecimal;
 import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
-import co.nano.nanowallet.bus.Logout;
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.bus.SocketError;
 import co.nano.nanowallet.bus.WalletHistoryUpdate;
@@ -91,8 +91,6 @@ public class HomeFragment extends BaseFragment {
     }
 
 
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -109,12 +107,9 @@ public class HomeFragment extends BaseFragment {
 
                     // reset status bar to blue when dialog is closed
                     dialog.getDialog().setOnDismissListener(dialogInterface -> {
-                        if (!logoutClicked) {
-                            setStatusBarBlue();
-                            if (binding.homeViewpager != null && accountService != null) {
-                                updateAmounts();
-                                accountService.requestUpdate();
-                            }
+                        setStatusBarBlue();
+                        if (binding.homeViewpager != null) {
+                            updateAmounts();
                         }
                     });
                 }
@@ -211,15 +206,10 @@ public class HomeFragment extends BaseFragment {
     @Subscribe
     public void receiveError(SocketError error) {
         binding.homeSwiperefresh.setRefreshing(false);
-//        Toast.makeText(getContext(),
-//                getString(R.string.error_message),
-//                Toast.LENGTH_SHORT)
-//                .show();
-    }
-
-    @Subscribe
-    public void logOut(Logout logout) {
-        logoutClicked = true;
+        Toast.makeText(getContext(),
+                getString(R.string.error_message),
+                Toast.LENGTH_SHORT)
+                .show();
     }
 
     private void updateAmounts() {

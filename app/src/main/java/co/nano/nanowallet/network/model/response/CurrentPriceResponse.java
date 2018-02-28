@@ -2,13 +2,13 @@ package co.nano.nanowallet.network.model.response;
 
 import com.google.gson.annotations.SerializedName;
 
-import co.nano.nanowallet.network.model.BaseNetworkModel;
+import co.nano.nanowallet.network.model.BaseResponse;
 
 /**
  * Pushed price data - currently sent every minute to all clients
  */
 
-public class CurrentPriceResponse extends BaseNetworkModel {
+public class CurrentPriceResponse extends BaseResponse {
     @SerializedName("currency")
     private String currency;
 
