@@ -85,7 +85,6 @@
     <string name="send_error_alert_title">Something Went Wrong</string>
     <string name="send_error_alert_message">There was a problem sending Nano. Please try again.</string>
     <string name="send_error_cta">Okay</string>
-    <string name="send_address_prefix">xrb_</string>
     <string name="send_confirm_address_cta">Confirm Address</string>
 
     <!-- Scan Screen -->

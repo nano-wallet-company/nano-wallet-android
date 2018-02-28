@@ -1,6 +1,7 @@
 package co.nano.nanowallet.model;
 
 import android.graphics.Color;
+import android.net.Uri;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -15,6 +16,7 @@ import java.util.List;
 
 public class Address implements Serializable {
     private String value;
+    private String amount;
 
     public static final List<Character> VALID_ADDRESS_CHARACTERS = Arrays.asList('a','b','c','d','e','f','g','h','i','j','k','m','n','o','p','q','r','s','t','u','w','x','y','z','1','3','4','5','6','7','8','9','_');
 
@@ -23,6 +25,7 @@ public class Address implements Serializable {
 
     public Address(String value) {
         this.value = value;
+        parseAddress();
     }
 
     public boolean hasXrbAddressFormat() {
@@ -63,6 +66,10 @@ public class Address implements Serializable {
         return value.replace("xrb_", "");
     }
 
+    public String getAmount() {
+        return amount;
+    }
+
     public boolean isValidAddress() {
         if (getAddress().length() != 64) {
             return false;
@@ -76,4 +83,23 @@ public class Address implements Serializable {
         }
         return isMatch;
     }
+
+    private void parseAddress() {
+        if (this.value != null) {
+            String[] _split = value.split(":");
+            if (_split.length > 1) {
+                String _addressString = _split[1];
+                Uri uri = Uri.parse(_addressString);
+                if (uri.getPath() != null) {
+                    this.value = uri.getPath();
+                }
+                if (uri.getQueryParameter("amount") != null) {
+                    this.amount = uri.getQueryParameter("amount");
+                }
+            }
+
+        }
+
+    }
+
 }

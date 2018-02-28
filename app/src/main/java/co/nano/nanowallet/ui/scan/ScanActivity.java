@@ -80,6 +80,4 @@ public class ScanActivity extends BaseScannerActivity implements ZXingScannerVie
             handler.postDelayed(() -> mScannerView.resumeCameraPreview(ScanActivity.this), 2000);
         }
     }
-
-
 }

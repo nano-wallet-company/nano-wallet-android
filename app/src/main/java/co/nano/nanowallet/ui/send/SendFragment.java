@@ -168,7 +168,7 @@ public class SendFragment extends BaseFragment {
         binding.sendAddress.setOnFocusChangeListener((view12, hasFocus) -> {
             binding.setShowAmount(!hasFocus);
         });
-        binding.sendAddress.setText(getString(R.string.send_address_prefix));
+
         binding.sendAddress.setBackgroundResource(binding.sendAddress.getText().length() > 0 ? R.drawable.bg_seed_input_active : R.drawable.bg_seed_input);
         UIUtil.colorizeSpannable(binding.sendAddress.getText(), getContext());
 
@@ -190,14 +190,26 @@ public class SendFragment extends BaseFragment {
             if (resultCode == RESULT_OK) {
                 Bundle res = data.getExtras();
                 if (res != null) {
+                    // parse address
+                    Address address = new Address(res.getString(ScanActivity.QR_CODE_RESULT));
+
                     // set to scanned value
-                    binding.sendAddress.setText(res.getString(ScanActivity.QR_CODE_RESULT));
+                    if (address.getAddress() != null) {
+                        binding.sendAddress.setText(address.getAddress());
+                    }
+
+                    if (address.getAmount() != null) {
+                        wallet.setSendNanoAmount(address.getAmount());
+                        binding.setWallet(wallet);
+                    }
 
                     setShortAddress();
                 }
             }
         }
     }
+
+
 
     public AvailableCurrency getLocalCurrency() {
         return sharedPreferencesUtil.getLocalCurrency();
