@@ -51,6 +51,7 @@ public class NanoWallet {
     // for sending
     private String sendNanoAmount;
     private String sendLocalCurrencyAmount;
+    private String publicKey;
 
     @Inject
     SharedPreferencesUtil sharedPreferencesUtil;
@@ -66,6 +67,11 @@ public class NanoWallet {
 
         clear();
         RxBus.get().register(this);
+
+        if (realm != null) {
+            Credentials credentials = realm.where(Credentials.class).findFirst();
+            publicKey = credentials.getPublicKey();
+        }
     }
 
     public String getOpenBlock() {
@@ -344,9 +350,8 @@ public class NanoWallet {
     }
 
     public String getFrontierBlock() {
-        if (frontierBlock == null && realm != null) {
-            Credentials credentials = realm.where(Credentials.class).findFirst();
-            return credentials.getPublicKey();
+        if (frontierBlock == null) {
+            return publicKey;
         } else {
             return frontierBlock;
         }
@@ -369,7 +374,7 @@ public class NanoWallet {
         representativeAddress = subscribeResponse.getRepresentative_block();
         openBlock = subscribeResponse.getOpen_block();
         blockCount = subscribeResponse.getBlock_count();
-        accountBalance = new BigDecimal(subscribeResponse.getBalance());
+        accountBalance = new BigDecimal(subscribeResponse.getBalance() != null ? subscribeResponse.getBalance() : "0.0");
         localCurrencyPrice = new BigDecimal(subscribeResponse.getPrice());
         btcPrice = new BigDecimal(subscribeResponse.getBtc());
         RxBus.get().post(new WalletSubscribeUpdate());

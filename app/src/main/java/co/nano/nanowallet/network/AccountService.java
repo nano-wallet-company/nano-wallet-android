@@ -14,7 +14,6 @@ import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -27,6 +26,7 @@ import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.model.PreconfiguredRepresentatives;
 import co.nano.nanowallet.network.model.BaseResponse;
+import co.nano.nanowallet.network.model.BlockTypes;
 import co.nano.nanowallet.network.model.RequestItem;
 import co.nano.nanowallet.network.model.request.AccountHistoryRequest;
 import co.nano.nanowallet.network.model.request.PendingTransactionsRequest;
@@ -37,6 +37,7 @@ import co.nano.nanowallet.network.model.request.block.Block;
 import co.nano.nanowallet.network.model.request.block.OpenBlock;
 import co.nano.nanowallet.network.model.request.block.ReceiveBlock;
 import co.nano.nanowallet.network.model.request.block.SendBlock;
+import co.nano.nanowallet.network.model.response.CurrentPriceResponse;
 import co.nano.nanowallet.network.model.response.PendingTransactionResponseItem;
 import co.nano.nanowallet.network.model.response.ProcessResponse;
 import co.nano.nanowallet.network.model.response.SubscribeResponse;
@@ -46,7 +47,6 @@ import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.util.ExceptionHandler;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -60,7 +60,7 @@ import timber.log.Timber;
 
 public class AccountService {
     private static final String CONNECTION_URL = "wss://light.nano.org:443";
-    private static final int TIMEOUT_MILLISECONDS = 3000;
+    private static final int TIMEOUT_MILLISECONDS = 5000;
 
     private WebSocket websocket;
     private boolean connected = false;
@@ -110,11 +110,6 @@ public class AccountService {
     private void initWebSocket() {
         // create websocket
         OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS)
-                .readTimeout(TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS)
-                .writeTimeout(TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS)
-                .retryOnConnectionFailure(true)
-                .pingInterval(TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS)
                 .build();
 
         Request request = new Request.Builder().url(CONNECTION_URL).build();
@@ -148,10 +143,10 @@ public class AccountService {
                 super.onClosed(webSocket, code, reason);
                 connected = false;
                 switch (code) {
-                    case 1000:    // CLOSE_NORMAL
+                    case 1000: // CLOSE_NORMAL
                         Timber.d("CLOSED");
                         break;
-                    default:    // Abnormal closure
+                    default: // Abnormal closure
                         checkState();
                         break;
                 }
@@ -165,9 +160,6 @@ public class AccountService {
                     close();
                     checkState();
                 } else {
-                    if (requestQueue != null) {
-                        requestQueue.clear();
-                    }
                     post(new SocketError(t));
                 }
             }
@@ -208,14 +200,20 @@ public class AccountService {
             TransactionResponse transactionResponse = (TransactionResponse) event;
             PendingTransactionResponseItem pendingTransactionResponseItem = new PendingTransactionResponseItem(
                     transactionResponse.getAccount(), transactionResponse.getAmount(), transactionResponse.getHash());
-            handleTransactionResponse(pendingTransactionResponseItem);
+            if (transactionResponse.getBlock().getType().equals(BlockTypes.SEND.toString())) {
+                handleTransactionResponse(pendingTransactionResponseItem);
+            }
         } else if (event != null && event instanceof ProcessResponse) {
             handleProcessResponse((ProcessResponse) event);
         } else {
             // update block count on subscribe request
             if (event instanceof SubscribeResponse) {
-                updateBlockCount(((SubscribeResponse) event).getBlock_count());
-                updateFrontier(((SubscribeResponse) event).getFrontier());
+                if (((SubscribeResponse) event).getBlock_count() != null) {
+                    updateBlockCount(((SubscribeResponse) event).getBlock_count());
+                }
+                if (((SubscribeResponse) event).getFrontier() != null) {
+                    updateFrontier(((SubscribeResponse) event).getFrontier());
+                }
             }
 
             // post whatever the response type is to the bus
@@ -224,7 +222,9 @@ public class AccountService {
             }
 
             // remove item from queue and process
-            requestQueue.poll();
+            if (!(event instanceof CurrentPriceResponse)) {
+                requestQueue.poll();
+            }
             processQueue();
         }
     }
@@ -245,10 +245,13 @@ public class AccountService {
      * @param item Pending transaction response item
      */
     private void handleTransactionResponse(PendingTransactionResponseItem item) {
-        if (wallet.getOpenBlock() == null && !queueContainsOpenBlock()) {
-            requestOpen(item.getHash());
-        } else {
-            requestReceive(item.getHash());
+        Timber.d(item.toString());
+        if (!queueContainsRequestWithHash(item.getHash())) {
+            if (wallet.getOpenBlock() == null && !queueContainsOpenBlock()) {
+                requestOpen(item.getHash());
+            } else {
+                requestReceive(item.getHash());
+            }
         }
     }
 
@@ -531,17 +534,6 @@ public class AccountService {
         }
     }
 
-    private Realm getRealmInstance(byte[] key) {
-        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()
-                .name("nano.realm")
-                .encryptionKey(key)
-                .schemaVersion(1)
-                .build();
-
-        // Open the Realm with encryption enabled
-        return Realm.getInstance(realmConfiguration);
-    }
-
     /**
      * Check to see if queue already contains an open block
      *
@@ -553,6 +545,24 @@ public class AccountService {
         }
         for (RequestItem item : requestQueue) {
             if (item.getRequest() instanceof OpenBlock) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * See if this block is already in the queue
+     * @param source Source hash
+     * @return true if block is already in the queue with the same source
+     */
+    private boolean queueContainsRequestWithHash(String source) {
+        if (requestQueue == null) {
+            return false;
+        }
+        for (RequestItem item : requestQueue) {
+            if ((item.getRequest() instanceof OpenBlock && ((OpenBlock) item.getRequest()).getSource().equals(source)) ||
+                    (item.getRequest() instanceof ReceiveBlock && ((ReceiveBlock) item.getRequest()).getSource().equals(source))) {
                 return true;
             }
         }
