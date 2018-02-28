@@ -14,6 +14,7 @@ import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -110,6 +111,10 @@ public class AccountService {
     private void initWebSocket() {
         // create websocket
         OkHttpClient client = new OkHttpClient.Builder()
+                .writeTimeout(TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS)
+                .readTimeout(TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS)
+                .connectTimeout(TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS)
+                .pingInterval(TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS)
                 .build();
 
         Request request = new Request.Builder().url(CONNECTION_URL).build();
@@ -161,6 +166,9 @@ public class AccountService {
                     checkState();
                 } else {
                     post(new SocketError(t));
+                }
+                if (requestQueue != null) {
+                    requestQueue.clear();
                 }
             }
         };
@@ -553,6 +561,7 @@ public class AccountService {
 
     /**
      * See if this block is already in the queue
+     *
      * @param source Source hash
      * @return true if block is already in the queue with the same source
      */
