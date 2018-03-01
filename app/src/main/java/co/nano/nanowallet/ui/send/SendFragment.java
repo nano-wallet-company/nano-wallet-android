@@ -45,6 +45,7 @@ import co.nano.nanowallet.network.model.response.ProcessResponse;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.UIUtil;
+import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.scan.ScanActivity;
 import co.nano.nanowallet.util.NumberUtil;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
@@ -210,7 +211,6 @@ public class SendFragment extends BaseFragment {
     }
 
 
-
     public AvailableCurrency getLocalCurrency() {
         return sharedPreferencesUtil.getLocalCurrency();
     }
@@ -243,6 +243,7 @@ public class SendFragment extends BaseFragment {
 
     /**
      * Received a successful send response so go back
+     *
      * @param processResponse Process Response
      */
     @Subscribe
@@ -377,6 +378,15 @@ public class SendFragment extends BaseFragment {
         }
     }
 
+    private void executeSend() {
+        Address destination = new Address(binding.sendAddress.getText().toString());
+        BigInteger sendAmount = NumberUtil.getAmountAsRawBigInteger(wallet.getSendNanoAmount());
+        BigInteger balance = wallet.getAccountBalanceNanoRaw().toBigInteger().subtract(sendAmount);
+
+        accountService.requestSend(wallet.getFrontierBlock(), destination, balance);
+        Answers.getInstance().logCustom(new CustomEvent("Send Nano Began"));
+    }
+
     public class ClickHandlers {
         /**
          * Listener for styling updates when text changes
@@ -408,15 +418,20 @@ public class SendFragment extends BaseFragment {
         }
 
         public void onClickSend(View view) {
-            if (!validateRequest()) {
-                return;
-            }
-            Address destination = new Address(binding.sendAddress.getText().toString());
-            BigInteger sendAmount = NumberUtil.getAmountAsRawBigInteger(wallet.getSendNanoAmount());
-            BigInteger balance = wallet.getAccountBalanceNanoRaw().toBigInteger().subtract(sendAmount);
+//            if (!validateRequest()) {
+//                return;
+//            }
 
-            accountService.requestSend(wallet.getFrontierBlock(), destination, balance);
-            Answers.getInstance().logCustom(new CustomEvent("Send Nano Began"));
+//            if (Reprint.isHardwarePresent() && Reprint.hasFingerprintRegistered()) {
+                // show fingerprint dialog
+                FingerprintDialogFragment dialog = new FingerprintDialogFragment();
+                dialog.show(((WindowControl) getActivity()).getFragmentUtility().getFragmentManager(),
+                        FingerprintDialogFragment.TAG);
+                ((WindowControl) getActivity()).getFragmentUtility().getFragmentManager().executePendingTransactions();
+//            } else {
+//                // no fingerprint hardware present
+//                executeSend();
+//            }
         }
 
         public void onClickMax(View view) {

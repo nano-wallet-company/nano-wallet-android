@@ -52,6 +52,7 @@ dependencies {
     final CONSTRAINT_LAYOUT_VERSION = '1.1.0-beta5'
     final DAGGER_VERSION = '2.14.1'
     final ESPRESSO_VERSION = '3.0.1'
+    final FINGERPRINT_VERSION = '3.2.1'
     final GSON_FIRE_VERSION = '1.8.2'
     final GSON_VERSION = '2.8.2'
     final J_UNIT_VERSION = '4.12'
@@ -100,6 +101,11 @@ dependencies {
     implementation "com.fasterxml.jackson.core:jackson-core:2.9.4"
     implementation "com.fasterxml.jackson.core:jackson-annotations:2.9.4"
     implementation "com.fasterxml.jackson.core:jackson-databind:2.9.4"
+
+    // Fingerprint
+    implementation "com.github.ajalt.reprint:core:$FINGERPRINT_VERSION@aar"
+    implementation "com.github.ajalt.reprint:reprint_spass:$FINGERPRINT_VERSION@aar"
+    implementation "com.github.ajalt.reprint:rxjava2:$FINGERPRINT_VERSION@aar"
 
     // Event Bus
     implementation("com.hwangjr.rxbus:rxbus:$RXBUS_VERSION") {

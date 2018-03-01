@@ -61,6 +61,7 @@ import timber.log.Timber;
 
 public class AccountService {
     private static final String CONNECTION_URL = "wss://light.nano.org:443";
+    //private static final String CONNECTION_URL = "wss://raicast.lightrai.com:443";
     private static final int TIMEOUT_MILLISECONDS = 5000;
 
     private WebSocket websocket;
