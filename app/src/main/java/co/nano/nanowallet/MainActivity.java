@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
     private Toolbar mToolbar;
     private TextView mToolbarTitle;
     protected ActivityComponent mActivityComponent;
-    private Credentials credentials = null;
 
 
     @Inject
@@ -147,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         }
 
         // get wallet seed if it exists
-        credentials = realm.where(Credentials.class).findFirst();
+        Credentials credentials = realm.where(Credentials.class).findFirst();
 
         if (credentials == null) {
             // if we dont have a wallet, start the intro
@@ -222,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
     /**
      * Set visibility of app toolbar
      *
-     * @param visible
+     * @param visible true if toolbar should be visible
      */
     @Override
     public void setToolbarVisible(boolean visible) {
@@ -234,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
     /**
      * Set title of the app toolbar
      *
-     * @param title
+     * @param title Title of the toolbar
      */
     @Override
     public void setTitle(String title) {
@@ -247,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
     /**
      * Set title drawable of app toolbar
      *
-     * @param drawable
+     * @param drawable Drawable to show next to title on the toolbar
      */
     @Override
     public void setTitleDrawable(int drawable) {
