@@ -86,8 +86,10 @@
     <string name="send_error_alert_message">There was a problem sending Nano. Please try again.</string>
     <string name="send_error_cta">Okay</string>
     <string name="send_confirm_address_cta">Confirm Address</string>
+    <string name="send_fingerprint_title">Send Nano</string>
     <string name="send_fingerprint_description">Confirm fingerprint to send %s Nano</string>
     <string name="send_fingerprint_hint">Touch sensor</string>
+    <string name="send_fingerprint_success">Fingerprint recognized</string>
 
     <!-- Scan Screen -->
     <string name="scan_instruction_label">Scan a Nano or RaiBlocks\nwallet seed QR code to\nimport an existing wallet</string>

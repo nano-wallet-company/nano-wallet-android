@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.Guideline;
+import android.support.v4.content.ContextCompat;
 import android.text.InputType;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -22,9 +23,12 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
+import com.github.ajalt.reprint.core.AuthenticationFailureReason;
+import com.github.ajalt.reprint.core.Reprint;
 import com.hwangjr.rxbus.annotation.Subscribe;
 
 import java.math.BigInteger;
@@ -45,7 +49,6 @@ import co.nano.nanowallet.network.model.response.ProcessResponse;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.UIUtil;
-import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.scan.ScanActivity;
 import co.nano.nanowallet.util.NumberUtil;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
@@ -418,20 +421,36 @@ public class SendFragment extends BaseFragment {
         }
 
         public void onClickSend(View view) {
-//            if (!validateRequest()) {
-//                return;
-//            }
 
-//            if (Reprint.isHardwarePresent() && Reprint.hasFingerprintRegistered()) {
-                // show fingerprint dialog
-                FingerprintDialogFragment dialog = new FingerprintDialogFragment();
-                dialog.show(((WindowControl) getActivity()).getFragmentUtility().getFragmentManager(),
-                        FingerprintDialogFragment.TAG);
-                ((WindowControl) getActivity()).getFragmentUtility().getFragmentManager().executePendingTransactions();
-//            } else {
-//                // no fingerprint hardware present
-//                executeSend();
-//            }
+
+            LayoutInflater factory = LayoutInflater.from(getContext());
+            final View viewFingerprint = factory.inflate(R.layout.view_fingerprint, null);
+
+            if (!validateRequest()) {
+                return;
+            }
+
+            if (Reprint.isHardwarePresent() && Reprint.hasFingerprintRegistered()) {
+            // show fingerprint dialog
+            showFingerprintDialog(viewFingerprint);
+            com.github.ajalt.reprint.rxjava2.RxReprint.authenticate()
+                    .subscribe(result -> {
+                        switch (result.status) {
+                            case SUCCESS:
+                                showSuccess(viewFingerprint);
+                                break;
+                            case NONFATAL_FAILURE:
+                                showError(result.failureReason, result.errorMessage, viewFingerprint);
+                                break;
+                            case FATAL_FAILURE:
+                                showError(result.failureReason, result.errorMessage, viewFingerprint);
+                                break;
+                        }
+                    });
+            } else {
+                // no fingerprint hardware present
+                executeSend();
+            }
         }
 
         public void onClickMax(View view) {
@@ -444,5 +463,37 @@ public class SendFragment extends BaseFragment {
             updateAmount(((Button) view).getText());
         }
 
+    }
+
+    private void showFingerprintDialog(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle(getString(R.string.send_fingerprint_title));
+        builder.setMessage(getString(R.string.send_fingerprint_description,
+                !wallet.getSendNanoAmountFormatted().isEmpty() ? wallet.getSendNanoAmountFormatted() : "0"));
+        builder.setView(view);
+        String negativeText = getString(android.R.string.cancel);
+        builder.setNegativeButton(negativeText,
+                (dialog, which) -> {
+                    // negative button logic
+                });
+
+        AlertDialog dialog = builder.create();
+        // display dialog
+        dialog.show();
+    }
+
+    private void showSuccess(View view) {
+        TextView textView = view.findViewById(R.id.fingerprint_textview);
+        textView.setText(getString(R.string.send_fingerprint_success));
+        textView.setTextColor(ContextCompat.getColor(getContext(), R.color.dark_sky_blue));
+        textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_fingerprint_success, 0, 0, 0);
+        executeSend();
+    }
+
+    private void showError(AuthenticationFailureReason reason, CharSequence message, View view) {
+        TextView textView = view.findViewById(R.id.fingerprint_textview);
+        textView.setText(message.toString());
+        textView.setTextColor(ContextCompat.getColor(getContext(), R.color.error));
+        textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_fingerprint_error, 0, 0, 0);
     }
 }
