@@ -62,7 +62,7 @@ import timber.log.Timber;
 public class AccountService {
     private static final String CONNECTION_URL = "wss://light.nano.org:443";
     //private static final String CONNECTION_URL = "wss://raicast.lightrai.com:443";
-    private static final int TIMEOUT_MILLISECONDS = 5000;
+    public static final int TIMEOUT_MILLISECONDS = 5000;
 
     private WebSocket websocket;
     private boolean connected = false;
@@ -400,6 +400,10 @@ public class AccountService {
                     Timber.d("SEND: %s", gson.toJson(requestItem.getRequest()));
                     websocket.send(gson.toJson(requestItem.getRequest()));
                 }
+            } else if (requestItem == null || (requestItem.isProcessing() && System.currentTimeMillis() > requestItem.getExpireTime())) {
+                // null item or expired request on the queue so remove and go to the next
+                requestQueue.poll();
+                processQueue();
             }
         }
     }
