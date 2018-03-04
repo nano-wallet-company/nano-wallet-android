@@ -57,7 +57,9 @@ public class ActivityModule {
                 .registerPreProcessor(BaseResponse.class, (clazz, src, gson) -> {
                     // figure out the response type based on what fields are in the response
                     if (src.isJsonObject() && src.getAsJsonObject().get("messageType") == null) {
-                        if (src.getAsJsonObject().get("uuid") != null) {
+                        if (src.getAsJsonObject().get("uuid") != null ||
+                                (src.getAsJsonObject().get("frontier") != null &&
+                                        src.getAsJsonObject().get("representative_block") != null)) {
                             // subscribe response
                             src.getAsJsonObject().addProperty("messageType", Actions.SUBSCRIBE.toString());
                         } else if (src.getAsJsonObject().get("history") != null) {

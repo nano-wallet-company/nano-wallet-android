@@ -413,7 +413,7 @@ public class AccountService {
      */
     public void requestUpdate() {
         if (address != null && address.getAddress() != null) {
-            requestQueue.add(new RequestItem<>(new SubscribeRequest(address.getAddress(), getLocalCurrency())));
+            requestQueue.add(new RequestItem<>(new SubscribeRequest(address.getAddress(), getLocalCurrency(), wallet.getUuid())));
             requestQueue.add(new RequestItem<>(new AccountHistoryRequest(address.getAddress(), wallet.getBlockCount() != null ? wallet.getBlockCount() : 10)));
             requestQueue.add(new RequestItem<>(new PendingTransactionsRequest(address.getAddress(), true, wallet.getBlockCount())));
             processQueue();
@@ -425,7 +425,7 @@ public class AccountService {
      */
     public void requestSubscribe() {
         if (address != null && address.getAddress() != null) {
-            requestQueue.add(new RequestItem<>(new SubscribeRequest(address.getAddress(), getLocalCurrency())));
+            requestQueue.add(new RequestItem<>(new SubscribeRequest(address.getAddress(), getLocalCurrency(), wallet.getUuid())));
             processQueue();
         }
     }

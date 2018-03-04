@@ -73,6 +73,7 @@ public class NanoWallet {
             Credentials credentials = realm.where(Credentials.class).findFirst();
             if (credentials != null) {
                 publicKey = credentials.getPublicKey();
+                uuid = credentials.getUuid();
             }
         }
     }
@@ -107,6 +108,14 @@ public class NanoWallet {
 
     public void setLocalCurrencyPrice(BigDecimal localCurrencyPrice) {
         this.localCurrencyPrice = localCurrencyPrice;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public List<AccountHistoryResponseItem> getAccountHistory() {
@@ -385,15 +394,17 @@ public class NanoWallet {
         representativeAddress = subscribeResponse.getRepresentative_block();
         openBlock = subscribeResponse.getOpen_block();
         blockCount = subscribeResponse.getBlock_count();
-        uuid = subscribeResponse.getUuid();
-        if (realm != null && !realm.isClosed()) {
-            realm.executeTransaction(realm -> {
-                Credentials credentials = realm.where(Credentials.class).findFirst();
-                if (credentials != null) {
-                    credentials.setUuid(uuid);
-                    realm.insertOrUpdate(credentials);
-                }
-            });
+        if (subscribeResponse.getUuid() != null) {
+            uuid = subscribeResponse.getUuid();
+            if (realm != null && !realm.isClosed()) {
+                realm.executeTransaction(realm -> {
+                    Credentials credentials = realm.where(Credentials.class).findFirst();
+                    if (credentials != null) {
+                        credentials.setUuid(uuid);
+                        realm.insertOrUpdate(credentials);
+                    }
+                });
+            }
         }
         accountBalance = new BigDecimal(subscribeResponse.getBalance() != null ? subscribeResponse.getBalance() : "0.0");
         localCurrencyPrice = new BigDecimal(subscribeResponse.getPrice());

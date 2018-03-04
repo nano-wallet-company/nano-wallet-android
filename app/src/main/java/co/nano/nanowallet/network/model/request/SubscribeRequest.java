@@ -20,14 +20,23 @@ public class SubscribeRequest extends BaseRequest {
     @SerializedName("currency")
     private String currency;
 
+    @SerializedName("uuid")
+    private String uuid;
+
     public SubscribeRequest() {
         this.action = Actions.SUBSCRIBE.toString();
     }
 
-    public SubscribeRequest(String account, String currency) {
+    public SubscribeRequest(String account, String currency, String uuid) {
         this.action = Actions.SUBSCRIBE.toString();
-        this.account = account;
         this.currency = currency;
+        if (uuid != null) {
+            this.uuid = uuid;
+            this.account = null;
+        } else {
+            this.account = account;
+            this.uuid = null;
+        }
     }
 
     public String getAction() {
@@ -52,5 +61,13 @@ public class SubscribeRequest extends BaseRequest {
 
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }
