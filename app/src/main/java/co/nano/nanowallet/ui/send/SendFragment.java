@@ -299,9 +299,10 @@ public class SendFragment extends BaseFragment {
             enableSend = false;
         }
         BigInteger balance = NumberUtil.getAmountAsRawBigInteger(wallet.getSendNanoAmount());
-        if (balance.compareTo(wallet.getAccountBalanceNanoRaw().toBigInteger()) > 0) {
+        if (balance.compareTo(new BigInteger("0")) <= 0 || balance.compareTo(wallet.getAccountBalanceNanoRaw().toBigInteger()) > 0) {
             enableSend = false;
         }
+
 
         // check that we have a frontier block
         if (wallet.getFrontierBlock() == null) {
@@ -484,6 +485,7 @@ public class SendFragment extends BaseFragment {
             Answers.getInstance().logCustom(new CustomEvent("Send: Max Amount Used"));
             wallet.setSendNanoAmount(wallet.getLongerAccountBalanceNano());
             binding.setWallet(wallet);
+            enableSendIfPossible();
         }
 
         public void onClickNumKeyboard(View view) {
