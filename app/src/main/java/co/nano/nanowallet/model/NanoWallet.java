@@ -45,6 +45,7 @@ public class NanoWallet {
     private String openBlock;
 
     private Integer blockCount;
+    private String uuid;
 
     private List<AccountHistoryResponseItem> accountHistory;
 
@@ -384,6 +385,16 @@ public class NanoWallet {
         representativeAddress = subscribeResponse.getRepresentative_block();
         openBlock = subscribeResponse.getOpen_block();
         blockCount = subscribeResponse.getBlock_count();
+        uuid = subscribeResponse.getUuid();
+        if (realm != null && !realm.isClosed()) {
+            realm.executeTransaction(realm -> {
+                Credentials credentials = realm.where(Credentials.class).findFirst();
+                if (credentials != null) {
+                    credentials.setUuid(uuid);
+                    realm.insertOrUpdate(credentials);
+                }
+            });
+        }
         accountBalance = new BigDecimal(subscribeResponse.getBalance() != null ? subscribeResponse.getBalance() : "0.0");
         localCurrencyPrice = new BigDecimal(subscribeResponse.getPrice());
         btcPrice = new BigDecimal(subscribeResponse.getBtc());

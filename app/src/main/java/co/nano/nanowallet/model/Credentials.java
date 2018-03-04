@@ -14,6 +14,7 @@ import io.realm.RealmObject;
 public class Credentials extends RealmObject {
     private String seed;
     private String privateKey;
+    private String uuid;
 
     public static final List<Character> VALID_SEED_CHARACTERS = Arrays.asList('a','b','c','d','e','f','0','1','2','3','4','5','6','7','8','9');
 
@@ -43,7 +44,16 @@ public class Credentials extends RealmObject {
         this.privateKey = privateKey;
     }
 
+    public String getUuid() {
+        return uuid;
+    }
 
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+
+    // Generated fields
 
     public String getPublicKey() {
         if (this.privateKey != null) {
@@ -93,13 +103,16 @@ public class Credentials extends RealmObject {
         Credentials that = (Credentials) o;
 
         if (seed != null ? !seed.equals(that.seed) : that.seed != null) return false;
-        return privateKey != null ? privateKey.equals(that.privateKey) : that.privateKey == null;
+        if (privateKey != null ? !privateKey.equals(that.privateKey) : that.privateKey != null)
+            return false;
+        return uuid != null ? uuid.equals(that.uuid) : that.uuid == null;
     }
 
     @Override
     public int hashCode() {
         int result = seed != null ? seed.hashCode() : 0;
         result = 31 * result + (privateKey != null ? privateKey.hashCode() : 0);
+        result = 31 * result + (uuid != null ? uuid.hashCode() : 0);
         return result;
     }
 }
