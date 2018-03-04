@@ -59,7 +59,9 @@ public class ActivityModule {
                     if (src.isJsonObject() && src.getAsJsonObject().get("messageType") == null) {
                         if (src.getAsJsonObject().get("uuid") != null ||
                                 (src.getAsJsonObject().get("frontier") != null &&
-                                        src.getAsJsonObject().get("representative_block") != null)) {
+                                        src.getAsJsonObject().get("representative_block") != null) ||
+                                (src.getAsJsonObject().get("error") != null &&
+                                        src.getAsJsonObject().get("currency") != null)) {
                             // subscribe response
                             src.getAsJsonObject().addProperty("messageType", Actions.SUBSCRIBE.toString());
                         } else if (src.getAsJsonObject().get("history") != null) {
