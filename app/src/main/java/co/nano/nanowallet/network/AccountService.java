@@ -400,7 +400,7 @@ public class AccountService {
                     Timber.d("SEND: %s", gson.toJson(requestItem.getRequest()));
                     websocket.send(gson.toJson(requestItem.getRequest()));
                 }
-            } else if (requestItem == null || (requestItem.isProcessing() && System.currentTimeMillis() > requestItem.getExpireTime())) {
+            } else if (requestItem != null && (requestItem.isProcessing() && System.currentTimeMillis() > requestItem.getExpireTime())) {
                 // null item or expired request on the queue so remove and go to the next
                 requestQueue.poll();
                 processQueue();
