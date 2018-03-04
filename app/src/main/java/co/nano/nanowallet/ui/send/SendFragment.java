@@ -503,10 +503,11 @@ public class SendFragment extends BaseFragment {
         String negativeText = getString(android.R.string.cancel);
         builder.setNegativeButton(negativeText,
                 (dialog, which) -> {
-                    // negative button logic
+                    Reprint.cancelAuthentication();
                 });
 
         fingerprintDialog = builder.create();
+        fingerprintDialog.setCanceledOnTouchOutside(false);
         // display dialog
         fingerprintDialog.show();
     }
