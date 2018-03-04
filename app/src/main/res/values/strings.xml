@@ -51,7 +51,7 @@
     <!-- Receive Screen -->
     <string name="receive_title">Receive</string>
     <string name="receive_instructions">Scan the QR code\nbelow to receive NANO</string>
-    <string name="receive_copy_cta">Copy</string>
+    <string name="receive_copy_cta">Copy Address</string>
     <string name="receive_address_label">Nano Address</string>
     <string name="receive_copy_message"><![CDATA[<font color=\"#ffffff\">Your Nano Address has been copied.<br>Share it with a friend to receive Nano!</font>]]></string>
     <string name="receive_copy_done">Done</string>
