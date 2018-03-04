@@ -6,6 +6,7 @@ import android.util.Base64;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
+import com.github.ajalt.reprint.core.Reprint;
 
 import co.nano.nanowallet.di.application.ApplicationComponent;
 import co.nano.nanowallet.di.application.ApplicationModule;
@@ -48,6 +49,9 @@ public class NanoApplication extends Application {
         // initialize vault
         Vault.initializeVault(this);
         generateEncryptionKey();
+
+        // initialize fingerprint
+        Reprint.initialize(this);
 
     }
 

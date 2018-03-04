@@ -80,7 +80,7 @@
             app:layout_constraintBottom_toTopOf="@+id/send_guideline_amounts_top"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="gone"/>
+            tools:visibility="gone" />
 
         <FrameLayout
             android:id="@+id/send_amounts_background"
@@ -362,6 +362,7 @@
             android:layout_marginLeft="37dp"
             android:layout_marginRight="37dp"
             android:layout_marginStart="37dp"
+            android:enabled="false"
             android:onClick="@{handlers::onClickSend}"
             android:text="@string/send_send_cta"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -394,8 +395,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="@{safeUnbox(showAmount) ? View.VISIBLE : View.GONE}"
-            tools:visibility="gone"
-            app:constraint_referenced_ids="send_amounts_background,send_max_button,send_amount_nano_symbol,send_amount_nano,send_amounts_divider,send_arrows,send_amount_localcurrency" />
+            app:constraint_referenced_ids="send_amounts_background,send_max_button,send_amount_nano_symbol,send_amount_nano,send_amounts_divider,send_arrows,send_amount_localcurrency"
+            tools:visibility="gone" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>
