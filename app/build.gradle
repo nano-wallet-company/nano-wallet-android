@@ -57,7 +57,7 @@ dependencies {
     final GSON_VERSION = '2.8.2'
     final J_UNIT_VERSION = '4.12'
     final RX_ANDROID = '2.0.1'
-    final RXBUS_VERSION = '1.0.6'
+    final RXBUS_VERSION = '2.0.0'
     final RX_JAVA_2 = '2.1.8'
     final SUPPORT_LIBRARY_VERSION = '26.1.0'
     final TEST_RUNNER_VERSION = '1.0.1'
