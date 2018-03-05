@@ -11,6 +11,8 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.internal.LinkedTreeMap;
 
 import java.math.BigInteger;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
@@ -66,6 +68,7 @@ public class AccountService {
 
     private WebSocket websocket;
     private boolean connected = false;
+    private boolean isUpdatingQueue = false;
     private Queue<RequestItem> requestQueue = new LinkedList<>();
     private String private_key;
     private Address address;
@@ -162,14 +165,16 @@ public class AccountService {
             public void onFailure(WebSocket webSocket, Throwable t, @Nullable Response response) {
                 super.onFailure(webSocket, t, response);
                 ExceptionHandler.handle(t);
-                if (connected) {
+                if (connected && (t instanceof SocketTimeoutException ||
+                        t instanceof UnknownHostException)) {
                     close();
                     checkState();
-                } else {
-                    post(new SocketError(t));
                 }
-                if (requestQueue != null) {
-                    requestQueue.clear();
+                if (!connected) {
+                    post(new SocketError(t));
+                    if (requestQueue != null) {
+                        requestQueue.clear();
+                    }
                 }
             }
         };
@@ -231,7 +236,7 @@ public class AccountService {
             }
 
             // remove item from queue and process
-            if (!(event instanceof CurrentPriceResponse)) {
+            if (!(event instanceof CurrentPriceResponse) && !isUpdatingQueue) {
                 requestQueue.poll();
             }
             processQueue();
@@ -274,7 +279,9 @@ public class AccountService {
         Handler handler = new Handler(Looper.getMainLooper());
         handler.post(() -> {
             // work response received so remove that work item from the queue
-            requestQueue.poll();
+            if (!isUpdatingQueue) {
+                requestQueue.poll();
+            }
 
             // make sure the next item is a Block type and update the work on that type
             RequestItem nextRequest = requestQueue.peek();
@@ -318,7 +325,9 @@ public class AccountService {
                     ExceptionHandler.handle(new Throwable("Queue Error: something is out of sync if this wasn't a block"));
                 }
             }
-            requestQueue.poll();
+            if (!isUpdatingQueue) {
+                requestQueue.poll();
+            }
             processQueue();
         });
     }
@@ -334,12 +343,16 @@ public class AccountService {
             if (o instanceof LinkedTreeMap) {
                 processLinkedTreeMap((LinkedTreeMap) o);
             } else {
-                requestQueue.poll();
+                if (!isUpdatingQueue) {
+                    requestQueue.poll();
+                }
                 processQueue();
             }
         } catch (JsonSyntaxException e) {
             ExceptionHandler.handle(e);
-            requestQueue.poll();
+            if (!isUpdatingQueue) {
+                requestQueue.poll();
+            }
             processQueue();
         }
     }
@@ -367,7 +380,9 @@ public class AccountService {
                 }
             }
         }
-        requestQueue.poll();
+        if (!isUpdatingQueue) {
+            requestQueue.poll();
+        }
         processQueue();
     }
 
@@ -402,7 +417,9 @@ public class AccountService {
                 }
             } else if (requestItem != null && (requestItem.isProcessing() && System.currentTimeMillis() > requestItem.getExpireTime())) {
                 // null item or expired request on the queue so remove and go to the next
-                requestQueue.poll();
+                if (!isUpdatingQueue) {
+                    requestQueue.poll();
+                }
                 processQueue();
             }
         }
@@ -604,6 +621,7 @@ public class AccountService {
      * @param blockCount Block count
      */
     private void updateBlockCount(int blockCount) {
+        isUpdatingQueue = true;
         wallet.setBlockCount(blockCount);
         if (requestQueue != null) {
             for (RequestItem item : requestQueue) {
@@ -614,6 +632,7 @@ public class AccountService {
                 }
             }
         }
+        isUpdatingQueue = false;
     }
 
 
@@ -623,16 +642,19 @@ public class AccountService {
      * @param frontier
      */
     private void updateFrontier(String frontier) {
+        isUpdatingQueue = true;
         wallet.setFrontierBlock(frontier);
         if (requestQueue != null) {
             for (RequestItem item : requestQueue) {
-                if (item.getRequest() instanceof ReceiveBlock && !item.isProcessing()) {
-                    ((ReceiveBlock) item.getRequest()).setPrevious(frontier);
+                Object o = item.getRequest();
+                if (o instanceof ReceiveBlock && !item.isProcessing()) {
+                    ((ReceiveBlock) o).setPrevious(frontier);
                 } else if (item.getRequest() instanceof WorkRequest && !item.isProcessing()) {
-                    ((WorkRequest) item.getRequest()).setHash(frontier);
+                    ((WorkRequest) o).setHash(frontier);
                 }
             }
         }
+        isUpdatingQueue = false;
     }
 
     /**
