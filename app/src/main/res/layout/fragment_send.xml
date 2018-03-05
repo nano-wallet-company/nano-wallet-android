@@ -112,7 +112,7 @@
             app:layout_constraintTop_toTopOf="@+id/send_guideline_amounts_top"
             tools:ignore="UnusedAttribute" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatImageView
             android:id="@+id/send_amount_nano_symbol"
             style="@style/SendAmountInput"
             android:layout_width="wrap_content"
@@ -120,11 +120,10 @@
             android:layout_marginBottom="10dp"
             android:layout_marginEnd="3dp"
             android:layout_marginRight="3dp"
-            android:drawableLeft="@drawable/ic_currency_nano_white"
-            android:drawableStart="@drawable/ic_currency_nano_white"
             app:layout_constraintBottom_toTopOf="@+id/send_arrows"
             app:layout_constraintEnd_toStartOf="@+id/send_amount_nano"
-            app:layout_constraintTop_toTopOf="@+id/send_guideline_amounts_top" />
+            app:layout_constraintTop_toTopOf="@+id/send_guideline_amounts_top"
+            app:srcCompat="@drawable/ic_currency_nano_white" />
 
         <EditText
             android:id="@+id/send_amount_nano"

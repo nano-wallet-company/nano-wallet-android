@@ -66,7 +66,7 @@ dependencies {
     final OKHTTP_VERSION = '3.10.0'
     final ZXING_VERSION = '1.9'
 
-    compile 'com.android.support:multidex:1.0.2'
+    compile 'com.android.support:multidex:1.0.3'
 
     // Support
     implementation "com.android.support:appcompat-v7:$SUPPORT_LIBRARY_VERSION"

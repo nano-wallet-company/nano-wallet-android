@@ -1,7 +1,8 @@
 package co.nano.nanowallet;
 
-import android.app.Application;
 import android.content.Context;
+import android.support.multidex.MultiDexApplication;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.Base64;
 
 import com.crashlytics.android.Crashlytics;
@@ -20,7 +21,7 @@ import timber.log.Timber;
  * Any custom application logic can go here
  */
 
-public class NanoApplication extends Application {
+public class NanoApplication extends MultiDexApplication {
     private ApplicationComponent mApplicationComponent;
     private static final int SCHEMA_VERSION = 1;
     private static final String REALM_NAME = "nano.realm";
@@ -53,6 +54,7 @@ public class NanoApplication extends Application {
         // initialize fingerprint
         Reprint.initialize(this);
 
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
     }
 
     /**

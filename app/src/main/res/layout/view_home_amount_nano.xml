@@ -8,6 +8,7 @@
         <variable
             name="wallet"
             type="co.nano.nanowallet.model.NanoWallet" />
+
         <variable
             name="localCurrency"
             type="co.nano.nanowallet.model.AvailableCurrency" />
@@ -18,13 +19,13 @@
         android:layout_height="match_parent"
         android:background="@color/very_dark_blue">
 
-        <TextView
+        <android.support.v7.widget.AppCompatImageView
             android:id="@+id/amount_nano_symbol"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_currency_nano_white"
-            android:drawablePadding="5dp"
-            android:drawableStart="@drawable/ic_currency_nano_white"
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"
+            app:srcCompat="@drawable/ic_currency_nano_white"
             app:layout_constraintEnd_toStartOf="@+id/amount_nano_title"
             app:layout_constraintTop_toTopOf="parent" />
 

@@ -351,7 +351,6 @@ public class SendFragment extends BaseFragment {
         localCurrencyActive = isLocalCurrency;
 
         v.setTextSize(TypedValue.COMPLEX_UNIT_SP, hasFocus ? 20f : 16f);
-        binding.sendAmountNanoSymbol.setTextSize(TypedValue.COMPLEX_UNIT_SP, hasFocus && isLocalCurrency ? 16f : 14f);
         binding.sendAmountNanoSymbol.setAlpha(hasFocus && !isLocalCurrency ? 1.0f : 0.5f);
 
         // clear amounts

@@ -8,6 +8,7 @@
         <variable
             name="wallet"
             type="co.nano.nanowallet.model.NanoWallet" />
+
         <variable
             name="localCurrency"
             type="co.nano.nanowallet.model.AvailableCurrency" />
@@ -18,15 +19,15 @@
         android:layout_height="match_parent"
         android:background="@color/very_dark_blue">
 
-        <TextView
+        <android.support.v7.widget.AppCompatImageView
             android:id="@+id/amount_nano_symbol"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_currency_btc"
-            android:drawablePadding="5dp"
-            android:drawableStart="@drawable/ic_currency_btc"
+            android:layout_marginEnd="5dp"
+            android:layout_marginRight="5dp"
             app:layout_constraintEnd_toStartOf="@+id/amount_btc_title"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_currency_btc" />
 
         <TextView
             android:id="@+id/amount_btc_title"
@@ -46,7 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5"/>
+            app:layout_constraintGuide_percent="0.5" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>
