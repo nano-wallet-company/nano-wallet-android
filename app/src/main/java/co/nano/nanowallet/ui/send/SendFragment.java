@@ -512,20 +512,22 @@ public class SendFragment extends BaseFragment {
     }
 
     private void showFingerprintSuccess(View view) {
-        TextView textView = view.findViewById(R.id.fingerprint_textview);
-        textView.setText(getString(R.string.send_fingerprint_success));
-        textView.setTextColor(ContextCompat.getColor(getContext(), R.color.dark_sky_blue));
-        textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_fingerprint_success, 0, 0, 0);
-        executeSend();
+        if (isAdded()) {
+            TextView textView = view.findViewById(R.id.fingerprint_textview);
+            textView.setText(getString(R.string.send_fingerprint_success));
+            textView.setTextColor(ContextCompat.getColor(getContext(), R.color.dark_sky_blue));
+            textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_fingerprint_success, 0, 0, 0);
+            executeSend();
 
-        // close dialog after 1 second
-        final Handler handler = new Handler();
-        final Runnable runnable = () -> {
-            if (fingerprintDialog != null && fingerprintDialog.isShowing()) {
-                fingerprintDialog.dismiss();
-            }
-        };
-        handler.postDelayed(runnable, 500);
+            // close dialog after 1 second
+            final Handler handler = new Handler();
+            final Runnable runnable = () -> {
+                if (fingerprintDialog != null && fingerprintDialog.isShowing()) {
+                    fingerprintDialog.dismiss();
+                }
+            };
+            handler.postDelayed(runnable, 500);
+        }
     }
 
     private void showFingerprintError(AuthenticationFailureReason reason, CharSequence message, View view) {
