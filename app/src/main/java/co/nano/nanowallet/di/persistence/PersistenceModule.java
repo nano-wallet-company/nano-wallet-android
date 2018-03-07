@@ -36,7 +36,14 @@ public class PersistenceModule {
             // Open the Realm with encryption enabled
             return Realm.getInstance(realmConfiguration);
         } else {
-            return null;
+            RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()
+                    .name("nano.realm")
+                    .schemaVersion(2)
+                    .migration(new UuidMigration())
+                    .build();
+
+            // Open the Realm with encryption enabled
+            return Realm.getInstance(realmConfiguration);
         }
     }
 
@@ -57,6 +64,10 @@ public class PersistenceModule {
                             Base64.encodeToString(Vault.generateKey(), Base64.DEFAULT))
                     .apply();
         }
-        return Base64.decode(Vault.getVault().getString(Vault.ENCRYPTION_KEY_NAME, null), Base64.DEFAULT);
+        if (Vault.getVault() != null) {
+            return Base64.decode(Vault.getVault().getString(Vault.ENCRYPTION_KEY_NAME, null), Base64.DEFAULT);
+        } else {
+            return null;
+        }
     }
 }
