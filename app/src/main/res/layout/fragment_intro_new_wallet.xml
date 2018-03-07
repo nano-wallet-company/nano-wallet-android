@@ -14,89 +14,96 @@
             type="String" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/intro_new_wallet_scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/bright_white"
-        android:paddingEnd="45dp"
-        android:paddingStart="45dp">
+        android:fillViewport="true">
 
-
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/intro_new_wallet_logo"
-            android:layout_width="104dp"
-            android:layout_height="44dp"
-            android:contentDescription="@string/app_name"
-            app:layout_constraintBottom_toTopOf="@+id/intro_new_wallet_title"
-            app:layout_constraintEnd_toStartOf="@+id/intro_new_wallet_guideline_vert"
-            app:layout_constraintStart_toStartOf="@+id/intro_new_wallet_guideline_vert"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_logo"
-            tools:ignore="UnusedAttribute" />
-
-
-        <TextView
-            android:id="@+id/intro_new_wallet_title"
-            style="@style/TextStyle5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/intro_new_wallet_title"
-            app:layout_constraintBottom_toTopOf="@+id/intro_new_wallet_message"
-            app:layout_constraintEnd_toStartOf="@+id/intro_new_wallet_guideline_vert"
-            app:layout_constraintStart_toStartOf="@+id/intro_new_wallet_guideline_vert"
-            app:layout_constraintTop_toBottomOf="@+id/intro_new_wallet_logo" />
-
-        <TextView
-            android:id="@+id/intro_new_wallet_message"
-            style="@style/TextStyle18"
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="start"
-            app:layout_constraintBottom_toTopOf="@+id/intro_new_wallet_seed"
-            app:layout_constraintEnd_toStartOf="@+id/intro_new_wallet_guideline_vert"
-            app:layout_constraintStart_toStartOf="@+id/intro_new_wallet_guideline_vert"
-            app:layout_constraintTop_toBottomOf="@+id/intro_new_wallet_title"
-            tools:text="@string/intro_new_wallet_message" />
+            android:layout_height="match_parent"
+            android:background="@color/bright_white"
+            android:paddingEnd="45dp"
+            android:paddingStart="45dp">
 
-        <TextView
-            android:id="@+id/intro_new_wallet_seed"
-            style="@style/SeedText"
-            android:layout_marginTop="11dp"
-            android:layout_marginBottom="25dp"
-            android:onClick="@{handlers::onClickSeed}"
-            android:text="@{seed}"
-            app:layout_constraintBottom_toTopOf="@+id/intro_new_wallet_button_confirm"
-            app:layout_constraintEnd_toStartOf="@+id/intro_new_wallet_guideline_vert"
-            app:layout_constraintStart_toStartOf="@+id/intro_new_wallet_guideline_vert"
-            app:layout_constraintTop_toBottomOf="@+id/intro_new_wallet_message" />
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/intro_new_wallet_logo"
+                android:layout_width="104dp"
+                android:layout_height="44dp"
+                android:contentDescription="@string/app_name"
+                app:layout_constraintBottom_toTopOf="@+id/intro_new_wallet_title"
+                app:layout_constraintEnd_toStartOf="@+id/intro_new_wallet_guideline_vert"
+                app:layout_constraintStart_toStartOf="@+id/intro_new_wallet_guideline_vert"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_logo"
+                tools:ignore="UnusedAttribute" />
 
-        <TextView
-            android:id="@+id/intro_new_wallet_seed_label"
-            style="@style/TextStyle19"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/intro_new_wallet_seed_label"
-            app:layout_constraintEnd_toStartOf="@+id/intro_new_wallet_guideline_vert"
-            app:layout_constraintStart_toStartOf="@+id/intro_new_wallet_guideline_vert"
-            app:layout_constraintTop_toBottomOf="@+id/intro_new_wallet_seed" />
 
-        <Button
-            android:id="@+id/intro_new_wallet_button_confirm"
-            style="@style/LargeButton"
-            android:onClick="@{handlers::onClickConfirm}"
-            android:text="@string/intro_new_wallet_confirm"
-            android:layout_marginBottom="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/intro_new_wallet_guideline_vert"
-            app:layout_constraintStart_toStartOf="@+id/intro_new_wallet_guideline_vert"
-            app:layout_constraintTop_toBottomOf="@+id/intro_new_wallet_seed_label" />
+            <TextView
+                android:id="@+id/intro_new_wallet_title"
+                style="@style/TextStyle5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/intro_new_wallet_title"
+                app:layout_constraintBottom_toTopOf="@+id/intro_new_wallet_message"
+                app:layout_constraintEnd_toStartOf="@+id/intro_new_wallet_guideline_vert"
+                app:layout_constraintStart_toStartOf="@+id/intro_new_wallet_guideline_vert"
+                app:layout_constraintTop_toBottomOf="@+id/intro_new_wallet_logo" />
 
-        <android.support.constraint.Guideline
-            android:id="@+id/intro_new_wallet_guideline_vert"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5" />
+            <TextView
+                android:id="@+id/intro_new_wallet_message"
+                style="@style/TextStyle18"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                app:layout_constraintBottom_toTopOf="@+id/intro_new_wallet_seed"
+                app:layout_constraintEnd_toStartOf="@+id/intro_new_wallet_guideline_vert"
+                app:layout_constraintStart_toStartOf="@+id/intro_new_wallet_guideline_vert"
+                app:layout_constraintTop_toBottomOf="@+id/intro_new_wallet_title"
+                tools:text="@string/intro_new_wallet_message" />
 
-    </android.support.constraint.ConstraintLayout>
+            <TextView
+                android:id="@+id/intro_new_wallet_seed"
+                style="@style/SeedText"
+                android:layout_marginBottom="25dp"
+                android:layout_marginTop="11dp"
+                android:onClick="@{handlers::onClickSeed}"
+                android:text="@{seed}"
+                app:layout_constraintBottom_toTopOf="@+id/intro_new_wallet_button_confirm"
+                app:layout_constraintEnd_toStartOf="@+id/intro_new_wallet_guideline_vert"
+                app:layout_constraintStart_toStartOf="@+id/intro_new_wallet_guideline_vert"
+                app:layout_constraintTop_toBottomOf="@+id/intro_new_wallet_message" />
+
+            <TextView
+                android:id="@+id/intro_new_wallet_seed_label"
+                style="@style/TextStyle19"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/intro_new_wallet_seed_label"
+                app:layout_constraintEnd_toStartOf="@+id/intro_new_wallet_guideline_vert"
+                app:layout_constraintStart_toStartOf="@+id/intro_new_wallet_guideline_vert"
+                app:layout_constraintTop_toBottomOf="@+id/intro_new_wallet_seed" />
+
+            <Button
+                android:id="@+id/intro_new_wallet_button_confirm"
+                style="@style/LargeButton"
+                android:layout_marginBottom="20dp"
+                android:onClick="@{handlers::onClickConfirm}"
+                android:text="@string/intro_new_wallet_confirm"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/intro_new_wallet_guideline_vert"
+                app:layout_constraintStart_toStartOf="@+id/intro_new_wallet_guideline_vert"
+                app:layout_constraintTop_toBottomOf="@+id/intro_new_wallet_seed_label" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/intro_new_wallet_guideline_vert"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
+
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v4.widget.NestedScrollView>
 </layout>
