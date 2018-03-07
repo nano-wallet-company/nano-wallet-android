@@ -47,6 +47,10 @@
     <string name="settings_logout_alert_message">Logging out will remove your seed, keys, and all of your Nano-related data from this device.</string>
     <string name="settings_logout_alert_confirm_cta">Okay</string>
     <string name="settings_logout_alert_cancel_cta">Cancel</string>
+    <string name="settings_fingerprint_title">Copy Wallet Seed</string>
+    <string name="settings_fingerprint_description">Verify your identity to view your wallet seed.</string>
+    <string name="settings_fingerprint_hint">Touch sensor</string>
+    <string name="settings_fingerprint_success">Fingerprint recognized</string>
 
     <!-- Receive Screen -->
     <string name="receive_title">Receive</string>

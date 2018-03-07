@@ -7,6 +7,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,12 +18,15 @@ import android.widget.TextView;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
+import com.github.ajalt.reprint.core.AuthenticationFailureReason;
+import com.github.ajalt.reprint.core.Reprint;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import co.nano.nanowallet.BuildConfig;
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.bus.Logout;
 import co.nano.nanowallet.bus.RxBus;
@@ -44,6 +48,7 @@ public class SettingsDialogFragment extends BaseDialogFragment {
     private FragmentSettingsBinding binding;
     public static String TAG = SettingsDialogFragment.class.getSimpleName();
     private Boolean showCurrency = false;
+    private AlertDialog fingerprintDialog;
 
     @Inject
     SharedPreferencesUtil sharedPreferencesUtil;
@@ -94,6 +99,7 @@ public class SettingsDialogFragment extends BaseDialogFragment {
         View view = binding.getRoot();
         binding.setHandlers(new ClickHandlers());
         binding.setShowCurrency(showCurrency);
+        binding.setVersion(getString(R.string.version_display, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE));
 
         setStatusBarWhite(view);
 
@@ -177,34 +183,29 @@ public class SettingsDialogFragment extends BaseDialogFragment {
         }
 
         public void onClickShowSeed(View view) {
-            // show the copy seed dialog
-            AlertDialog.Builder builder;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                builder = new AlertDialog.Builder(getContext(), android.R.style.Theme_Material_Light_Dialog_Alert);
+            if (Reprint.isHardwarePresent() && Reprint.hasFingerprintRegistered()) {
+                // show fingerprint dialog
+                LayoutInflater factory = LayoutInflater.from(getContext());
+                final View viewFingerprint = factory.inflate(R.layout.view_fingerprint, null);
+                showFingerprintDialog(viewFingerprint);
+                com.github.ajalt.reprint.rxjava2.RxReprint.authenticate()
+                        .subscribe(result -> {
+                            switch (result.status) {
+                                case SUCCESS:
+                                    showFingerprintSuccess(viewFingerprint);
+                                    break;
+                                case NONFATAL_FAILURE:
+                                    showFingerprintError(result.failureReason, result.errorMessage, viewFingerprint);
+                                    break;
+                                case FATAL_FAILURE:
+                                    showFingerprintError(result.failureReason, result.errorMessage, viewFingerprint);
+                                    break;
+                            }
+                        });
             } else {
-                builder = new AlertDialog.Builder(getContext());
+                // no fingerprint hardware present
+                showCopySeedAlert();
             }
-
-            Credentials credentials = realm.where(Credentials.class).findFirst();
-
-            builder.setTitle(R.string.settings_seed_alert_title)
-                    .setMessage(R.string.settings_seed_alert_message)
-                    .setPositiveButton(R.string.settings_seed_alert_confirm_cta, (dialog, which) -> {
-                        Answers.getInstance().logCustom(new CustomEvent("Seed Copied"));
-                        // copy seed to clipboard
-                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-                        android.content.ClipData clip = android.content.ClipData.newPlainText("seed", credentials.getSeed());
-                        if (clipboard != null) {
-                            clipboard.setPrimaryClip(clip);
-                        }
-
-                        setClearClipboardAlarm();
-                    })
-                    .setNegativeButton(R.string.settings_seed_alert_cancel_cta, (dialog, which) -> {
-                        // do nothing which dismisses the dialog
-                    })
-                    .setIcon(R.drawable.ic_warning)
-                    .show();
         }
 
         public void onClickLogOut(View view) {
@@ -229,5 +230,73 @@ public class SettingsDialogFragment extends BaseDialogFragment {
                         .show();
             }
         }
+    }
+
+    private void showCopySeedAlert() {
+        // show the copy seed dialog
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(getContext(), android.R.style.Theme_Material_Light_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(getContext());
+        }
+
+        Credentials credentials = realm.where(Credentials.class).findFirst();
+        builder.setTitle(R.string.settings_seed_alert_title)
+                .setMessage(R.string.settings_seed_alert_message)
+                .setPositiveButton(R.string.settings_seed_alert_confirm_cta, (dialog, which) -> {
+                    Answers.getInstance().logCustom(new CustomEvent("Seed Copied"));
+                    // copy seed to clipboard
+                    android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                    android.content.ClipData clip = android.content.ClipData.newPlainText("seed", credentials.getSeed());
+                    if (clipboard != null) {
+                        clipboard.setPrimaryClip(clip);
+                    }
+
+                    setClearClipboardAlarm();
+                })
+                .setNegativeButton(R.string.settings_seed_alert_cancel_cta, (dialog, which) -> {
+                    // do nothing which dismisses the dialog
+                })
+                .setIcon(R.drawable.ic_warning)
+                .show();
+    }
+
+    private void showFingerprintDialog(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle(getString(R.string.settings_fingerprint_title));
+        builder.setMessage(getString(R.string.settings_fingerprint_description));
+        builder.setView(view);
+        String negativeText = getString(android.R.string.cancel);
+        builder.setNegativeButton(negativeText,
+                (dialog, which) -> {
+                    Reprint.cancelAuthentication();
+                });
+
+        fingerprintDialog = builder.create();
+        fingerprintDialog.setCanceledOnTouchOutside(false);
+        // display dialog
+        fingerprintDialog.show();
+    }
+
+    private void showFingerprintSuccess(View view) {
+        if (isAdded()) {
+            TextView textView = view.findViewById(R.id.fingerprint_textview);
+            textView.setText(getString(R.string.settings_fingerprint_success));
+            textView.setTextColor(ContextCompat.getColor(getContext(), R.color.dark_sky_blue));
+            textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_fingerprint_success, 0, 0, 0);
+            if (fingerprintDialog != null && fingerprintDialog.isShowing()) {
+                fingerprintDialog.dismiss();
+                showCopySeedAlert();
+            }
+        }
+    }
+
+    private void showFingerprintError(AuthenticationFailureReason reason, CharSequence message, View view) {
+        Answers.getInstance().logCustom(new CustomEvent("Seed Copy Failed").putCustomAttribute("description", reason.name()));
+        TextView textView = view.findViewById(R.id.fingerprint_textview);
+        textView.setText(message.toString());
+        textView.setTextColor(ContextCompat.getColor(getContext(), R.color.error));
+        textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_fingerprint_error, 0, 0, 0);
     }
 }

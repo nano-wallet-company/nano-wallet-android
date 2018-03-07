@@ -12,6 +12,10 @@
             type="Boolean" />
 
         <variable
+            name="version"
+            type="String" />
+
+        <variable
             name="handlers"
             type="co.nano.nanowallet.ui.settings.SettingsDialogFragment.ClickHandlers" />
     </data>
@@ -86,6 +90,18 @@
             android:onClick="@{handlers::onClickShowSeed}"
             android:text="@string/settings_show_seed"
             app:layout_constraintTop_toBottomOf="@+id/settings_local_currency_spinner" />
+
+        <TextView
+            android:id="@+id/settings_version"
+            style="@style/TextStyle4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alpha="0.35"
+            android:text="@{version}"
+            android:gravity="center"
+            android:layout_marginBottom="10dp"
+            tools:text="v1.0 (10)"
+            app:layout_constraintBottom_toTopOf="@+id/settings_log_out" />
 
         <TextView
             android:id="@+id/settings_log_out"

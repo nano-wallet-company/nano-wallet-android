@@ -531,6 +531,7 @@ public class SendFragment extends BaseFragment {
     }
 
     private void showFingerprintError(AuthenticationFailureReason reason, CharSequence message, View view) {
+        Answers.getInstance().logCustom(new CustomEvent("Error with Send Authentication").putCustomAttribute("description", reason.name()));
         TextView textView = view.findViewById(R.id.fingerprint_textview);
         textView.setText(message.toString());
         textView.setTextColor(ContextCompat.getColor(getContext(), R.color.error));
