@@ -116,7 +116,9 @@ public class IntroSeedFragment extends BaseFragment {
         for (int i = 0; i < text.length(); i++) {
             char letter = text.toString().toLowerCase().charAt(i);
             if (!Credentials.VALID_SEED_CHARACTERS.contains(letter)) {
-                text.delete(i, i+1);
+                if (text.length() > 0) {
+                    text.delete(i, i + 1);
+                }
             }
         }
     }
