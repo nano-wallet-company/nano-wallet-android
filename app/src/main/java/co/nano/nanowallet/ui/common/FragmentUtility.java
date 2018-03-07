@@ -157,7 +157,11 @@ public class FragmentUtility {
         int backStackEntry = mFragmentManager.getBackStackEntryCount();
         if (backStackEntry > 0) {
             for (int i = 0; i < backStackEntry; i++) {
-                mFragmentManager.popBackStackImmediate();
+                try {
+                    mFragmentManager.popBackStackImmediate();
+                } catch (Exception e) {
+                    ExceptionHandler.handle(e);
+                }
             }
         }
 
@@ -167,8 +171,8 @@ public class FragmentUtility {
                 Fragment mFragment = mFragmentManager.getFragments().get(i);
                 if (mFragment != null) {
                     try {
-                        mFragmentManager.beginTransaction().remove(mFragment).commit();
-                    } catch(Exception e) {
+                        mFragmentManager.beginTransaction().remove(mFragment).commitAllowingStateLoss();
+                    } catch (Exception e) {
                         ExceptionHandler.handle(e);
                     }
                 }
