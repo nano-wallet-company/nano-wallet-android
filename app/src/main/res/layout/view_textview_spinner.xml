@@ -3,9 +3,10 @@
     android:id="@+id/textview_spinner"
     style="@style/TextStyle15"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="50dp"
+    android:layout_centerVertical="true"
+    android:background="@drawable/bg_border_bottom_green"
+    android:gravity="center_vertical"
     android:paddingLeft="38dp"
     android:paddingRight="38dp"
-    android:gravity="center_vertical"
-    android:height="50dp"
-    android:background="@drawable/bg_border_bottom_green"/>
+    android:textAlignment="gravity" />
