@@ -13,7 +13,9 @@ import com.google.gson.internal.LinkedTreeMap;
 import java.math.BigInteger;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -68,7 +70,6 @@ public class AccountService {
 
     private WebSocket websocket;
     private boolean connected = false;
-    private boolean isUpdatingQueue = false;
     private Queue<RequestItem> requestQueue = new LinkedList<>();
     private String private_key;
     private Address address;
@@ -236,7 +237,7 @@ public class AccountService {
             }
 
             // remove item from queue and process
-            if (!(event instanceof CurrentPriceResponse) && !isUpdatingQueue) {
+            if (!(event instanceof CurrentPriceResponse)) {
                 requestQueue.poll();
             }
             processQueue();
@@ -279,9 +280,7 @@ public class AccountService {
         Handler handler = new Handler(Looper.getMainLooper());
         handler.post(() -> {
             // work response received so remove that work item from the queue
-            if (!isUpdatingQueue) {
-                requestQueue.poll();
-            }
+            requestQueue.poll();
 
             // make sure the next item is a Block type and update the work on that type
             RequestItem nextRequest = requestQueue.peek();
@@ -325,9 +324,7 @@ public class AccountService {
                     ExceptionHandler.handle(new Throwable("Queue Error: something is out of sync if this wasn't a block"));
                 }
             }
-            if (!isUpdatingQueue) {
-                requestQueue.poll();
-            }
+            requestQueue.poll();
             processQueue();
         });
     }
@@ -343,16 +340,12 @@ public class AccountService {
             if (o instanceof LinkedTreeMap) {
                 processLinkedTreeMap((LinkedTreeMap) o);
             } else {
-                if (!isUpdatingQueue) {
-                    requestQueue.poll();
-                }
+                requestQueue.poll();
                 processQueue();
             }
         } catch (JsonSyntaxException e) {
             ExceptionHandler.handle(e);
-            if (!isUpdatingQueue) {
-                requestQueue.poll();
-            }
+            requestQueue.poll();
             processQueue();
         }
     }
@@ -380,9 +373,7 @@ public class AccountService {
                 }
             }
         }
-        if (!isUpdatingQueue) {
-            requestQueue.poll();
-        }
+        requestQueue.poll();
         processQueue();
     }
 
@@ -416,10 +407,8 @@ public class AccountService {
                     websocket.send(gson.toJson(requestItem.getRequest()));
                 }
             } else if (requestItem != null && (requestItem.isProcessing() && System.currentTimeMillis() > requestItem.getExpireTime())) {
-                // null item or expired request on the queue so remove and go to the next
-                if (!isUpdatingQueue) {
-                    requestQueue.poll();
-                }
+                // expired request on the queue so remove and go to the next
+                requestQueue.poll();
                 processQueue();
             }
         }
@@ -621,7 +610,6 @@ public class AccountService {
      * @param blockCount Block count
      */
     private void updateBlockCount(int blockCount) {
-        isUpdatingQueue = true;
         wallet.setBlockCount(blockCount);
         if (requestQueue != null) {
             for (RequestItem item : requestQueue) {
@@ -632,7 +620,6 @@ public class AccountService {
                 }
             }
         }
-        isUpdatingQueue = false;
     }
 
 
@@ -642,19 +629,24 @@ public class AccountService {
      * @param frontier
      */
     private void updateFrontier(String frontier) {
-        isUpdatingQueue = true;
         wallet.setFrontierBlock(frontier);
+        List<Object> objectsToUpdate = new ArrayList<>();
         if (requestQueue != null) {
             for (RequestItem item : requestQueue) {
                 Object o = item.getRequest();
-                if (o instanceof ReceiveBlock && !item.isProcessing()) {
-                    ((ReceiveBlock) o).setPrevious(frontier);
-                } else if (item.getRequest() instanceof WorkRequest && !item.isProcessing()) {
-                    ((WorkRequest) o).setHash(frontier);
+                if ((o instanceof ReceiveBlock || o instanceof WorkRequest) && !item.isProcessing()) {
+                    objectsToUpdate.add(o);
                 }
             }
         }
-        isUpdatingQueue = false;
+
+        for (Object o : objectsToUpdate) {
+            if (o != null && o instanceof ReceiveBlock) {
+                ((ReceiveBlock) o).setPrevious(frontier);
+            } else if (o != null && o instanceof WorkRequest) {
+                ((WorkRequest) o).setHash(frontier);
+            }
+        }
     }
 
     /**
