@@ -6,6 +6,6 @@
     android:layout_height="wrap_content"
     android:paddingLeft="38dp"
     android:paddingRight="38dp"
-    android:paddingTop="13dp"
-    android:paddingBottom="13dp"
+    android:gravity="center_vertical"
+    android:height="50dp"
     android:background="@drawable/bg_border_bottom_green"/>

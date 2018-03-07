@@ -47,7 +47,7 @@
         <Spinner
             android:id="@+id/settings_local_currency_spinner"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
+            android:layout_height="50dp"
             android:layout_marginLeft="38dp"
             android:layout_marginRight="38dp"
             android:background="@drawable/bg_spinner"

@@ -45,7 +45,7 @@
             android:text="@string/receive_card_title"
             android:textAllCaps="true"
             android:textColor="@color/bright_white"
-            android:textSize="24sp"
+            android:textSize="24dp"
             app:layout_constraintStart_toEndOf="@+id/card_logo"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="UnusedAttribute" />
@@ -61,7 +61,7 @@
             android:layout_marginTop="5dp"
             android:fontFamily="@font/sofiapro_regular"
             android:textColor="@color/bright_white"
-            android:textSize="18sp"
+            android:textSize="18dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/card_barcode"
             app:layout_constraintTop_toBottomOf="@+id/card_logo"
@@ -77,7 +77,7 @@
             android:fontFamily="@font/sofiapro_regular"
             android:text="@string/receive_card_label"
             android:textColor="@color/dark_sky_blue"
-            android:textSize="14sp"
+            android:textSize="14dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/card_barcode" />
 
