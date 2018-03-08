@@ -1,7 +1,7 @@
 package co.nano.nanowallet.bus;
 
 /**
- * Created by szeidner on 04/02/2018.
+ * Event when wallet history has been updated
  */
 
 public class WalletHistoryUpdate {

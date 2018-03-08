@@ -27,8 +27,7 @@ public enum AvailableCurrency {
     }
 
     public String getFullDisplayName() {
-        StringBuilder sb = new StringBuilder();
-        return sb.append(getCurrencySymbol()).append(" ").append(getDisplayName()).toString();
+        return getCurrencySymbol() + " " + getDisplayName();
     }
 
     public String getDisplayName() {

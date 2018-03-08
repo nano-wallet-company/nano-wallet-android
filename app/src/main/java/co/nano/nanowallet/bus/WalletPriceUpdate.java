@@ -1,7 +1,7 @@
 package co.nano.nanowallet.bus;
 
 /**
- * Created by szeidner on 06/02/2018.
+ * Event when wallet prices have been updated
  */
 
 public class WalletPriceUpdate {

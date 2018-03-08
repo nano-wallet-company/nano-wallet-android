@@ -42,6 +42,7 @@ public class NanoWalletTest extends InstrumentationTestCase {
     @Before
     @UiThreadTest
     public void setUp() throws Exception {
+        super.setUp();
         // build the activity component
         testActivityComponent = DaggerTestActivityComponent
                 .builder()
@@ -69,5 +70,6 @@ public class NanoWalletTest extends InstrumentationTestCase {
 
     @After
     public void tearDown() throws Exception {
+        super.tearDown();
     }
 }

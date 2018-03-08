@@ -1,7 +1,7 @@
 package co.nano.nanowallet;
 
-/**
- * Utilities for crypto functions
+/*
+  Utilities for crypto functions
  */
 
 import org.libsodium.jni.NaCl;
@@ -75,7 +75,7 @@ public class NanoUtil {
      * @param source         Source address
      * @param representative Representative address
      * @param account        Account address
-     * @return
+     * @return Open Hash
      */
     public static String computeOpenHash(String source, String representative, String account) {
         Sodium sodium = NaCl.sodium();
@@ -152,7 +152,7 @@ public class NanoUtil {
      *
      * @param private_key Private Key
      * @param data        Message
-     * @return
+     * @return Signed message
      */
     public static String sign(String private_key, String data) {
         Sodium sodium = NaCl.sodium();
@@ -292,7 +292,7 @@ public class NanoUtil {
         StringBuilder output = new StringBuilder();
         int slice = data.length() / 5;
         for (int this_slice = 0; this_slice < slice; this_slice++) {
-            output.append(codeCharArray[Integer.parseInt(data.substring(this_slice * 5, this_slice * 5 + 5).toString(), 2)]);
+            output.append(codeCharArray[Integer.parseInt(data.substring(this_slice * 5, this_slice * 5 + 5), 2)]);
         }
         return output.toString();
     }

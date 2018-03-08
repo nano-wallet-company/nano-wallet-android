@@ -626,7 +626,7 @@ public class AccountService {
     /**
      * Update frontier block in wallet and on any pending receive requests
      *
-     * @param frontier
+     * @param frontier Frontier hash
      */
     private void updateFrontier(String frontier) {
         wallet.setFrontierBlock(frontier);

@@ -21,7 +21,7 @@ public class UIUtil {
      * Last 5 characters are orange
      *
      * @param s       Spannable
-     * @param context
+     * @param context Context
      */
     public static void colorizeSpannable(Spannable s, Context context) {
         if (context == null) {
@@ -41,7 +41,7 @@ public class UIUtil {
      * Last 5 characters are orange
      *
      * @param s       Spannable
-     * @param context
+     * @param context Context
      */
     public static void colorizeSeed(Spannable s, Context context) {
         if (context == null) {

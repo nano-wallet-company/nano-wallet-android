@@ -68,7 +68,7 @@ public class HomeFragment extends BaseFragment {
     /**
      * Create new instance of the fragment (handy pattern if any data needs to be passed to it)
      *
-     * @return
+     * @return HomeFragment
      */
     public static HomeFragment newInstance() {
         Bundle args = new Bundle();
@@ -261,7 +261,7 @@ public class HomeFragment extends BaseFragment {
          * Execute all pending transactions and set up a listener to set the status bar to
          * blue when the dialog is closed
          *
-         * @param dialog
+         * @param dialog Instance of the dialog to listen for closing on
          */
         private void resetStatusBar(BaseDialogFragment dialog) {
             // make sure that dialog is not null

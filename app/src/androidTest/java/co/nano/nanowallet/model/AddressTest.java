@@ -33,7 +33,7 @@ public class AddressTest extends InstrumentationTestCase {
 
     @Before
     public void setUp() throws Exception {
-
+        super.setUp();
     }
 
     @Test
@@ -63,5 +63,6 @@ public class AddressTest extends InstrumentationTestCase {
 
     @After
     public void tearDown() throws Exception {
+        super.tearDown();
     }
 }

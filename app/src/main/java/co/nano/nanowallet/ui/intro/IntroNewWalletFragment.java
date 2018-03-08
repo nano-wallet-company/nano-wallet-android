@@ -25,6 +25,7 @@ import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.home.HomeFragment;
+import co.nano.nanowallet.util.ExceptionHandler;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
 import io.realm.Realm;
 
@@ -49,7 +50,7 @@ public class IntroNewWalletFragment extends BaseFragment {
     /**
      * Create new instance of the fragment (handy pattern if any data needs to be passed to it)
      *
-     * @return
+     * @return IntroNewWalletFragment instance
      */
     public static IntroNewWalletFragment newInstance() {
         Bundle args = new Bundle();
@@ -78,11 +79,15 @@ public class IntroNewWalletFragment extends BaseFragment {
 
         // get seed from storage
         Credentials credentials = realm.where(Credentials.class).findFirst();
-        seed = credentials.getSeed();
+        if (credentials != null) {
+            seed = credentials.getSeed();
+            binding.setSeed(seed);
+        } else {
+            ExceptionHandler.handle(new Throwable("Problem accessing generated seed"));
+        }
 
         // bind data to view
         binding.setHandlers(new ClickHandlers());
-        binding.setSeed(seed);
         binding.introNewWalletMessage.setText(Html.fromHtml(getString(R.string.intro_new_wallet_message)));
 
         accountService.open();
@@ -95,7 +100,7 @@ public class IntroNewWalletFragment extends BaseFragment {
         /**
          * Confirm button listener
          *
-         * @param view
+         * @param view View
          */
         public void onClickConfirm(View view) {
             Answers.getInstance().logCustom(new CustomEvent("Seed Confirmation Continue Button Pressed"));
@@ -131,7 +136,7 @@ public class IntroNewWalletFragment extends BaseFragment {
         /**
          * Seed Click Listener
          *
-         * @param view
+         * @param view View
          */
         public void onClickSeed(View view) {
             Answers.getInstance().logCustom(new CustomEvent("Seed Copied").putCustomAttribute("location", "seed confirmation"));

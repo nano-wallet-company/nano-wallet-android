@@ -69,7 +69,7 @@ public class SettingsDialogFragment extends BaseDialogFragment {
     /**
      * Create new instance of the dialog fragment (handy pattern if any data needs to be passed to it)
      *
-     * @return
+     * @return New instance of SettingsDialogFragment
      */
     public static SettingsDialogFragment newInstance() {
         Bundle args = new Bundle();
@@ -151,7 +151,7 @@ public class SettingsDialogFragment extends BaseDialogFragment {
     /**
      * Get list of all of the available currencies
      *
-     * @return
+     * @return Lost of all currencies the app supports
      */
     private List<StringWithTag> getAllCurrencies() {
         List<StringWithTag> itemList = new ArrayList<>();
@@ -162,9 +162,9 @@ public class SettingsDialogFragment extends BaseDialogFragment {
     }
 
     /**
-     * Get list of all of the available currencies
+     * Get Index of a particular currency
      *
-     * @return
+     * @return Index of a particular currency in the spinner
      */
     private int getIndexOf(AvailableCurrency currency, List<StringWithTag> availableCurrencies) {
         int i = 0;
@@ -249,12 +249,14 @@ public class SettingsDialogFragment extends BaseDialogFragment {
                     Answers.getInstance().logCustom(new CustomEvent("Seed Copied"));
                     // copy seed to clipboard
                     android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-                    android.content.ClipData clip = android.content.ClipData.newPlainText("seed", credentials.getSeed());
-                    if (clipboard != null) {
-                        clipboard.setPrimaryClip(clip);
-                    }
+                    if (credentials != null) {
+                        android.content.ClipData clip = android.content.ClipData.newPlainText("seed", credentials.getSeed());
+                        if (clipboard != null) {
+                            clipboard.setPrimaryClip(clip);
+                        }
 
-                    setClearClipboardAlarm();
+                        setClearClipboardAlarm();
+                    }
                 })
                 .setNegativeButton(R.string.settings_seed_alert_cancel_cta, (dialog, which) -> {
                     // do nothing which dismisses the dialog
@@ -269,10 +271,7 @@ public class SettingsDialogFragment extends BaseDialogFragment {
         builder.setMessage(getString(R.string.settings_fingerprint_description));
         builder.setView(view);
         String negativeText = getString(android.R.string.cancel);
-        builder.setNegativeButton(negativeText,
-                (dialog, which) -> {
-                    Reprint.cancelAuthentication();
-                });
+        builder.setNegativeButton(negativeText, (dialog, which) -> Reprint.cancelAuthentication());
 
         fingerprintDialog = builder.create();
         fingerprintDialog.setCanceledOnTouchOutside(false);

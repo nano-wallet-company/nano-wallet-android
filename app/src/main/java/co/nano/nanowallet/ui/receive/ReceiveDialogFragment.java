@@ -55,7 +55,7 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
     /**
      * Create new instance of the dialog fragment (handy pattern if any data needs to be passed to it)
      *
-     * @return
+     * @return ReceiveDialogFragment instance
      */
     public static ReceiveDialogFragment newInstance() {
         Bundle args = new Bundle();
@@ -81,8 +81,7 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
         }
 
         // get data
-        Credentials credentials = null;
-        credentials = realm.where(Credentials.class).findFirst();
+        Credentials credentials = realm.where(Credentials.class).findFirst();
         if (credentials != null) {
             address = new Address(credentials.getAddressString());
         }

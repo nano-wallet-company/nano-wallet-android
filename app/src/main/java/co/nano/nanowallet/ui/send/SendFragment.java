@@ -85,7 +85,7 @@ public class SendFragment extends BaseFragment {
     /**
      * Create new instance of the fragment (handy pattern if any data needs to be passed to it)
      *
-     * @return
+     * @return New instance of SendFragment
      */
     public static SendFragment newInstance() {
         Bundle args = new Bundle();
@@ -172,9 +172,7 @@ public class SendFragment extends BaseFragment {
         binding.sendAmountLocalcurrency.setHint(NumberFormat.getCurrencyInstance(getLocalCurrency().getLocale()).format(0));
         binding.setShowAmount(true);
 
-        binding.sendAddress.setOnFocusChangeListener((view12, hasFocus) -> {
-            binding.setShowAmount(!hasFocus);
-        });
+        binding.sendAddress.setOnFocusChangeListener((view12, hasFocus) -> binding.setShowAmount(!hasFocus));
 
         binding.sendAddress.setBackgroundResource(binding.sendAddress.getText().length() > 0 ? R.drawable.bg_seed_input_active : R.drawable.bg_seed_input);
         UIUtil.colorizeSpannable(binding.sendAddress.getText(), getContext());
@@ -224,7 +222,7 @@ public class SendFragment extends BaseFragment {
     /**
      * Event that occurs if an amount entered is invalid
      *
-     * @param sendInvalidAmount
+     * @param sendInvalidAmount Send Invalid Amount event
      */
     @Subscribe
     public void receiveInvalidAmount(SendInvalidAmount sendInvalidAmount) {
@@ -239,7 +237,7 @@ public class SendFragment extends BaseFragment {
     /**
      * Catch errors from the service
      *
-     * @param errorResponse
+     * @param errorResponse Error Resposne event
      */
     @Subscribe
     public void receiveServiceError(ErrorResponse errorResponse) {
@@ -344,9 +342,9 @@ public class SendFragment extends BaseFragment {
     /**
      * Helper to set focus size and color on fields
      *
-     * @param v
-     * @param hasFocus
-     * @param isLocalCurrency
+     * @param v EditText view
+     * @param hasFocus Does view have focus currently?
+     * @param isLocalCurrency Is this view the local currency view?
      */
     private void toggleFieldFocus(EditText v, boolean hasFocus, boolean isLocalCurrency) {
         localCurrencyActive = isLocalCurrency;
@@ -425,10 +423,10 @@ public class SendFragment extends BaseFragment {
         /**
          * Listener for styling updates when text changes
          *
-         * @param s
-         * @param start
-         * @param before
-         * @param count
+         * @param s Character sequence
+         * @param start Starting character
+         * @param before Character that came before
+         * @param count Total character count
          */
         public void onAddressTextChanged(CharSequence s, int start, int before, int count) {
             // set background to active or not
@@ -501,10 +499,7 @@ public class SendFragment extends BaseFragment {
                 !wallet.getSendNanoAmountFormatted().isEmpty() ? wallet.getSendNanoAmountFormatted() : "0"));
         builder.setView(view);
         String negativeText = getString(android.R.string.cancel);
-        builder.setNegativeButton(negativeText,
-                (dialog, which) -> {
-                    Reprint.cancelAuthentication();
-                });
+        builder.setNegativeButton(negativeText, (dialog, which) -> Reprint.cancelAuthentication());
 
         fingerprintDialog = builder.create();
         fingerprintDialog.setCanceledOnTouchOutside(false);

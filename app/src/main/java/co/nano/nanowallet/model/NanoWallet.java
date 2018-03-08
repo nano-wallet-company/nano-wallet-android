@@ -177,7 +177,7 @@ public class NanoWallet {
     /**
      * Return the currency formatted local currency amount as a string
      *
-     * @return
+     * @return Formatted Nano amount
      */
     public String getSendNanoAmountFormatted() {
         if (sendNanoAmount.length() > 0) {
@@ -189,8 +189,8 @@ public class NanoWallet {
 
     /**
      * Remove any non-currency characters
-     * @param amount
-     * @return
+     * @param amount Unsanitized string
+     * @return Santized string with everything but digits, decimal points, and commas removed
      */
     public String sanitize(String amount) {
         return amount.replaceAll("[^\\d.,]", "");
@@ -198,8 +198,8 @@ public class NanoWallet {
 
     /**
      * Remove all but digits and decimals
-     * @param amount
-     * @return
+     * @param amount Unsanitized string
+     * @return Santized string with everything but digits and decimal points removed
      */
     public String sanitizeNoCommas(String amount) {
         return amount.replaceAll("[^\\d.]", "");
@@ -246,7 +246,7 @@ public class NanoWallet {
     /**
      * Return the  local currency amount as a string
      *
-     * @return
+     * @return Local currency amount
      */
     public String getLocalCurrencyAmount() {
         return sendLocalCurrencyAmount;
@@ -255,7 +255,7 @@ public class NanoWallet {
     /**
      * Return the currency formatted local currency amount as a string
      *
-     * @return
+     * @return Formatted local currency amount
      */
     public String getSendLocalCurrencyAmountFormatted() {
         if (sendLocalCurrencyAmount.length() > 0) {
@@ -386,7 +386,7 @@ public class NanoWallet {
     /**
      * Receive account subscribe response
      *
-     * @param subscribeResponse
+     * @param subscribeResponse Subscribe response
      */
     @Subscribe
     public void receiveSubscribe(SubscribeResponse subscribeResponse) {
@@ -415,7 +415,7 @@ public class NanoWallet {
     /**
      * Receive a history update
      *
-     * @param accountHistoryResponse
+     * @param accountHistoryResponse Account history response
      */
     @Subscribe
     public void receiveHistory(AccountHistoryResponse accountHistoryResponse) {
@@ -426,7 +426,7 @@ public class NanoWallet {
     /**
      * Receive a current price response
      *
-     * @param currentPriceResponse
+     * @param currentPriceResponse Current price response
      */
     @Subscribe
     public void receiveCurrentPrice(CurrentPriceResponse currentPriceResponse) {
@@ -446,7 +446,7 @@ public class NanoWallet {
     /**
      * Receive clear wallet
      *
-     * @param walletClear
+     * @param walletClear Wallet Clear event
      */
     @Subscribe
     public void receiveClear(WalletClear walletClear) {

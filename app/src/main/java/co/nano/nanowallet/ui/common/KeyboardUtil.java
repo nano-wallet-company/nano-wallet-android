@@ -6,16 +6,20 @@ import android.view.inputmethod.InputMethodManager;
 
 public class KeyboardUtil {
     public static void showKeyboard(Context context, View v) {
-        if(context == null || v == null) return;
+        if (context == null || v == null) return;
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        imm.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);
+        if (imm != null) {
+            imm.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);
+        }
     }
 
     public static void hideKeyboard(Context context, View v) {
-        if(context == null || v == null) return;
+        if (context == null || v == null) return;
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        }
     }
 }

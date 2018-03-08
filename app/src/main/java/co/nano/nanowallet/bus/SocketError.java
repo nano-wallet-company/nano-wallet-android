@@ -1,7 +1,7 @@
 package co.nano.nanowallet.bus;
 
 /**
- * Created by szeidner on 23/02/2018.
+ * Event when error occurs on the websocket
  */
 
 public class SocketError {

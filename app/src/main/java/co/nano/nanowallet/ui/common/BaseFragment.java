@@ -88,7 +88,7 @@ public class BaseFragment extends Fragment {
     /**
      * Set drawable on the toolbar
      *
-     * @param drawable
+     * @param drawable Drawable reference
      */
     protected void setTitleDrawable(int drawable) {
         if (getActivity() instanceof WindowControl) {
@@ -99,7 +99,7 @@ public class BaseFragment extends Fragment {
     /**
      * Enable or disable back button
      *
-     * @param enabled
+     * @param enabled Is enabled or not
      */
     protected void setBackEnabled(boolean enabled) {
         if (getActivity() instanceof WindowControl) {

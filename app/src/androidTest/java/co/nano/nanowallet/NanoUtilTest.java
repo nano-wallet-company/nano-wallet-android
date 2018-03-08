@@ -27,6 +27,7 @@ public class NanoUtilTest extends InstrumentationTestCase {
 
     @Before
     public void setUp() throws Exception {
+        super.setUp();
         seed = "387151e6ea2a42eead77f26b1c0fc4c485df4e78902ada848ff97fc5dce85e81";
         privateKey = "C5469190B25E850CED298E57723258F716A4E1956AC2BC60DA023300476D1212";
         publicKey = "9D473FD0CAD0D43DD79B9FDCAC6FED51EDE7E78279A84142290487CF864B8B8F";
@@ -92,6 +93,7 @@ public class NanoUtilTest extends InstrumentationTestCase {
 
     @After
     public void tearDown() throws Exception {
+        super.tearDown();
     }
 }
 

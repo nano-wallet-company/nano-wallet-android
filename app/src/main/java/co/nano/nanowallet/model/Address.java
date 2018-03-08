@@ -40,10 +40,9 @@ public class Address implements Serializable {
         int frontStartIndex = 0;
         int frontEndIndex = hasXrbAddressFormat() ? 9 : 10;
         int backStartIndex = value.length() - 5;
-        StringBuilder sb = new StringBuilder();
-        return sb.append(value.substring(frontStartIndex, frontEndIndex))
-                .append("...")
-                .append(value.substring(backStartIndex, value.length())).toString();
+        return value.substring(frontStartIndex, frontEndIndex) +
+                "..." +
+                value.substring(backStartIndex, value.length());
     }
 
     public Spannable getColorizedShortSpannable() {

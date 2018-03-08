@@ -128,10 +128,10 @@ public class IntroSeedFragment extends BaseFragment {
         /**
          * Listener for styling updates when text changes
          *
-         * @param s
-         * @param start
-         * @param before
-         * @param count
+         * @param s Character sequence
+         * @param start Starting character
+         * @param before Character that came before
+         * @param count Total character count
          */
         public void onSeedTextChanged(CharSequence s, int start, int before, int count) {
             // update background color based on entry length
@@ -164,7 +164,7 @@ public class IntroSeedFragment extends BaseFragment {
         /**
          * Confirm button listener
          *
-         * @param view
+         * @param view View
          */
         public void onClickConfirm(View view) {
             createAndStoreCredentials(binding.introSeedSeed.getText().toString());
@@ -187,7 +187,7 @@ public class IntroSeedFragment extends BaseFragment {
         /**
          * Camera click listener
          *
-         * @param view
+         * @param view View
          */
         public void onClickCamera(View view) {
             Answers.getInstance().logCustom(new CustomEvent("Seed Scan Camera View Viewed"));
