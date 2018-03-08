@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         Credentials credentials = realm.where(Credentials.class).findFirst();
 
         if (credentials == null) {
-            // if we dont have a wallet, start the intro
+            // if we don't have a wallet, start the intro
             mFragmentUtility.clearStack();
             mFragmentUtility.replace(new IntroWelcomeFragment());
         } else {

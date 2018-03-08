@@ -33,7 +33,6 @@ import io.realm.Realm;
  */
 
 public class IntroNewWalletFragment extends BaseFragment {
-    private FragmentIntroNewWalletBinding binding;
     private int currentStep = 1;
     public static String TAG = IntroNewWalletFragment.class.getSimpleName();
     private String seed;
@@ -70,7 +69,7 @@ public class IntroNewWalletFragment extends BaseFragment {
             ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
         }
         // inflate the view
-        binding = DataBindingUtil.inflate(
+        FragmentIntroNewWalletBinding binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_intro_new_wallet, container, false);
         View view = binding.getRoot();
 

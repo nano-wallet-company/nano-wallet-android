@@ -16,7 +16,7 @@ public class NumberUtil {
     public static final BigInteger nanoDivider = baseOfDivider.pow(24);
 
     /**
-     * Go from 32-bit raw NANO to user readable bigdecimal
+     * Go from 32-bit raw NANO to user readable big decimal
      *
      * @param raw 1000000000000000000000000000000
      * @return BigDecimal value 1.000000000000000000000000000000

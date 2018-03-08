@@ -1,5 +1,6 @@
 package co.nano.nanowallet.ui.settings;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.databinding.BindingAdapter;
@@ -186,7 +187,7 @@ public class SettingsDialogFragment extends BaseDialogFragment {
             if (Reprint.isHardwarePresent() && Reprint.hasFingerprintRegistered()) {
                 // show fingerprint dialog
                 LayoutInflater factory = LayoutInflater.from(getContext());
-                final View viewFingerprint = factory.inflate(R.layout.view_fingerprint, null);
+                @SuppressLint("InflateParams") final View viewFingerprint = factory.inflate(R.layout.view_fingerprint, null);
                 showFingerprintDialog(viewFingerprint);
                 com.github.ajalt.reprint.rxjava2.RxReprint.authenticate()
                         .subscribe(result -> {

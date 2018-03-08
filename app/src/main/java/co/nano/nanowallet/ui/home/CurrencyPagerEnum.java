@@ -3,7 +3,7 @@ package co.nano.nanowallet.ui.home;
 import co.nano.nanowallet.R;
 
 /**
- * Created by szeidner on 12/01/2018.
+ * View Pager types
  */
 
 public enum CurrencyPagerEnum {

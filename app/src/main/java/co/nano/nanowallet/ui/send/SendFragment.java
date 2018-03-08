@@ -1,5 +1,6 @@
 package co.nano.nanowallet.ui.send;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -458,7 +459,7 @@ public class SendFragment extends BaseFragment {
             if (Reprint.isHardwarePresent() && Reprint.hasFingerprintRegistered()) {
                 // show fingerprint dialog
                 LayoutInflater factory = LayoutInflater.from(getContext());
-                final View viewFingerprint = factory.inflate(R.layout.view_fingerprint, null);
+                @SuppressLint("InflateParams") final View viewFingerprint = factory.inflate(R.layout.view_fingerprint, null);
                 showFingerprintDialog(viewFingerprint);
                 com.github.ajalt.reprint.rxjava2.RxReprint.authenticate()
                         .subscribe(result -> {

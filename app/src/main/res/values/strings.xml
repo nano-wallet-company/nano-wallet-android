@@ -4,7 +4,6 @@
     <string name="version_display">NANO V%1$s (%2$d)</string>
 
     <!-- Intro Screens -->
-    <string name="intro_logo_transition">LogoTransition</string>
     <string name="intro_welcome_title">Welcome to Nano</string>
     <string name="intro_welcome_new_wallet_cta">Start a new wallet</string>
     <string name="intro_welcome_have_wallet_cta">I already have a wallet</string>
@@ -28,9 +27,6 @@
     <!-- Home Screen -->
     <string name="home_send_cta">Send</string>
     <string name="home_receive_cta">Receive</string>
-    <string name="symbol_btc">\u20BF</string>
-    <string name="symbol_usd">$</string>
-    <string name="ellipsis">&#8230;</string>
     <string name="home_explore_url">https://nano.org/en/explore/block/%s</string>
     <string name="error_message">There was a problem connecting. Please try again.</string>
 
@@ -49,7 +45,6 @@
     <string name="settings_logout_alert_cancel_cta">Cancel</string>
     <string name="settings_fingerprint_title">Copy Wallet Seed</string>
     <string name="settings_fingerprint_description">Verify your identity to view your wallet seed.</string>
-    <string name="settings_fingerprint_hint">Touch sensor</string>
     <string name="settings_fingerprint_success">Fingerprint recognized</string>
 
     <!-- Receive Screen -->
@@ -62,6 +57,7 @@
     <string name="receive_share_title">Share via…</string>
     <string name="receive_card_label">$nano\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020nano.co</string>
     <string name="receive_card_title">Nano</string>
+    <string name="receive_qrcode_description">QR Code</string>
 
     <!-- Send Screen -->
     <string name="send_title">Send To</string>
@@ -88,7 +84,6 @@
     <string name="send_amount_too_large_alert_cta">Okay</string>
     <string name="send_error_alert_title">Something Went Wrong</string>
     <string name="send_error_alert_message">There was a problem sending Nano. Please try again.</string>
-    <string name="send_error_cta">Okay</string>
     <string name="send_confirm_address_cta">Confirm Address</string>
     <string name="send_fingerprint_title">Send Nano</string>
     <string name="send_fingerprint_description">Confirm fingerprint to send %s Nano</string>

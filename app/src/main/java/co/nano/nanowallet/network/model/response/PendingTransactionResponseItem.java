@@ -38,7 +38,7 @@ public class PendingTransactionResponseItem {
         return source;
     }
 
-    public void setSource(String account) {
+    public void setSource(String source) {
         this.source = source;
     }
 

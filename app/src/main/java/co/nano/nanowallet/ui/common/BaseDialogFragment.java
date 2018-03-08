@@ -14,7 +14,7 @@ import co.nano.nanowallet.R;
 import co.nano.nanowallet.broadcastreceiver.ClipboardAlarmReceiver;
 
 /**
- * Created by szeidner on 12/01/2018.
+ * Base class for dialog fragments
  */
 
 public class BaseDialogFragment extends DialogFragment {

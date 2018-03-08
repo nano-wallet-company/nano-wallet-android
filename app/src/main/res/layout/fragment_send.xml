@@ -316,6 +316,7 @@
             style="@style/NumberButton"
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
             android:onClick="@{handlers::onClickNumKeyboard}"
             android:text="@string/send_keyboard_decimal"
             app:layout_constraintBottom_toTopOf="@+id/send_send_button"

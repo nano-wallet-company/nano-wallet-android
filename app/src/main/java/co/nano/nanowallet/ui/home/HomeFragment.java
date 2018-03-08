@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
-import com.google.gson.internal.LinkedTreeMap;
 import com.hwangjr.rxbus.annotation.Subscribe;
 
 import java.math.BigDecimal;
@@ -196,11 +195,6 @@ public class HomeFragment extends BaseFragment {
             // account is on the network, so send a pending request
             accountService.requestPending();
         }
-    }
-
-    @Subscribe
-    public void receivePendingBlocks(LinkedTreeMap pendingBlocks) {
-
     }
 
     @Subscribe
