@@ -9,7 +9,6 @@
 ### Building From the command line
 
 * Execute `./gradlew assembleDebug` to create a debug APK
-* Execute `/gradlew installDebugAndroidTest` to build and run all
 
 ### Contributing
 
