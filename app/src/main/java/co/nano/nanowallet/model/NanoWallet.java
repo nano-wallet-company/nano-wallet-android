@@ -298,7 +298,7 @@ public class NanoWallet {
      * @return String of Nano converted amount
      */
     private String convertLocalCurrencyToNano(String amount) {
-        if (amount.equals("0.")) {
+        if (amount.equals("0.") || amount.equals("0")) {
             return amount;
         } else {
             try {
