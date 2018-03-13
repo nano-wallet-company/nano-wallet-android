@@ -45,7 +45,7 @@
             app:layout_constraintBottom_toTopOf="@+id/send_button_confirm"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="visible" />
+            tools:visibility="gone" />
 
         <Button
             android:id="@+id/send_button_confirm"
@@ -61,7 +61,7 @@
             android:visibility="@{safeUnbox(showAmount) ? View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toTopOf="@+id/send_guideline_amounts_top"
             app:layout_constraintStart_toStartOf="parent"
-            tools:visibility="visible" />
+            tools:visibility="gone" />
 
         <TextView
             android:id="@+id/send_address_display"
@@ -80,7 +80,7 @@
             app:layout_constraintBottom_toTopOf="@+id/send_guideline_amounts_top"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="gone" />
+            tools:visibility="visible" />
 
         <FrameLayout
             android:id="@+id/send_amounts_background"
@@ -90,6 +90,46 @@
             app:layout_constraintBottom_toTopOf="@+id/send_guideline_keyboard_top"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/send_guideline_amounts_top" />
+
+        <LinearLayout
+            android:id="@+id/send_amount_nano_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:onClick="@{handlers::onClickNanoContainer}"
+            android:orientation="horizontal"
+            android:paddingEnd="20dp"
+            android:paddingRight="20dp"
+            app:layout_constraintBottom_toTopOf="@+id/send_arrows"
+            app:layout_constraintEnd_toStartOf="@+id/send_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/send_guideline_vert"
+            app:layout_constraintTop_toTopOf="@+id/send_guideline_amounts_top">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/send_amount_nano_symbol"
+                style="@style/SendAmountInput"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginEnd="3dp"
+                android:layout_marginRight="3dp"
+                app:srcCompat="@drawable/ic_currency_nano_white" />
+
+            <EditText
+                android:id="@+id/send_amount_nano"
+                style="@style/SendAmountInput"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:hint="@string/send_nano_hint"
+                android:text="@{wallet.sendNanoAmountFormatted}"
+                android:textSize="20sp"
+                tools:text="0">
+
+                <requestFocus />
+            </EditText>
+
+        </LinearLayout>
 
         <Button
             android:id="@+id/send_max_button"
@@ -111,36 +151,6 @@
             app:layout_constraintStart_toStartOf="@+id/send_address"
             app:layout_constraintTop_toTopOf="@+id/send_guideline_amounts_top"
             tools:ignore="UnusedAttribute" />
-
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/send_amount_nano_symbol"
-            style="@style/SendAmountInput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginEnd="3dp"
-            android:layout_marginRight="3dp"
-            app:layout_constraintBottom_toTopOf="@+id/send_arrows"
-            app:layout_constraintEnd_toStartOf="@+id/send_amount_nano"
-            app:layout_constraintTop_toTopOf="@+id/send_guideline_amounts_top"
-            app:srcCompat="@drawable/ic_currency_nano_white" />
-
-        <EditText
-            android:id="@+id/send_amount_nano"
-            style="@style/SendAmountInput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="@string/send_nano_hint"
-            android:text="@{wallet.sendNanoAmountFormatted}"
-            android:textSize="20sp"
-            app:layout_constraintBottom_toTopOf="@+id/send_arrows"
-            app:layout_constraintEnd_toStartOf="@+id/send_guideline_vert"
-            app:layout_constraintStart_toStartOf="@+id/send_guideline_vert"
-            app:layout_constraintTop_toTopOf="@+id/send_guideline_amounts_top"
-            tools:text="123,405.695">
-
-            <requestFocus />
-        </EditText>
 
         <FrameLayout
             android:id="@+id/send_amounts_divider"
@@ -164,8 +174,9 @@
         <EditText
             android:id="@+id/send_amount_localcurrency"
             style="@style/SendAmountInput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="center"
             android:hint="@string/send_localcurrency_hint"
             android:text="@{wallet.sendLocalCurrencyAmountFormatted}"
             android:textSize="16sp"
@@ -396,7 +407,7 @@
             android:layout_height="wrap_content"
             android:visibility="@{safeUnbox(showAmount) ? View.VISIBLE : View.GONE}"
             app:constraint_referenced_ids="send_amounts_background,send_max_button,send_amount_nano_symbol,send_amount_nano,send_amounts_divider,send_arrows,send_amount_localcurrency"
-            tools:visibility="gone" />
+            tools:visibility="visible" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>

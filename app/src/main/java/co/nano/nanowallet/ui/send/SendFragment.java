@@ -34,6 +34,8 @@ import com.github.ajalt.reprint.core.Reprint;
 import com.hwangjr.rxbus.annotation.Subscribe;
 
 import java.math.BigInteger;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 
 import javax.inject.Inject;
@@ -355,6 +357,9 @@ public class SendFragment extends BaseFragment {
         // clear amounts
         wallet.clearSendAmounts();
         binding.setWallet(wallet);
+
+        // set local currency decimal separator if local currency is active, otherwise . for nano
+        binding.sendKeyboardDecimal.setText(localCurrencyActive ? getDecimalSeparator() : ".");
     }
 
     /**
@@ -374,7 +379,7 @@ public class SendFragment extends BaseFragment {
                     wallet.setSendNanoAmount(wallet.getSendNanoAmount().substring(0, wallet.getSendNanoAmount().length() - 1));
                 }
             }
-        } else if (value.equals(getString(R.string.send_keyboard_decimal))) {
+        } else if ((!localCurrencyActive && value.equals(getString(R.string.send_keyboard_decimal))) || (localCurrencyActive && value.equals(getDecimalSeparator()))) {
             // decimal point
             if (localCurrencyActive) {
                 if (!wallet.getLocalCurrencyAmount().contains(value)) {
@@ -419,6 +424,19 @@ public class SendFragment extends BaseFragment {
         Answers.getInstance().logCustom(new CustomEvent("Send Nano Began"));
     }
 
+    /**
+     * Get the decimal separator for the selected currency
+     * @return decimal separator (i.e. . or ,)
+     */
+    private String getDecimalSeparator() {
+        NumberFormat nf = NumberFormat.getInstance(wallet.getLocalCurrency().getLocale());
+        if (nf instanceof DecimalFormat) {
+            DecimalFormatSymbols sym = ((DecimalFormat) nf).getDecimalFormatSymbols();
+            return Character.toString(sym.getDecimalSeparator());
+        }
+        return ".";
+    }
+
     public class ClickHandlers {
         /**
          * Listener for styling updates when text changes
@@ -440,6 +458,10 @@ public class SendFragment extends BaseFragment {
             binding.setShowAmount(false);
             binding.sendAddress.setSelection(binding.sendAddress.getText().length());
             showSoftKeyboard();
+        }
+
+        public void onClickNanoContainer(View view) {
+            binding.sendAmountNano.requestFocus();
         }
 
         public void onClickConfirm(View view) {
