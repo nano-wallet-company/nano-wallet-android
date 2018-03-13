@@ -7,17 +7,32 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.SystemClock;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
 import android.view.View;
 
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.broadcastreceiver.ClipboardAlarmReceiver;
+import co.nano.nanowallet.util.ExceptionHandler;
 
 /**
  * Base class for dialog fragments
  */
 
 public class BaseDialogFragment extends DialogFragment {
+
+    @Override
+    public void show(FragmentManager manager, String tag) {
+
+        try {
+            FragmentTransaction ft = manager.beginTransaction();
+            ft.add(this, tag);
+            ft.commit();
+        } catch (IllegalStateException e) {
+            ExceptionHandler.handle(e);
+        }
+    }
 
     @Override
     public void onResume() {
