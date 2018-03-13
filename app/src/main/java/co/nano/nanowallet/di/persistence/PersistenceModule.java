@@ -64,7 +64,7 @@ public class PersistenceModule {
                             Base64.encodeToString(Vault.generateKey(), Base64.DEFAULT))
                     .apply();
         }
-        if (Vault.getVault() != null) {
+        if (Vault.getVault() != null && Vault.getVault().getString(Vault.ENCRYPTION_KEY_NAME, null) != null) {
             return Base64.decode(Vault.getVault().getString(Vault.ENCRYPTION_KEY_NAME, null), Base64.DEFAULT);
         } else {
             return null;
