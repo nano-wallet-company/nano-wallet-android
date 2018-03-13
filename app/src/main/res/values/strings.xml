@@ -83,7 +83,7 @@
     <string name="send_amount_too_large_alert_message">The amount you entered was larger than your Nano balance.\n\nWe\'ve filled the form with your full balance for sending.</string>
     <string name="send_amount_too_large_alert_cta">Okay</string>
     <string name="send_error_alert_title">Something Went Wrong</string>
-    <string name="send_error_alert_message">There was a problem sending Nano. Please try again.</string>
+    <string name="send_error_alert_message">We have detected an issue, and are working to resolve it. Please try again in a few minutes.</string>
     <string name="send_confirm_address_cta">Confirm Address</string>
     <string name="send_fingerprint_title">Send Nano</string>
     <string name="send_fingerprint_description">Confirm fingerprint to send %s Nano</string>

@@ -244,7 +244,17 @@ public class SendFragment extends BaseFragment {
     @Subscribe
     public void receiveServiceError(ErrorResponse errorResponse) {
         // show alert with a message to the user letting them know the amount they entered
-        showError(R.string.send_error_alert_title, errorResponse.getError());
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(getContext(), android.R.style.Theme_Material_Light_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(getContext());
+        }
+        builder.setMessage(R.string.send_error_alert_message)
+                .setPositiveButton(R.string.send_amount_too_large_alert_cta, (dialog, which) -> {
+                    goBack();
+                })
+                .show();
     }
 
     /**
@@ -344,8 +354,8 @@ public class SendFragment extends BaseFragment {
     /**
      * Helper to set focus size and color on fields
      *
-     * @param v EditText view
-     * @param hasFocus Does view have focus currently?
+     * @param v               EditText view
+     * @param hasFocus        Does view have focus currently?
      * @param isLocalCurrency Is this view the local currency view?
      */
     private void toggleFieldFocus(EditText v, boolean hasFocus, boolean isLocalCurrency) {
@@ -426,6 +436,7 @@ public class SendFragment extends BaseFragment {
 
     /**
      * Get the decimal separator for the selected currency
+     *
      * @return decimal separator (i.e. . or ,)
      */
     private String getDecimalSeparator() {
@@ -441,10 +452,10 @@ public class SendFragment extends BaseFragment {
         /**
          * Listener for styling updates when text changes
          *
-         * @param s Character sequence
-         * @param start Starting character
+         * @param s      Character sequence
+         * @param start  Starting character
          * @param before Character that came before
-         * @param count Total character count
+         * @param count  Total character count
          */
         public void onAddressTextChanged(CharSequence s, int start, int before, int count) {
             // set background to active or not
