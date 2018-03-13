@@ -23,8 +23,6 @@ import timber.log.Timber;
 
 public class NanoApplication extends MultiDexApplication {
     private ApplicationComponent mApplicationComponent;
-    private static final int SCHEMA_VERSION = 1;
-    private static final String REALM_NAME = "nano.realm";
 
     public void onCreate() {
         super.onCreate();

@@ -55,6 +55,8 @@ public class NanoWallet {
     private String sendLocalCurrencyAmount;
     private String publicKey;
 
+    private static final int MAX_NANO_DISPLAY_LENGTH = 10;
+
     @Inject
     SharedPreferencesUtil sharedPreferencesUtil;
 
@@ -223,6 +225,16 @@ public class NanoWallet {
             if (this.sendNanoAmount.equals("00")) {
                 this.sendNanoAmount = "0";
             }
+
+            // keep decimal length at 10 total
+            String[] split = this.sendNanoAmount.split("\\.");
+            if (split.length > 1) {
+                String whole = split[0];
+                String decimal = split[1];
+                decimal = decimal.substring(0, Math.min(decimal.length(), MAX_NANO_DISPLAY_LENGTH));
+                this.sendNanoAmount = whole + "." + decimal;
+            }
+
             this.sendLocalCurrencyAmount = convertNanoToLocalCurrency(this.sendNanoAmount);
         } else {
             this.sendLocalCurrencyAmount = "";
@@ -287,6 +299,17 @@ public class NanoWallet {
             if (localCurrencyAmount.equals(".")) {
                 this.sendLocalCurrencyAmount = "0.";
             }
+
+            // keep decimal length at 10 total
+            String regex = getDecimalSeparator().equals(".") ? "\\." : ",";
+            String[] split = this.sendLocalCurrencyAmount.split(regex);
+            if (split.length > 1) {
+                String whole = split[0];
+                String decimal = split[1];
+                decimal = decimal.substring(0, Math.min(decimal.length(), 2));
+                this.sendLocalCurrencyAmount = whole + getDecimalSeparator() + decimal;
+            }
+
             this.sendNanoAmount = convertLocalCurrencyToNano(this.sendLocalCurrencyAmount);
         } else {
             this.sendNanoAmount = "";
@@ -301,7 +324,14 @@ public class NanoWallet {
      * @return String of Nano converted amount
      */
     private String convertLocalCurrencyToNano(String amount) {
-        if (amount.equals("0.") || amount.equals("0")) {
+        BigDecimal amountBigDecimal;
+        try {
+            amountBigDecimal = new BigDecimal(sanitizeNoCommas(amount));
+        } catch(NumberFormatException e) {
+            return amount;
+        }
+
+        if (amount.length() == 0 || amountBigDecimal.compareTo(new BigDecimal(0)) == 0) {
             return amount;
         } else {
             try {
@@ -328,7 +358,14 @@ public class NanoWallet {
      * Convert local currency to properly formatted string for the currency
      */
     private String nanoFormat(String amount) {
-        if (new BigDecimal(sanitizeNoCommas(amount)).compareTo(new BigDecimal(0)) == 0) {
+        BigDecimal amountBigDecimal;
+        try {
+            amountBigDecimal = new BigDecimal(sanitizeNoCommas(amount));
+        } catch(NumberFormatException e) {
+            return amount;
+        }
+
+        if (amountBigDecimal.compareTo(new BigDecimal(0)) == 0) {
             return amount;
         } else {
             String decimal;
@@ -338,7 +375,7 @@ public class NanoWallet {
                 // keep decimal length at 10 total
                 whole = split[0];
                 decimal = split[1];
-                decimal = decimal.substring(0, Math.min(decimal.length(), 10));
+                decimal = decimal.substring(0, Math.min(decimal.length(), MAX_NANO_DISPLAY_LENGTH));
 
                 // add commas to the whole amount
                 DecimalFormat df = new DecimalFormat("#,###");
