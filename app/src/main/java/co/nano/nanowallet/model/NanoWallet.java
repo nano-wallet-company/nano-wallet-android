@@ -7,6 +7,7 @@ import com.hwangjr.rxbus.annotation.Subscribe;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -189,6 +190,7 @@ public class NanoWallet {
 
     /**
      * Remove any non-currency characters
+     *
      * @param amount Unsanitized string
      * @return Santized string with everything but digits, decimal points, and commas removed
      */
@@ -198,6 +200,7 @@ public class NanoWallet {
 
     /**
      * Remove all but digits and decimals
+     *
      * @param amount Unsanitized string
      * @return Santized string with everything but digits and decimal points removed
      */
@@ -328,14 +331,33 @@ public class NanoWallet {
         if (new BigDecimal(sanitizeNoCommas(amount)).compareTo(new BigDecimal(0)) == 0) {
             return amount;
         } else {
-            DecimalFormat df = new DecimalFormat("#,###.##########");
-            return df.format(new BigDecimal(sanitizeNoCommas(amount)));
+            String decimal;
+            String whole;
+            String[] split = amount.split("\\.");
+            if (split.length > 1) {
+                // keep decimal length at 10 total
+                whole = split[0];
+                decimal = split[1];
+                decimal = decimal.substring(0, Math.min(decimal.length(), 10));
+
+                // add commas to the whole amount
+                DecimalFormat df = new DecimalFormat("#,###");
+                whole = df.format(new BigDecimal(sanitizeNoCommas(whole)));
+
+                amount = whole + "." + decimal;
+            } else if (split.length == 1) {
+                // no decimals yet, so just add commas
+                DecimalFormat df = new DecimalFormat("#,###");
+                amount = df.format(new BigDecimal(sanitizeNoCommas(amount)));
+            }
+            return amount;
         }
     }
 
     /**
      * Validate that the requested send amount is not greater than the account balance
      */
+
     private void validateSendAmount() {
         try {
             if (new BigDecimal(sanitizeNoCommas(sendNanoAmount))
@@ -345,6 +367,20 @@ public class NanoWallet {
         } catch (NumberFormatException e) {
             ExceptionHandler.handle(e);
         }
+    }
+
+    /**
+     * Get the decimal separator for the selected currency
+     *
+     * @return decimal separator (i.e. . or ,)
+     */
+    public String getDecimalSeparator() {
+        NumberFormat nf = NumberFormat.getInstance(getLocalCurrency().getLocale());
+        if (nf instanceof DecimalFormat) {
+            DecimalFormatSymbols sym = ((DecimalFormat) nf).getDecimalFormatSymbols();
+            return Character.toString(sym.getDecimalSeparator());
+        }
+        return ".";
     }
 
     public void close() {
