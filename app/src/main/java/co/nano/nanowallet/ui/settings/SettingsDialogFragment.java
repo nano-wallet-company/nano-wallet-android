@@ -293,10 +293,12 @@ public class SettingsDialogFragment extends BaseDialogFragment {
     }
 
     private void showFingerprintError(AuthenticationFailureReason reason, CharSequence message, View view) {
-        Answers.getInstance().logCustom(new CustomEvent("Seed Copy Failed").putCustomAttribute("description", reason.name()));
-        TextView textView = view.findViewById(R.id.fingerprint_textview);
-        textView.setText(message.toString());
-        textView.setTextColor(ContextCompat.getColor(getContext(), R.color.error));
-        textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_fingerprint_error, 0, 0, 0);
+        if (isAdded()) {
+            Answers.getInstance().logCustom(new CustomEvent("Seed Copy Failed").putCustomAttribute("description", reason.name()));
+            TextView textView = view.findViewById(R.id.fingerprint_textview);
+            textView.setText(message.toString());
+            textView.setTextColor(ContextCompat.getColor(getContext(), R.color.error));
+            textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_fingerprint_error, 0, 0, 0);
+        }
     }
 }
