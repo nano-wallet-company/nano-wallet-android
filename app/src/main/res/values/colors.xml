@@ -14,6 +14,7 @@
     <color name="semitranslucent_white">#80ffffff</color>
     <color name="semitranslucent_black">#80000000</color>
     <color name="dark_gray">#999999</color>
+    <color name="black">#000000</color>
     <color name="error">#F4511E</color>
 
     <color name="colorPrimary">@color/bright_white</color>
