@@ -7,7 +7,7 @@ package co.nano.nanowallet.network.model;
 public enum Actions {
     CHECK("account_check"), SUBSCRIBE("account_subscribe"), HISTORY("account_history"),
     PENDING("pending"), PRICE("price_data"), PROCESS("process"),
-    WORK("work_generate"), ERROR("error");
+    WORK("work_generate"), ERROR("error"), WARNING("warning");
 
     String actionName;
 

@@ -16,6 +16,7 @@ import co.nano.nanowallet.network.model.response.ErrorResponse;
 import co.nano.nanowallet.network.model.response.ProcessResponse;
 import co.nano.nanowallet.network.model.response.SubscribeResponse;
 import co.nano.nanowallet.network.model.response.TransactionResponse;
+import co.nano.nanowallet.network.model.response.WarningResponse;
 import co.nano.nanowallet.network.model.response.WorkResponse;
 import dagger.Module;
 import dagger.Provides;
@@ -80,6 +81,9 @@ public class ActivityModule {
                         } else if (src.getAsJsonObject().get("error") != null) {
                             // error response
                             src.getAsJsonObject().addProperty("messageType", Actions.ERROR.toString());
+                        } else if (src.getAsJsonObject().get("warning") != null) {
+                            // warning response
+                            src.getAsJsonObject().addProperty("messageType", Actions.WARNING.toString());
                         } else if (src.getAsJsonObject().get("block") != null && src.getAsJsonObject().get("account") != null
                                 && src.getAsJsonObject().get("hash") != null) {
                             // block response
@@ -106,6 +110,8 @@ public class ActivityModule {
                             return WorkResponse.class;
                         } else if (kind.equals(Actions.ERROR.toString())) {
                             return ErrorResponse.class;
+                        } else if (kind.equals(Actions.WARNING.toString())) {
+                            return WarningResponse.class;
                         } else if (kind.equals(Actions.CHECK.toString())) {
                             return AccountCheckResponse.class;
                         } else if (kind.equals(Actions.PROCESS.toString())) {

@@ -47,6 +47,7 @@ import co.nano.nanowallet.network.model.response.PendingTransactionResponseItem;
 import co.nano.nanowallet.network.model.response.ProcessResponse;
 import co.nano.nanowallet.network.model.response.SubscribeResponse;
 import co.nano.nanowallet.network.model.response.TransactionResponse;
+import co.nano.nanowallet.network.model.response.WarningResponse;
 import co.nano.nanowallet.network.model.response.WorkResponse;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.util.ExceptionHandler;
@@ -237,7 +238,10 @@ public class AccountService {
             }
 
             // remove item from queue and process
-            if (!(event instanceof CurrentPriceResponse)) {
+            // current price response is sent without a request and warnings are
+            // sent in addition to the actual response
+            if (!(event instanceof CurrentPriceResponse) &&
+                    !(event instanceof WarningResponse)) {
                 requestQueue.poll();
             }
             processQueue();
