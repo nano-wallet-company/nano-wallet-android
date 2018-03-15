@@ -78,6 +78,7 @@
             android:layout_marginBottom="65dp"
             android:layout_marginTop="20dp"
             android:alpha="0.4"
+            android:visibility="gone"
             tools:text="@string/intro_welcome_disclaimer"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/intro_welcome_guideline_vert"
