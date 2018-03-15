@@ -7,7 +7,7 @@
     <string name="intro_welcome_title">Welcome to Nano</string>
     <string name="intro_welcome_new_wallet_cta">Start a new wallet</string>
     <string name="intro_welcome_have_wallet_cta">I already have a wallet</string>
-    <string name="intro_welcome_disclaimer"><![CDATA[By signing up, you agree to the Nano<br /><a href="https://nano.org/mobile-privacy-policy">Terms of Service</a> and <a href="https://nano.org/mobile-privacy-policy">Privacy Policy</a>]]></string>
+    <string name="intro_welcome_disclaimer"><![CDATA[By continuing, you agree to the Nano<br /><a href="https://nano.org/mobile-privacy-policy">Terms of Service</a> and <a href="https://nano.org/mobile-privacy-policy">Privacy Policy</a>]]></string>
     <string name="intro_seed_steps">%d / 2</string>
     <string name="intro_seed_title">Paste a seed or scan a\ncode to begin</string>
     <string name="intro_seed_seed_label">Seed</string>
