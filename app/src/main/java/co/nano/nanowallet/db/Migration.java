@@ -11,7 +11,7 @@ import io.realm.RealmSchema;
  * Migration for Adding a UUID field to Realm
  */
 
-public class UuidMigration implements RealmMigration {
+public class Migration implements RealmMigration {
 
     @Override
     public void migrate(@NonNull DynamicRealm realm, long oldVersion, long newVersion) {
@@ -21,6 +21,14 @@ public class UuidMigration implements RealmMigration {
             RealmObjectSchema credentialsSchema = schema.get("Credentials");
             if (credentialsSchema != null) {
                 credentialsSchema.addField("uuid", String.class);
+            }
+            oldVersion++;
+        }
+
+        if (oldVersion == 2) {
+            RealmObjectSchema credentialsSchema = schema.get("Credentials");
+            if (credentialsSchema != null) {
+                credentialsSchema.addField("pin", String.class);
             }
             oldVersion++;
         }

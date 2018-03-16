@@ -5,7 +5,7 @@ import android.util.Base64;
 
 import javax.inject.Named;
 
-import co.nano.nanowallet.db.UuidMigration;
+import co.nano.nanowallet.db.Migration;
 import co.nano.nanowallet.di.application.ApplicationScope;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
 import co.nano.nanowallet.util.Vault;
@@ -16,6 +16,8 @@ import io.realm.RealmConfiguration;
 
 @Module
 public class PersistenceModule {
+    private static final int SCHEMA_VERSION = 3;
+    private static final String DB_NAME = "nano.realm";
 
     @Provides
     @ApplicationScope
@@ -27,19 +29,19 @@ public class PersistenceModule {
     Realm providesRealmInstance(@Named("encryption_key") byte[] key) {
         if (key != null) {
             RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()
-                    .name("nano.realm")
+                    .name(DB_NAME)
                     .encryptionKey(key)
-                    .schemaVersion(2)
-                    .migration(new UuidMigration())
+                    .schemaVersion(SCHEMA_VERSION)
+                    .migration(new Migration())
                     .build();
 
             // Open the Realm with encryption enabled
             return Realm.getInstance(realmConfiguration);
         } else {
             RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()
-                    .name("nano.realm")
-                    .schemaVersion(2)
-                    .migration(new UuidMigration())
+                    .name(DB_NAME)
+                    .schemaVersion(SCHEMA_VERSION)
+                    .migration(new Migration())
                     .build();
 
             // Open the Realm with encryption enabled
