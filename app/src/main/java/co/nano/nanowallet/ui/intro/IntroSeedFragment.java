@@ -39,6 +39,7 @@ public class IntroSeedFragment extends BaseFragment {
     private FragmentIntroSeedBinding binding;
     private int currentStep = 1;
     public static String TAG = IntroSeedFragment.class.getSimpleName();
+    private boolean preventTextUpdate = false;
 
     @Inject
     Realm realm;
@@ -134,31 +135,41 @@ public class IntroSeedFragment extends BaseFragment {
          * @param count Total character count
          */
         public void onSeedTextChanged(CharSequence s, int start, int before, int count) {
-            // update background color based on entry length
-            if (s.length() > 0) {
-                binding.introSeedSeed.setBackgroundResource(R.drawable.bg_seed_input_active);
-            } else {
-                binding.introSeedSeed.setBackgroundResource(R.drawable.bg_seed_input);
+            if (!preventTextUpdate) {
+                preventTextUpdate = true;
+                // update background color based on entry length
+                if (s.length() > 0) {
+                    binding.introSeedSeed.setBackgroundResource(R.drawable.bg_seed_input_active);
+                } else {
+                    binding.introSeedSeed.setBackgroundResource(R.drawable.bg_seed_input);
+                }
+
+                // validate input string and update styles if valid
+                if (Credentials.isValidSeed(s.toString())) {
+                    currentStep = 2;
+                    updateSteps();
+                    binding.introSeedIconCheck.setVisibility(View.VISIBLE);
+                    binding.introSeedButtonConfirm.setEnabled(true);
+                } else {
+                    currentStep = 1;
+                    updateSteps();
+                    binding.introSeedIconCheck.setVisibility(View.GONE);
+                    binding.introSeedButtonConfirm.setEnabled(false);
+                }
+
+                // remove any invalid characters
+                removeInvalidCharacters(binding.introSeedSeed.getText());
+
+                // colorize input string
+                UIUtil.colorizeSeed(binding.introSeedSeed.getText(), getContext());
             }
+        }
 
-            // validate input string and update styles if valid
-            if (Credentials.isValidSeed(s.toString())) {
-                currentStep = 2;
-                updateSteps();
-                binding.introSeedIconCheck.setVisibility(View.VISIBLE);
-                binding.introSeedButtonConfirm.setEnabled(true);
-            } else {
-                currentStep = 1;
-                updateSteps();
-                binding.introSeedIconCheck.setVisibility(View.GONE);
-                binding.introSeedButtonConfirm.setEnabled(false);
+        public void afterSeedTextChanged(Editable s) {
+            if(preventTextUpdate){
+                preventTextUpdate = false;
+                return;
             }
-
-            // remove any invalid characters
-            removeInvalidCharacters(binding.introSeedSeed.getText());
-
-            // colorize input string
-            UIUtil.colorizeSeed(binding.introSeedSeed.getText(), getContext());
         }
 
         /**
