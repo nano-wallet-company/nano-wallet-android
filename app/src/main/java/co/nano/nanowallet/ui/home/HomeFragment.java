@@ -268,7 +268,9 @@ public class HomeFragment extends BaseFragment {
             ((WindowControl) getActivity()).getFragmentUtility().getFragmentManager().executePendingTransactions();
 
             // reset status bar to blue when dialog is closed
-            dialog.getDialog().setOnDismissListener(dialogInterface -> setStatusBarBlue());
+            if (dialog != null && dialog.getDialog() != null) {
+                dialog.getDialog().setOnDismissListener(dialogInterface -> setStatusBarBlue());
+            }
         }
     }
 
