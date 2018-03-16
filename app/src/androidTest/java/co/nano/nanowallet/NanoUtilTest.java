@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import co.nano.nanowallet.network.model.request.block.OpenBlock;
 import timber.log.Timber;
 
 /**
@@ -84,6 +85,16 @@ public class NanoUtilTest extends InstrumentationTestCase {
         Timber.d("Public to Address: " + output / 1000000);
 
         assertEquals(publicKey, this.publicKey);
+    }
+
+    @Test
+    public void openBlockTest() throws Exception {
+        String source = "3CD78EE059E404252669B37E8195C7AD4FC6CAEA5AA2C0A4989CF9AB248B4949";
+        String representative = "xrb_3crzecs58y9gd1ucqcfcdsh56ywty5ixzqk41oa5d3i1ggm4bd6c9q5u34m3";
+        String account = "xrb_1148met4bfcfu6dxhyedxjehogu35uxdwyaaqx8nqdn8qs67kj7gs693s3qi";
+
+        OpenBlock openBlock = new OpenBlock(privateKey, source, representative);
+        Timber.d("OpenBlock: %s", openBlock.toString());
     }
 
     @Test

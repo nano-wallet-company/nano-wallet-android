@@ -159,9 +159,8 @@ public class NanoUtil {
         byte[] data_b = hexToBytes(data);
         byte[] private_key_b = hexToBytes(private_key);
 
-        byte[] signature = new byte[Sodium.crypto_sign_bytes()]; //+ data_b.length];
+        byte[] signature = new byte[Sodium.crypto_sign_bytes()];
         int[] signature_len = new int[1];
-
 
         Sodium.crypto_sign_ed25519_detached(signature, signature_len, data_b, data_b.length, private_key_b);
         return bytesToHex(signature);
@@ -222,7 +221,7 @@ public class NanoUtil {
         return NanoUtil.bytesToHex(data_b);
     }
 
-    private static String bytesToHex(byte[] bytes) {
+    public static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         for (int j = 0; j < bytes.length; j++) {
             int v = bytes[j] & 0xFF;

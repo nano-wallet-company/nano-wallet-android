@@ -87,4 +87,15 @@ public class OpenBlock extends Block {
     public void setSignature(String signature) {
         this.signature = signature;
     }
+
+    @Override
+    public String toString() {
+        return "OpenBlock{" +
+                "type='" + type + '\'' +
+                ", source='" + source + '\'' +
+                ", representative='" + representative + '\'' +
+                ", account='" + account + '\'' +
+                ", signature='" + signature + '\'' +
+                '}';
+    }
 }
