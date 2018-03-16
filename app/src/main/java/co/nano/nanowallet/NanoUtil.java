@@ -205,7 +205,6 @@ public class NanoUtil {
     public static String addressToPublic(String encoded_address) {
         Sodium sodium = NaCl.sodium();
         String data = encoded_address.substring(4, 56);
-
         byte[] data_b = NanoUtil.hexStringToByteArray(decode(data));
 
         byte[] state = new byte[Sodium.crypto_generichash_statebytes()];
@@ -218,7 +217,13 @@ public class NanoUtil {
 
         reverse(verify_b);
 
-        return NanoUtil.bytesToHex(data_b);
+        // left pad byte array with zeros
+        StringBuilder pk = new StringBuilder(NanoUtil.bytesToHex(data_b));
+        while (pk.length() < 64) {
+            pk.insert(0, "0");
+        }
+
+        return pk.toString();
     }
 
     public static String bytesToHex(byte[] bytes) {

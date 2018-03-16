@@ -44,7 +44,7 @@ public class OpenBlock extends Block {
         this.representative = representative;
         this.account = NanoUtil.publicToAddress(NanoUtil.privateToPublic(private_key));
         this.source = source;
-        String hash = NanoUtil.computeOpenHash(source, NanoUtil.addressToPublic(representative), NanoUtil.addressToPublic(this.account));
+        String hash = NanoUtil.computeOpenHash(source, NanoUtil.addressToPublic(representative), NanoUtil.privateToPublic(private_key));
         this.signature = NanoUtil.sign(private_key, hash);
     }
 
