@@ -12,10 +12,14 @@ import android.widget.EditText;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
+import com.github.ajalt.reprint.core.Reprint;
+import com.hwangjr.rxbus.annotation.Subscribe;
 
 import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
+import co.nano.nanowallet.bus.PinComplete;
+import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.databinding.FragmentIntroSeedBinding;
 import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.network.AccountService;
@@ -66,6 +70,9 @@ public class IntroSeedFragment extends BaseFragment {
         setStatusBarWhite(view);
         hideToolbar();
 
+        // subscribe to bus
+        RxBus.get().register(this);
+
         // bind data to view
         binding.setSteps(getString(R.string.intro_seed_steps, currentStep));
         binding.setHandlers(new ClickHandlers());
@@ -99,6 +106,13 @@ public class IntroSeedFragment extends BaseFragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // unregister from bus
+        RxBus.get().unregister(this);
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
         if (requestCode == SCAN_RESULT) {
@@ -111,6 +125,17 @@ public class IntroSeedFragment extends BaseFragment {
                 }
             }
         }
+    }
+
+    @Subscribe
+    public void receivePinComplete(PinComplete pinComplete) {
+        realm.beginTransaction();
+        Credentials credentials = realm.where(Credentials.class).findFirst();
+        if (credentials != null) {
+            credentials.setPin(pinComplete.getPin());
+        }
+        realm.commitTransaction();
+        goToHomeScreen();
     }
 
     private void removeInvalidCharacters(Editable text) {
@@ -183,15 +208,13 @@ public class IntroSeedFragment extends BaseFragment {
 
             sharedPreferencesUtil.setConfirmedSeedBackedUp(true);
 
-            // go to home screen
-            if (getActivity() instanceof WindowControl) {
-                ((WindowControl) getActivity()).getFragmentUtility().clearStack();
-                ((WindowControl) getActivity()).getFragmentUtility().replace(
-                        new HomeFragment(),
-                        FragmentUtility.Animation.ENTER_LEFT_EXIT_RIGHT,
-                        FragmentUtility.Animation.ENTER_RIGHT_EXIT_LEFT,
-                        IntroSeedFragment.TAG
-                );
+            if (!Reprint.isHardwarePresent() || !Reprint.hasFingerprintRegistered()) {
+                // if no fingerprint software is present or user has not registered
+                // a fingerprint show pin screen
+                showCreatePinScreen();
+            } else {
+                // otherwise, go on in
+                goToHomeScreen();
             }
         }
 
@@ -203,6 +226,19 @@ public class IntroSeedFragment extends BaseFragment {
         public void onClickCamera(View view) {
             Answers.getInstance().logCustom(new CustomEvent("Seed Scan Camera View Viewed"));
             startScanActivity(getString(R.string.scan_instruction_label), true);
+        }
+    }
+
+    private void goToHomeScreen() {
+        // go to home screen
+        if (getActivity() instanceof WindowControl) {
+            ((WindowControl) getActivity()).getFragmentUtility().clearStack();
+            ((WindowControl) getActivity()).getFragmentUtility().replace(
+                    new HomeFragment(),
+                    FragmentUtility.Animation.ENTER_LEFT_EXIT_RIGHT,
+                    FragmentUtility.Animation.ENTER_RIGHT_EXIT_LEFT,
+                    IntroSeedFragment.TAG
+            );
         }
     }
 

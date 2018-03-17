@@ -12,11 +12,15 @@ import android.view.ViewGroup;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
+import com.github.ajalt.reprint.core.Reprint;
+import com.hwangjr.rxbus.annotation.Subscribe;
 
 import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.broadcastreceiver.ClipboardAlarmReceiver;
+import co.nano.nanowallet.bus.PinComplete;
+import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.databinding.FragmentIntroNewWalletBinding;
 import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.network.AccountService;
@@ -34,7 +38,6 @@ import io.realm.Realm;
  */
 
 public class IntroNewWalletFragment extends BaseFragment {
-    private int currentStep = 1;
     public static String TAG = IntroNewWalletFragment.class.getSimpleName();
     private String seed;
 
@@ -77,6 +80,9 @@ public class IntroNewWalletFragment extends BaseFragment {
         setStatusBarWhite(view);
         hideToolbar();
 
+        // subscribe to bus
+        RxBus.get().register(this);
+
         // get seed from storage
         Credentials credentials = realm.where(Credentials.class).findFirst();
         if (credentials != null) {
@@ -93,6 +99,39 @@ public class IntroNewWalletFragment extends BaseFragment {
         accountService.open();
 
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // unregister from bus
+        RxBus.get().unregister(this);
+    }
+
+    private void goToHomeScreen() {
+        // set confirm flag
+        sharedPreferencesUtil.setConfirmedSeedBackedUp(true);
+
+        // go to home screen
+        if (getActivity() instanceof WindowControl) {
+            ((WindowControl) getActivity()).getFragmentUtility().replace(
+                    HomeFragment.newInstance(),
+                    FragmentUtility.Animation.ENTER_LEFT_EXIT_RIGHT,
+                    FragmentUtility.Animation.ENTER_RIGHT_EXIT_LEFT,
+                    HomeFragment.TAG
+            );
+        }
+    }
+
+    @Subscribe
+    public void receivePinComplete(PinComplete pinComplete) {
+        realm.beginTransaction();
+        Credentials credentials = realm.where(Credentials.class).findFirst();
+        if (credentials != null) {
+            credentials.setPin(pinComplete.getPin());
+        }
+        realm.commitTransaction();
+        goToHomeScreen();
     }
 
     public class ClickHandlers {
@@ -114,17 +153,13 @@ public class IntroNewWalletFragment extends BaseFragment {
             builder.setTitle(R.string.intro_new_wallet_continue_title)
                     .setMessage(R.string.intro_new_wallet_continue_message)
                     .setPositiveButton(R.string.intro_new_wallet_continue_positive, (dialog, which) -> {
-                        // set confirm flag
-                        sharedPreferencesUtil.setConfirmedSeedBackedUp(true);
-
-                        // go to home screen
-                        if (getActivity() instanceof WindowControl) {
-                            ((WindowControl) getActivity()).getFragmentUtility().replace(
-                                    HomeFragment.newInstance(),
-                                    FragmentUtility.Animation.ENTER_LEFT_EXIT_RIGHT,
-                                    FragmentUtility.Animation.ENTER_RIGHT_EXIT_LEFT,
-                                    HomeFragment.TAG
-                            );
+                        if (!Reprint.isHardwarePresent() || !Reprint.hasFingerprintRegistered()) {
+                            // if no fingerprint software is present or user has not registered
+                            // a fingerprint show pin screen
+                            showCreatePinScreen();
+                        } else {
+                            // otherwise, go on in
+                            goToHomeScreen();
                         }
                     })
                     .setNegativeButton(R.string.intro_new_wallet_continue_negative, (dialog, which) -> {

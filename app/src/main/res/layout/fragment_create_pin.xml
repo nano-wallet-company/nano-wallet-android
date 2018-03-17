@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bright_white">
+
+        <TextView
+            android:id="@+id/pin_title"
+            style="@style/TextStyle5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="@string/pin_create_title"
+            app:layout_constraintBottom_toTopOf="@+id/pin_indicator_dots"
+            app:layout_constraintEnd_toStartOf="@+id/pin_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/pin_guideline_vert"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.andrognito.pinlockview.IndicatorDots
+            android:id="@+id/pin_indicator_dots"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:dotEmptyBackground="@drawable/pin_dot_empty"
+            app:dotFilledBackground="@drawable/pin_dot_filled"
+            app:indicatorType="fixed"
+            app:layout_constraintBottom_toTopOf="@+id/pin_lock_view"
+            app:layout_constraintEnd_toStartOf="@+id/pin_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/pin_guideline_vert"
+            app:layout_constraintTop_toBottomOf="@+id/pin_title" />
+
+        <com.andrognito.pinlockview.PinLockView
+            android:id="@+id/pin_lock_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            app:keypadButtonSize="72dp"
+            app:keypadDeleteButtonDrawable="@drawable/ic_backspace"
+            app:keypadDeleteButtonPressedColor="@color/dark_sky_blue"
+            app:keypadDeleteButtonSize="24dp"
+            app:keypadHorizontalSpacing="36dp"
+            app:keypadShowDeleteButton="true"
+            app:keypadTextColor="@color/very_dark_blue"
+            app:keypadTextSize="24dp"
+            app:keypadVerticalSpacing="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/pin_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/pin_guideline_vert"
+            app:layout_constraintTop_toBottomOf="@+id/pin_indicator_dots" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/pin_guideline_vert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

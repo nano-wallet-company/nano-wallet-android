@@ -10,6 +10,7 @@ import co.nano.nanowallet.ui.home.HomeFragment;
 import co.nano.nanowallet.ui.intro.IntroNewWalletFragment;
 import co.nano.nanowallet.ui.intro.IntroSeedFragment;
 import co.nano.nanowallet.ui.intro.IntroWelcomeFragment;
+import co.nano.nanowallet.ui.pin.CreatePinDialogFragment;
 import co.nano.nanowallet.ui.receive.ReceiveDialogFragment;
 import co.nano.nanowallet.ui.send.SendFragment;
 import co.nano.nanowallet.ui.settings.SettingsDialogFragment;
@@ -28,23 +29,25 @@ public interface ActivityComponent {
     @ActivityScope
     Gson provideGson();
 
-    void inject(MainActivity mainActivity);
-
-    void inject(SettingsDialogFragment settingsDialogFragment);
+    void inject(AccountService accountService);
 
     void inject(HomeFragment homeFragment);
 
-    void inject(SendFragment sendFragment);
+    void inject(IntroNewWalletFragment introNewWalletFragment);
 
     void inject(IntroWelcomeFragment introWelcomeFragment);
 
     void inject(IntroSeedFragment introSeedFragment);
 
-    void inject(ReceiveDialogFragment receiveDialogFragment);
-
-    void inject(IntroNewWalletFragment introNewWalletFragment);
-
-    void inject(AccountService accountService);
+    void inject(MainActivity mainActivity);
 
     void inject(NanoWallet nanoWallet);
+
+    void inject(CreatePinDialogFragment createPinDialogFragment);
+
+    void inject(ReceiveDialogFragment receiveDialogFragment);
+
+    void inject(SendFragment sendFragment);
+
+    void inject(SettingsDialogFragment settingsDialogFragment);
 }

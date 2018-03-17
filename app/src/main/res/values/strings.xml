@@ -5,8 +5,8 @@
 
     <!-- Intro Screens -->
     <string name="intro_welcome_title">Welcome to Nano</string>
-    <string name="intro_welcome_new_wallet_cta">Start a new wallet</string>
-    <string name="intro_welcome_have_wallet_cta">I already have a wallet</string>
+    <string name="intro_welcome_new_wallet_cta">Create a new wallet</string>
+    <string name="intro_welcome_have_wallet_cta">Enter existing Wallet Seed</string>
     <string name="intro_welcome_disclaimer"><![CDATA[By continuing, you agree to the Nano<br /><a href="https://nano.org/mobile-privacy-policy">Terms of Service</a> and <a href="https://nano.org/mobile-privacy-policy">Privacy Policy</a>]]></string>
     <string name="intro_seed_steps">%d / 2</string>
     <string name="intro_seed_title">Paste a seed or scan a\ncode to begin</string>
@@ -24,6 +24,12 @@
     <string name="intro_new_wallet_continue_message">Please confirm you have properly stored your Wallet Seed somewhere safe.</string>
     <string name="intro_new_wallet_continue_positive">I have backed up my Wallet Seed</string>
     <string name="intro_new_wallet_continue_negative">Back</string>
+
+    <!-- Pin Screen -->
+    <string name="pin_create_title">Create an Android passcode</string>
+    <string name="pin_confirm_title">Confirm your Android passcode</string>
+    <string name="pin_enter_title">Enter Android passcode for Nano</string>
+    <string name="pin_confirm_error">Passcodes did not match. Please try again.</string>
 
     <!-- Home Screen -->
     <string name="home_send_cta">Send</string>

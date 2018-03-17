@@ -15,6 +15,8 @@ import android.view.View;
 
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.broadcastreceiver.ClipboardAlarmReceiver;
+import co.nano.nanowallet.ui.pin.CreatePinDialogFragment;
+import co.nano.nanowallet.ui.receive.ReceiveDialogFragment;
 import co.nano.nanowallet.ui.scan.ScanActivity;
 import co.nano.nanowallet.util.ExceptionHandler;
 
@@ -176,5 +178,10 @@ public class BaseFragment extends Fragment {
                 alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 120 * 1000, alarmIntent);
             }
         }
+    }
+
+    protected void showCreatePinScreen() {
+        CreatePinDialogFragment.newInstance().show(((WindowControl) getActivity()).getFragmentUtility().getFragmentManager(),
+                ReceiveDialogFragment.TAG);
     }
 }
