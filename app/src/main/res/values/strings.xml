@@ -14,7 +14,7 @@
     <string name="intro_seed_seed_hint">(Seed Address)</string>
     <string name="intro_seed_confirm_cta">Confirm Seed</string>
     <string name="intro_new_wallet_title">Your Nano Wallet Seed</string>
-    <string name="intro_new_wallet_message"><![CDATA[<font color=\"#000034\">Your Nano Wallet Seed is how we generate your wallet. It\'s also how you log into the iOS Wallet or any of our other wallets, including NanoWallet.io</font><br><br><font color=\"#ee4b66\">If you lose your Wallet Seed, your funds cannot be recovered.</font><br><br><font color=\"#000034\">Keep your Wallet Seed somewhere safe (like 1Password, LastPass, or print it out and put it in a safe) and </font><font color=\"#ee4b66\">never give it to anyone, ever.</font>]]></string>
+    <string name="intro_new_wallet_message"><![CDATA[<font color=\"#000034\">Your Nano Wallet Seed is how we generate your wallet. It\'s also how you log into the Android Wallet or any of our other wallets, including NanoWallet.io</font><br><br><font color=\"#ee4b66\">If you lose your Wallet Seed, your funds cannot be recovered.</font><br><br><font color=\"#000034\">Keep your Wallet Seed somewhere safe (like 1Password, LastPass, or print it out and put it in a safe) and </font><font color=\"#ee4b66\">never give it to anyone, ever.</font>]]></string>
     <string name="intro_new_wallet_confirm">I Understand, Continue</string>
     <string name="intro_new_wallet_seed_copied">Your Wallet Seed is pastable for 2 minutes. After, you can access it in Settings.\n\nPlease backup your Wallet Seed somewhere safe like 1Password, LastPass, or print it out and put it in a safe.</string>
     <string name="intro_new_wallet_seed_done">Okay</string>
@@ -26,10 +26,11 @@
     <string name="intro_new_wallet_continue_negative">Back</string>
 
     <!-- Pin Screen -->
-    <string name="pin_create_title">Create an Android passcode</string>
-    <string name="pin_confirm_title">Confirm your Android passcode</string>
-    <string name="pin_enter_title">Enter Android passcode for Nano</string>
-    <string name="pin_confirm_error">Passcodes did not match. Please try again.</string>
+    <string name="pin_create_title">Create a 4-digit Android passcode</string>
+    <string name="pin_confirm_title">Confirm your passcode</string>
+    <string name="pin_enter_title">Enter passcode</string>
+    <string name="pin_confirm_error">Passcodes do not match</string>
+    <string name="pin_error">Invalid passcode entered</string>
 
     <!-- Home Screen -->
     <string name="home_send_cta">Send</string>
@@ -93,6 +94,7 @@
     <string name="send_error_alert_message">We have detected an issue, and are working to resolve it. Please try again in a few minutes.</string>
     <string name="send_confirm_address_cta">Confirm Address</string>
     <string name="send_fingerprint_title">Send Nano</string>
+    <string name="send_pin_description">Send %s Nano?</string>
     <string name="send_fingerprint_description">Confirm fingerprint to send %s Nano</string>
     <string name="send_fingerprint_hint">Touch sensor</string>
     <string name="send_fingerprint_success">Fingerprint recognized</string>

@@ -89,7 +89,7 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
         // inflate the view
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_receive, container, false);
-        View view = binding.getRoot();
+        view = binding.getRoot();
         binding.setHandlers(new ClickHandlers());
 
         // colorize address text

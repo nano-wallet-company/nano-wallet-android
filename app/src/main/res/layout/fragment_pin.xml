@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <!-- Click Listeners -->
+        <variable
+            name="handlers"
+            type="co.nano.nanowallet.ui.pin.PinDialogFragment.ClickHandlers" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bright_white">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/pin_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:onClick="@{handlers::onClickClose}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_close" />
+
+        <TextView
+            android:id="@+id/pin_title"
+            style="@style/TextStyle5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nunito_regular"
+            android:text="@string/pin_enter_title"
+            app:layout_constraintBottom_toTopOf="@+id/pin_subtitle"
+            app:layout_constraintEnd_toStartOf="@+id/pin_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/pin_guideline_vert"
+            app:layout_constraintTop_toBottomOf="@+id/pin_close" />
+
+        <TextView
+            android:id="@+id/pin_subtitle"
+            style="@style/TextStyle5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:textSize="12sp"
+            android:fontFamily="@font/nunito_regular"
+            android:text="@string/send_pin_description"
+            app:layout_constraintBottom_toTopOf="@+id/pin_indicator_dots"
+            app:layout_constraintEnd_toStartOf="@+id/pin_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/pin_guideline_vert"
+            app:layout_constraintTop_toBottomOf="@+id/pin_title" />
+
+        <com.andrognito.pinlockview.IndicatorDots
+            android:id="@+id/pin_indicator_dots"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:dotDiameter="12dp"
+            app:dotEmptyBackground="@drawable/pin_dot_empty"
+            app:dotFilledBackground="@drawable/pin_dot_filled"
+            app:dotSpacing="12dp"
+            app:indicatorType="fixed"
+            app:layout_constraintBottom_toTopOf="@+id/pin_lock_view"
+            app:layout_constraintEnd_toStartOf="@+id/pin_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/pin_guideline_vert"
+            app:layout_constraintTop_toBottomOf="@+id/pin_title" />
+
+        <com.andrognito.pinlockview.PinLockView
+            android:id="@+id/pin_lock_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/nunito_regular"
+            app:keypadButtonBackgroundDrawable="@drawable/pin_button_background"
+            app:keypadButtonSize="62dp"
+            app:keypadDeleteButtonDrawable="@drawable/ic_backspace"
+            app:keypadDeleteButtonPressedColor="@color/dark_sky_blue"
+            app:keypadDeleteButtonSize="24dp"
+            app:keypadHorizontalSpacing="24dp"
+            app:keypadShowDeleteButton="true"
+            app:keypadTextColor="@color/very_dark_blue"
+            app:keypadTextSize="24dp"
+            app:keypadVerticalSpacing="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/pin_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/pin_guideline_vert"
+            app:layout_constraintTop_toBottomOf="@+id/pin_indicator_dots" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/pin_guideline_vert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

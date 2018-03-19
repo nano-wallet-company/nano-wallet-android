@@ -12,11 +12,12 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.broadcastreceiver.ClipboardAlarmReceiver;
 import co.nano.nanowallet.ui.pin.CreatePinDialogFragment;
-import co.nano.nanowallet.ui.receive.ReceiveDialogFragment;
+import co.nano.nanowallet.ui.pin.PinDialogFragment;
 import co.nano.nanowallet.ui.scan.ScanActivity;
 import co.nano.nanowallet.util.ExceptionHandler;
 
@@ -30,6 +31,7 @@ public class BaseFragment extends Fragment {
 
     private String scanActivityTitle;
     private boolean isSeedScanner;
+    protected View view;
 
     /**
      * Set status bar color to dark blue
@@ -181,7 +183,31 @@ public class BaseFragment extends Fragment {
     }
 
     protected void showCreatePinScreen() {
-        CreatePinDialogFragment.newInstance().show(((WindowControl) getActivity()).getFragmentUtility().getFragmentManager(),
-                ReceiveDialogFragment.TAG);
+        CreatePinDialogFragment dialog = CreatePinDialogFragment.newInstance();
+        dialog.show(((WindowControl) getActivity()).getFragmentUtility().getFragmentManager(),
+                CreatePinDialogFragment.TAG);
+
+        // make sure that dialog is not null
+        ((WindowControl) getActivity()).getFragmentUtility().getFragmentManager().executePendingTransactions();
+
+        // reset status bar to blue when dialog is closed
+        if (dialog.getDialog() != null) {
+            dialog.getDialog().setOnDismissListener(dialogInterface -> {
+                // close keyboard
+                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null && view != null) {
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+            });
+        }
+    }
+
+    protected void showPinScreen(String subtitle) {
+        PinDialogFragment dialog = PinDialogFragment.newInstance(subtitle);
+        dialog.show(((WindowControl) getActivity()).getFragmentUtility().getFragmentManager(),
+                PinDialogFragment.TAG);
+
+        // make sure that dialog is not null
+        ((WindowControl) getActivity()).getFragmentUtility().getFragmentManager().executePendingTransactions();
     }
 }

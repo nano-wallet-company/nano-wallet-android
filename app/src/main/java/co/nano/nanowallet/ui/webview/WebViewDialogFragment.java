@@ -76,7 +76,7 @@ public class WebViewDialogFragment extends BaseDialogFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_webview, container, false);
-        View view = binding.getRoot();
+        view = binding.getRoot();
 
         setStatusBarWhite(view);
 

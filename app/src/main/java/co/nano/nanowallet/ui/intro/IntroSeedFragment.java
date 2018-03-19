@@ -18,7 +18,7 @@ import com.hwangjr.rxbus.annotation.Subscribe;
 import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
-import co.nano.nanowallet.bus.PinComplete;
+import co.nano.nanowallet.bus.CreatePin;
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.databinding.FragmentIntroSeedBinding;
 import co.nano.nanowallet.model.Credentials;
@@ -65,7 +65,7 @@ public class IntroSeedFragment extends BaseFragment {
         // inflate the view
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_intro_seed, container, false);
-        View view = binding.getRoot();
+        view = binding.getRoot();
 
         setStatusBarWhite(view);
         hideToolbar();
@@ -128,11 +128,11 @@ public class IntroSeedFragment extends BaseFragment {
     }
 
     @Subscribe
-    public void receivePinComplete(PinComplete pinComplete) {
+    public void receiveCreatePin(CreatePin createPin) {
         realm.beginTransaction();
         Credentials credentials = realm.where(Credentials.class).findFirst();
         if (credentials != null) {
-            credentials.setPin(pinComplete.getPin());
+            credentials.setPin(createPin.getPin());
         }
         realm.commitTransaction();
         goToHomeScreen();

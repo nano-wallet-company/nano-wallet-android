@@ -38,6 +38,7 @@ import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseDialogFragment;
 import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.FragmentUtility;
+import co.nano.nanowallet.ui.common.KeyboardUtil;
 import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.receive.ReceiveDialogFragment;
 import co.nano.nanowallet.ui.send.SendFragment;
@@ -147,7 +148,10 @@ public class HomeFragment extends BaseFragment {
         // inflate the view
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_home, container, false);
-        View view = binding.getRoot();
+        view = binding.getRoot();
+
+        // hide keyboard
+        KeyboardUtil.hideKeyboard(getActivity(), getView());
 
         binding.setHandlers(new ClickHandlers());
 

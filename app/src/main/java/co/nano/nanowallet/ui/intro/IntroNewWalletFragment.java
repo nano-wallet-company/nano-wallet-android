@@ -19,7 +19,7 @@ import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.broadcastreceiver.ClipboardAlarmReceiver;
-import co.nano.nanowallet.bus.PinComplete;
+import co.nano.nanowallet.bus.CreatePin;
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.databinding.FragmentIntroNewWalletBinding;
 import co.nano.nanowallet.model.Credentials;
@@ -75,7 +75,7 @@ public class IntroNewWalletFragment extends BaseFragment {
         // inflate the view
         FragmentIntroNewWalletBinding binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_intro_new_wallet, container, false);
-        View view = binding.getRoot();
+        view = binding.getRoot();
 
         setStatusBarWhite(view);
         hideToolbar();
@@ -124,11 +124,11 @@ public class IntroNewWalletFragment extends BaseFragment {
     }
 
     @Subscribe
-    public void receivePinComplete(PinComplete pinComplete) {
+    public void receiveCreatePin(CreatePin createPin) {
         realm.beginTransaction();
         Credentials credentials = realm.where(Credentials.class).findFirst();
         if (credentials != null) {
-            credentials.setPin(pinComplete.getPin());
+            credentials.setPin(createPin.getPin());
         }
         realm.commitTransaction();
         goToHomeScreen();

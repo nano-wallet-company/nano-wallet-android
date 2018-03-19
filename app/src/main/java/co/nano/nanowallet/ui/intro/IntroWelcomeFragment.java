@@ -49,7 +49,7 @@ public class IntroWelcomeFragment extends BaseFragment {
         // inflate the view
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_intro_welcome, container, false);
-        View view = binding.getRoot();
+        view = binding.getRoot();
 
         setStatusBarWhite(view);
         hideToolbar();

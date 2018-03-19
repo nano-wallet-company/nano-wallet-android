@@ -39,11 +39,14 @@ import java.text.NumberFormat;
 import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
+import co.nano.nanowallet.bus.CreatePin;
+import co.nano.nanowallet.bus.PinComplete;
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.bus.SendInvalidAmount;
 import co.nano.nanowallet.databinding.FragmentSendBinding;
 import co.nano.nanowallet.model.Address;
 import co.nano.nanowallet.model.AvailableCurrency;
+import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.network.AccountService;
 import co.nano.nanowallet.network.model.response.ErrorResponse;
@@ -54,6 +57,7 @@ import co.nano.nanowallet.ui.common.UIUtil;
 import co.nano.nanowallet.ui.scan.ScanActivity;
 import co.nano.nanowallet.util.NumberUtil;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
+import io.realm.Realm;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -74,6 +78,9 @@ public class SendFragment extends BaseFragment {
 
     @Inject
     SharedPreferencesUtil sharedPreferencesUtil;
+
+    @Inject
+    Realm realm;
 
     @BindingAdapter("layout_constraintGuide_percent")
     public static void setLayoutConstraintGuidePercent(Guideline guideline, float percent) {
@@ -154,7 +161,7 @@ public class SendFragment extends BaseFragment {
         // inflate the view
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_send, container, false);
-        View view = binding.getRoot();
+        view = binding.getRoot();
         binding.setHandlers(new ClickHandlers());
 
         setStatusBarBlue();
@@ -265,6 +272,25 @@ public class SendFragment extends BaseFragment {
         accountService.requestUpdate();
         Answers.getInstance().logCustom(new CustomEvent("Send Nano Finished"));
         goBack();
+    }
+
+    /**
+     * Pin entered correctly
+     * @param pinComplete PinComplete object
+     */
+    @Subscribe
+    public void receivePinComplete(PinComplete pinComplete) {
+        executeSend();
+    }
+
+    @Subscribe
+    public void receiveCreatePin(CreatePin pinComplete) {
+        realm.beginTransaction();
+        Credentials credentials = realm.where(Credentials.class).findFirst();
+        if (credentials != null) {
+            credentials.setPin(pinComplete.getPin());
+        }
+        realm.commitTransaction();
     }
 
     private boolean validateRequest() {
@@ -473,6 +499,8 @@ public class SendFragment extends BaseFragment {
                 return;
             }
 
+            Credentials credentials = realm.where(Credentials.class).findFirst();
+
             if (Reprint.isHardwarePresent() && Reprint.hasFingerprintRegistered()) {
                 // show fingerprint dialog
                 LayoutInflater factory = LayoutInflater.from(getContext());
@@ -492,9 +520,10 @@ public class SendFragment extends BaseFragment {
                                     break;
                             }
                         });
-            } else {
-                // no fingerprint hardware present
-                executeSend();
+            } else if (credentials != null && credentials.getPin() != null) {
+                showPinScreen(getString(R.string.send_pin_description, wallet.getSendNanoAmount()));
+            } else if (credentials != null && credentials.getPin() == null) {
+                showCreatePinScreen();
             }
         }
 

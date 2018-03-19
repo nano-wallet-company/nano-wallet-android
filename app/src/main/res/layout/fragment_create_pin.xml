@@ -1,55 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <!-- Click Listeners -->
+        <variable
+            name="handlers"
+            type="co.nano.nanowallet.ui.pin.CreatePinDialogFragment.ClickHandlers" />
+    </data>
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/bright_white">
 
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/pin_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:onClick="@{handlers::onClickClose}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_close" />
+
         <TextView
             android:id="@+id/pin_title"
             style="@style/TextStyle5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/nunito_regular"
+            android:textSize="16sp"
+            android:layout_marginTop="12dp"
             android:text="@string/pin_create_title"
-            app:layout_constraintBottom_toTopOf="@+id/pin_indicator_dots"
+            app:layout_constraintBottom_toTopOf="@+id/pin_entry"
             app:layout_constraintEnd_toStartOf="@+id/pin_guideline_vert"
             app:layout_constraintStart_toStartOf="@+id/pin_guideline_vert"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/pin_close" />
 
-        <com.andrognito.pinlockview.IndicatorDots
-            android:id="@+id/pin_indicator_dots"
+        <EditText
+            android:id="@+id/pin_entry"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:dotEmptyBackground="@drawable/pin_dot_empty"
-            app:dotFilledBackground="@drawable/pin_dot_filled"
-            app:indicatorType="fixed"
-            app:layout_constraintBottom_toTopOf="@+id/pin_lock_view"
+            android:ems="10"
+            android:inputType="numberPassword"
+            android:maxLength="4"
+            android:gravity="center"
             app:layout_constraintEnd_toStartOf="@+id/pin_guideline_vert"
             app:layout_constraintStart_toStartOf="@+id/pin_guideline_vert"
             app:layout_constraintTop_toBottomOf="@+id/pin_title" />
-
-        <com.andrognito.pinlockview.PinLockView
-            android:id="@+id/pin_lock_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            app:keypadButtonSize="72dp"
-            app:keypadDeleteButtonDrawable="@drawable/ic_backspace"
-            app:keypadDeleteButtonPressedColor="@color/dark_sky_blue"
-            app:keypadDeleteButtonSize="24dp"
-            app:keypadHorizontalSpacing="36dp"
-            app:keypadShowDeleteButton="true"
-            app:keypadTextColor="@color/very_dark_blue"
-            app:keypadTextSize="24dp"
-            app:keypadVerticalSpacing="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/pin_guideline_vert"
-            app:layout_constraintStart_toStartOf="@+id/pin_guideline_vert"
-            app:layout_constraintTop_toBottomOf="@+id/pin_indicator_dots" />
 
         <android.support.constraint.Guideline
             android:id="@+id/pin_guideline_vert"

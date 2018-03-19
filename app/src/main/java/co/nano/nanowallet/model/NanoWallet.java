@@ -378,8 +378,10 @@ public class NanoWallet {
                 decimal = decimal.substring(0, Math.min(decimal.length(), MAX_NANO_DISPLAY_LENGTH));
 
                 // add commas to the whole amount
-                DecimalFormat df = new DecimalFormat("#,###");
-                whole = df.format(new BigDecimal(sanitizeNoCommas(whole)));
+                if (whole.length() > 0) {
+                    DecimalFormat df = new DecimalFormat("#,###");
+                    whole = df.format(new BigDecimal(sanitizeNoCommas(whole)));
+                }
 
                 amount = whole + "." + decimal;
             } else if (split.length == 1) {

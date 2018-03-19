@@ -10,7 +10,7 @@ import co.nano.nanowallet.ui.home.HomeFragment;
 import co.nano.nanowallet.ui.intro.IntroNewWalletFragment;
 import co.nano.nanowallet.ui.intro.IntroSeedFragment;
 import co.nano.nanowallet.ui.intro.IntroWelcomeFragment;
-import co.nano.nanowallet.ui.pin.CreatePinDialogFragment;
+import co.nano.nanowallet.ui.pin.PinDialogFragment;
 import co.nano.nanowallet.ui.receive.ReceiveDialogFragment;
 import co.nano.nanowallet.ui.send.SendFragment;
 import co.nano.nanowallet.ui.settings.SettingsDialogFragment;
@@ -43,7 +43,7 @@ public interface ActivityComponent {
 
     void inject(NanoWallet nanoWallet);
 
-    void inject(CreatePinDialogFragment createPinDialogFragment);
+    void inject(PinDialogFragment pinDialogFragment);
 
     void inject(ReceiveDialogFragment receiveDialogFragment);
 

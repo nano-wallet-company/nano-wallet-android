@@ -1,28 +1,23 @@
 package co.nano.nanowallet.ui.pin;
 
+import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 
-import com.andrognito.pinlockview.PinLockListener;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 
-import javax.inject.Inject;
-
 import co.nano.nanowallet.R;
-import co.nano.nanowallet.bus.PinChange;
-import co.nano.nanowallet.bus.PinComplete;
+import co.nano.nanowallet.bus.CreatePin;
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.databinding.FragmentCreatePinBinding;
-import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseDialogFragment;
-import io.realm.Realm;
-import timber.log.Timber;
 
 /**
  * Settings main screen
@@ -31,46 +26,8 @@ public class CreatePinDialogFragment extends BaseDialogFragment {
     private FragmentCreatePinBinding binding;
     public static String TAG = CreatePinDialogFragment.class.getSimpleName();
     private static final int PIN_LENGTH = 4;
-
     private String firstPin = null;
 
-    private PinLockListener pinLockListener = new PinLockListener() {
-        @Override
-            public void onComplete(String pin) {
-            Timber.d("Pin complete: %s", pin);
-
-            if (firstPin == null) {
-                // first pin submitted, so move to confirm screen
-                firstPin = pin;
-                binding.pinTitle.setText(R.string.pin_confirm_title);
-                binding.pinLockView.resetPinLockView();
-            } else if (firstPin.equals(pin)) {
-                // pins matched, so set this as the pin
-                RxBus.get().post(new PinComplete(pin));
-                dismiss();
-            } else {
-                // pins did not match
-                Toast.makeText(getContext(), R.string.pin_confirm_error, Toast.LENGTH_SHORT).show();
-                firstPin = null;
-                binding.pinTitle.setText(R.string.pin_create_title);
-                binding.pinLockView.resetPinLockView();
-            }
-        }
-
-        @Override
-        public void onEmpty() {
-            Timber.d("Pin empty");
-        }
-
-        @Override
-        public void onPinChange(int pinLength, String intermediatePin) {
-            Timber.d("Pin changed, new length " + pinLength + " with intermediate pin " + intermediatePin);
-            RxBus.get().post(new PinChange(pinLength, intermediatePin));
-        }
-    };
-
-    @Inject
-    Realm realm;
 
     /**
      * Create new instance of the dialog fragment (handy pattern if any data needs to be passed to it)
@@ -93,24 +50,55 @@ public class CreatePinDialogFragment extends BaseDialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Answers.getInstance().logCustom(new CustomEvent("Received VC Viewed"));
-
-        // init dependency injection
-        if (getActivity() instanceof ActivityWithComponent) {
-            ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
-        }
+        Answers.getInstance().logCustom(new CustomEvent("Create Pin Shown"));
 
         // inflate the view
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_create_pin, container, false);
-        View view = binding.getRoot();
+        view = binding.getRoot();
 
-        binding.pinLockView.attachIndicatorDots(binding.pinIndicatorDots);
-        binding.pinLockView.setPinLockListener(pinLockListener);
-        binding.pinLockView.setPinLength(PIN_LENGTH);
+        // show keyboard by default
+        binding.pinEntry.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        }
+
+        binding.setHandlers(new ClickHandlers());
+        binding.pinEntry.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                String pin = v.getText().toString();
+                if (pin.length() != PIN_LENGTH) {
+                    return false;
+                }
+                if (firstPin == null) {
+                    // first pin submitted, so move to confirm screen
+                    firstPin = pin;
+                    binding.pinTitle.setText(R.string.pin_confirm_title);
+                    v.setText("");
+                } else if (firstPin.equals(pin)) {
+                    // pins matched, so set this as the pin
+                    RxBus.get().post(new CreatePin(pin));
+                    dismiss();
+                } else {
+                    // pins did not match
+                    binding.pinTitle.setText(R.string.pin_confirm_error);
+                }
+
+                return true;
+            }
+            return false;
+        });
+
 
         setStatusBarWhite(view);
 
         return view;
+    }
+
+    public class ClickHandlers {
+        public void onClickClose(View view) {
+            dismiss();
+        }
     }
 }

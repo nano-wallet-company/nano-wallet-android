@@ -4,7 +4,7 @@
         <shape android:shape="oval">
             <solid android:color="@color/very_dark_blue"/>
             <!-- Set the same value for both width and height to get a circular shape -->
-            <size android:width="6dp" android:height="6dp"/>
+            <size android:width="10dp" android:height="10dp"/>
         </shape>
     </item>
 </layer-list>

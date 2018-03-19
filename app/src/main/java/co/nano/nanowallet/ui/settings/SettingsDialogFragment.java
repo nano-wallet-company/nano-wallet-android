@@ -21,6 +21,7 @@ import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 import com.github.ajalt.reprint.core.AuthenticationFailureReason;
 import com.github.ajalt.reprint.core.Reprint;
+import com.hwangjr.rxbus.annotation.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,9 @@ import javax.inject.Inject;
 
 import co.nano.nanowallet.BuildConfig;
 import co.nano.nanowallet.R;
+import co.nano.nanowallet.bus.CreatePin;
 import co.nano.nanowallet.bus.Logout;
+import co.nano.nanowallet.bus.PinComplete;
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.databinding.FragmentSettingsBinding;
 import co.nano.nanowallet.model.AvailableCurrency;
@@ -97,12 +100,15 @@ public class SettingsDialogFragment extends BaseDialogFragment {
         // inflate the view
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_settings, container, false);
-        View view = binding.getRoot();
+        view = binding.getRoot();
         binding.setHandlers(new ClickHandlers());
         binding.setShowCurrency(showCurrency);
         binding.setVersion(getString(R.string.version_display, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE));
 
         setStatusBarWhite(view);
+
+        // subscribe to bus
+        RxBus.get().register(this);
 
         // set up spinner
         List<StringWithTag> availableCurrencies = getAllCurrencies();
@@ -148,6 +154,33 @@ public class SettingsDialogFragment extends BaseDialogFragment {
         return view;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // unregister from bus
+        RxBus.get().unregister(this);
+    }
+
+    /**
+     * Pin entered correctly
+     *
+     * @param pinComplete PinComplete object
+     */
+    @Subscribe
+    public void receivePinComplete(PinComplete pinComplete) {
+        showCopySeedAlert();
+    }
+
+    @Subscribe
+    public void receiveCreatePin(CreatePin pinComplete) {
+        realm.beginTransaction();
+        Credentials credentials = realm.where(Credentials.class).findFirst();
+        if (credentials != null) {
+            credentials.setPin(pinComplete.getPin());
+        }
+        realm.commitTransaction();
+    }
+
     /**
      * Get list of all of the available currencies
      *
@@ -184,6 +217,8 @@ public class SettingsDialogFragment extends BaseDialogFragment {
         }
 
         public void onClickShowSeed(View view) {
+            Credentials credentials = realm.where(Credentials.class).findFirst();
+
             if (Reprint.isHardwarePresent() && Reprint.hasFingerprintRegistered()) {
                 // show fingerprint dialog
                 LayoutInflater factory = LayoutInflater.from(getContext());
@@ -203,9 +238,10 @@ public class SettingsDialogFragment extends BaseDialogFragment {
                                     break;
                             }
                         });
-            } else {
-                // no fingerprint hardware present
-                showCopySeedAlert();
+            } else if (credentials != null && credentials.getPin() != null) {
+                showPinScreen(getString(R.string.settings_fingerprint_description));
+            } else if (credentials != null && credentials.getPin() == null) {
+                showCreatePinScreen();
             }
         }
 
