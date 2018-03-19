@@ -1,5 +1,6 @@
 package co.nano.nanowallet.ui.pin;
 
+import android.app.Activity;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -79,6 +80,12 @@ public class CreatePinDialogFragment extends BaseDialogFragment {
                 } else if (firstPin.equals(pin)) {
                     // pins matched, so set this as the pin
                     RxBus.get().post(new CreatePin(pin));
+                    // close keyboard
+                    InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                    if (inputMethodManager != null && getActivity().getCurrentFocus() != null) {
+                        inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+                    }
+
                     dismiss();
                 } else {
                     // pins did not match
@@ -98,6 +105,10 @@ public class CreatePinDialogFragment extends BaseDialogFragment {
 
     public class ClickHandlers {
         public void onClickClose(View view) {
+            InputMethodManager input = (InputMethodManager) binding.pinEntry.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (input != null && input.isActive()) {
+                input.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+            }
             dismiss();
         }
     }

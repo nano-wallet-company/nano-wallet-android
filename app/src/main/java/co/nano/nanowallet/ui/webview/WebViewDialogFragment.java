@@ -87,7 +87,7 @@ public class WebViewDialogFragment extends BaseDialogFragment {
             final WebViewDialogFragment window = this;
             binding.dialogAppbar.setTitle(mTitle);
             binding.dialogAppbar.setNavigationOnClickListener(v1 -> {
-                KeyboardUtil.hideKeyboard(getContext(), getView());
+                KeyboardUtil.hideKeyboard(getActivity());
                 window.dismiss();
             });
 

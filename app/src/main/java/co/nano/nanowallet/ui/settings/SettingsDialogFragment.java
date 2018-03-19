@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
@@ -41,6 +42,7 @@ import co.nano.nanowallet.model.StringWithTag;
 import co.nano.nanowallet.network.AccountService;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseDialogFragment;
+import co.nano.nanowallet.ui.common.KeyboardUtil;
 import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
 import io.realm.Realm;
@@ -179,6 +181,7 @@ public class SettingsDialogFragment extends BaseDialogFragment {
             credentials.setPin(pinComplete.getPin());
         }
         realm.commitTransaction();
+        showCopySeedAlert();
     }
 
     /**
@@ -279,9 +282,9 @@ public class SettingsDialogFragment extends BaseDialogFragment {
         }
 
         Credentials credentials = realm.where(Credentials.class).findFirst();
-        builder.setTitle(R.string.settings_seed_alert_title)
+        AlertDialog dialog = builder.setTitle(R.string.settings_seed_alert_title)
                 .setMessage(R.string.settings_seed_alert_message)
-                .setPositiveButton(R.string.settings_seed_alert_confirm_cta, (dialog, which) -> {
+                .setPositiveButton(R.string.settings_seed_alert_confirm_cta, (d, which) -> {
                     Answers.getInstance().logCustom(new CustomEvent("Seed Copied"));
                     // copy seed to clipboard
                     android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
@@ -294,11 +297,16 @@ public class SettingsDialogFragment extends BaseDialogFragment {
                         setClearClipboardAlarm();
                     }
                 })
-                .setNegativeButton(R.string.settings_seed_alert_cancel_cta, (dialog, which) -> {
+                .setNegativeButton(R.string.settings_seed_alert_cancel_cta, (d, which) -> {
                     // do nothing which dismisses the dialog
                 })
                 .setIcon(R.drawable.ic_warning)
                 .show();
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        }
+
+        KeyboardUtil.hideKeyboard(getActivity());
     }
 
     private void showFingerprintDialog(View view) {

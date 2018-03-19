@@ -151,7 +151,7 @@ public class HomeFragment extends BaseFragment {
         view = binding.getRoot();
 
         // hide keyboard
-        KeyboardUtil.hideKeyboard(getActivity(), getView());
+        KeyboardUtil.hideKeyboard(getActivity());
 
         binding.setHandlers(new ClickHandlers());
 

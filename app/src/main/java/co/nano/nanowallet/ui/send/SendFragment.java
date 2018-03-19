@@ -53,6 +53,7 @@ import co.nano.nanowallet.network.model.response.ErrorResponse;
 import co.nano.nanowallet.network.model.response.ProcessResponse;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseFragment;
+import co.nano.nanowallet.ui.common.KeyboardUtil;
 import co.nano.nanowallet.ui.common.UIUtil;
 import co.nano.nanowallet.ui.scan.ScanActivity;
 import co.nano.nanowallet.util.NumberUtil;
@@ -126,14 +127,6 @@ public class SendFragment extends BaseFragment {
         return false;
     }
 
-    public void hideSoftKeyboard() {
-        //Hides the SoftKeyboard
-        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-        if (inputMethodManager != null && getActivity().getCurrentFocus() != null) {
-            inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
-        }
-    }
-
     public void showSoftKeyboard() {
         //Shows the SoftKeyboard
         InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -157,6 +150,7 @@ public class SendFragment extends BaseFragment {
 
         // change keyboard mode
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        KeyboardUtil.hideKeyboard(getActivity());
 
         // inflate the view
         binding = DataBindingUtil.inflate(
@@ -291,6 +285,7 @@ public class SendFragment extends BaseFragment {
             credentials.setPin(pinComplete.getPin());
         }
         realm.commitTransaction();
+        executeSend();
     }
 
     private boolean validateRequest() {
@@ -490,7 +485,7 @@ public class SendFragment extends BaseFragment {
         public void onClickConfirm(View view) {
             binding.setShowAmount(true);
             setShortAddress();
-            hideSoftKeyboard();
+            KeyboardUtil.hideKeyboard(getActivity());
             binding.sendAmountNano.requestFocus();
         }
 

@@ -11,7 +11,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.broadcastreceiver.ClipboardAlarmReceiver;
@@ -113,15 +112,11 @@ public class BaseDialogFragment extends DialogFragment {
 
         // make sure that dialog is not null
         ((WindowControl) getActivity()).getFragmentUtility().getFragmentManager().executePendingTransactions();
-
         // reset status bar to blue when dialog is closed
         if (dialog.getDialog() != null) {
             dialog.getDialog().setOnDismissListener(dialogInterface -> {
                 // close keyboard
-                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null && view != null) {
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                }
+                KeyboardUtil.hideKeyboard(getActivity());
             });
         }
     }
