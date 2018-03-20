@@ -13,6 +13,7 @@ import dagger.Module;
 import dagger.Provides;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.exceptions.RealmFileException;
 
 @Module
 public class PersistenceModule {
@@ -28,24 +29,62 @@ public class PersistenceModule {
     @Provides
     Realm providesRealmInstance(@Named("encryption_key") byte[] key) {
         if (key != null) {
-            RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()
-                    .name(DB_NAME)
-                    .encryptionKey(key)
-                    .schemaVersion(SCHEMA_VERSION)
-                    .migration(new Migration())
-                    .build();
+            try {
+                RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()
+                        .name(DB_NAME)
+                        .encryptionKey(key)
+                        .schemaVersion(SCHEMA_VERSION)
+                        .migration(new Migration())
+                        .build();
 
-            // Open the Realm with encryption enabled
-            return Realm.getInstance(realmConfiguration);
+                // Open the Realm with encryption enabled
+                return Realm.getInstance(realmConfiguration);
+            } catch (RealmFileException e) {
+                // regenerate key and open realm with new key
+                Vault.getVault()
+                        .edit()
+                        .putString(Vault.ENCRYPTION_KEY_NAME,
+                                Base64.encodeToString(Vault.generateKey(), Base64.DEFAULT))
+                        .apply();
+
+                RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()
+                        .name(DB_NAME)
+                        .encryptionKey(Base64.decode(Vault.getVault().getString(Vault.ENCRYPTION_KEY_NAME, null), Base64.DEFAULT))
+                        .schemaVersion(SCHEMA_VERSION)
+                        .migration(new Migration())
+                        .build();
+
+                // Open the Realm with encryption enabled
+                return Realm.getInstance(realmConfiguration);
+            }
         } else {
-            RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()
-                    .name(DB_NAME)
-                    .schemaVersion(SCHEMA_VERSION)
-                    .migration(new Migration())
-                    .build();
+            try {
+                RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()
+                        .name(DB_NAME)
+                        .schemaVersion(SCHEMA_VERSION)
+                        .migration(new Migration())
+                        .build();
 
-            // Open the Realm with encryption enabled
-            return Realm.getInstance(realmConfiguration);
+                // Open the Realm with encryption enabled
+                return Realm.getInstance(realmConfiguration);
+            } catch (RealmFileException e) {
+                // regenerate key and open realm with new key
+                Vault.getVault()
+                        .edit()
+                        .putString(Vault.ENCRYPTION_KEY_NAME,
+                                Base64.encodeToString(Vault.generateKey(), Base64.DEFAULT))
+                        .apply();
+
+                RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()
+                        .name(DB_NAME)
+                        .encryptionKey(Base64.decode(Vault.getVault().getString(Vault.ENCRYPTION_KEY_NAME, null), Base64.DEFAULT))
+                        .schemaVersion(SCHEMA_VERSION)
+                        .migration(new Migration())
+                        .build();
+
+                // Open the Realm with encryption enabled
+                return Realm.getInstance(realmConfiguration);
+            }
         }
     }
 
