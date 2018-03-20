@@ -7,15 +7,15 @@ apply plugin: 'realm-android'
 apply plugin: 'io.fabric'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.2"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
     dataBinding {
         enabled = true
     }
     defaultConfig {
         applicationId "co.nano.nanowallet"
         minSdkVersion 16
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 17
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -59,7 +59,7 @@ dependencies {
     final RX_ANDROID = '2.0.1'
     final RXBUS_VERSION = '2.0.0'
     final RX_JAVA_2 = '2.1.8'
-    final SUPPORT_LIBRARY_VERSION = '26.1.0'
+    final SUPPORT_LIBRARY_VERSION = '27.1.0'
     final TEST_RUNNER_VERSION = '1.0.1'
     final TIMBER_VERSION = '4.6.0'
     final VAULT_VERSION = '1.4.0'
