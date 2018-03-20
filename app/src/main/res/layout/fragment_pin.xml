@@ -75,7 +75,6 @@
             android:fontFamily="@font/nunito_regular"
             app:keypadButtonBackgroundDrawable="@drawable/pin_button_background"
             app:keypadButtonSize="62dp"
-            app:keypadDeleteButtonDrawable="@drawable/ic_backspace"
             app:keypadDeleteButtonPressedColor="@color/dark_sky_blue"
             app:keypadDeleteButtonSize="24dp"
             app:keypadHorizontalSpacing="24dp"
