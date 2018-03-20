@@ -6,7 +6,7 @@
         <item name="android:textSize">14sp</item>
         <item name="android:textColorHint">@color/very_dark_blue</item>
         <item name="android:textColor">@color/bright_white</item>
-        <item name="android:fontFamily">@font/sofiapro_regular</item>
+        <item name="android:fontFamily">@font/notosans_regular</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">80dp</item>
@@ -40,7 +40,7 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:fontFamily">@font/sofiapro_regular</item>
+        <item name="android:fontFamily">@font/notosans_regular</item>
         <item name="android:padding">14dp</item>
         <item name="android:letterSpacing">0.32</item>
     </style>
@@ -59,7 +59,7 @@
         <item name="android:textColor">@color/dark_sky_blue</item>
         <item name="android:letterSpacing">0.36</item>
         <item name="android:gravity">center_horizontal</item>
-        <item name="android:fontFamily">@font/sofiapro_regular</item>
+        <item name="android:fontFamily">@font/notosans_regular</item>
     </style>
 
     <style name="TextStyle">
@@ -138,7 +138,7 @@
         <item name="android:textSize">10sp</item>
         <item name="android:textColor">#cccccc</item>
         <item name="android:letterSpacing">0.06</item>
-        <item name="android:fontFamily">@font/sofiapro_regular</item>
+        <item name="android:fontFamily">@font/notosans_regular</item>
     </style>
 
     <style name="TextStyle14">
@@ -146,7 +146,7 @@
         <item name="android:textColor">@color/very_dark_blue</item>
         <item name="android:letterSpacing">0.05</item>
         <item name="android:gravity">center_horizontal</item>
-        <item name="android:fontFamily">@font/sofiapro_regular</item>
+        <item name="android:fontFamily">@font/notosans_regular</item>
     </style>
 
     <style name="TextStyle15">
@@ -154,7 +154,7 @@
         <item name="android:textColor">@color/very_dark_blue</item>
         <item name="android:letterSpacing">0.05</item>
         <item name="android:lineSpacingExtra">26sp</item>
-        <item name="android:fontFamily">@font/sofiapro_regular</item>
+        <item name="android:fontFamily">@font/notosans_regular</item>
     </style>
 
     <style name="TextStyle16">
