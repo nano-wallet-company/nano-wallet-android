@@ -92,6 +92,18 @@
             app:layout_constraintTop_toBottomOf="@+id/settings_local_currency_spinner" />
 
         <TextView
+            android:id="@+id/settings_disclaimer"
+            style="@style/TextStyle20"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:alpha="0.4"
+            app:layout_constraintEnd_toStartOf="@+id/settings_guideline_vert"
+            app:layout_constraintStart_toStartOf="@+id/settings_guideline_vert"
+            app:layout_constraintTop_toBottomOf="@+id/settings_show_seed"
+            tools:text="@string/settings_disclaimer" />
+
+        <TextView
             android:id="@+id/settings_version"
             style="@style/TextStyle4"
             android:layout_width="match_parent"
@@ -113,6 +125,13 @@
             android:onClick="@{handlers::onClickLogOut}"
             android:text="@string/settings_log_out"
             app:layout_constraintBottom_toBottomOf="parent" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/settings_guideline_vert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
 
         <android.support.constraint.Group
             android:id="@+id/settings_group_currency_spinner"

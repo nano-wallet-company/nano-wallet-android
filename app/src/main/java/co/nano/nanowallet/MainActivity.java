@@ -19,6 +19,7 @@ import com.hwangjr.rxbus.annotation.Subscribe;
 import javax.inject.Inject;
 
 import co.nano.nanowallet.bus.Logout;
+import co.nano.nanowallet.bus.OpenWebView;
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.di.activity.ActivityComponent;
 import co.nano.nanowallet.di.activity.ActivityModule;
@@ -33,6 +34,7 @@ import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.home.HomeFragment;
 import co.nano.nanowallet.ui.intro.IntroNewWalletFragment;
 import co.nano.nanowallet.ui.intro.IntroWelcomeFragment;
+import co.nano.nanowallet.ui.webview.WebViewDialogFragment;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -187,6 +189,13 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         // go to the welcome fragment
         getFragmentUtility().clearStack();
         getFragmentUtility().replace(new IntroWelcomeFragment(), FragmentUtility.Animation.CROSSFADE);
+    }
+
+    @Subscribe
+    public void openWebView(OpenWebView openWebView) {
+        WebViewDialogFragment
+                .newInstance(openWebView.getUrl(), openWebView.getTitle() != null ? openWebView.getTitle() : "")
+                .show(getFragmentUtility().getFragmentManager(), WebViewDialogFragment.TAG);
     }
 
     @Override

@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +45,7 @@ import co.nano.nanowallet.network.AccountService;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseDialogFragment;
 import co.nano.nanowallet.ui.common.KeyboardUtil;
+import co.nano.nanowallet.ui.common.LinkTransformationMethod;
 import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
 import io.realm.Realm;
@@ -108,6 +111,15 @@ public class SettingsDialogFragment extends BaseDialogFragment {
         binding.setVersion(getString(R.string.version_display, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE));
 
         setStatusBarWhite(view);
+
+        // set disclaimer links
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            binding.settingsDisclaimer.setText(Html.fromHtml(getString(R.string.settings_disclaimer), Html.FROM_HTML_MODE_LEGACY));
+        } else {
+            binding.settingsDisclaimer.setText(Html.fromHtml(getString(R.string.settings_disclaimer)));
+        }
+        binding.settingsDisclaimer.setTransformationMethod(new LinkTransformationMethod());
+        binding.settingsDisclaimer.setMovementMethod(LinkMovementMethod.getInstance());
 
         // subscribe to bus
         RxBus.get().register(this);

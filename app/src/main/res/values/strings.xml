@@ -54,6 +54,7 @@
     <string name="settings_fingerprint_title">Copy Wallet Seed</string>
     <string name="settings_fingerprint_description">Verify your identity to view your wallet seed.</string>
     <string name="settings_fingerprint_success">Fingerprint recognized</string>
+    <string name="settings_disclaimer"><![CDATA[<a href="https://nano.org/mobile-terms-of-service">Terms of Service</a> and <a href="https://nano.org/mobile-privacy-policy">Privacy Policy</a>]]></string>
 
     <!-- Receive Screen -->
     <string name="receive_title">Receive</string>

@@ -4,6 +4,8 @@ import android.os.Parcel;
 import android.text.style.URLSpan;
 import android.view.View;
 
+import co.nano.nanowallet.bus.OpenWebView;
+import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.ui.webview.WebViewDialogFragment;
 
 public class CustomUrlSpan extends URLSpan {
@@ -25,6 +27,8 @@ public class CustomUrlSpan extends URLSpan {
                             ((WindowControl) widget.getContext()).getFragmentUtility().getFragmentManager(),
                             WebViewDialogFragment.TAG
                     );
+        } else if (url != null) {
+            RxBus.get().post(new OpenWebView(url));
         }
     }
 }
