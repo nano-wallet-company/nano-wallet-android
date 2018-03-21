@@ -5,9 +5,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -31,6 +37,7 @@ import io.realm.Realm;
 public class IntroLegalFragment extends BaseFragment {
     public static String TAG = IntroLegalFragment.class.getSimpleName();
     private String seed;
+    private FragmentIntroLegalBinding binding;
 
     @Inject
     Realm realm;
@@ -64,7 +71,7 @@ public class IntroLegalFragment extends BaseFragment {
             ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
         }
         // inflate the view
-        FragmentIntroLegalBinding binding = DataBindingUtil.inflate(
+        binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_intro_legal, container, false);
         view = binding.getRoot();
 
@@ -90,14 +97,49 @@ public class IntroLegalFragment extends BaseFragment {
     }
 
     public class ClickHandlers {
+
+        public void onCheckChanged(CompoundButton view, boolean isChecked) {
+            if (binding.introLegalCheckboxTos.isChecked() &&
+                    binding.introLegalCheckboxEula.isChecked() &&
+                    binding.introLegalCheckboxPp.isChecked()) {
+                binding.introLegalButtonConfirm.setEnabled(true);
+            } else {
+                binding.introLegalButtonConfirm.setEnabled(false);
+            }
+        }
+
+
         /**
          * Confirm button listener
          *
          * @param view View
          */
         public void onClickConfirm(View view) {
-            if (true) {
-                //Answers.getInstance().logCustom(new CustomEvent("X Agreement").putCustomAttribute("description", reason.name()));
+            if (binding.introLegalCheckboxTos.isChecked() &&
+                    binding.introLegalCheckboxEula.isChecked() &&
+                    binding.introLegalCheckboxPp.isChecked()) {
+                // get date
+                Date c = Calendar.getInstance().getTime();
+                SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
+                // send event
+                Answers.getInstance().logCustom(new CustomEvent("Terms of Service Agreement")
+                        .putCustomAttribute("device_id", sharedPreferencesUtil.getAppInstallUuid())
+                        .putCustomAttribute("accepted", "true")
+                        .putCustomAttribute("date", df.format(c))
+                );
+
+                Answers.getInstance().logCustom(new CustomEvent("End User License Agreement")
+                        .putCustomAttribute("device_id", sharedPreferencesUtil.getAppInstallUuid())
+                        .putCustomAttribute("accepted", "true")
+                        .putCustomAttribute("date", df.format(c))
+                );
+
+                Answers.getInstance().logCustom(new CustomEvent("Privacy Policy Agreement")
+                        .putCustomAttribute("device_id", sharedPreferencesUtil.getAppInstallUuid())
+                        .putCustomAttribute("accepted", "true")
+                        .putCustomAttribute("date", df.format(c))
+                );
 
                 // set confirm flag
                 realm.beginTransaction();

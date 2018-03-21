@@ -26,6 +26,9 @@
     <string name="intro_new_wallet_continue_negative">Back</string>
     <string name="intro_legal_title">You must agree to the following</string>
     <string name="intro_legal_confirm">Confirm Agreements</string>
+    <string name="intro_legal_checkbox_tos">Terms of Service</string>
+    <string name="intro_legal_checkbox_eula">End User License Agreement</string>
+    <string name="intro_legal_checkbox_pp">Privacy Policy</string>
 
     <!-- Pin Screen -->
     <string name="pin_create_title">Create a 4-digit Android passcode</string>

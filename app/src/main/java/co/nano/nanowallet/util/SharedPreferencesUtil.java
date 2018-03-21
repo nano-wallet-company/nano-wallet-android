@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import java.util.UUID;
+
 import co.nano.nanowallet.model.AvailableCurrency;
 
 /**
@@ -11,6 +13,7 @@ import co.nano.nanowallet.model.AvailableCurrency;
  */
 public class SharedPreferencesUtil {
     private static final String LOCAL_CURRENCY = "local_currency";
+    private static final String APP_INSTALL_UUID = "app_install_uuid";
     private static final String CONFIRMED_SEED_BACKEDUP = "confirmed_seed_backedup";
     private static final String FROM_NEW_WALLET = "from_new_wallet";
 
@@ -66,6 +69,22 @@ public class SharedPreferencesUtil {
 
     public void clearLocalCurrency() {
         set(LOCAL_CURRENCY, null);
+    }
+
+    public boolean hasAppInstallUuid() {
+        return has(APP_INSTALL_UUID);
+    }
+
+    public String getAppInstallUuid() {
+        return get(APP_INSTALL_UUID, UUID.randomUUID().toString());
+    }
+
+    public void setAppInstallUuid(String appInstallUuid) {
+        set(APP_INSTALL_UUID, appInstallUuid);
+    }
+
+    public void clearAppInstallUuid() {
+        set(APP_INSTALL_UUID, null);
     }
 
     public boolean hasFromNewWallet() {

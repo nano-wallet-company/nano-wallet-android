@@ -16,6 +16,8 @@ import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 import com.hwangjr.rxbus.annotation.Subscribe;
 
+import java.util.UUID;
+
 import javax.inject.Inject;
 
 import co.nano.nanowallet.bus.Logout;
@@ -77,6 +79,11 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
 
         // subscribe to bus
         RxBus.get().register(this);
+
+        // set unique uuid (per app install)
+        if (!sharedPreferencesUtil.hasAppInstallUuid()) {
+            sharedPreferencesUtil.setAppInstallUuid(UUID.randomUUID().toString());
+        }
 
         initUi();
     }

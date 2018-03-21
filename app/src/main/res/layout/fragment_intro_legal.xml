@@ -51,11 +51,37 @@
                 app:layout_constraintStart_toStartOf="@+id/intro_legal_guideline_vert"
                 app:layout_constraintTop_toBottomOf="@+id/intro_legal_logo" />
 
+            <CheckBox
+                android:id="@+id/intro_legal_checkbox_tos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onCheckedChanged="@{handlers::onCheckChanged}"
+                android:text="@string/intro_legal_checkbox_tos"
+                app:layout_constraintStart_toStartOf="@+id/intro_legal_guideline_left"
+                app:layout_constraintTop_toBottomOf="@+id/intro_legal_title" />
+
+            <CheckBox
+                android:id="@+id/intro_legal_checkbox_eula"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onCheckedChanged="@{handlers::onCheckChanged}"
+                android:text="@string/intro_legal_checkbox_eula"
+                app:layout_constraintStart_toStartOf="@+id/intro_legal_guideline_left"
+                app:layout_constraintTop_toBottomOf="@+id/intro_legal_checkbox_tos" />
+
+            <CheckBox
+                android:id="@+id/intro_legal_checkbox_pp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onCheckedChanged="@{handlers::onCheckChanged}"
+                android:text="@string/intro_legal_checkbox_pp"
+                app:layout_constraintStart_toStartOf="@+id/intro_legal_guideline_left"
+                app:layout_constraintTop_toBottomOf="@+id/intro_legal_checkbox_eula" />
 
             <Button
                 android:id="@+id/intro_legal_button_confirm"
                 style="@style/LargeButton"
-                android:layout_marginBottom="20dp"
+                android:enabled="false"
                 android:onClick="@{handlers::onClickConfirm}"
                 android:text="@string/intro_legal_confirm"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -69,6 +95,14 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintGuide_percent="0.5" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/intro_legal_guideline_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.1" />
+
 
         </android.support.constraint.ConstraintLayout>
     </android.support.v4.widget.NestedScrollView>
