@@ -1,10 +1,7 @@
 package co.nano.nanowallet.ui.intro;
 
 import android.databinding.DataBindingUtil;
-import android.os.Build;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +19,8 @@ import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.FragmentUtility;
-import co.nano.nanowallet.ui.common.LinkTransformationMethod;
 import co.nano.nanowallet.ui.common.WindowControl;
+import co.nano.nanowallet.util.SharedPreferencesUtil;
 import io.realm.Realm;
 
 /**
@@ -36,6 +33,9 @@ public class IntroWelcomeFragment extends BaseFragment {
 
     @Inject
     Realm realm;
+
+    @Inject
+    SharedPreferencesUtil sharedPreferencesUtil;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,15 +58,6 @@ public class IntroWelcomeFragment extends BaseFragment {
         binding.setVersion(getString(R.string.version_display, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE));
         binding.setHandlers(new ClickHandlers());
 
-        // set disclaimer links
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            binding.introWelcomeDisclaimer.setText(Html.fromHtml(getString(R.string.intro_welcome_disclaimer), Html.FROM_HTML_MODE_LEGACY));
-        } else {
-            binding.introWelcomeDisclaimer.setText(Html.fromHtml(getString(R.string.intro_welcome_disclaimer)));
-        }
-        binding.introWelcomeDisclaimer.setTransformationMethod(new LinkTransformationMethod());
-        binding.introWelcomeDisclaimer.setMovementMethod(LinkMovementMethod.getInstance());
-
         return view;
     }
 
@@ -81,12 +72,12 @@ public class IntroWelcomeFragment extends BaseFragment {
                     credentials.setSeed(NanoUtil.generateSeed());
                 });
 
+                sharedPreferencesUtil.setFromNewWallet(true);
                 ((WindowControl) getActivity()).getFragmentUtility().replace(
-                        IntroNewWalletFragment.newInstance(),
+                        IntroLegalFragment.newInstance(),
                         FragmentUtility.Animation.ENTER_LEFT_EXIT_RIGHT,
                         FragmentUtility.Animation.ENTER_RIGHT_EXIT_LEFT,
-                        IntroSeedFragment.TAG,
-                        binding.introWelcomeLogo
+                        IntroLegalFragment.TAG
                 );
             }
         }
@@ -98,8 +89,7 @@ public class IntroWelcomeFragment extends BaseFragment {
                         new IntroSeedFragment(),
                         FragmentUtility.Animation.CROSSFADE,
                         FragmentUtility.Animation.CROSSFADE,
-                        IntroSeedFragment.TAG,
-                        binding.introWelcomeLogo
+                        IntroSeedFragment.TAG
                 );
             }
         }

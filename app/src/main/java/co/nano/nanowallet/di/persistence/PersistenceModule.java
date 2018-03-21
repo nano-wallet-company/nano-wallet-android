@@ -5,6 +5,8 @@ import android.util.Base64;
 
 import javax.inject.Named;
 
+import co.nano.nanowallet.bus.Logout;
+import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.db.Migration;
 import co.nano.nanowallet.di.application.ApplicationScope;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
@@ -17,7 +19,7 @@ import io.realm.exceptions.RealmFileException;
 
 @Module
 public class PersistenceModule {
-    private static final int SCHEMA_VERSION = 3;
+    private static final int SCHEMA_VERSION = 4;
     private static final String DB_NAME = "nano.realm";
 
     @Provides
@@ -54,7 +56,10 @@ public class PersistenceModule {
                         .migration(new Migration())
                         .build();
 
-                // Open the Realm with encryption enabled
+                Realm.deleteRealm(realmConfiguration);
+
+                RxBus.get().post(new Logout());
+
                 return Realm.getInstance(realmConfiguration);
             }
         } else {
@@ -82,7 +87,10 @@ public class PersistenceModule {
                         .migration(new Migration())
                         .build();
 
-                // Open the Realm with encryption enabled
+                Realm.deleteRealm(realmConfiguration);
+
+                RxBus.get().post(new Logout());
+
                 return Realm.getInstance(realmConfiguration);
             }
         }

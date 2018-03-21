@@ -16,6 +16,7 @@ public class Credentials extends RealmObject {
     private String privateKey;
     private String uuid;
     private String pin;
+    private Boolean hasCompletedLegalAgreements;
 
     public static final List<Character> VALID_SEED_CHARACTERS = Arrays.asList('a', 'b', 'c', 'd', 'e', 'f', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
 
@@ -59,6 +60,14 @@ public class Credentials extends RealmObject {
 
     public void setPin(String pin) {
         this.pin = pin;
+    }
+
+    public Boolean getHasCompletedLegalAgreements() {
+        return hasCompletedLegalAgreements == null ? false : hasCompletedLegalAgreements;
+    }
+
+    public void setHasCompletedLegalAgreements(Boolean hasCompletedLegalAgreements) {
+        this.hasCompletedLegalAgreements = hasCompletedLegalAgreements;
     }
 
     // Generated fields
@@ -111,10 +120,11 @@ public class Credentials extends RealmObject {
         Credentials that = (Credentials) o;
 
         if (seed != null ? !seed.equals(that.seed) : that.seed != null) return false;
-        if (privateKey != null ? !privateKey.equals(that.privateKey) : that.privateKey != null) {
+        if (privateKey != null ? !privateKey.equals(that.privateKey) : that.privateKey != null)
             return false;
-        }
-        return uuid != null ? uuid.equals(that.uuid) : that.uuid == null;
+        if (uuid != null ? !uuid.equals(that.uuid) : that.uuid != null) return false;
+        if (pin != null ? !pin.equals(that.pin) : that.pin != null) return false;
+        return hasCompletedLegalAgreements != null ? hasCompletedLegalAgreements.equals(that.hasCompletedLegalAgreements) : that.hasCompletedLegalAgreements == null;
     }
 
     @Override
@@ -122,6 +132,19 @@ public class Credentials extends RealmObject {
         int result = seed != null ? seed.hashCode() : 0;
         result = 31 * result + (privateKey != null ? privateKey.hashCode() : 0);
         result = 31 * result + (uuid != null ? uuid.hashCode() : 0);
+        result = 31 * result + (pin != null ? pin.hashCode() : 0);
+        result = 31 * result + (hasCompletedLegalAgreements != null ? hasCompletedLegalAgreements.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Credentials{" +
+                "seed='" + seed + '\'' +
+                ", privateKey='" + privateKey + '\'' +
+                ", uuid='" + uuid + '\'' +
+                ", pin='" + pin + '\'' +
+                ", hasCompletedLegalAgreements=" + hasCompletedLegalAgreements +
+                '}';
     }
 }

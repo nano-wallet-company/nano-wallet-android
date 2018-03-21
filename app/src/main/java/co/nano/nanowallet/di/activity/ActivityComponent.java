@@ -7,6 +7,7 @@ import co.nano.nanowallet.di.application.ApplicationComponent;
 import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.network.AccountService;
 import co.nano.nanowallet.ui.home.HomeFragment;
+import co.nano.nanowallet.ui.intro.IntroLegalFragment;
 import co.nano.nanowallet.ui.intro.IntroNewWalletFragment;
 import co.nano.nanowallet.ui.intro.IntroSeedFragment;
 import co.nano.nanowallet.ui.intro.IntroWelcomeFragment;
@@ -32,6 +33,8 @@ public interface ActivityComponent {
     void inject(AccountService accountService);
 
     void inject(HomeFragment homeFragment);
+
+    void inject(IntroLegalFragment introLegalFragment);
 
     void inject(IntroNewWalletFragment introNewWalletFragment);
 

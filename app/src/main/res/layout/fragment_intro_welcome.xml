@@ -64,25 +64,11 @@
             android:layout_marginTop="20dp"
             android:onClick="@{handlers::onClickHaveWallet}"
             android:text="@string/intro_welcome_have_wallet_cta"
-            app:layout_constraintBottom_toBottomOf="@+id/intro_welcome_disclaimer"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/intro_welcome_guideline_vert"
             app:layout_constraintStart_toStartOf="@+id/intro_welcome_guideline_vert"
             app:layout_constraintTop_toBottomOf="@+id/intro_welcome_button_new_wallet"
             app:layout_constraintVertical_chainStyle="packed" />
-
-        <TextView
-            android:id="@+id/intro_welcome_disclaimer"
-            style="@style/TextStyle20"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="65dp"
-            android:layout_marginTop="20dp"
-            android:alpha="0.4"
-            tools:text="@string/intro_welcome_disclaimer"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/intro_welcome_guideline_vert"
-            app:layout_constraintStart_toStartOf="@+id/intro_welcome_guideline_vert"
-            app:layout_constraintTop_toBottomOf="@+id/intro_welcome_button_have_wallet" />
 
         <TextView
             android:id="@+id/intro_welcome_version"

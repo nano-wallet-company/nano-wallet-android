@@ -32,6 +32,7 @@ import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.home.HomeFragment;
+import co.nano.nanowallet.ui.intro.IntroLegalFragment;
 import co.nano.nanowallet.ui.intro.IntroNewWalletFragment;
 import co.nano.nanowallet.ui.intro.IntroWelcomeFragment;
 import co.nano.nanowallet.ui.webview.WebViewDialogFragment;
@@ -154,16 +155,18 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
             // if we don't have a wallet, start the intro
             mFragmentUtility.clearStack();
             mFragmentUtility.replace(new IntroWelcomeFragment());
-        } else {
+        } else if (credentials.getHasCompletedLegalAgreements()) {
+            mFragmentUtility.clearStack();
             if (sharedPreferencesUtil.getConfirmedSeedBackedUp()) {
                 // go to home screen
-                mFragmentUtility.clearStack();
-                mFragmentUtility.replace(new HomeFragment());
+                mFragmentUtility.replace(HomeFragment.newInstance());
             } else {
-                // go to
-                mFragmentUtility.clearStack();
-                mFragmentUtility.replace(new IntroNewWalletFragment());
+                // go to intro new wallet
+                mFragmentUtility.replace(IntroNewWalletFragment.newInstance());
             }
+        } else {
+            mFragmentUtility.clearStack();
+            mFragmentUtility.replace(IntroLegalFragment.newInstance());
         }
     }
 
@@ -185,6 +188,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         mActivityComponent = null;
 
         sharedPreferencesUtil.setConfirmedSeedBackedUp(false);
+        sharedPreferencesUtil.setFromNewWallet(false);
 
         // go to the welcome fragment
         getFragmentUtility().clearStack();

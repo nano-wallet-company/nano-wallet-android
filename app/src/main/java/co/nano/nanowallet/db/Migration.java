@@ -32,6 +32,14 @@ public class Migration implements RealmMigration {
             }
             oldVersion++;
         }
+
+        if (oldVersion == 3) {
+            RealmObjectSchema credentialsSchema = schema.get("Credentials");
+            if (credentialsSchema != null) {
+                credentialsSchema.addField("hasCompletedLegalAgreements", Boolean.class);
+            }
+            oldVersion++;
+        }
     }
 
     @Override

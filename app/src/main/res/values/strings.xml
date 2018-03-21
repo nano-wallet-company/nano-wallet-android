@@ -24,6 +24,8 @@
     <string name="intro_new_wallet_continue_message">Please confirm you have properly stored your Wallet Seed somewhere safe.</string>
     <string name="intro_new_wallet_continue_positive">I have backed up my Wallet Seed</string>
     <string name="intro_new_wallet_continue_negative">Back</string>
+    <string name="intro_legal_title">You must agree to the following</string>
+    <string name="intro_legal_confirm">Confirm Agreements</string>
 
     <!-- Pin Screen -->
     <string name="pin_create_title">Create a 4-digit Android passcode</string>

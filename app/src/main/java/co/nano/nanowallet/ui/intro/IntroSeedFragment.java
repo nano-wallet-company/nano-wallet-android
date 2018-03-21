@@ -28,7 +28,6 @@ import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.common.UIUtil;
 import co.nano.nanowallet.ui.common.WindowControl;
-import co.nano.nanowallet.ui.home.HomeFragment;
 import co.nano.nanowallet.ui.scan.ScanActivity;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
 import io.realm.Realm;
@@ -234,10 +233,10 @@ public class IntroSeedFragment extends BaseFragment {
         if (getActivity() instanceof WindowControl) {
             ((WindowControl) getActivity()).getFragmentUtility().clearStack();
             ((WindowControl) getActivity()).getFragmentUtility().replace(
-                    new HomeFragment(),
+                    IntroLegalFragment.newInstance(),
                     FragmentUtility.Animation.ENTER_LEFT_EXIT_RIGHT,
                     FragmentUtility.Animation.ENTER_RIGHT_EXIT_LEFT,
-                    IntroSeedFragment.TAG
+                    IntroLegalFragment.TAG
             );
         }
     }
