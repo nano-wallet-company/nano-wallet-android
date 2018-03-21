@@ -120,7 +120,7 @@ public class IntroLegalFragment extends BaseFragment {
                     binding.introLegalCheckboxPp.isChecked()) {
                 // get date
                 Date c = Calendar.getInstance().getTime();
-                SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy-HH:mm:ssXXX", Locale.getDefault());
 
                 // send event
                 Answers.getInstance().logCustom(new CustomEvent("Terms of Service Agreement")
