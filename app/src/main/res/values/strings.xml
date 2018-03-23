@@ -33,7 +33,7 @@
     <string name="intro_legal_checkbox_pp"><![CDATA[<a href="https://nano.org//mobile-privacy-policy">Privacy Policy</a>]]></string>
     <string name="intro_legal_alert_title">Log Out Warning</string>
     <string name="intro_legal_alert_message">Not agreeing will result in logging out of the app.</string>
-    <string name="intro_legal_alert_confirm_cta">Okay</string>
+    <string name="intro_legal_alert_confirm_cta">Log Me Out</string>
     <string name="intro_legal_alert_cancel_cta">Cancel</string>
 
     <!-- Pin Screen -->
