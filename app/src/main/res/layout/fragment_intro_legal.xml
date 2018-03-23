@@ -25,13 +25,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/bright_white"
-            android:padding="20dp">
+            android:padding="10dp">
 
             <TextView
                 android:id="@+id/intro_legal_title"
                 style="@style/TextStyle22"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
                 android:text="@string/intro_legal_title"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -39,8 +41,12 @@
             <TextView
                 android:id="@+id/intro_legal_description"
                 style="@style/TextStyle21"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"
                 android:layout_marginTop="20dp"
                 android:text="@string/intro_legal_description"
                 app:layout_constraintStart_toStartOf="parent"
@@ -50,7 +56,9 @@
                 android:id="@+id/intro_legal_checkbox_disclaimer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="30dp"
                 android:onCheckedChanged="@{handlers::onDisclaimerCheckChanged}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/intro_legal_description" />
@@ -60,10 +68,10 @@
                 style="@style/TextStyle21"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/intro_legal_checkbox_disclaimer"
                 android:layout_marginLeft="5dp"
                 android:layout_marginStart="5dp"
                 android:onClickListener="@{handlers::onDisclaimerLinkClicked}"
+                android:text="@string/intro_legal_checkbox_disclaimer"
                 app:layout_constraintBottom_toBottomOf="@+id/intro_legal_checkbox_disclaimer"
                 app:layout_constraintStart_toEndOf="@+id/intro_legal_checkbox_disclaimer"
                 app:layout_constraintTop_toTopOf="@+id/intro_legal_checkbox_disclaimer" />
@@ -72,6 +80,8 @@
                 android:id="@+id/intro_legal_checkbox_eula"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
                 android:onCheckedChanged="@{handlers::onEULACheckChanged}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/intro_legal_checkbox_disclaimer" />
@@ -81,10 +91,10 @@
                 style="@style/TextStyle21"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/intro_legal_checkbox_eula"
                 android:layout_marginLeft="5dp"
                 android:layout_marginStart="5dp"
                 android:onClickListener="@{handlers::onEULALinkClicked}"
+                android:text="@string/intro_legal_checkbox_eula"
                 app:layout_constraintBottom_toBottomOf="@+id/intro_legal_checkbox_eula"
                 app:layout_constraintStart_toEndOf="@+id/intro_legal_checkbox_eula"
                 app:layout_constraintTop_toTopOf="@+id/intro_legal_checkbox_eula" />
@@ -93,6 +103,8 @@
                 android:id="@+id/intro_legal_checkbox_pp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
                 android:onCheckedChanged="@{handlers::onPPCheckChanged}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/intro_legal_checkbox_eula" />
@@ -102,10 +114,10 @@
                 style="@style/TextStyle21"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/intro_legal_checkbox_pp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginStart="5dp"
                 android:onClickListener="@{handlers::onPPLinkClicked}"
+                android:text="@string/intro_legal_checkbox_pp"
                 app:layout_constraintBottom_toBottomOf="@+id/intro_legal_checkbox_pp"
                 app:layout_constraintStart_toEndOf="@+id/intro_legal_checkbox_pp"
                 app:layout_constraintTop_toTopOf="@+id/intro_legal_checkbox_pp" />
