@@ -127,7 +127,7 @@ public class IntroLegalFragment extends BaseFragment {
     private void sendCheckToggledEvent(String title, boolean isChecked) {
         // get date
         Date c = Calendar.getInstance().getTime();
-        SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy-HH:mm:ssXXX", Locale.getDefault());
+        SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy-HH:mm:ssZZZZZ", Locale.getDefault());
 
         // send event
         Answers.getInstance().logCustom(new CustomEvent(title)
@@ -144,7 +144,7 @@ public class IntroLegalFragment extends BaseFragment {
     private void sendLinkViewedEvent(String title) {
         // get date
         Date c = Calendar.getInstance().getTime();
-        SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy-HH:mm:ssXXX", Locale.getDefault());
+        SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy-HH:mm:ssZZZZZ", Locale.getDefault());
 
         // send event
         Answers.getInstance().logCustom(new CustomEvent(title)
