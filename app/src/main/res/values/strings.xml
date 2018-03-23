@@ -52,7 +52,7 @@
     <!-- Settings Screen -->
     <string name="settings_title">Settings</string>
     <string name="settings_local_currency">Local Currency</string>
-    <string name="settings_show_seed">Show My Seed</string>
+    <string name="settings_show_seed">Copy My Wallet Seed</string>
     <string name="settings_log_out">Log Out</string>
     <string name="settings_seed_alert_title">Here is your Wallet Seed, be careful.</string>
     <string name="settings_seed_alert_message">Tap the button below to copy your Seed to paste later. The Seed is pasteable for 2 minutes and then expires.\n\nWe suggest copying to an app like 1Password, LastPass, or printing the Seed out and hiding it somewhere safe.\n\nNever share your seed with anyone, ever, under any circumstances.</string>
@@ -65,7 +65,7 @@
     <string name="settings_fingerprint_title">Copy Wallet Seed</string>
     <string name="settings_fingerprint_description">Verify your identity to view your wallet seed.</string>
     <string name="settings_fingerprint_success">Fingerprint recognized</string>
-    <string name="settings_disclaimer"><![CDATA[<a href="https://nano.org/mobile-terms-of-service">Terms of Service</a> and <a href="https://nano.org/mobile-privacy-policy">Privacy Policy</a>]]></string>
+    <string name="settings_disclaimer"><![CDATA[Read the <a href="https://nano.org/mobile-disclaimer">Mobile Disclaimer</a>,<br><a href="https://nano.org/mobile-end-user-license-agreement">EULA</a>, and <a href="https://nano.org//mobile-privacy-policy">Privacy Policy</a>]]></string>
 
     <!-- Receive Screen -->
     <string name="receive_title">Receive</string>
