@@ -9,8 +9,11 @@ import android.os.SystemClock;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.broadcastreceiver.ClipboardAlarmReceiver;
@@ -128,6 +131,21 @@ public class BaseDialogFragment extends DialogFragment {
 
         // make sure that dialog is not null
         ((WindowControl) getActivity()).getFragmentUtility().getFragmentManager().executePendingTransactions();
+    }
+
+    /**
+     * Create a link from the text on the view
+     * @param v TextView
+     * @param text id of text to add to the field
+     */
+    protected void createLink(TextView v, int text) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            v.setText(Html.fromHtml(getString(text), Html.FROM_HTML_MODE_LEGACY));
+        } else {
+            v.setText(Html.fromHtml(getString(text)));
+        }
+        v.setTransformationMethod(new LinkTransformationMethod());
+        v.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
 }

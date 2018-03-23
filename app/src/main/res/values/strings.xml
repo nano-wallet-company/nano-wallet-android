@@ -24,11 +24,17 @@
     <string name="intro_new_wallet_continue_message">Please confirm you have properly stored your Wallet Seed somewhere safe.</string>
     <string name="intro_new_wallet_continue_positive">I have backed up my Wallet Seed</string>
     <string name="intro_new_wallet_continue_negative">Back</string>
-    <string name="intro_legal_title">You must agree to the following</string>
-    <string name="intro_legal_confirm">Confirm Agreements</string>
-    <string name="intro_legal_checkbox_tos">Terms of Service</string>
-    <string name="intro_legal_checkbox_eula">End User License Agreement</string>
-    <string name="intro_legal_checkbox_pp">Privacy Policy</string>
+    <string name="intro_legal_title">Terms and Conditions</string>
+    <string name="intro_legal_description">Tap the links below and read them carefully.\n\nBy checking the boxes, you acknowledge that you have read and agree to the following terms.</string>
+    <string name="intro_legal_confirm">Agree</string>
+    <string name="intro_legal_deny">Disagree</string>
+    <string name="intro_legal_checkbox_disclaimer"><![CDATA[<a href="https://nano.org/mobile-disclaimer">NanoLabs Mobile Disclaimer</a>]]></string>
+    <string name="intro_legal_checkbox_eula"><![CDATA[<a href="https://nano.org/mobile-end-user-license-agreement">End User License Agreement</a>]]></string>
+    <string name="intro_legal_checkbox_pp"><![CDATA[<a href="https://nano.org//mobile-privacy-policy">Privacy Policy</a>]]></string>
+    <string name="intro_legal_alert_title">Log Out Warning</string>
+    <string name="intro_legal_alert_message">Not agreeing will result in logging out of the app.</string>
+    <string name="intro_legal_alert_confirm_cta">Okay</string>
+    <string name="intro_legal_alert_cancel_cta">Cancel</string>
 
     <!-- Pin Screen -->
     <string name="pin_create_title">Create a 4-digit Android passcode</string>

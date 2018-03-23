@@ -11,7 +11,10 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
+import android.widget.TextView;
 
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.broadcastreceiver.ClipboardAlarmReceiver;
@@ -208,5 +211,20 @@ public class BaseFragment extends Fragment {
         if (dialog.getDialog() != null) {
             dialog.getDialog().setOnDismissListener(dialogInterface -> setStatusBarBlue());
         }
+    }
+
+    /**
+     * Create a link from the text on the view
+     * @param v TextView
+     * @param text id of text to add to the field
+     */
+    protected void createLink(TextView v, int text) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            v.setText(Html.fromHtml(getString(text), Html.FROM_HTML_MODE_LEGACY));
+        } else {
+            v.setText(Html.fromHtml(getString(text)));
+        }
+        v.setTransformationMethod(new LinkTransformationMethod());
+        v.setMovementMethod(LinkMovementMethod.getInstance());
     }
 }

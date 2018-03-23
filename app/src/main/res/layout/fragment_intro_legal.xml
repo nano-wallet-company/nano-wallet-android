@@ -25,76 +25,122 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/bright_white"
-            android:paddingEnd="45dp"
-            android:paddingStart="45dp">
-
-            <android.support.v7.widget.AppCompatImageView
-                android:id="@+id/intro_legal_logo"
-                android:layout_width="104dp"
-                android:layout_height="44dp"
-                android:contentDescription="@string/app_name"
-                app:layout_constraintBottom_toTopOf="@+id/intro_legal_title"
-                app:layout_constraintEnd_toStartOf="@+id/intro_legal_guideline_vert"
-                app:layout_constraintStart_toStartOf="@+id/intro_legal_guideline_vert"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_logo"
-                tools:ignore="UnusedAttribute" />
+            android:padding="20dp">
 
             <TextView
                 android:id="@+id/intro_legal_title"
-                style="@style/TextStyle5"
+                style="@style/TextStyle22"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/intro_legal_title"
-                app:layout_constraintBottom_toTopOf="@+id/intro_legal_button_confirm"
-                app:layout_constraintEnd_toStartOf="@+id/intro_legal_guideline_vert"
-                app:layout_constraintStart_toStartOf="@+id/intro_legal_guideline_vert"
-                app:layout_constraintTop_toBottomOf="@+id/intro_legal_logo" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <CheckBox
-                android:id="@+id/intro_legal_checkbox_tos"
+            <TextView
+                android:id="@+id/intro_legal_description"
+                style="@style/TextStyle21"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onCheckedChanged="@{handlers::onCheckChanged}"
-                android:text="@string/intro_legal_checkbox_tos"
-                app:layout_constraintStart_toStartOf="@+id/intro_legal_guideline_left"
+                android:layout_marginTop="20dp"
+                android:text="@string/intro_legal_description"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/intro_legal_title" />
+
+            <CheckBox
+                android:id="@+id/intro_legal_checkbox_disclaimer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:onCheckedChanged="@{handlers::onDisclaimerCheckChanged}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/intro_legal_description" />
+
+            <TextView
+                android:id="@+id/intro_legal_label_disclaimer"
+                style="@style/TextStyle21"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/intro_legal_checkbox_disclaimer"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:onClickListener="@{handlers::onDisclaimerLinkClicked}"
+                app:layout_constraintBottom_toBottomOf="@+id/intro_legal_checkbox_disclaimer"
+                app:layout_constraintStart_toEndOf="@+id/intro_legal_checkbox_disclaimer"
+                app:layout_constraintTop_toTopOf="@+id/intro_legal_checkbox_disclaimer" />
 
             <CheckBox
                 android:id="@+id/intro_legal_checkbox_eula"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onCheckedChanged="@{handlers::onCheckChanged}"
+                android:onCheckedChanged="@{handlers::onEULACheckChanged}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/intro_legal_checkbox_disclaimer" />
+
+            <TextView
+                android:id="@+id/intro_legal_label_eula"
+                style="@style/TextStyle21"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/intro_legal_checkbox_eula"
-                app:layout_constraintStart_toStartOf="@+id/intro_legal_guideline_left"
-                app:layout_constraintTop_toBottomOf="@+id/intro_legal_checkbox_tos" />
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:onClickListener="@{handlers::onEULALinkClicked}"
+                app:layout_constraintBottom_toBottomOf="@+id/intro_legal_checkbox_eula"
+                app:layout_constraintStart_toEndOf="@+id/intro_legal_checkbox_eula"
+                app:layout_constraintTop_toTopOf="@+id/intro_legal_checkbox_eula" />
 
             <CheckBox
                 android:id="@+id/intro_legal_checkbox_pp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onCheckedChanged="@{handlers::onCheckChanged}"
-                android:text="@string/intro_legal_checkbox_pp"
-                app:layout_constraintStart_toStartOf="@+id/intro_legal_guideline_left"
+                android:onCheckedChanged="@{handlers::onPPCheckChanged}"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/intro_legal_checkbox_eula" />
+
+            <TextView
+                android:id="@+id/intro_legal_label_pp"
+                style="@style/TextStyle21"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/intro_legal_checkbox_pp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:onClickListener="@{handlers::onPPLinkClicked}"
+                app:layout_constraintBottom_toBottomOf="@+id/intro_legal_checkbox_pp"
+                app:layout_constraintStart_toEndOf="@+id/intro_legal_checkbox_pp"
+                app:layout_constraintTop_toTopOf="@+id/intro_legal_checkbox_pp" />
+
+            <Button
+                android:id="@+id/intro_legal_button_deny"
+                style="@style/LargeButton"
+                android:layout_width="0dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/bg_large_button_gray"
+                android:onClick="@{handlers::onClickDeny}"
+                android:text="@string/intro_legal_deny"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/intro_legal_button_confirm"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_weight="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintVertical_chainStyle="spread" />
 
             <Button
                 android:id="@+id/intro_legal_button_confirm"
                 style="@style/LargeButton"
+                android:layout_width="0dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
                 android:enabled="false"
                 android:onClick="@{handlers::onClickConfirm}"
                 android:text="@string/intro_legal_confirm"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/intro_legal_guideline_vert"
-                app:layout_constraintStart_toStartOf="@+id/intro_legal_guideline_vert"
-                app:layout_constraintTop_toBottomOf="@+id/intro_legal_title" />
-
-            <android.support.constraint.Guideline
-                android:id="@+id/intro_legal_guideline_vert"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.5" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_weight="0.5"
+                app:layout_constraintStart_toEndOf="@+id/intro_legal_button_deny"
+                app:layout_constraintVertical_chainStyle="spread" />
 
             <android.support.constraint.Guideline
                 android:id="@+id/intro_legal_guideline_left"
