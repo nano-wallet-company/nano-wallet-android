@@ -19,3 +19,7 @@
 ### Have a question?
 
 If you need any help, please visit our [GitHub Issues](https://github.com/icarusglider/nanowallet-android/issues) or the [Nano #support channel](https://chat.nano.org). Feel free to file an issue if you do not manage to find any solution.
+
+### License
+
+Nano Wallet is released under the [BSD-2 License](https://github.com/nanocurrency/nanowallet-android/blob/master/LICENSE)
