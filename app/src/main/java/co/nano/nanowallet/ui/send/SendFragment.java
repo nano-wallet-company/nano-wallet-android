@@ -40,9 +40,11 @@ import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.bus.CreatePin;
+import co.nano.nanowallet.bus.HideOverlay;
 import co.nano.nanowallet.bus.PinComplete;
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.bus.SendInvalidAmount;
+import co.nano.nanowallet.bus.ShowOverlay;
 import co.nano.nanowallet.databinding.FragmentSendBinding;
 import co.nano.nanowallet.model.Address;
 import co.nano.nanowallet.model.AvailableCurrency;
@@ -242,6 +244,7 @@ public class SendFragment extends BaseFragment {
      */
     @Subscribe
     public void receiveServiceError(ErrorResponse errorResponse) {
+        RxBus.get().post(new HideOverlay());
         // show alert with a message to the user letting them know the amount they entered
         AlertDialog.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -263,6 +266,7 @@ public class SendFragment extends BaseFragment {
      */
     @Subscribe
     public void receiveProcessResponse(ProcessResponse processResponse) {
+        RxBus.get().post(new HideOverlay());
         accountService.requestUpdate();
         Answers.getInstance().logCustom(new CustomEvent("Send Nano Finished"));
         goBack();
@@ -445,6 +449,7 @@ public class SendFragment extends BaseFragment {
     }
 
     private void executeSend() {
+        RxBus.get().post(new ShowOverlay());
         Address destination = new Address(binding.sendAddress.getText().toString());
         BigInteger sendAmount = NumberUtil.getAmountAsRawBigInteger(wallet.getSendNanoAmount());
         BigInteger balance = wallet.getAccountBalanceNanoRaw().toBigInteger().subtract(sendAmount);

@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.crashlytics.android.answers.Answers;
@@ -20,9 +21,11 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
+import co.nano.nanowallet.bus.HideOverlay;
 import co.nano.nanowallet.bus.Logout;
 import co.nano.nanowallet.bus.OpenWebView;
 import co.nano.nanowallet.bus.RxBus;
+import co.nano.nanowallet.bus.ShowOverlay;
 import co.nano.nanowallet.di.activity.ActivityComponent;
 import co.nano.nanowallet.di.activity.ActivityModule;
 import co.nano.nanowallet.di.activity.DaggerActivityComponent;
@@ -47,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
     private Toolbar mToolbar;
     private TextView mToolbarTitle;
     protected ActivityComponent mActivityComponent;
+    private FrameLayout mOverlay;
 
 
     @Inject
@@ -147,6 +151,9 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         mFragmentUtility = new FragmentUtility(getSupportFragmentManager());
         mFragmentUtility.setContainerViewId(R.id.container);
 
+        // get overlay
+        mOverlay = findViewById(R.id.overlay);
+
         // set up toolbar
         mToolbar = findViewById(R.id.toolbar);
         mToolbarTitle = findViewById(R.id.toolbar_title);
@@ -209,10 +216,24 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
                 .show(getFragmentUtility().getFragmentManager(), WebViewDialogFragment.TAG);
     }
 
+    @Subscribe
+    public void showOverlay(ShowOverlay showOverlay) {
+        mOverlay.setVisibility(View.VISIBLE);
+        mOverlay.setOnClickListener(view -> {
+        });
+    }
+
+    @Subscribe
+    public void hideOverlay(HideOverlay hideOverlay) {
+        mOverlay.setVisibility(View.GONE);
+    }
+
     @Override
     public FragmentUtility getFragmentUtility() {
         return mFragmentUtility;
     }
+
+
 
     /**
      * Set the status bar to a particular color
