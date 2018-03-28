@@ -2,6 +2,7 @@ package co.nano.nanowallet.ui.intro;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,6 @@ import io.realm.Realm;
  */
 
 public class IntroWelcomeFragment extends BaseFragment {
-    private FragmentIntroWelcomeBinding binding;
     public static String TAG = IntroWelcomeFragment.class.getSimpleName();
 
     @Inject
@@ -38,7 +38,7 @@ public class IntroWelcomeFragment extends BaseFragment {
     SharedPreferencesUtil sharedPreferencesUtil;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Answers.getInstance().logCustom(new CustomEvent("Welcome VC Viewed"));
 
@@ -47,7 +47,7 @@ public class IntroWelcomeFragment extends BaseFragment {
             ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
         }
         // inflate the view
-        binding = DataBindingUtil.inflate(
+        FragmentIntroWelcomeBinding binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_intro_welcome, container, false);
         view = binding.getRoot();
 
@@ -55,7 +55,7 @@ public class IntroWelcomeFragment extends BaseFragment {
         hideToolbar();
 
         // bind data to view
-        binding.setVersion(getString(R.string.version_display, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE));
+        binding.setVersion(getString(R.string.version_display, BuildConfig.VERSION_NAME));
         binding.setHandlers(new ClickHandlers());
 
         return view;
