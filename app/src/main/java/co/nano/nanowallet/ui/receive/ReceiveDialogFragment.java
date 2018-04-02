@@ -93,8 +93,15 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
         binding.setHandlers(new ClickHandlers());
 
         // colorize address text
-        binding.receiveAddress.setText(UIUtil.getColorizedSpannable(address.getAddress(), getContext()));
-        binding.receiveCard.cardAddress.setText(UIUtil.getColorizedSpannable(address.getAddress(), getContext()));
+        if (binding != null &&
+                binding.receiveAddress != null &&
+                binding.receiveCard != null &&
+                binding.receiveCard.cardAddress != null &&
+                address != null &&
+                address.getAddress() != null) {
+            binding.receiveAddress.setText(UIUtil.getColorizedSpannable(address.getAddress(), getContext()));
+            binding.receiveCard.cardAddress.setText(UIUtil.getColorizedSpannable(address.getAddress(), getContext()));
+        }
 
         // generate QR code
         new AwesomeQRCode.Renderer()
