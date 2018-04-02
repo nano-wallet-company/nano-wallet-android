@@ -43,6 +43,9 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
         incremental false
     }
+    lintOptions {
+        abortOnError false
+    }
 }
 
 dependencies {
@@ -116,7 +119,8 @@ dependencies {
     }
 
     // Libsodium
-    implementation project(':libsodium-jni-release') // custom built with forked libsodium to support blake2b hashing in ed25519 natively
+    implementation project(':libsodium-jni-release')
+    // custom built with forked libsodium to support blake2b hashing in ed25519 natively
 
     // Secure storage
     implementation "com.bottlerocketstudios:vault:$VAULT_VERSION"
