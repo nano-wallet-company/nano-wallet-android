@@ -9,7 +9,7 @@
         <item name="android:fontFamily">@font/notosans_regular</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">80dp</item>
+        <item name="android:layout_height">0dp</item>
         <item name="android:maxLength">64</item>
         <item name="android:scrollHorizontally">false</item>
         <item name="android:inputType">textMultiLine|textNoSuggestions</item>
