@@ -449,13 +449,17 @@ public class SendFragment extends BaseFragment {
     }
 
     private void executeSend() {
-        RxBus.get().post(new ShowOverlay());
         Address destination = new Address(binding.sendAddress.getText().toString());
-        BigInteger sendAmount = NumberUtil.getAmountAsRawBigInteger(wallet.getSendNanoAmount());
-        BigInteger balance = wallet.getAccountBalanceNanoRaw().toBigInteger().subtract(sendAmount);
+        if (destination.isValidAddress()) {
+            RxBus.get().post(new ShowOverlay());
+            BigInteger sendAmount = NumberUtil.getAmountAsRawBigInteger(wallet.getSendNanoAmount());
+            BigInteger balance = wallet.getAccountBalanceNanoRaw().toBigInteger().subtract(sendAmount);
 
-        accountService.requestSend(wallet.getFrontierBlock(), destination, balance);
-        Answers.getInstance().logCustom(new CustomEvent("Send Nano Began"));
+            accountService.requestSend(wallet.getFrontierBlock(), destination, balance);
+            Answers.getInstance().logCustom(new CustomEvent("Send Nano Began"));
+        } else {
+            showError(R.string.send_error_alert_title, R.string.send_error_alert_message);
+        }
     }
 
 
