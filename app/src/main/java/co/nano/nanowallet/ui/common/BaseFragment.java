@@ -185,31 +185,35 @@ public class BaseFragment extends Fragment {
     }
 
     protected void showCreatePinScreen() {
-        CreatePinDialogFragment dialog = CreatePinDialogFragment.newInstance();
-        dialog.show(((WindowControl) getActivity()).getFragmentUtility().getFragmentManager(),
-                CreatePinDialogFragment.TAG);
+        if (getActivity() instanceof WindowControl) {
+            CreatePinDialogFragment dialog = CreatePinDialogFragment.newInstance();
+            dialog.show(((WindowControl) getActivity()).getFragmentUtility().getFragmentManager(),
+                    CreatePinDialogFragment.TAG);
 
-        // make sure that dialog is not null
-        ((WindowControl) getActivity()).getFragmentUtility().getFragmentManager().executePendingTransactions();
+            // make sure that dialog is not null
+            ((WindowControl) getActivity()).getFragmentUtility().getFragmentManager().executePendingTransactions();
 
-        if (dialog.getDialog() != null) {
-            dialog.getDialog().setOnDismissListener(dialogInterface -> {
-                KeyboardUtil.hideKeyboard(getActivity());
-            });
+            if (dialog.getDialog() != null) {
+                dialog.getDialog().setOnDismissListener(dialogInterface -> {
+                    KeyboardUtil.hideKeyboard(getActivity());
+                });
+            }
         }
     }
 
     protected void showPinScreen(String subtitle) {
-        PinDialogFragment dialog = PinDialogFragment.newInstance(subtitle);
-        dialog.show(((WindowControl) getActivity()).getFragmentUtility().getFragmentManager(),
-                PinDialogFragment.TAG);
+        if (getActivity() instanceof WindowControl) {
+            PinDialogFragment dialog = PinDialogFragment.newInstance(subtitle);
+            dialog.show(((WindowControl) getActivity()).getFragmentUtility().getFragmentManager(),
+                    PinDialogFragment.TAG);
 
-        // make sure that dialog is not null
-        ((WindowControl) getActivity()).getFragmentUtility().getFragmentManager().executePendingTransactions();
+            // make sure that dialog is not null
+            ((WindowControl) getActivity()).getFragmentUtility().getFragmentManager().executePendingTransactions();
 
-        // reset status bar to blue when dialog is closed
-        if (dialog.getDialog() != null) {
-            dialog.getDialog().setOnDismissListener(dialogInterface -> setStatusBarBlue());
+            // reset status bar to blue when dialog is closed
+            if (dialog.getDialog() != null) {
+                dialog.getDialog().setOnDismissListener(dialogInterface -> setStatusBarBlue());
+            }
         }
     }
 
