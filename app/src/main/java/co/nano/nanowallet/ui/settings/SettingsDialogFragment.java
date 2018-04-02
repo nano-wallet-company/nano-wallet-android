@@ -105,7 +105,7 @@ public class SettingsDialogFragment extends BaseDialogFragment {
         view = binding.getRoot();
         binding.setHandlers(new ClickHandlers());
         binding.setShowCurrency(showCurrency);
-        binding.setVersion(getString(R.string.version_display, BuildConfig.VERSION_NAME));
+        binding.setVersion(getString(R.string.version_display, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE));
 
         setStatusBarWhite(view);
 
