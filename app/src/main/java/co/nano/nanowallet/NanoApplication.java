@@ -30,11 +30,6 @@ public class NanoApplication extends MultiDexApplication {
         // initialize Realm database
         Realm.init(this);
 
-        // initialize crashlytics
-        Fabric.with(this, new Crashlytics());
-        // initialize answers
-        Fabric.with(this, new Answers());
-
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }
