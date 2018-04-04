@@ -40,6 +40,14 @@ public class Migration implements RealmMigration {
             }
             oldVersion++;
         }
+
+        if (oldVersion == 4) {
+            RealmObjectSchema credentialsSchema = schema.get("Credentials");
+            if (credentialsSchema != null) {
+                credentialsSchema.addField("hasAgreedToTracking", Boolean.class);
+            }
+            oldVersion++;
+        }
     }
 
     @Override

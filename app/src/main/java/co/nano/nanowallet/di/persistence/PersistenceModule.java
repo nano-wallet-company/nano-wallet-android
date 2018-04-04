@@ -19,7 +19,7 @@ import io.realm.exceptions.RealmFileException;
 
 @Module
 public class PersistenceModule {
-    private static final int SCHEMA_VERSION = 4;
+    private static final int SCHEMA_VERSION = 5;
     private static final String DB_NAME = "nano.realm";
 
     @Provides

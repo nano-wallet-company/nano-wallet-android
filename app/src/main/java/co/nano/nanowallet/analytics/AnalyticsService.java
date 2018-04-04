@@ -50,9 +50,8 @@ public class AnalyticsService {
     }
 
     /**
-     * Trace a basic event
-     *
-     * @param event String of event title
+     * Track a basic event
+     * @param event Event Title String
      */
     public void track(String event) {
         Credentials credentials = realm.where(Credentials.class).findFirst();
