@@ -258,7 +258,7 @@ public class BaseFragment extends Fragment {
                     Credentials credentials = realm.where(Credentials.class).findFirst();
                     if (credentials != null) {
                         credentials.setHasAgreedToTracking(true);
-                        credentials.setHasAnsweredAnalyticsTracking(true);
+                        credentials.setHasAnsweredAnalyticsQuestion(true);
                     }
                     realm.commitTransaction();
                 })
@@ -267,7 +267,7 @@ public class BaseFragment extends Fragment {
                     Credentials credentials = realm.where(Credentials.class).findFirst();
                     if (credentials != null) {
                         credentials.setHasAgreedToTracking(false);
-                        credentials.setHasAnsweredAnalyticsTracking(true);
+                        credentials.setHasAnsweredAnalyticsQuestion(true);
                     }
                     realm.commitTransaction();
                     analyticsService.stop();

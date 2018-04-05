@@ -65,7 +65,7 @@ public class AnalyticsService {
             return;
         }
 
-        if (credentials.getHasAgreedToTracking() || !credentials.getHasAnsweredAnalyticsTracking()) {
+        if (credentials.getHasAgreedToTracking() || !credentials.getHasAnsweredAnalyticsQuestion()) {
             Answers.getInstance().logCustom(new CustomEvent(event));
         }
     }
@@ -82,7 +82,7 @@ public class AnalyticsService {
             return;
         }
 
-        if (credentials.getHasAgreedToTracking() || !credentials.getHasAnsweredAnalyticsTracking()) {
+        if (credentials.getHasAgreedToTracking() || !credentials.getHasAnsweredAnalyticsQuestion()) {
             CustomEvent customEvent = new CustomEvent(event);
             for (Map.Entry<String, String> entry : customData.entrySet()) {
                 customEvent.putCustomAttribute(entry.getKey(), entry.getValue());

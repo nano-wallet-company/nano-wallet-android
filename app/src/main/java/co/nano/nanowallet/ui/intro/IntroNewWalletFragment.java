@@ -10,8 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.CustomEvent;
 import com.github.ajalt.reprint.core.Reprint;
 import com.hwangjr.rxbus.annotation.Subscribe;
 
@@ -105,7 +103,7 @@ public class IntroNewWalletFragment extends BaseFragment {
 
         accountService.open();
 
-        if (credentials != null && !credentials.getHasAnsweredAnalyticsTracking()) {
+        if (credentials != null && !credentials.getHasAnsweredAnalyticsQuestion()) {
             showAnalyticsOptIn(analyticsService, realm);
         }
 

@@ -13,8 +13,6 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.CustomEvent;
 import com.hwangjr.rxbus.annotation.Subscribe;
 
 import java.util.UUID;
@@ -171,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
 
         // initialize analytics
         if (credentials != null &&
-                (credentials.getHasAgreedToTracking() || !credentials.getHasAnsweredAnalyticsTracking())) {
+                (credentials.getHasAgreedToTracking() || !credentials.getHasAnsweredAnalyticsQuestion())) {
             analyticsService.start();
         } else {
             analyticsService.stop();

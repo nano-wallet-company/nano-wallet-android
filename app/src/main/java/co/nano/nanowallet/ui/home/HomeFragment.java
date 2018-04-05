@@ -15,8 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.CustomEvent;
 import com.hwangjr.rxbus.annotation.Subscribe;
 
 import java.math.BigDecimal;
@@ -47,7 +45,6 @@ import co.nano.nanowallet.ui.receive.ReceiveDialogFragment;
 import co.nano.nanowallet.ui.send.SendFragment;
 import co.nano.nanowallet.ui.settings.SettingsDialogFragment;
 import co.nano.nanowallet.ui.webview.WebViewDialogFragment;
-import co.nano.nanowallet.util.ExceptionHandler;
 import io.realm.Realm;
 
 /**
@@ -185,7 +182,7 @@ public class HomeFragment extends BaseFragment {
         updateAmounts();
 
         Credentials credentials = realm.where(Credentials.class).findFirst();
-        if (credentials != null && !credentials.getHasAnsweredAnalyticsTracking()) {
+        if (credentials != null && !credentials.getHasAnsweredAnalyticsQuestion()) {
             showAnalyticsOptIn(analyticsService, realm);
         }
 
