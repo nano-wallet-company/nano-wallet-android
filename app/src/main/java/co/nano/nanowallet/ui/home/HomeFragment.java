@@ -45,6 +45,7 @@ import co.nano.nanowallet.ui.receive.ReceiveDialogFragment;
 import co.nano.nanowallet.ui.send.SendFragment;
 import co.nano.nanowallet.ui.settings.SettingsDialogFragment;
 import co.nano.nanowallet.ui.webview.WebViewDialogFragment;
+import co.nano.nanowallet.util.ExceptionHandler;
 import io.realm.Realm;
 
 /**
@@ -143,6 +144,7 @@ public class HomeFragment extends BaseFragment {
         }
 
         analyticsService.track(AnalyticsEvents.HOME_VIEWED);
+        ExceptionHandler.handle(new Exception("my custom"));
 
         // subscribe to bus
         RxBus.get().register(this);

@@ -168,9 +168,10 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         Credentials credentials = realm.where(Credentials.class).findFirst();
 
         // initialize analytics
-        if (credentials != null &&
-                (credentials.getHasAgreedToTracking() || !credentials.getHasAnsweredAnalyticsQuestion())) {
+        if (credentials != null && credentials.getHasAgreedToTracking()) {
             analyticsService.start();
+        } else if (credentials != null && !credentials.getHasAnsweredAnalyticsQuestion()) {
+            analyticsService.startAnswersOnly(); // for legal
         } else {
             analyticsService.stop();
         }

@@ -261,6 +261,7 @@ public class BaseFragment extends Fragment {
                         credentials.setHasAnsweredAnalyticsQuestion(true);
                     }
                     realm.commitTransaction();
+                    analyticsService.start();
                 })
                 .setNegativeButton(R.string.analytics_optin_alert_cancel_cta, (dialog, which) -> {
                     realm.beginTransaction();

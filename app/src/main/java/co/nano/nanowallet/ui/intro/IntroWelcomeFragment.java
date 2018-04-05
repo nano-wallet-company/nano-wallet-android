@@ -39,9 +39,6 @@ public class IntroWelcomeFragment extends BaseFragment {
     @Inject
     SharedPreferencesUtil sharedPreferencesUtil;
 
-    @Inject
-    AnalyticsService analyticsService;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -49,8 +46,6 @@ public class IntroWelcomeFragment extends BaseFragment {
         if (getActivity() instanceof ActivityWithComponent) {
             ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
         }
-
-        analyticsService.track(AnalyticsEvents.WELCOME_VIEWED);
 
         // inflate the view
         binding = DataBindingUtil.inflate(

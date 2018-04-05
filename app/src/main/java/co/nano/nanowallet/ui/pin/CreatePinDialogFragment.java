@@ -63,8 +63,6 @@ public class CreatePinDialogFragment extends BaseDialogFragment {
             ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
         }
 
-        analyticsService.track(AnalyticsEvents.CREATE_PIN_VIEWED);
-
         // inflate the view
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_create_pin, container, false);

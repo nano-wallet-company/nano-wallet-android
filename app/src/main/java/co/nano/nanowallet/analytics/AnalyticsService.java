@@ -44,6 +44,18 @@ public class AnalyticsService {
     }
 
     /**
+     * Start analytics services
+     */
+    public void startAnswersOnly() {
+        // initialize crashlytics
+        Crashlytics crashlyticsKit = new Crashlytics.Builder()
+                .core(new CrashlyticsCore.Builder().disabled(true).build())
+                .answers(new Answers())
+                .build();
+        Fabric.with(context, crashlyticsKit);
+    }
+
+    /**
      * Stop analytics services
      */
     public void stop() {

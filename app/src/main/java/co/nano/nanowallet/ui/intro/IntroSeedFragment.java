@@ -10,16 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.CustomEvent;
 import com.github.ajalt.reprint.core.Reprint;
 import com.hwangjr.rxbus.annotation.Subscribe;
 
 import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
-import co.nano.nanowallet.analytics.AnalyticsEvents;
-import co.nano.nanowallet.analytics.AnalyticsService;
 import co.nano.nanowallet.bus.CreatePin;
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.databinding.FragmentIntroSeedBinding;
@@ -54,9 +50,6 @@ public class IntroSeedFragment extends BaseFragment {
 
     @Inject
     SharedPreferencesUtil sharedPreferencesUtil;
-
-    @Inject
-    AnalyticsService analyticsService;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -158,10 +151,10 @@ public class IntroSeedFragment extends BaseFragment {
         /**
          * Listener for styling updates when text changes
          *
-         * @param s Character sequence
-         * @param start Starting character
+         * @param s      Character sequence
+         * @param start  Starting character
          * @param before Character that came before
-         * @param count Total character count
+         * @param count  Total character count
          */
         public void onSeedTextChanged(CharSequence s, int start, int before, int count) {
             if (!preventTextUpdate) {
@@ -195,7 +188,7 @@ public class IntroSeedFragment extends BaseFragment {
         }
 
         public void afterSeedTextChanged(Editable s) {
-            if(preventTextUpdate){
+            if (preventTextUpdate) {
                 preventTextUpdate = false;
                 return;
             }
@@ -228,7 +221,6 @@ public class IntroSeedFragment extends BaseFragment {
          * @param view View
          */
         public void onClickCamera(View view) {
-            analyticsService.track(AnalyticsEvents.SEED_SCAN_CAMERA_VIEWED);
             startScanActivity(getString(R.string.scan_instruction_label), true);
         }
     }
