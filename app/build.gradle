@@ -27,7 +27,7 @@ android {
         // Enabling multidex support.
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
-
+        buildConfigField "String", "CONNECTION_URL", "\"wss://light.nano.org:443\""
     }
     buildTypes {
         debug {
