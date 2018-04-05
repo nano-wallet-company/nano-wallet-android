@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import co.nano.nanowallet.BuildConfig;
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.bus.SocketError;
 import co.nano.nanowallet.model.Address;
@@ -65,8 +66,6 @@ import timber.log.Timber;
  */
 
 public class AccountService {
-    private static final String CONNECTION_URL = "wss://light.nano.org:443";
-    //private static final String CONNECTION_URL = "wss://raicast.lightrai.com:443";
     public static final int TIMEOUT_MILLISECONDS = 5000;
 
     private WebSocket websocket;
@@ -123,7 +122,7 @@ public class AccountService {
                 .pingInterval(TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS)
                 .build();
 
-        Request request = new Request.Builder().url(CONNECTION_URL).build();
+        Request request = new Request.Builder().url(BuildConfig.CONNECTION_URL).build();
 
         WebSocketListener listener = new WebSocketListener() {
             @Override
@@ -453,7 +452,7 @@ public class AccountService {
     /**
      * Request AccountHistory
      */
-    public void requestAccountHistory() {
+    private void requestAccountHistory() {
         if (address != null && address.getAddress() != null) {
             requestQueue.add(new RequestItem<>(new AccountHistoryRequest(address.getAddress(), wallet.getBlockCount() != null ? wallet.getBlockCount() : 10)));
             processQueue();
