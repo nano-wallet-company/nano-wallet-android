@@ -58,5 +58,8 @@ public class AnalyticsEvents {
     public static final String SETTINGS_VIEWED = "Settings VC Viewed";
     public static final String SEED_SCAN_CAMERA_VIEWED = "Seed Scan Camera View Viewed";
     public static final String SEND_VIEWED = "Send VC Viewed";
-
+    public static final String SEED_CONFIRMATION_VIEWED = "Seed Confirmation VC Viewed";
+    public static final String WELCOME_VIEWED = "Welcome VC Viewed";
+    public static final String CREATE_PIN_VIEWED = "Create PIN VC Viewed";
+    public static final String ENTER_PIN_VIEWED = "Enter PIN VC Viewed";
 }

@@ -35,10 +35,13 @@ import com.hwangjr.rxbus.annotation.Subscribe;
 
 import java.math.BigInteger;
 import java.text.NumberFormat;
+import java.util.HashMap;
 
 import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
+import co.nano.nanowallet.analytics.AnalyticsEvents;
+import co.nano.nanowallet.analytics.AnalyticsService;
 import co.nano.nanowallet.bus.CreatePin;
 import co.nano.nanowallet.bus.HideOverlay;
 import co.nano.nanowallet.bus.PinComplete;
@@ -85,6 +88,9 @@ public class SendFragment extends BaseFragment {
     @Inject
     Realm realm;
 
+    @Inject
+    AnalyticsService analyticsService;
+
     @BindingAdapter("layout_constraintGuide_percent")
     public static void setLayoutConstraintGuidePercent(Guideline guideline, float percent) {
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) guideline.getLayoutParams();
@@ -121,7 +127,7 @@ public class SendFragment extends BaseFragment {
         int id = item.getItemId();
         switch (id) {
             case R.id.send_camera:
-                Answers.getInstance().logCustom(new CustomEvent("Address Scan Camera View Used"));
+                analyticsService.track(AnalyticsEvents.ADDRESS_SCAN_CAMERA_VIEWED);
                 startScanActivity(getString(R.string.scan_send_instruction_label), false);
                 return true;
         }
@@ -140,12 +146,12 @@ public class SendFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Answers.getInstance().logCustom(new CustomEvent("Send VC Viewed"));
-
         // init dependency injection
         if (getActivity() instanceof ActivityWithComponent) {
             ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
         }
+
+        analyticsService.track(AnalyticsEvents.SEND_VIEWED);
 
         // subscribe to bus
         RxBus.get().register(this);
@@ -268,7 +274,7 @@ public class SendFragment extends BaseFragment {
     public void receiveProcessResponse(ProcessResponse processResponse) {
         RxBus.get().post(new HideOverlay());
         accountService.requestUpdate();
-        Answers.getInstance().logCustom(new CustomEvent("Send Nano Finished"));
+        analyticsService.track(AnalyticsEvents.SEND_FINISHED);
         goBack();
     }
 
@@ -456,7 +462,7 @@ public class SendFragment extends BaseFragment {
             BigInteger balance = wallet.getAccountBalanceNanoRaw().toBigInteger().subtract(sendAmount);
 
             accountService.requestSend(wallet.getFrontierBlock(), destination, balance);
-            Answers.getInstance().logCustom(new CustomEvent("Send Nano Began"));
+            analyticsService.track(AnalyticsEvents.SEND_BEGAN);
         } else {
             showError(R.string.send_error_alert_title, R.string.send_error_alert_message);
         }
@@ -532,7 +538,7 @@ public class SendFragment extends BaseFragment {
         }
 
         public void onClickMax(View view) {
-            Answers.getInstance().logCustom(new CustomEvent("Send: Max Amount Used"));
+            analyticsService.track(AnalyticsEvents.SEND_MAX_AMOUNT_USED);
             wallet.setSendNanoAmount(wallet.getLongerAccountBalanceNano());
             binding.setWallet(wallet);
             enableSendIfPossible();
@@ -563,7 +569,9 @@ public class SendFragment extends BaseFragment {
         if (isAdded()) {
             TextView textView = view.findViewById(R.id.fingerprint_textview);
             textView.setText(getString(R.string.send_fingerprint_success));
-            textView.setTextColor(ContextCompat.getColor(getContext(), R.color.dark_sky_blue));
+            if (getContext() != null) {
+                textView.setTextColor(ContextCompat.getColor(getContext(), R.color.dark_sky_blue));
+            }
             textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_fingerprint_success, 0, 0, 0);
             executeSend();
 
@@ -580,10 +588,14 @@ public class SendFragment extends BaseFragment {
 
     private void showFingerprintError(AuthenticationFailureReason reason, CharSequence message, View view) {
         if (isAdded()) {
-            Answers.getInstance().logCustom(new CustomEvent("Error with Send Authentication").putCustomAttribute("description", reason.name()));
+            final HashMap<String, String> customData = new HashMap<>();
+            customData.put("description", reason.name());
+            analyticsService.track(AnalyticsEvents.SEND_AUTH_ERROR, customData);
             TextView textView = view.findViewById(R.id.fingerprint_textview);
             textView.setText(message.toString());
-            textView.setTextColor(ContextCompat.getColor(getContext(), R.color.error));
+            if (getContext() != null) {
+                textView.setTextColor(ContextCompat.getColor(getContext(), R.color.error));
+            }
             textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_fingerprint_error, 0, 0, 0);
         }
     }

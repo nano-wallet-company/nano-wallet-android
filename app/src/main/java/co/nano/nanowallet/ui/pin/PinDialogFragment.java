@@ -15,6 +15,8 @@ import com.crashlytics.android.answers.CustomEvent;
 import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
+import co.nano.nanowallet.analytics.AnalyticsEvents;
+import co.nano.nanowallet.analytics.AnalyticsService;
 import co.nano.nanowallet.bus.PinChange;
 import co.nano.nanowallet.bus.PinComplete;
 import co.nano.nanowallet.bus.RxBus;
@@ -68,6 +70,9 @@ public class PinDialogFragment extends BaseDialogFragment {
     @Inject
     Realm realm;
 
+    @Inject
+    AnalyticsService analyticsService;
+
     /**
      * Create new instance of the dialog fragment (handy pattern if any data needs to be passed to it)
      *
@@ -91,12 +96,12 @@ public class PinDialogFragment extends BaseDialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Answers.getInstance().logCustom(new CustomEvent("Received VC Viewed"));
-
         // init dependency injection
         if (getActivity() instanceof ActivityWithComponent) {
             ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
         }
+
+        analyticsService.track(AnalyticsEvents.ENTER_PIN_VIEWED);
 
         // inflate the view
         binding = DataBindingUtil.inflate(

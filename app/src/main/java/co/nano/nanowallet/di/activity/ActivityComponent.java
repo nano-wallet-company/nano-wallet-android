@@ -3,6 +3,7 @@ package co.nano.nanowallet.di.activity;
 import com.google.gson.Gson;
 
 import co.nano.nanowallet.MainActivity;
+import co.nano.nanowallet.analytics.AnalyticsService;
 import co.nano.nanowallet.di.application.ApplicationComponent;
 import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.network.AccountService;
@@ -11,6 +12,7 @@ import co.nano.nanowallet.ui.intro.IntroLegalFragment;
 import co.nano.nanowallet.ui.intro.IntroNewWalletFragment;
 import co.nano.nanowallet.ui.intro.IntroSeedFragment;
 import co.nano.nanowallet.ui.intro.IntroWelcomeFragment;
+import co.nano.nanowallet.ui.pin.CreatePinDialogFragment;
 import co.nano.nanowallet.ui.pin.PinDialogFragment;
 import co.nano.nanowallet.ui.receive.ReceiveDialogFragment;
 import co.nano.nanowallet.ui.send.SendFragment;
@@ -20,7 +22,6 @@ import dagger.Component;
 @Component(modules = {ActivityModule.class}, dependencies = {ApplicationComponent.class})
 @ActivityScope
 public interface ActivityComponent {
-    // network
     @ActivityScope
     AccountService provideAccountService();
 
@@ -31,6 +32,8 @@ public interface ActivityComponent {
     Gson provideGson();
 
     void inject(AccountService accountService);
+
+    void inject(CreatePinDialogFragment createPinDialogFragment);
 
     void inject(HomeFragment homeFragment);
 

@@ -8,6 +8,9 @@ import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 import com.crashlytics.android.core.CrashlyticsCore;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import co.nano.nanowallet.model.Credentials;
 import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
@@ -33,9 +36,11 @@ public class AnalyticsService {
      */
     public void start() {
         // initialize crashlytics
-        Fabric.with(context, new Crashlytics());
-        // initialize answers
-        Fabric.with(context, new Answers());
+        Crashlytics crashlyticsKit = new Crashlytics.Builder()
+                .core(new CrashlyticsCore.Builder().disabled(false).build())
+                .answers(new Answers())
+                .build();
+        Fabric.with(context, crashlyticsKit);
     }
 
     /**
@@ -51,14 +56,51 @@ public class AnalyticsService {
 
     /**
      * Track a basic event
-     * @param event Event Title String
+     * @param event Event title string
      */
     public void track(String event) {
         Credentials credentials = realm.where(Credentials.class).findFirst();
-        if (credentials != null && credentials.getHasCompletedLegalAgreements()) {
+        if (credentials == null) {
+            return;
+        }
+
+        if (credentials.getHasAgreedToTracking() || !credentials.getHasAnsweredAnalyticsTracking()) {
             Answers.getInstance().logCustom(new CustomEvent(event));
         }
     }
+
+    /**
+     * Track an event with custom data
+     * @param event Event title string
+     * @param customData Hashmap of custom attribute fields
+     */
+    public void track(String event, HashMap<String, String> customData) {
+        Credentials credentials = realm.where(Credentials.class).findFirst();
+        if (credentials == null) {
+            return;
+        }
+
+        if (credentials.getHasAgreedToTracking() || !credentials.getHasAnsweredAnalyticsTracking()) {
+            CustomEvent customEvent = new CustomEvent(event);
+            for (Map.Entry<String, String> entry : customData.entrySet()) {
+                customEvent.putCustomAttribute(entry.getKey(), entry.getValue());
+            }
+            Answers.getInstance().logCustom(customEvent);
+        }
+    }
+
+    /**
+     * Track a non-fatal exception
+     * @param t Throwable error
+     */
+    public void trackCustomException(Throwable t) {
+        Credentials credentials = realm.where(Credentials.class).findFirst();
+        if (credentials != null && credentials.getHasAgreedToTracking()) {
+            // log to crashlytics
+            Crashlytics.logException(t);
+        }
+    }
+
 
     public void close() {
         context = null;

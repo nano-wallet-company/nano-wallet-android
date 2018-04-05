@@ -5,6 +5,8 @@ import android.content.Context;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 
+import co.nano.nanowallet.analytics.AnalyticsService;
+import co.nano.nanowallet.di.persistence.PersistenceModule;
 import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.network.AccountService;
 import co.nano.nanowallet.network.model.Actions;
@@ -21,6 +23,7 @@ import co.nano.nanowallet.network.model.response.WorkResponse;
 import dagger.Module;
 import dagger.Provides;
 import io.gsonfire.GsonFireBuilder;
+import io.realm.Realm;
 
 @Module
 public class ActivityModule {

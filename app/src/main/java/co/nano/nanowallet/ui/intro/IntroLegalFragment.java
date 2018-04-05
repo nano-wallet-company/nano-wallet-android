@@ -15,12 +15,17 @@ import com.crashlytics.android.answers.CustomEvent;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
+import co.nano.nanowallet.analytics.AnalyticsEvents;
+import co.nano.nanowallet.analytics.AnalyticsService;
 import co.nano.nanowallet.bus.Logout;
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.databinding.FragmentIntroLegalBinding;
@@ -52,6 +57,9 @@ public class IntroLegalFragment extends BaseFragment {
     @Inject
     SharedPreferencesUtil sharedPreferencesUtil;
 
+    @Inject
+    AnalyticsService analyticsService;
+
     /**
      * Create new instance of the fragment (handy pattern if any data needs to be passed to it)
      *
@@ -67,13 +75,13 @@ public class IntroLegalFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        Answers.getInstance().logCustom(new CustomEvent("Legal VC Viewed"));
-
         // init dependency injection
         if (getActivity() instanceof ActivityWithComponent) {
             ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
         }
+
+        analyticsService.track(AnalyticsEvents.LEGAL_VIEWED);
+
         // inflate the view
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_intro_legal, container, false);
@@ -130,11 +138,11 @@ public class IntroLegalFragment extends BaseFragment {
         SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy-HH:mm:ssZZZZZ", Locale.getDefault());
 
         // send event
-        Answers.getInstance().logCustom(new CustomEvent(title)
-                .putCustomAttribute("device_id", sharedPreferencesUtil.getAppInstallUuid())
-                .putCustomAttribute("accepted", isChecked ? "true" : "false")
-                .putCustomAttribute("date", df.format(c))
-        );
+        final HashMap<String, String> customData = new HashMap<>();
+        customData.put("device_id", sharedPreferencesUtil.getAppInstallUuid());
+        customData.put("accepted", isChecked ? "true" : "false");
+        customData.put("date", df.format(c));
+        analyticsService.track(title, customData);
     }
 
     /**
@@ -147,39 +155,39 @@ public class IntroLegalFragment extends BaseFragment {
         SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy-HH:mm:ssZZZZZ", Locale.getDefault());
 
         // send event
-        Answers.getInstance().logCustom(new CustomEvent(title)
-                .putCustomAttribute("device_id", sharedPreferencesUtil.getAppInstallUuid())
-                .putCustomAttribute("date", df.format(c))
-        );
+        final HashMap<String, String> customData = new HashMap<>();
+        customData.put("device_id", sharedPreferencesUtil.getAppInstallUuid());
+        customData.put("date", df.format(c));
+        analyticsService.track(title, customData);
     }
 
     public class ClickHandlers {
 
         public void onDisclaimerCheckChanged(CompoundButton view, boolean isChecked) {
             setAgreeButtonState();
-            sendCheckToggledEvent("Mobile Disclaimer Agreement Toggled", isChecked);
+            sendCheckToggledEvent(AnalyticsEvents.DISCLAIMER_AGREEMENT_TOGGLED, isChecked);
         }
 
         public void onEULACheckChanged(CompoundButton view, boolean isChecked) {
             setAgreeButtonState();
-            sendCheckToggledEvent("Mobile EULA Agreement Toggled", isChecked);
+            sendCheckToggledEvent(AnalyticsEvents.EULA_AGREEMENT_TOGGLED, isChecked);
         }
 
         public void onPPCheckChanged(CompoundButton view, boolean isChecked) {
             setAgreeButtonState();
-            sendCheckToggledEvent("Mobile Privacy Policy Agreement Toggled", isChecked);
+            sendCheckToggledEvent(AnalyticsEvents.PRIVACY_POLICY_AGREEMENT_TOGGLED, isChecked);
         }
 
         public void onDisclaimerLinkClicked(View view) {
-            sendLinkViewedEvent("Mobile Disclaimer Viewed");
+            sendLinkViewedEvent(AnalyticsEvents.DISCLAIMER_VIEWED);
         }
 
         public void onEULALinkClicked(View view) {
-            sendLinkViewedEvent("Mobile EULA Viewed");
+            sendLinkViewedEvent(AnalyticsEvents.EULA_VIEWED);
         }
 
         public void onPPLinkClicked(View view) {
-            sendLinkViewedEvent("Mobile Privacy Policy Viewed");
+            sendLinkViewedEvent(AnalyticsEvents.PRIVACY_POLICY_VIEWED);
         }
 
         /**

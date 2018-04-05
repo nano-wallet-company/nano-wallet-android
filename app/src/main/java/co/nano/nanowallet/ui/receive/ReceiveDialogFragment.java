@@ -28,6 +28,8 @@ import java.io.FileOutputStream;
 import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
+import co.nano.nanowallet.analytics.AnalyticsEvents;
+import co.nano.nanowallet.analytics.AnalyticsService;
 import co.nano.nanowallet.broadcastreceiver.ClipboardAlarmReceiver;
 import co.nano.nanowallet.databinding.FragmentReceiveBinding;
 import co.nano.nanowallet.model.Address;
@@ -52,6 +54,9 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
     @Inject
     Realm realm;
 
+    @Inject
+    AnalyticsService analyticsService;
+
     /**
      * Create new instance of the dialog fragment (handy pattern if any data needs to be passed to it)
      *
@@ -73,12 +78,12 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Answers.getInstance().logCustom(new CustomEvent("Received VC Viewed"));
-
         // init dependency injection
         if (getActivity() instanceof ActivityWithComponent) {
             ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
         }
+
+        analyticsService.track(AnalyticsEvents.RECEIVE_VIEWED);
 
         // get data
         Credentials credentials = realm.where(Credentials.class).findFirst();
@@ -173,7 +178,7 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
         }
 
         public void onClickShare(View view) {
-            Answers.getInstance().logCustom(new CustomEvent("Share Dialog Viewed"));
+            analyticsService.track(AnalyticsEvents.SHARE_DIALOGUE_VIEWED);
             binding.receiveCard.cardLayout.setVisibility(View.VISIBLE);
             saveImage(setViewToBitmapImage(binding.receiveCard.cardLayout));
             File imagePath = new File(getContext().getCacheDir(), "images");
@@ -190,7 +195,8 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
         }
 
         public void onClickCopy(View view) {
-            Answers.getInstance().logCustom(new CustomEvent("Nano Address Copied"));
+            analyticsService.track(AnalyticsEvents.NANO_ADDRESS_COPIED);
+
             // copy address to clipboard
             android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
             android.content.ClipData clip = android.content.ClipData.newPlainText(ClipboardAlarmReceiver.CLIPBOARD_NAME, address.getAddress());

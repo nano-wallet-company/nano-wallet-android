@@ -15,9 +15,13 @@ import com.crashlytics.android.answers.CustomEvent;
 import com.github.ajalt.reprint.core.Reprint;
 import com.hwangjr.rxbus.annotation.Subscribe;
 
+import java.util.HashMap;
+
 import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
+import co.nano.nanowallet.analytics.AnalyticsEvents;
+import co.nano.nanowallet.analytics.AnalyticsService;
 import co.nano.nanowallet.broadcastreceiver.ClipboardAlarmReceiver;
 import co.nano.nanowallet.bus.CreatePin;
 import co.nano.nanowallet.bus.RxBus;
@@ -50,6 +54,9 @@ public class IntroNewWalletFragment extends BaseFragment {
     @Inject
     SharedPreferencesUtil sharedPreferencesUtil;
 
+    @Inject
+    AnalyticsService analyticsService;
+
     /**
      * Create new instance of the fragment (handy pattern if any data needs to be passed to it)
      *
@@ -65,13 +72,13 @@ public class IntroNewWalletFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        Answers.getInstance().logCustom(new CustomEvent("Seed Confirmation VC Viewed"));
-
         // init dependency injection
         if (getActivity() instanceof ActivityWithComponent) {
             ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
         }
+
+        analyticsService.track(AnalyticsEvents.SEED_CONFIRMATION_VIEWED);
+
         // inflate the view
         FragmentIntroNewWalletBinding binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_intro_new_wallet, container, false);
@@ -142,7 +149,8 @@ public class IntroNewWalletFragment extends BaseFragment {
          * @param view View
          */
         public void onClickConfirm(View view) {
-            Answers.getInstance().logCustom(new CustomEvent("Seed Confirmation Continue Button Pressed"));
+            analyticsService.track(AnalyticsEvents.SEED_CONFIRMATON_CONTINUE_BUTTON_PRESSED);
+
             // show the copy seed dialog
             AlertDialog.Builder builder;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -174,7 +182,10 @@ public class IntroNewWalletFragment extends BaseFragment {
          * @param view View
          */
         public void onClickSeed(View view) {
-            Answers.getInstance().logCustom(new CustomEvent("Seed Copied").putCustomAttribute("location", "seed confirmation"));
+            final HashMap<String, String> customData = new HashMap<>();
+            customData.put("location", "seed confirmation");
+            analyticsService.track(AnalyticsEvents.SEED_COPIED, customData);
+
             // copy address to clipboard
             android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
             android.content.ClipData clip = android.content.ClipData.newPlainText(ClipboardAlarmReceiver.CLIPBOARD_NAME, seed);

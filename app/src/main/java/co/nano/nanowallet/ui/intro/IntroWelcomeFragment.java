@@ -14,6 +14,8 @@ import javax.inject.Inject;
 import co.nano.nanowallet.BuildConfig;
 import co.nano.nanowallet.NanoUtil;
 import co.nano.nanowallet.R;
+import co.nano.nanowallet.analytics.AnalyticsEvents;
+import co.nano.nanowallet.analytics.AnalyticsService;
 import co.nano.nanowallet.databinding.FragmentIntroWelcomeBinding;
 import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
@@ -37,15 +39,19 @@ public class IntroWelcomeFragment extends BaseFragment {
     @Inject
     SharedPreferencesUtil sharedPreferencesUtil;
 
+    @Inject
+    AnalyticsService analyticsService;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Answers.getInstance().logCustom(new CustomEvent("Welcome VC Viewed"));
-
         // init dependency injection
         if (getActivity() instanceof ActivityWithComponent) {
             ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
         }
+
+        analyticsService.track(AnalyticsEvents.WELCOME_VIEWED);
+
         // inflate the view
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_intro_welcome, container, false);

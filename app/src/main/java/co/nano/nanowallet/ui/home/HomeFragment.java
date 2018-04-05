@@ -24,6 +24,8 @@ import java.math.BigDecimal;
 import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
+import co.nano.nanowallet.analytics.AnalyticsEvents;
+import co.nano.nanowallet.analytics.AnalyticsService;
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.bus.SocketError;
 import co.nano.nanowallet.bus.WalletHistoryUpdate;
@@ -65,6 +67,9 @@ public class HomeFragment extends BaseFragment {
 
     @Inject
     NanoWallet wallet;
+
+    @Inject
+    AnalyticsService analyticsService;
 
     /**
      * Create new instance of the fragment (handy pattern if any data needs to be passed to it)
@@ -129,12 +134,12 @@ public class HomeFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Answers.getInstance().logCustom(new CustomEvent("Home VC Viewed"));
-
         // init dependency injection
         if (getActivity() instanceof ActivityWithComponent) {
             ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
         }
+
+        analyticsService.track(AnalyticsEvents.HOME_VIEWED);
 
         // subscribe to bus
         RxBus.get().register(this);

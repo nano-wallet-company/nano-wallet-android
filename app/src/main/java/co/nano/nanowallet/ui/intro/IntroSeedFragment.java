@@ -18,6 +18,8 @@ import com.hwangjr.rxbus.annotation.Subscribe;
 import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
+import co.nano.nanowallet.analytics.AnalyticsEvents;
+import co.nano.nanowallet.analytics.AnalyticsService;
 import co.nano.nanowallet.bus.CreatePin;
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.databinding.FragmentIntroSeedBinding;
@@ -52,6 +54,9 @@ public class IntroSeedFragment extends BaseFragment {
 
     @Inject
     SharedPreferencesUtil sharedPreferencesUtil;
+
+    @Inject
+    AnalyticsService analyticsService;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -223,7 +228,7 @@ public class IntroSeedFragment extends BaseFragment {
          * @param view View
          */
         public void onClickCamera(View view) {
-            Answers.getInstance().logCustom(new CustomEvent("Seed Scan Camera View Viewed"));
+            analyticsService.track(AnalyticsEvents.SEED_SCAN_CAMERA_VIEWED);
             startScanActivity(getString(R.string.scan_instruction_label), true);
         }
     }

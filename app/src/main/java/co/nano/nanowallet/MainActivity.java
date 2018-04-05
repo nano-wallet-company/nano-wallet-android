@@ -21,6 +21,8 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
+import co.nano.nanowallet.analytics.AnalyticsEvents;
+import co.nano.nanowallet.analytics.AnalyticsService;
 import co.nano.nanowallet.bus.HideOverlay;
 import co.nano.nanowallet.bus.Logout;
 import co.nano.nanowallet.bus.OpenWebView;
@@ -52,7 +54,6 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
     protected ActivityComponent mActivityComponent;
     private FrameLayout mOverlay;
 
-
     @Inject
     Realm realm;
 
@@ -64,6 +65,9 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
 
     @Inject
     SharedPreferencesUtil sharedPreferencesUtil;
+
+    @Inject
+    AnalyticsService analyticsService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,6 +169,14 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         // get wallet seed if it exists
         Credentials credentials = realm.where(Credentials.class).findFirst();
 
+        // initialize analytics
+        if (credentials != null &&
+                (credentials.getHasAgreedToTracking() || !credentials.getHasAnsweredAnalyticsTracking())) {
+            analyticsService.start();
+        } else {
+            analyticsService.stop();
+        }
+
         if (credentials == null) {
             // if we don't have a wallet, start the intro
             mFragmentUtility.clearStack();
@@ -186,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
 
     @Subscribe
     public void logOut(Logout logout) {
-        Answers.getInstance().logCustom(new CustomEvent("User Logged Out"));
+        analyticsService.track(AnalyticsEvents.LOG_OUT);
 
         // delete user seed data before logging out
         final RealmResults<Credentials> results = realm.where(Credentials.class).findAll();

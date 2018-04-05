@@ -45,6 +45,7 @@ public class Migration implements RealmMigration {
             RealmObjectSchema credentialsSchema = schema.get("Credentials");
             if (credentialsSchema != null) {
                 credentialsSchema.addField("hasAgreedToTracking", Boolean.class);
+                credentialsSchema.addField("hasAnsweredAnalyticsQuestion", Boolean.class);
             }
             oldVersion++;
         }

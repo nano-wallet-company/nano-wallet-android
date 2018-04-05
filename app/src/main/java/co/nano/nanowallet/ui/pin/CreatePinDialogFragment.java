@@ -14,10 +14,15 @@ import android.view.inputmethod.InputMethodManager;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 
+import javax.inject.Inject;
+
 import co.nano.nanowallet.R;
+import co.nano.nanowallet.analytics.AnalyticsEvents;
+import co.nano.nanowallet.analytics.AnalyticsService;
 import co.nano.nanowallet.bus.CreatePin;
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.databinding.FragmentCreatePinBinding;
+import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseDialogFragment;
 
 /**
@@ -29,6 +34,8 @@ public class CreatePinDialogFragment extends BaseDialogFragment {
     private static final int PIN_LENGTH = 4;
     private String firstPin = null;
 
+    @Inject
+    AnalyticsService analyticsService;
 
     /**
      * Create new instance of the dialog fragment (handy pattern if any data needs to be passed to it)
@@ -51,7 +58,12 @@ public class CreatePinDialogFragment extends BaseDialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Answers.getInstance().logCustom(new CustomEvent("Create Pin Shown"));
+        // init dependency injection
+        if (getActivity() instanceof ActivityWithComponent) {
+            ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
+        }
+
+        analyticsService.track(AnalyticsEvents.CREATE_PIN_VIEWED);
 
         // inflate the view
         binding = DataBindingUtil.inflate(

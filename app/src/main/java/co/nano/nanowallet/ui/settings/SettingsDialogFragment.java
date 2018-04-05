@@ -25,12 +25,15 @@ import com.github.ajalt.reprint.core.Reprint;
 import com.hwangjr.rxbus.annotation.Subscribe;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import co.nano.nanowallet.BuildConfig;
 import co.nano.nanowallet.R;
+import co.nano.nanowallet.analytics.AnalyticsEvents;
+import co.nano.nanowallet.analytics.AnalyticsService;
 import co.nano.nanowallet.bus.CreatePin;
 import co.nano.nanowallet.bus.Logout;
 import co.nano.nanowallet.bus.PinComplete;
@@ -58,10 +61,15 @@ public class SettingsDialogFragment extends BaseDialogFragment {
 
     @Inject
     SharedPreferencesUtil sharedPreferencesUtil;
+
     @Inject
     Realm realm;
+
     @Inject
     AccountService accountService;
+
+    @Inject
+    AnalyticsService analyticsService;
 
     @BindingAdapter("android:layout_marginTop")
     public static void setTopMargin(View view, float topMargin) {
@@ -92,12 +100,12 @@ public class SettingsDialogFragment extends BaseDialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Answers.getInstance().logCustom(new CustomEvent("Settings VC Viewed"));
-
         // inject
         if (getActivity() instanceof ActivityWithComponent) {
             ((ActivityWithComponent) getActivity()).getActivityComponent().inject(this);
         }
+
+        analyticsService.track(AnalyticsEvents.SETTINGS_VIEWED);
 
         // inflate the view
         binding = DataBindingUtil.inflate(
@@ -132,7 +140,9 @@ public class SettingsDialogFragment extends BaseDialogFragment {
                 AvailableCurrency key = (AvailableCurrency) swt.tag;
                 if (key != null) {
                     sharedPreferencesUtil.setLocalCurrency(key);
-                    Answers.getInstance().logCustom(new CustomEvent("Local Currency Selected").putCustomAttribute("currency", key.toString()));
+                    final HashMap<String, String> customData = new HashMap<>();
+                    customData.put("currency", key.toString());
+                    analyticsService.track(AnalyticsEvents.LOCAL_CURRENCY_SELECTED, customData);
                     // update currency amounts
                     accountService.requestSubscribe();
                 }
@@ -288,7 +298,7 @@ public class SettingsDialogFragment extends BaseDialogFragment {
         AlertDialog dialog = builder.setTitle(R.string.settings_seed_alert_title)
                 .setMessage(R.string.settings_seed_alert_message)
                 .setPositiveButton(R.string.settings_seed_alert_confirm_cta, (d, which) -> {
-                    Answers.getInstance().logCustom(new CustomEvent("Seed Copied"));
+                    analyticsService.track(AnalyticsEvents.SEED_COPIED);
                     // copy seed to clipboard
                     android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
                     if (credentials != null) {
@@ -341,7 +351,9 @@ public class SettingsDialogFragment extends BaseDialogFragment {
 
     private void showFingerprintError(AuthenticationFailureReason reason, CharSequence message, View view) {
         if (isAdded()) {
-            Answers.getInstance().logCustom(new CustomEvent("Seed Copy Failed").putCustomAttribute("description", reason.name()));
+            final HashMap<String, String> customData = new HashMap<>();
+            customData.put("description", reason.name());
+            analyticsService.track(AnalyticsEvents.SEED_COPY_FAILED, customData);
             TextView textView = view.findViewById(R.id.fingerprint_textview);
             textView.setText(message.toString());
             textView.setTextColor(ContextCompat.getColor(getContext(), R.color.error));
