@@ -292,7 +292,7 @@ public class AccountService {
                 ((Block) nextRequest.getRequest()).setWork(workResponse.getWork());
             } else {
                 // Work was submitted without a block request following - should never happen
-                ExceptionHandler.handle(new Throwable("Queue Error: work was submitted without a block request following"));
+                ExceptionHandler.handle(new Exception("Queue Error: work was submitted without a block request following"));
             }
             processQueue();
         });
@@ -325,7 +325,7 @@ public class AccountService {
                     requestAccountHistory();
                 } else {
                     // something is out of sync if this wasn't a block - should never happen
-                    ExceptionHandler.handle(new Throwable("Queue Error: something is out of sync if this wasn't a block"));
+                    ExceptionHandler.handle(new Exception("Queue Error: something is out of sync if this wasn't a block"));
                 }
             }
             requestQueue.poll();

@@ -2,6 +2,7 @@ package co.nano.nanowallet.ui.common;
 
 import android.Manifest;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -17,11 +18,14 @@ import android.view.View;
 import android.widget.TextView;
 
 import co.nano.nanowallet.R;
+import co.nano.nanowallet.analytics.AnalyticsService;
 import co.nano.nanowallet.broadcastreceiver.ClipboardAlarmReceiver;
+import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.ui.pin.CreatePinDialogFragment;
 import co.nano.nanowallet.ui.pin.PinDialogFragment;
 import co.nano.nanowallet.ui.scan.ScanActivity;
 import co.nano.nanowallet.util.ExceptionHandler;
+import io.realm.Realm;
 
 /**
  * Helper methods used by all fragments
@@ -219,7 +223,8 @@ public class BaseFragment extends Fragment {
 
     /**
      * Create a link from the text on the view
-     * @param v TextView
+     *
+     * @param v    TextView
      * @param text id of text to add to the field
      */
     protected void createLink(TextView v, int text) {
@@ -230,5 +235,43 @@ public class BaseFragment extends Fragment {
         }
         v.setTransformationMethod(new LinkTransformationMethod());
         v.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+
+    /**
+     * Show opt-in alert for analytics
+     *
+     * @param analyticsService Instance of analytics service
+     */
+    protected void showAnalyticsOptIn(AnalyticsService analyticsService, Realm realm) {
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(getContext(), android.R.style.Theme_Material_Light_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(getContext());
+        }
+
+        builder.setTitle(R.string.analytics_optin_alert_title)
+                .setMessage(R.string.analytics_optin_alert_message)
+                .setPositiveButton(R.string.analytics_optin_alert_confirm_cta, (dialog, which) -> {
+                    realm.beginTransaction();
+                    Credentials credentials = realm.where(Credentials.class).findFirst();
+                    if (credentials != null) {
+                        credentials.setHasAgreedToTracking(true);
+                        credentials.setHasAnsweredAnalyticsTracking(true);
+                    }
+                    realm.commitTransaction();
+                })
+                .setNegativeButton(R.string.analytics_optin_alert_cancel_cta, (dialog, which) -> {
+                    realm.beginTransaction();
+                    Credentials credentials = realm.where(Credentials.class).findFirst();
+                    if (credentials != null) {
+                        credentials.setHasAgreedToTracking(false);
+                        credentials.setHasAnsweredAnalyticsTracking(true);
+                    }
+                    realm.commitTransaction();
+                    analyticsService.stop();
+                })
+                .show();
     }
 }

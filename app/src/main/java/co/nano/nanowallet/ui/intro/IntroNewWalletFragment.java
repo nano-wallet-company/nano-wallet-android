@@ -96,7 +96,7 @@ public class IntroNewWalletFragment extends BaseFragment {
             seed = credentials.getSeed();
             binding.setSeed(seed);
         } else {
-            ExceptionHandler.handle(new Throwable("Problem accessing generated seed"));
+            ExceptionHandler.handle(new Exception("Problem accessing generated seed"));
         }
 
         // bind data to view
@@ -104,6 +104,10 @@ public class IntroNewWalletFragment extends BaseFragment {
         binding.introNewWalletMessage.setText(Html.fromHtml(getString(R.string.intro_new_wallet_message)));
 
         accountService.open();
+
+        if (credentials != null && !credentials.getHasAnsweredAnalyticsTracking()) {
+            showAnalyticsOptIn(analyticsService, realm);
+        }
 
         return view;
     }

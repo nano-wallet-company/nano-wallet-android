@@ -32,6 +32,7 @@ import co.nano.nanowallet.bus.WalletHistoryUpdate;
 import co.nano.nanowallet.bus.WalletPriceUpdate;
 import co.nano.nanowallet.bus.WalletSubscribeUpdate;
 import co.nano.nanowallet.databinding.FragmentHomeBinding;
+import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.network.AccountService;
 import co.nano.nanowallet.network.model.response.AccountCheckResponse;
@@ -46,6 +47,8 @@ import co.nano.nanowallet.ui.receive.ReceiveDialogFragment;
 import co.nano.nanowallet.ui.send.SendFragment;
 import co.nano.nanowallet.ui.settings.SettingsDialogFragment;
 import co.nano.nanowallet.ui.webview.WebViewDialogFragment;
+import co.nano.nanowallet.util.ExceptionHandler;
+import io.realm.Realm;
 
 /**
  * Home Wallet Screen
@@ -70,6 +73,9 @@ public class HomeFragment extends BaseFragment {
 
     @Inject
     AnalyticsService analyticsService;
+
+    @Inject
+    Realm realm;
 
     /**
      * Create new instance of the fragment (handy pattern if any data needs to be passed to it)
@@ -177,6 +183,11 @@ public class HomeFragment extends BaseFragment {
         }
 
         updateAmounts();
+
+        Credentials credentials = realm.where(Credentials.class).findFirst();
+        if (credentials != null && !credentials.getHasAnsweredAnalyticsTracking()) {
+            showAnalyticsOptIn(analyticsService, realm);
+        }
 
         return view;
     }

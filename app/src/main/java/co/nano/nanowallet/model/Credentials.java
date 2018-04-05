@@ -32,7 +32,7 @@ public class Credentials extends RealmObject {
     public void setSeed(String seed) {
         // validate seed length
         if (!isValidSeed(seed)) {
-            ExceptionHandler.handle(new Throwable("Invalid Seed: " + seed));
+            ExceptionHandler.handle(new Exception("Invalid Seed: " + seed));
             return;
         }
 

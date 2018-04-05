@@ -37,7 +37,7 @@ public class AnalyticsService {
     public void start() {
         // initialize crashlytics
         Crashlytics crashlyticsKit = new Crashlytics.Builder()
-                .core(new CrashlyticsCore.Builder().disabled(false).build())
+                .core(new CrashlyticsCore())
                 .answers(new Answers())
                 .build();
         Fabric.with(context, crashlyticsKit);
@@ -56,6 +56,7 @@ public class AnalyticsService {
 
     /**
      * Track a basic event
+     *
      * @param event Event title string
      */
     public void track(String event) {
@@ -71,7 +72,8 @@ public class AnalyticsService {
 
     /**
      * Track an event with custom data
-     * @param event Event title string
+     *
+     * @param event      Event title string
      * @param customData Hashmap of custom attribute fields
      */
     public void track(String event, HashMap<String, String> customData) {
@@ -91,14 +93,11 @@ public class AnalyticsService {
 
     /**
      * Track a non-fatal exception
+     *
      * @param t Throwable error
      */
-    public void trackCustomException(Throwable t) {
-        Credentials credentials = realm.where(Credentials.class).findFirst();
-        if (credentials != null && credentials.getHasAgreedToTracking()) {
-            // log to crashlytics
-            Crashlytics.logException(t);
-        }
+    public static void trackCustomException(Throwable t) {
+        Crashlytics.logException(t);
     }
 
 

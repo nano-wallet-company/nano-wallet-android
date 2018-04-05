@@ -36,6 +36,12 @@
     <string name="intro_legal_alert_confirm_cta">Log Me Out</string>
     <string name="intro_legal_alert_cancel_cta">Cancel</string>
 
+    <!-- Analytics Opt-In -->
+    <string name="analytics_optin_alert_title">Analytics Opt-In</string>
+    <string name="analytics_optin_alert_message">Nano Wallet would like to anonymously collect usage data and crash reports in order to help to understand how people are using the wallet, where errors might occur, and how to improve the wallet in the future.\n\nNo data about your funds, your Wallet Seed, or your private keys are ever collected. You can see exactly what data is collected by viewing our code on Github.</string>
+    <string name="analytics_optin_alert_confirm_cta">Opt-in</string>
+    <string name="analytics_optin_alert_cancel_cta">No Thanks</string>
+
     <!-- Pin Screen -->
     <string name="pin_create_title">Create a 4-digit Android passcode</string>
     <string name="pin_confirm_title">Confirm your passcode</string>
