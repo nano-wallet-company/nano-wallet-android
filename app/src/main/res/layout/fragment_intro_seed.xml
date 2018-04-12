@@ -39,8 +39,7 @@
                 app:layout_constraintStart_toStartOf="@+id/intro_seed_guideline_vert"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.396"
-                app:srcCompat="@drawable/ic_logo"
-                tools:ignore="UnusedAttribute" />
+                app:srcCompat="@drawable/ic_logo" />
 
             <TextView
                 android:id="@+id/intro_seed_steps"
@@ -82,12 +81,12 @@
             <EditText
                 android:id="@+id/intro_seed_seed"
                 style="@style/SeedInput"
+                android:layout_height="100dp"
                 android:layout_marginTop="10dp"
+                android:afterTextChanged="@{handlers::afterSeedTextChanged}"
                 android:hint="@string/intro_seed_seed_hint"
                 android:inputType="textNoSuggestions|textCapCharacters|textMultiLine"
                 android:onTextChanged="@{handlers::onSeedTextChanged}"
-                android:afterTextChanged="@{handlers::afterSeedTextChanged}"
-                android:layout_height="100dp"
                 app:layout_constraintBottom_toTopOf="@+id/intro_seed_button_confirm"
                 app:layout_constraintEnd_toStartOf="@+id/intro_seed_guideline_vert"
                 app:layout_constraintStart_toStartOf="@+id/intro_seed_guideline_vert"
@@ -110,12 +109,12 @@
                 android:id="@+id/intro_seed_button_camera"
                 android:layout_width="37dp"
                 android:layout_height="100dp"
+                android:background="@android:color/transparent"
+                android:onClick="@{handlers::onClickCamera}"
+                android:paddingBottom="43dp"
                 android:paddingEnd="20dp"
                 android:paddingRight="20dp"
                 android:paddingTop="43dp"
-                android:paddingBottom="43dp"
-                android:background="@android:color/transparent"
-                android:onClick="@{handlers::onClickCamera}"
                 app:layout_constraintEnd_toEndOf="@+id/intro_seed_seed"
                 app:layout_constraintTop_toTopOf="@+id/intro_seed_seed"
                 app:srcCompat="@drawable/ic_camera" />

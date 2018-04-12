@@ -79,15 +79,7 @@ public class FragmentUtility {
                         Animation pushAnimations,
                         Animation popAnimations,
                         @Nullable String tag) {
-        replace(fragment, pushAnimations, popAnimations, tag, null);
-    }
-
-    public void replace(Fragment fragment,
-                        Animation pushAnimations,
-                        Animation popAnimations,
-                        @Nullable String tag,
-                        @Nullable View sharedElement) {
-        performReplaceTransaction(fragment, pushAnimations, popAnimations, tag, false, sharedElement);
+        performReplaceTransaction(fragment, pushAnimations, popAnimations, tag, false);
     }
 
     /**
@@ -109,15 +101,7 @@ public class FragmentUtility {
                      Animation pushAnimations,
                      Animation popAnimations,
                      @Nullable String tag) {
-        replace(fragment, pushAnimations, popAnimations, tag, null);
-    }
-
-    public void push(Fragment fragment,
-                     Animation pushAnimations,
-                     Animation popAnimations,
-                     @Nullable String tag,
-                     @Nullable View sharedElement) {
-        performReplaceTransaction(fragment, pushAnimations, popAnimations, tag, true, sharedElement);
+        replace(fragment, pushAnimations, popAnimations, tag);
     }
 
     /**
@@ -212,8 +196,7 @@ public class FragmentUtility {
                                           Animation pushAnimations,
                                           Animation popAnimations,
                                           @Nullable String tag,
-                                          boolean addToBackStack,
-                                          View sharedElement) {
+                                          boolean addToBackStack) {
         FragmentTransaction transaction;
         if (tag == null) {
             transaction = mFragmentManager.beginTransaction()

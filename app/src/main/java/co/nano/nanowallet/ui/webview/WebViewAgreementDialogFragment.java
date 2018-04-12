@@ -104,10 +104,11 @@ public class WebViewAgreementDialogFragment extends BaseDialogFragment {
             binding.dialogAppBarProgress.setIndeterminate(true);
         }
 
-        binding.webviewAgreementWebview.setWebViewClient(new WebViewClient() {
-        });
+        binding.webviewAgreementWebview.setWebViewClient(new WebViewClient() {});
         binding.webviewAgreementWebview.setWebChromeClient(mWebChromeClient);
         binding.webviewAgreementWebview.getSettings().setDomStorageEnabled(true);
+        binding.webviewAgreementWebview.getSettings().setLoadWithOverviewMode(true);
+        binding.webviewAgreementWebview.getSettings().setUseWideViewPort(true);
 
         binding.webviewAgreementWebview.loadUrl(mUrl);
 
