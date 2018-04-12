@@ -4,6 +4,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,23 +14,27 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import co.nano.nanowallet.R;
-import co.nano.nanowallet.databinding.FragmentWebviewBinding;
+import co.nano.nanowallet.bus.AcceptAgreement;
+import co.nano.nanowallet.bus.RxBus;
+import co.nano.nanowallet.databinding.FragmentWebviewAgreementBinding;
 import co.nano.nanowallet.ui.common.BaseDialogFragment;
 import co.nano.nanowallet.ui.common.KeyboardUtil;
 
 /**
  * Webview
  */
-public class WebViewDialogFragment extends BaseDialogFragment {
-    public static final String TAG = WebViewDialogFragment.class.getSimpleName();
+public class WebViewAgreementDialogFragment extends BaseDialogFragment {
+    public static final String TAG = WebViewAgreementDialogFragment.class.getSimpleName();
 
     private String mUrl;
     private String mTitle;
+    private String mId;
 
-    private FragmentWebviewBinding binding;
+    private FragmentWebviewAgreementBinding binding;
 
     private static final String ARG_URL = "argUrl";
     private static final String ARG_TITLE = "argTitle";
+    private static final String ARG_ID = "argID";
 
     private final WebChromeClient mWebChromeClient = new WebChromeClient() {
         public void onProgressChanged(WebView view, int progress) {
@@ -41,22 +46,23 @@ public class WebViewDialogFragment extends BaseDialogFragment {
             binding.dialogAppBarProgress.setProgress(progress);
             if (progress == 100) {
                 binding.dialogAppBarProgress.setVisibility(ProgressBar.GONE);
-                binding.webviewSwiperefresh.setRefreshing(false);
+                binding.webviewAgreementSwiperefresh.setRefreshing(false);
             }
         }
     };
 
-    private SwipeRefreshLayout.OnRefreshListener mSwipeRefreshListener = () -> binding.webviewWebview.reload();
+    private SwipeRefreshLayout.OnRefreshListener mSwipeRefreshListener = () -> binding.webviewAgreementWebview.reload();
 
     // Required empty public constructor
-    public WebViewDialogFragment() {
+    public WebViewAgreementDialogFragment() {
     }
 
-    public static WebViewDialogFragment newInstance(String url, String title) {
+    public static WebViewAgreementDialogFragment newInstance(String url, String title, String id) {
         Bundle args = new Bundle();
         args.putString(ARG_URL, url);
         args.putString(ARG_TITLE, title);
-        WebViewDialogFragment fragment = new WebViewDialogFragment();
+        args.putString(ARG_ID, id);
+        WebViewAgreementDialogFragment fragment = new WebViewAgreementDialogFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -68,6 +74,7 @@ public class WebViewDialogFragment extends BaseDialogFragment {
         if (getArguments() != null) {
             mUrl = getArguments().getString(ARG_URL);
             mTitle = getArguments().getString(ARG_TITLE);
+            mId = getArguments().getString(ARG_ID);
         }
 
         setStyle(STYLE_NO_FRAME, R.style.AppTheme_Modal_Window);
@@ -77,16 +84,17 @@ public class WebViewDialogFragment extends BaseDialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_webview, container, false);
+                inflater, R.layout.fragment_webview_agreement, container, false);
         view = binding.getRoot();
 
         setStatusBarWhite(view);
 
-        binding.webviewSwiperefresh.setOnRefreshListener(mSwipeRefreshListener);
+        binding.webviewAgreementSwiperefresh.setOnRefreshListener(mSwipeRefreshListener);
+        binding.setHandlers(new ClickHandlers());
 
         // set the listener for Navigation
         if (binding.dialogAppbar != null) {
-            final WebViewDialogFragment window = this;
+            final WebViewAgreementDialogFragment window = this;
             binding.dialogAppbar.setTitle(mTitle);
             binding.dialogAppbar.setNavigationOnClickListener(v1 -> {
                 KeyboardUtil.hideKeyboard(getActivity());
@@ -96,11 +104,20 @@ public class WebViewDialogFragment extends BaseDialogFragment {
             binding.dialogAppBarProgress.setIndeterminate(true);
         }
 
-        binding.webviewWebview.setWebViewClient(new WebViewClient() {});
-        binding.webviewWebview.setWebChromeClient(mWebChromeClient);
-        binding.webviewWebview.getSettings().setDomStorageEnabled(true);
+        binding.webviewAgreementWebview.setWebViewClient(new WebViewClient() {
+        });
+        binding.webviewAgreementWebview.setWebChromeClient(mWebChromeClient);
+        binding.webviewAgreementWebview.getSettings().setDomStorageEnabled(true);
 
-        binding.webviewWebview.loadUrl(mUrl);
+        binding.webviewAgreementWebview.loadUrl(mUrl);
+
+        binding.webviewAgreementWebview.setOnScrollChangedCallback((l, t, oldl, oldt) -> {
+            int height = (int) Math.floor(binding.webviewAgreementWebview.getContentHeight() * binding.webviewAgreementWebview.getScale());
+            int webViewHeight = binding.webviewAgreementWebview.getMeasuredHeight();
+            if(binding.webviewAgreementWebview.getScrollY() + webViewHeight >= height){
+                binding.webviewAgreementAcceptButton.setEnabled(true);
+            }
+        });
 
         return view;
     }
@@ -108,21 +125,29 @@ public class WebViewDialogFragment extends BaseDialogFragment {
     @Override
     public void onPause() {
         super.onPause();
-        binding.webviewWebview.onPause();
-        binding.webviewWebview.pauseTimers();
+        binding.webviewAgreementWebview.onPause();
+        binding.webviewAgreementWebview.pauseTimers();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        binding.webviewWebview.resumeTimers();
-        binding.webviewWebview.onResume();
+        binding.webviewAgreementWebview.resumeTimers();
+        binding.webviewAgreementWebview.onResume();
     }
 
 
     @Override
     public void onDestroy() {
-        binding.webviewWebview.destroy();
+        binding.webviewAgreementWebview.destroy();
         super.onDestroy();
+    }
+
+    public class ClickHandlers {
+        public void onClickAccept(View view) {
+            RxBus.get().post(new AcceptAgreement(mId));
+            KeyboardUtil.hideKeyboard(getActivity());
+            dismiss();
+        }
     }
 }

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
         <!-- Click Listeners -->
@@ -43,10 +42,10 @@
                 style="@style/TextStyle21"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginRight="10dp"
                 android:layout_marginEnd="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginStart="10dp"
                 android:layout_marginTop="20dp"
                 android:text="@string/intro_legal_description"
                 app:layout_constraintStart_toStartOf="parent"
@@ -60,6 +59,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="30dp"
                 android:onCheckedChanged="@{handlers::onDisclaimerCheckChanged}"
+                android:onClick="@{handlers::onDisclaimerLinkClicked}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/intro_legal_description" />
 
@@ -71,7 +71,8 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginStart="5dp"
                 android:onClickListener="@{handlers::onDisclaimerLinkClicked}"
-                android:text="@string/intro_legal_checkbox_disclaimer"
+                android:text="@string/intro_legal_checkbox_disclaimer_label"
+                android:textColor="@color/dark_sky_blue"
                 app:layout_constraintBottom_toBottomOf="@+id/intro_legal_checkbox_disclaimer"
                 app:layout_constraintStart_toEndOf="@+id/intro_legal_checkbox_disclaimer"
                 app:layout_constraintTop_toTopOf="@+id/intro_legal_checkbox_disclaimer" />
@@ -83,6 +84,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginStart="10dp"
                 android:onCheckedChanged="@{handlers::onEULACheckChanged}"
+                android:onClick="@{handlers::onEULALinkClicked}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/intro_legal_checkbox_disclaimer" />
 
@@ -94,7 +96,8 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginStart="5dp"
                 android:onClickListener="@{handlers::onEULALinkClicked}"
-                android:text="@string/intro_legal_checkbox_eula"
+                android:text="@string/intro_legal_checkbox_eula_label"
+                android:textColor="@color/dark_sky_blue"
                 app:layout_constraintBottom_toBottomOf="@+id/intro_legal_checkbox_eula"
                 app:layout_constraintStart_toEndOf="@+id/intro_legal_checkbox_eula"
                 app:layout_constraintTop_toTopOf="@+id/intro_legal_checkbox_eula" />
@@ -106,6 +109,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginStart="10dp"
                 android:onCheckedChanged="@{handlers::onPPCheckChanged}"
+                android:onClick="@{handlers::onPPLinkClicked}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/intro_legal_checkbox_eula" />
 
@@ -117,7 +121,8 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginStart="5dp"
                 android:onClickListener="@{handlers::onPPLinkClicked}"
-                android:text="@string/intro_legal_checkbox_pp"
+                android:text="@string/intro_legal_checkbox_pp_label"
+                android:textColor="@color/dark_sky_blue"
                 app:layout_constraintBottom_toBottomOf="@+id/intro_legal_checkbox_pp"
                 app:layout_constraintStart_toEndOf="@+id/intro_legal_checkbox_pp"
                 app:layout_constraintTop_toTopOf="@+id/intro_legal_checkbox_pp" />

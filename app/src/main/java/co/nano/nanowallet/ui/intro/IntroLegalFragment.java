@@ -1,31 +1,32 @@
 package co.nano.nanowallet.ui.intro;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.databinding.DataBindingUtil;
 import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.CustomEvent;
+import com.hwangjr.rxbus.annotation.Subscribe;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.inject.Inject;
 
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.analytics.AnalyticsEvents;
 import co.nano.nanowallet.analytics.AnalyticsService;
+import co.nano.nanowallet.bus.AcceptAgreement;
 import co.nano.nanowallet.bus.Logout;
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.databinding.FragmentIntroLegalBinding;
@@ -36,6 +37,7 @@ import co.nano.nanowallet.ui.common.BaseFragment;
 import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.common.WindowControl;
 import co.nano.nanowallet.ui.home.HomeFragment;
+import co.nano.nanowallet.ui.webview.WebViewAgreementDialogFragment;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
 import io.realm.Realm;
 
@@ -72,6 +74,16 @@ public class IntroLegalFragment extends BaseFragment {
         return fragment;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
+    private OnTouchListener checkBoxTouchListener = (view, motionEvent) -> {
+        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+            view.callOnClick();
+            return true; //this will prevent checkbox from changing state
+        }
+        return false;
+    };
+
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -96,11 +108,12 @@ public class IntroLegalFragment extends BaseFragment {
         // bind data to view
         binding.setHandlers(new ClickHandlers());
         binding.introLegalTitle.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
-
-        // set up the links on terms of service checkbox
-        createLink(binding.introLegalLabelDisclaimer, R.string.intro_legal_checkbox_disclaimer);
-        createLink(binding.introLegalLabelEula, R.string.intro_legal_checkbox_eula);
-        createLink(binding.introLegalLabelPp, R.string.intro_legal_checkbox_pp);
+        binding.introLegalCheckboxDisclaimer.setOnTouchListener(checkBoxTouchListener);
+        binding.introLegalLabelDisclaimer.setPaintFlags(binding.introLegalCheckboxDisclaimer.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        binding.introLegalCheckboxEula.setOnTouchListener(checkBoxTouchListener);
+        binding.introLegalLabelEula.setPaintFlags(binding.introLegalCheckboxEula.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        binding.introLegalCheckboxPp.setOnTouchListener(checkBoxTouchListener);
+        binding.introLegalLabelPp.setPaintFlags(binding.introLegalCheckboxPp.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
         accountService.open();
 
@@ -112,6 +125,22 @@ public class IntroLegalFragment extends BaseFragment {
         super.onDestroyView();
         // unregister from bus
         RxBus.get().unregister(this);
+    }
+
+    @Subscribe
+    public void receiveHistory(AcceptAgreement acceptAgreement) {
+        if (binding != null &&
+                binding.introLegalCheckboxDisclaimer != null &&
+                binding.introLegalCheckboxEula != null &&
+                binding.introLegalCheckboxPp != null) {
+            if (acceptAgreement.getAgreementId().equals(LegalTypes.DISCLAIMER.getName())) {
+                binding.introLegalCheckboxDisclaimer.setChecked(true);
+            } else if (acceptAgreement.getAgreementId().equals(LegalTypes.EULA.getName())) {
+                binding.introLegalCheckboxEula.setChecked(true);
+            } else if (acceptAgreement.getAgreementId().equals(LegalTypes.PRIVACY.getName())) {
+                binding.introLegalCheckboxPp.setChecked(true);
+            }
+        }
     }
 
     /**
@@ -129,7 +158,8 @@ public class IntroLegalFragment extends BaseFragment {
 
     /**
      * Send an analytics event when a checkmark is toggled
-     * @param title Title of the event
+     *
+     * @param title     Title of the event
      * @param isChecked Whether the checkbox is checked or not
      */
     private void sendCheckToggledEvent(String title, boolean isChecked) {
@@ -147,6 +177,7 @@ public class IntroLegalFragment extends BaseFragment {
 
     /**
      * Send an analytics event when a link is viewed
+     *
      * @param title Title of the event
      */
     private void sendLinkViewedEvent(String title) {
@@ -159,6 +190,17 @@ public class IntroLegalFragment extends BaseFragment {
         customData.put("device_id", sharedPreferencesUtil.getAppInstallUuid());
         customData.put("date", df.format(c));
         analyticsService.track(title, customData);
+    }
+
+    private void openAgreementView(String url, String title, String id) {
+        if (getActivity() instanceof WindowControl) {
+            WebViewAgreementDialogFragment
+                    .newInstance(url, title, id)
+                    .show(
+                            ((WindowControl) getActivity()).getFragmentUtility().getFragmentManager(),
+                            WebViewAgreementDialogFragment.TAG
+                    );
+        }
     }
 
     public class ClickHandlers {
@@ -179,19 +221,29 @@ public class IntroLegalFragment extends BaseFragment {
         }
 
         public void onDisclaimerLinkClicked(View view) {
+            openAgreementView(getString(R.string.intro_legal_checkbox_disclaimer_link),
+                    getString(R.string.intro_legal_checkbox_disclaimer_label),
+                    LegalTypes.DISCLAIMER.getName());
             sendLinkViewedEvent(AnalyticsEvents.DISCLAIMER_VIEWED);
         }
 
         public void onEULALinkClicked(View view) {
+            openAgreementView(getString(R.string.intro_legal_checkbox_eula_link),
+                    getString(R.string.intro_legal_checkbox_eula_label),
+                    LegalTypes.EULA.getName());
             sendLinkViewedEvent(AnalyticsEvents.EULA_VIEWED);
         }
 
         public void onPPLinkClicked(View view) {
+            openAgreementView(getString(R.string.intro_legal_checkbox_pp_link),
+                    getString(R.string.intro_legal_checkbox_pp_label),
+                    LegalTypes.PRIVACY.getName());
             sendLinkViewedEvent(AnalyticsEvents.PRIVACY_POLICY_VIEWED);
         }
 
         /**
          * Deny button listener
+         *
          * @param view View
          */
         public void onClickDeny(View view) {
@@ -218,6 +270,7 @@ public class IntroLegalFragment extends BaseFragment {
 
         /**
          * Confirm button listener
+         *
          * @param view View
          */
         public void onClickConfirm(View view) {

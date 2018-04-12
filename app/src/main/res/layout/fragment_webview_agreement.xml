@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+        <!-- Click Listeners -->
+        <variable
+            name="handlers"
+            type="co.nano.nanowallet.ui.webview.WebViewAgreementDialogFragment.ClickHandlers" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/webview_agreement_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/dialog_appbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/bright_white"
+                android:minHeight="?attr/actionBarSize"
+                app:navigationIcon="@drawable/ic_close" />
+
+            <ProgressBar
+                android:id="@+id/dialog_app_bar_progress"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="-7dp"
+                android:layout_marginTop="-7dp"
+                android:theme="@style/AppTheme.ProgressBar.Dialog.Horizontal"
+                android:visibility="gone"
+                tools:progress="80"
+                tools:visibility="visible" />
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/webview_agreement_swiperefresh"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/webview_agreement_accept_button_layout"
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
+
+            <co.nano.nanowallet.ui.webview.ObservableWebView
+                android:id="@+id/webview_agreement_webview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <FrameLayout
+            android:id="@+id/webview_agreement_accept_button_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/bright_white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <Button
+                android:id="@+id/webview_agreement_accept_button"
+                style="@style/SmallButton"
+                android:layout_width="match_parent"
+                android:layout_margin="34dp"
+                android:enabled="false"
+                android:onClick="@{handlers::onClickAccept}"
+                android:text="@string/webview_agreement_accept_cta" />
+
+        </FrameLayout>
+
+    </android.support.constraint.ConstraintLayout>
+</layout>
