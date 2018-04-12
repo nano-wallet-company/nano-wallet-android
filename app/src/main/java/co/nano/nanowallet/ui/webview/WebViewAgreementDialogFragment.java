@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
@@ -106,7 +107,9 @@ public class WebViewAgreementDialogFragment extends BaseDialogFragment {
 
         binding.webviewAgreementWebview.setWebViewClient(new WebViewClient() {});
         binding.webviewAgreementWebview.setWebChromeClient(mWebChromeClient);
+        binding.webviewAgreementWebview.setInitialScale(1);
         binding.webviewAgreementWebview.getSettings().setDomStorageEnabled(true);
+        binding.webviewAgreementWebview.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         binding.webviewAgreementWebview.getSettings().setLoadWithOverviewMode(true);
         binding.webviewAgreementWebview.getSettings().setUseWideViewPort(true);
 
