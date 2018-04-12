@@ -115,7 +115,7 @@ public class WebViewAgreementDialogFragment extends BaseDialogFragment {
         binding.webviewAgreementWebview.setOnScrollChangedCallback((l, t, oldl, oldt) -> {
             int height = (int) Math.floor(binding.webviewAgreementWebview.getContentHeight() * binding.webviewAgreementWebview.getScale());
             int webViewHeight = binding.webviewAgreementWebview.getMeasuredHeight();
-            if(binding.webviewAgreementWebview.getScrollY() + webViewHeight >= height){
+            if(binding.webviewAgreementWebview.getScrollY() + webViewHeight >= (height - 10)){
                 binding.webviewAgreementAcceptButton.setEnabled(true);
             }
         });
