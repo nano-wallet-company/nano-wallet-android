@@ -249,7 +249,7 @@ public class FragmentUtility {
 
     public enum Animation {
         NONE(0, 0),
-        CROSSFADE(R.anim.enter_crossfade, R.anim.exit_crossfade),
+        CROSSFADE(android.R.animator.fade_in, android.R.animator.fade_out),
         ENTER_UP_EXIT_DOWN(R.anim.enter_slide_up, R.anim.exit_slide_down),
         ENTER_LEFT_EXIT_RIGHT(R.anim.enter_slide_left, R.anim.exit_slide_right),
         ENTER_RIGHT_EXIT_LEFT(R.anim.enter_slide_right, R.anim.exit_slide_left);
