@@ -125,5 +125,5 @@
     <string name="scan_seed_error">Please scan a valid seed.</string>
 
     <!-- Webview Screen -->
-    <string name="webview_agreement_accept_cta">Accept</string>
+    <string name="webview_agreement_accept_cta">I Accept</string>
 </resources>
