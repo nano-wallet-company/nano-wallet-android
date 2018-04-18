@@ -20,6 +20,8 @@ contributor [code of conduct](CODE_OF_CONDUCT.md).
 * Make changes
 * Submit a pull request for review
 
+### Links
+
 | Link | Description |
 | :----- | :------ |
 [NanoWalletCompany.com](https://nanowalletco.com/) | Nano Wallet Company Homepage
