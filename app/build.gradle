@@ -62,7 +62,7 @@ dependencies {
     final RX_ANDROID = '2.0.1'
     final RXBUS_VERSION = '2.0.0'
     final RX_JAVA_2 = '2.1.8'
-    final SUPPORT_LIBRARY_VERSION = '27.1.0'
+    final SUPPORT_LIBRARY_VERSION = '27.1.1'
     final TEST_RUNNER_VERSION = '1.0.1'
     final TIMBER_VERSION = '4.6.0'
     final VAULT_VERSION = '1.4.0'
