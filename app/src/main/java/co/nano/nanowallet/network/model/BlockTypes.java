@@ -6,7 +6,8 @@ package co.nano.nanowallet.network.model;
 
 public enum BlockTypes {
     SEND("send"), RECEIVE("receive"),
-    CHANGE("change"), OPEN("open");
+    CHANGE("change"), OPEN("open"),
+    STATE("state");
 
     String blockTypeName;
 

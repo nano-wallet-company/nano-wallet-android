@@ -8,12 +8,14 @@ import org.libsodium.jni.NaCl;
 import org.libsodium.jni.Sodium;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Random;
 
 public class NanoUtil {
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
     private final static String codeArray = "13456789abcdefghijkmnopqrstuwxyz";
     private final static char[] codeCharArray = codeArray.toCharArray();
+
 
     /**
      * Generate a new Wallet Seed
@@ -142,6 +144,48 @@ public class NanoUtil {
         Sodium.crypto_generichash_blake2b_update(state, previous_b, previous_b.length);
         Sodium.crypto_generichash_blake2b_update(state, destination_b, destination_b.length);
         Sodium.crypto_generichash_blake2b_update(state, balance_b, balance_b.length);
+        Sodium.crypto_generichash_blake2b_final(state, output, output.length);
+
+        return bytesToHex(output);
+    }
+
+    /**
+     * Compute hash for a universal (state) block
+     * @param account This account's xrb_ address.
+     * @param previous Previous head block on account; 0 if open block.
+     * @param representative Representative xrb_ address.
+     * @param balance Resulting balance
+     * @param link Multipurpose Field
+     * @return String of hash
+     */
+    public static String computeStateHash(String account,
+                                         String previous,
+                                         String representative,
+                                         String balance,
+                                         String link) {
+        Sodium sodium = NaCl.sodium();
+
+        byte[] temp = hexToBytes("6");
+        byte[] STATE_BLOCK_PREAMBLE = new byte[32];
+        System.arraycopy(temp, 0, STATE_BLOCK_PREAMBLE, 32 - temp.length, temp.length);
+
+        byte[] state = new byte[Sodium.crypto_generichash_statebytes()];
+        byte[] key = new byte[Sodium.crypto_generichash_keybytes()];
+
+        byte[] account_b = hexToBytes(account);
+        byte[] previous_b = hexToBytes(previous);
+        byte[] representative_b = hexToBytes(representative);
+        byte[] balance_b = hexToBytes(balance);
+        byte[] link_b = hexToBytes(link);
+        byte[] output = new byte[32];
+
+        Sodium.crypto_generichash_blake2b_init(state, key, 0, 32);
+        Sodium.crypto_generichash_blake2b_update(state, STATE_BLOCK_PREAMBLE, STATE_BLOCK_PREAMBLE.length);
+        Sodium.crypto_generichash_blake2b_update(state, account_b, account_b.length);
+        Sodium.crypto_generichash_blake2b_update(state, previous_b, previous_b.length);
+        Sodium.crypto_generichash_blake2b_update(state, representative_b, representative_b.length);
+        Sodium.crypto_generichash_blake2b_update(state, balance_b, balance_b.length);
+        Sodium.crypto_generichash_blake2b_update(state, link_b, link_b.length);
         Sodium.crypto_generichash_blake2b_final(state, output, output.length);
 
         return bytesToHex(output);

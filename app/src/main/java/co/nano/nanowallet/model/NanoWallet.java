@@ -16,6 +16,7 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import co.nano.nanowallet.NanoUtil;
 import co.nano.nanowallet.bus.RxBus;
 import co.nano.nanowallet.bus.SendInvalidAmount;
 import co.nano.nanowallet.bus.WalletClear;
@@ -455,6 +456,11 @@ public class NanoWallet {
     public void setFrontierBlock(String frontierBlock) {
         this.frontierBlock = frontierBlock;
     }
+
+    public String getRepresentative() {
+        return representativeAddress != null ? NanoUtil.publicToAddress(representativeAddress) : PreconfiguredRepresentatives.getRepresentative();
+    }
+
 
     /* Bus Listeners */
 

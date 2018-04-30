@@ -30,9 +30,9 @@
     <string name="intro_legal_checkbox_disclaimer_label">NanoLabs Mobile Disclaimer</string>
     <string name="intro_legal_checkbox_eula_label">End User License Agreement</string>
     <string name="intro_legal_checkbox_pp_label">Privacy Policy</string>
-    <string name="intro_legal_checkbox_disclaimer_link">https://nanowalletcompany.org/mobile-disclaimer</string>
-    <string name="intro_legal_checkbox_eula_link">https://nanowalletcompany.org/mobile-end-user-license-agreement</string>
-    <string name="intro_legal_checkbox_pp_link">https://nanowalletcompany.org/mobile-privacy-policy</string>
+    <string name="intro_legal_checkbox_disclaimer_link">https://nano.org/mobile-disclaimer</string>
+    <string name="intro_legal_checkbox_eula_link">https://nano.org/mobile-end-user-license-agreement</string>
+    <string name="intro_legal_checkbox_pp_link">https://nano.org/mobile-privacy-policy</string>
     <string name="intro_legal_alert_title">Log Out Warning</string>
     <string name="intro_legal_alert_message">Not agreeing will result in logging out of the app.</string>
     <string name="intro_legal_alert_confirm_cta">Log Me Out</string>

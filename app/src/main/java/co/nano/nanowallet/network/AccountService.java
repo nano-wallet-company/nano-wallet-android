@@ -43,6 +43,7 @@ import co.nano.nanowallet.network.model.request.block.Block;
 import co.nano.nanowallet.network.model.request.block.OpenBlock;
 import co.nano.nanowallet.network.model.request.block.ReceiveBlock;
 import co.nano.nanowallet.network.model.request.block.SendBlock;
+import co.nano.nanowallet.network.model.request.block.StateBlock;
 import co.nano.nanowallet.network.model.response.CurrentPriceResponse;
 import co.nano.nanowallet.network.model.response.PendingTransactionResponseItem;
 import co.nano.nanowallet.network.model.response.ProcessResponse;
@@ -309,15 +310,24 @@ public class AccountService {
             RequestItem requestItem = requestQueue.peek();
             if (requestItem != null) {
                 if (requestItem.getRequest() instanceof Block) {
-                    if (requestItem.getRequest() instanceof OpenBlock) {
+                    if (requestItem.getRequest() instanceof OpenBlock ||
+                            requestItem.getRequest() instanceof StateBlock &&
+                                    ((StateBlock) requestItem.getRequest()).getInternal_block_type().equals(BlockTypes.OPEN)) {
                         updateFrontier(processResponse.getHash());
                         updateBlockCount(1);
-                    } else if (requestItem.getRequest() instanceof ReceiveBlock) {
+                    } else if (requestItem.getRequest() instanceof ReceiveBlock ||
+                            requestItem.getRequest() instanceof StateBlock &&
+                                    ((StateBlock) requestItem.getRequest()).getInternal_block_type().equals(BlockTypes.RECEIVE)) {
                         updateFrontier(processResponse.getHash());
                         updateBlockCount(wallet.getBlockCount() + 1);
-                    } else if (requestItem.getRequest() instanceof SendBlock) {
+                    } else if (requestItem.getRequest() instanceof SendBlock ||
+                            requestItem.getRequest() instanceof StateBlock &&
+                                    ((StateBlock) requestItem.getRequest()).getInternal_block_type().equals(BlockTypes.SEND)) {
                         updateBlockCount(wallet.getBlockCount() + 1);
                         post(processResponse);
+                    } else {
+                        // something is out of sync if this wasn't a block - should never happen
+                        ExceptionHandler.handle(new Exception("Queue Error: something is out of sync if this wasn't a block"));
                     }
 
                     requestSubscribe();
@@ -486,12 +496,33 @@ public class AccountService {
         // create a work block
         requestQueue.add(new RequestItem<>(new WorkRequest(wallet.getFrontierBlock())));
 
-        // create an open block
+        // create a receive block
         requestQueue.add(new RequestItem<>(new ReceiveBlock(
                 private_key,
                 wallet.getFrontierBlock(),
                 source))
         );
+        processQueue();
+    }
+
+    /**
+     * Make a receive block request
+     *
+     * @param source Source
+     */
+    private void requestStateReceive(String previous, String source, BigInteger balance) {
+        // create a work block
+        requestQueue.add(new RequestItem<>(new WorkRequest(wallet.getFrontierBlock())));
+
+        // create a state block for receiving
+        requestQueue.add(new RequestItem<>(new StateBlock(
+                BlockTypes.RECEIVE,
+                private_key,
+                previous,
+                wallet.getRepresentative(),
+                balance.toString(),
+                source
+        )));
         processQueue();
     }
 
@@ -506,13 +537,16 @@ public class AccountService {
         // create a work block
         requestQueue.add(new RequestItem<>(new WorkRequest(previous)));
 
-        // create a send block
-        requestQueue.add(new RequestItem<>(new SendBlock(
+        // create a state block for sending
+        requestQueue.add(new RequestItem<>(new StateBlock(
+                BlockTypes.SEND,
                 private_key,
                 previous,
-                destination.getAddress(),
-                balance.toString()))
-        );
+                wallet.getRepresentative(),
+                balance.toString(),
+                destination.getAddress()
+        )));
+
         processQueue();
     }
 

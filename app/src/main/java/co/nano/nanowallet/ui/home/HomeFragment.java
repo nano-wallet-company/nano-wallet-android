@@ -144,7 +144,6 @@ public class HomeFragment extends BaseFragment {
         }
 
         analyticsService.track(AnalyticsEvents.HOME_VIEWED);
-        ExceptionHandler.handle(new Exception("my custom"));
 
         // subscribe to bus
         RxBus.get().register(this);
