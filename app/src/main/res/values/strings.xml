@@ -24,7 +24,7 @@
     <string name="intro_new_wallet_continue_positive">I have backed up my Wallet Seed</string>
     <string name="intro_new_wallet_continue_negative">Back</string>
     <string name="intro_legal_title">Terms and Conditions</string>
-    <string name="intro_legal_description">Tap the links below and read them carefully.\n\nBy checking the boxes, you acknowledge that you have read and agree to the following terms.</string>
+    <string name="intro_legal_description">Your use of this Nano Wallet mobile application is subject to your agreement to all terms and conditions of the End User License Agreement and Privacy Policy linked below (collectively, the "Terms and Conditions"). Please tap the links below and read all Terms and Conditions carefully. By checking the boxes below and tapping “Agree,” you acknowledge that you have read, understand and agree to all of the Terms and Conditions, which are binding legal agreements. If you do not understand or agree to any of the Terms and Conditions, you are not licensed or authorized to use this application and should delete it from your device.</string>
     <string name="intro_legal_confirm">Agree</string>
     <string name="intro_legal_deny">Disagree</string>
     <string name="intro_legal_checkbox_disclaimer_label">NanoLabs Mobile Disclaimer</string>
@@ -40,9 +40,9 @@
 
     <!-- Analytics Opt-In -->
     <string name="analytics_optin_alert_title">Analytics Opt-In</string>
-    <string name="analytics_optin_alert_message">Nano Wallet would like to anonymously collect usage data and crash reports in order to help to understand how people are using the wallet, where errors might occur, and how to improve the wallet in the future.\n\nNo data about your funds, your Wallet Seed, or your private keys are ever collected. You can see exactly what data is collected by viewing our code on Github.</string>
-    <string name="analytics_optin_alert_confirm_cta">Opt-in</string>
-    <string name="analytics_optin_alert_cancel_cta">No Thanks</string>
+    <string name="analytics_optin_alert_message">Nano Wallet Company LLC (\'we\' or \'us\') would like to collect your device ID, as well as usage metrics and error and crash reports relating to your use of this Nano Wallet mobile application (the \'Wallet\'), in order to help us understand how users are using the Wallet and where errors might occur in the Wallet, and to use this data to help us maintain, develop and improve the Wallet and our products and services. \n\n No data about your name, contact information, funds, Nano tokens, Wallet Seed or private keys are ever collected through the Wallet. You can see exactly what types of data we collect through the Wallet by viewing our Privacy Policy.\n\nDo you consent to our collection and use of this data for these purposes? (Your consent is not a prerequisite for using the Wallet and, if you consent, you will have the right to withdraw your consent at any time as described in the Privacy Policy.)</string>
+    <string name="analytics_optin_alert_confirm_cta">I Consent</string>
+    <string name="analytics_optin_alert_cancel_cta">I Do Not Consent</string>
 
     <!-- Pin Screen -->
     <string name="pin_create_title">Create a 4-digit Android passcode</string>

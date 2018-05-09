@@ -269,4 +269,10 @@
         <item name="android:fontFamily">@font/nunito_regular</item>
     </style>
 
+    <style name="TextStyle23">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/very_dark_blue</item>
+        <item name="android:fontFamily">@font/nunito_regular</item>
+    </style>
+
 </resources>
