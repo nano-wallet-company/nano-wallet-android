@@ -57,7 +57,7 @@
     <style name="TextStyle4">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/dark_sky_blue</item>
-        <item name="android:letterSpacing">0.36</item>
+        <item name="android:letterSpacing">0.15</item>
         <item name="android:gravity">center_horizontal</item>
         <item name="android:fontFamily">@font/notosans_regular</item>
     </style>
