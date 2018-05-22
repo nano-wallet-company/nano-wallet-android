@@ -21,6 +21,9 @@ public class TransactionResponse extends BaseResponse {
     @SerializedName("amount")
     private String amount;
 
+    @SerializedName("is_send")
+    private String is_send;
+
     public TransactionResponse() {
     }
 
@@ -56,6 +59,14 @@ public class TransactionResponse extends BaseResponse {
         this.amount = amount;
     }
 
+    public String getIs_send() {
+        return is_send;
+    }
+
+    public void setIs_send(String is_send) {
+        this.is_send = is_send;
+    }
+
     @Override
     public String toString() {
         return "TransactionResponse{" +
@@ -63,6 +74,7 @@ public class TransactionResponse extends BaseResponse {
                 ", hash='" + hash + '\'' +
                 ", block=" + block +
                 ", amount='" + amount + '\'' +
+                ", is_send='" + is_send + '\'' +
                 '}';
     }
 }

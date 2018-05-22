@@ -9,6 +9,7 @@ import org.libsodium.jni.Sodium;
 
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Random;
 
 public class NanoUtil {
@@ -173,7 +174,10 @@ public class NanoUtil {
         byte[] key = new byte[Sodium.crypto_generichash_keybytes()];
 
         byte[] account_b = hexToBytes(account);
-        byte[] previous_b = hexToBytes(previous);
+        //byte[] previous_b = hexToBytes(previous);//String.format(Locale.US, "%032d", new BigInteger(previous)));
+        byte[] previous_temp = hexToBytes(previous);
+        byte[] previous_b = new byte[32];
+        System.arraycopy(previous_temp, 0, previous_b, 32 - previous_temp.length, previous_temp.length);
         byte[] representative_b = hexToBytes(representative);
         byte[] balance_b = hexToBytes(balance);
         byte[] link_b = hexToBytes(link);

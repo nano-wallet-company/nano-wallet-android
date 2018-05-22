@@ -10,14 +10,23 @@ public class BlockItem {
     @SerializedName("type")
     private String type;
 
+    @SerializedName("account")
+    private String account;
+
     @SerializedName("previous")
     private String previous;
 
-    @SerializedName("destination")
-    private String destination;
+    @SerializedName("representative")
+    private String representative;
 
     @SerializedName("balance")
     private String balance;
+
+    @SerializedName("link")
+    private String link;
+
+    @SerializedName("link_as_account")
+    private String link_as_account;
 
     @SerializedName("work")
     private String work;
@@ -36,6 +45,14 @@ public class BlockItem {
         this.type = type;
     }
 
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
+    }
+
     public String getPrevious() {
         return previous;
     }
@@ -44,12 +61,12 @@ public class BlockItem {
         this.previous = previous;
     }
 
-    public String getDestination() {
-        return destination;
+    public String getRepresentative() {
+        return representative;
     }
 
-    public void setDestination(String destination) {
-        this.destination = destination;
+    public void setRepresentative(String representative) {
+        this.representative = representative;
     }
 
     public String getBalance() {
@@ -58,6 +75,22 @@ public class BlockItem {
 
     public void setBalance(String balance) {
         this.balance = balance;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public String getLink_as_account() {
+        return link_as_account;
+    }
+
+    public void setLink_as_account(String link_as_account) {
+        this.link_as_account = link_as_account;
     }
 
     public String getWork() {

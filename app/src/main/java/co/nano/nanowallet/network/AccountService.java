@@ -216,7 +216,7 @@ public class AccountService {
             TransactionResponse transactionResponse = (TransactionResponse) event;
             PendingTransactionResponseItem pendingTransactionResponseItem = new PendingTransactionResponseItem(
                     transactionResponse.getAccount(), transactionResponse.getAmount(), transactionResponse.getHash());
-            if (transactionResponse.getBlock().getType().equals(BlockTypes.SEND.toString())) {
+            if (transactionResponse.getIs_send().equals("true")) {
                 handleTransactionResponse(pendingTransactionResponseItem);
             }
         } else if (event != null && event instanceof ProcessResponse) {
