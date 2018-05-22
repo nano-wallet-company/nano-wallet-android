@@ -11,6 +11,7 @@ import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.network.AccountService;
 import co.nano.nanowallet.network.model.Actions;
 import co.nano.nanowallet.network.model.BaseResponse;
+import co.nano.nanowallet.network.model.BlockTypes;
 import co.nano.nanowallet.network.model.response.AccountCheckResponse;
 import co.nano.nanowallet.network.model.response.AccountHistoryResponse;
 import co.nano.nanowallet.network.model.response.CurrentPriceResponse;
@@ -95,6 +96,10 @@ public class ActivityModule {
                             // account check response
                             src.getAsJsonObject().addProperty("messageType", Actions.CHECK.toString());
                         } else if (src.getAsJsonObject().get("hash") != null) {
+                            // account check response
+                            src.getAsJsonObject().addProperty("messageType", Actions.PROCESS.toString());
+                        }  else if (src.getAsJsonObject().get("type") != null &&
+                                src.getAsJsonObject().get("type").getAsString().equals(BlockTypes.STATE.toString())) {
                             // account check response
                             src.getAsJsonObject().addProperty("messageType", Actions.PROCESS.toString());
                         }

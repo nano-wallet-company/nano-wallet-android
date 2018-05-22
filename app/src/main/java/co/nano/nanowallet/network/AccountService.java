@@ -266,10 +266,11 @@ public class AccountService {
     private void handleTransactionResponse(PendingTransactionResponseItem item) {
         Timber.d(item.toString());
         if (!queueContainsRequestWithHash(item.getHash())) {
+            BigInteger balance = wallet.getAccountBalanceNanoRaw().toBigInteger().add(new BigInteger(item.getAmount()));
             if (wallet.getOpenBlock() == null && !queueContainsOpenBlock()) {
-                requestOpen(item.getHash());
+                requestOpen("0", item.getHash(), balance);
             } else {
-                requestReceive(item.getHash());
+                requestReceive(wallet.getFrontierBlock(), item.getHash(), balance);
             }
         }
     }
@@ -311,18 +312,18 @@ public class AccountService {
             if (requestItem != null) {
                 if (requestItem.getRequest() instanceof Block) {
                     if (requestItem.getRequest() instanceof OpenBlock ||
-                            requestItem.getRequest() instanceof StateBlock &&
-                                    ((StateBlock) requestItem.getRequest()).getInternal_block_type().equals(BlockTypes.OPEN)) {
+                            (requestItem.getRequest() instanceof StateBlock &&
+                                    ((StateBlock) requestItem.getRequest()).getInternal_block_type().equals(BlockTypes.OPEN))) {
                         updateFrontier(processResponse.getHash());
                         updateBlockCount(1);
                     } else if (requestItem.getRequest() instanceof ReceiveBlock ||
-                            requestItem.getRequest() instanceof StateBlock &&
-                                    ((StateBlock) requestItem.getRequest()).getInternal_block_type().equals(BlockTypes.RECEIVE)) {
+                            (requestItem.getRequest() instanceof StateBlock &&
+                                    ((StateBlock) requestItem.getRequest()).getInternal_block_type().equals(BlockTypes.RECEIVE))) {
                         updateFrontier(processResponse.getHash());
                         updateBlockCount(wallet.getBlockCount() + 1);
                     } else if (requestItem.getRequest() instanceof SendBlock ||
-                            requestItem.getRequest() instanceof StateBlock &&
-                                    ((StateBlock) requestItem.getRequest()).getInternal_block_type().equals(BlockTypes.SEND)) {
+                            (requestItem.getRequest() instanceof StateBlock &&
+                                    ((StateBlock) requestItem.getRequest()).getInternal_block_type().equals(BlockTypes.SEND))) {
                         updateBlockCount(wallet.getBlockCount() + 1);
                         post(processResponse);
                     } else {
@@ -488,6 +489,29 @@ public class AccountService {
     }
 
     /**
+     * Make an open block request (state)
+     *
+     * @param previous Previous hash
+     * @param source   Destination
+     * @param balance  Remaining balance after a send
+     */
+    private void requestOpen(String previous, String source, BigInteger balance) {
+        // create a work block
+        requestQueue.add(new RequestItem<>(new WorkRequest(wallet.getFrontierBlock())));
+
+        // create a state block for receiving
+        requestQueue.add(new RequestItem<>(new StateBlock(
+                BlockTypes.OPEN,
+                private_key,
+                previous,
+                PreconfiguredRepresentatives.getRepresentative(),
+                balance.toString(),
+                source
+        )));
+        processQueue();
+    }
+
+    /**
      * Make a receive block request
      *
      * @param source Source
@@ -506,11 +530,13 @@ public class AccountService {
     }
 
     /**
-     * Make a receive block request
+     * Make a receive block request (state)
      *
-     * @param source Source
+     * @param previous Previous hash
+     * @param source   Destination
+     * @param balance  Remaining balance after a send
      */
-    private void requestStateReceive(String previous, String source, BigInteger balance) {
+    private void requestReceive(String previous, String source, BigInteger balance) {
         // create a work block
         requestQueue.add(new RequestItem<>(new WorkRequest(wallet.getFrontierBlock())));
 
@@ -634,7 +660,10 @@ public class AccountService {
         }
         for (RequestItem item : requestQueue) {
             if ((item.getRequest() instanceof OpenBlock && ((OpenBlock) item.getRequest()).getSource().equals(source)) ||
-                    (item.getRequest() instanceof ReceiveBlock && ((ReceiveBlock) item.getRequest()).getSource().equals(source))) {
+                    (item.getRequest() instanceof ReceiveBlock && ((ReceiveBlock) item.getRequest()).getSource().equals(source)) ||
+                    (item.getRequest() instanceof StateBlock && ((StateBlock) item.getRequest()).getInternal_block_type().equals(BlockTypes.RECEIVE) && ((StateBlock) item.getRequest()).getLink().equals(source)) ||
+                    (item.getRequest() instanceof StateBlock && ((StateBlock) item.getRequest()).getInternal_block_type().equals(BlockTypes.OPEN) && ((StateBlock) item.getRequest()).getLink().equals(source))
+                    ) {
                 return true;
             }
         }
@@ -671,7 +700,9 @@ public class AccountService {
         if (requestQueue != null) {
             for (RequestItem item : requestQueue) {
                 Object o = item.getRequest();
-                if ((o instanceof ReceiveBlock || o instanceof WorkRequest) && !item.isProcessing()) {
+                if (((o instanceof ReceiveBlock ||
+                        (o instanceof StateBlock &&
+                                ((StateBlock) o).getInternal_block_type().equals(BlockTypes.RECEIVE))) || o instanceof WorkRequest) && !item.isProcessing()) {
                     objectsToUpdate.add(o);
                 }
             }
@@ -680,6 +711,9 @@ public class AccountService {
         for (Object o : objectsToUpdate) {
             if (o != null && o instanceof ReceiveBlock) {
                 ((ReceiveBlock) o).setPrevious(frontier);
+            } else if ((o instanceof StateBlock &&
+                    ((StateBlock) o).getInternal_block_type().equals(BlockTypes.RECEIVE))){
+                ((StateBlock) o).setPrevious(frontier);
             } else if (o != null && o instanceof WorkRequest) {
                 ((WorkRequest) o).setHash(frontier);
             }

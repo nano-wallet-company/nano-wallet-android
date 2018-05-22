@@ -1,5 +1,6 @@
 package co.nano.nanowallet.network.model.request.block;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.gson.annotations.SerializedName;
 
 import co.nano.nanowallet.network.model.BlockTypes;
@@ -7,7 +8,7 @@ import co.nano.nanowallet.network.model.BlockTypes;
 /**
  * Base block
  */
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Block {
     @SerializedName("work")
     private String work;
