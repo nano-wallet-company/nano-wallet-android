@@ -4,9 +4,8 @@ import android.content.Context;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 
-import co.nano.nanowallet.analytics.AnalyticsService;
-import co.nano.nanowallet.di.persistence.PersistenceModule;
 import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.network.AccountService;
 import co.nano.nanowallet.network.model.Actions;
@@ -14,6 +13,7 @@ import co.nano.nanowallet.network.model.BaseResponse;
 import co.nano.nanowallet.network.model.BlockTypes;
 import co.nano.nanowallet.network.model.response.AccountCheckResponse;
 import co.nano.nanowallet.network.model.response.AccountHistoryResponse;
+import co.nano.nanowallet.network.model.response.BlockItem;
 import co.nano.nanowallet.network.model.response.CurrentPriceResponse;
 import co.nano.nanowallet.network.model.response.ErrorResponse;
 import co.nano.nanowallet.network.model.response.ProcessResponse;
@@ -24,7 +24,6 @@ import co.nano.nanowallet.network.model.response.WorkResponse;
 import dagger.Module;
 import dagger.Provides;
 import io.gsonfire.GsonFireBuilder;
-import io.realm.Realm;
 
 @Module
 public class ActivityModule {
@@ -96,12 +95,18 @@ public class ActivityModule {
                             // account check response
                             src.getAsJsonObject().addProperty("messageType", Actions.CHECK.toString());
                         } else if (src.getAsJsonObject().get("hash") != null) {
-                            // account check response
+                            // process block response
                             src.getAsJsonObject().addProperty("messageType", Actions.PROCESS.toString());
-                        }  else if (src.getAsJsonObject().get("type") != null &&
+                        } else if (src.getAsJsonObject().get("type") != null &&
                                 src.getAsJsonObject().get("type").getAsString().equals(BlockTypes.STATE.toString())) {
-                            // account check response
+                            // state block response
                             src.getAsJsonObject().addProperty("messageType", Actions.PROCESS.toString());
+                        } else if (src.getAsJsonObject().get("content") != null) {
+                            // get block response
+                            String content = src.getAsJsonObject().get("content").getAsString();
+                            src = gson.toJsonTree(gson.fromJson(content, BlockItem.class));
+
+                            src.getAsJsonObject().addProperty("messageType", "content");
                         }
                     }
                 }).registerTypeSelector(BaseResponse.class, readElement -> {
@@ -126,6 +131,8 @@ public class ActivityModule {
                             return ProcessResponse.class;
                         } else if (kind.equals("block")) {
                             return TransactionResponse.class;
+                        } else if (kind.equals("content")) {
+                            return BlockItem.class;
                         } else {
                             return null; // returning null will trigger Gson's default behavior
                         }

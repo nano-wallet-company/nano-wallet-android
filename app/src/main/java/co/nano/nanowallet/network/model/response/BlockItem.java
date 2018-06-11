@@ -2,11 +2,13 @@ package co.nano.nanowallet.network.model.response;
 
 import com.google.gson.annotations.SerializedName;
 
+import co.nano.nanowallet.network.model.BaseResponse;
+
 /**
  * BlockItem Item
  */
 
-public class BlockItem {
+public class BlockItem extends BaseResponse {
     @SerializedName("type")
     private String type;
 
