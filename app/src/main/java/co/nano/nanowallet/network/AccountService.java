@@ -289,35 +289,40 @@ public class AccountService {
      * @param blockItem Block Item Response
      */
     private void handleBlockItemResponse(BlockResponse blockItem) {
-        String hash = NanoUtil.computeStateHash(
-                NanoUtil.addressToPublic(blockItem.getAccount()),
-                blockItem.getPrevious(),
-                NanoUtil.addressToPublic(blockItem.getRepresentative()),
-                NumberUtil.getRawAsHex(blockItem.getBalance()),
-                blockItem.getLink());
 
-        // compare hash to the hash we sent
-        RequestItem getBlockRequest = requestQueue.peek();
-        if (getBlockRequest.getRequest() instanceof GetBlockRequest &&
-                hash.equals(((GetBlockRequest) getBlockRequest.getRequest()).getHash())) {
-            // update amount on receive request
-            requestQueue.poll();
-            RequestItem nextRequest = requestQueue.peek();
-            if (nextRequest != null && nextRequest.getRequest() instanceof StateBlock) {
-                ((StateBlock) nextRequest.getRequest()).setRepresentative(blockItem.getRepresentative());
-                ((StateBlock) nextRequest.getRequest()).setBalance(
-                        new BigInteger(blockItem.getBalance())
-                                .add(new BigInteger(((StateBlock) nextRequest.getRequest()).getBalance()))
-                                .toString()
-                );
+        if (blockItem.getType().equals(BlockTypes.STATE.toString())) {
+            String hash = NanoUtil.computeStateHash(
+                    NanoUtil.addressToPublic(blockItem.getAccount()),
+                    blockItem.getPrevious(),
+                    NanoUtil.addressToPublic(blockItem.getRepresentative()),
+                    NumberUtil.getRawAsHex(blockItem.getBalance()),
+                    blockItem.getLink());
+
+            // compare hash to the hash we sent
+            RequestItem getBlockRequest = requestQueue.peek();
+            if (getBlockRequest.getRequest() instanceof GetBlockRequest &&
+                    hash.equals(((GetBlockRequest) getBlockRequest.getRequest()).getHash())) {
+                // update amount on receive request
+                requestQueue.poll();
+                RequestItem nextRequest = requestQueue.peek();
+                if (nextRequest != null && nextRequest.getRequest() instanceof StateBlock) {
+                    ((StateBlock) nextRequest.getRequest()).setRepresentative(blockItem.getRepresentative());
+                    ((StateBlock) nextRequest.getRequest()).setBalance(
+                            new BigInteger(blockItem.getBalance())
+                                    .add(new BigInteger(((StateBlock) nextRequest.getRequest()).getBalance()))
+                                    .toString()
+                    );
+                }
+
+            } else {
+                ExceptionHandler.handle(new Exception("hash comparison failed"));
+                // TODO: Analytics for fail (could not decode head block)
+
+                // skip processing the receive call as something failed
+                requestQueue.poll();
+                requestQueue.poll();
             }
-
         } else {
-            ExceptionHandler.handle(new Exception("hash comparison failed"));
-            // TODO: Analytics for fail (could not decode head block)
-
-            // skip processing the receive call as something failed
-            requestQueue.poll();
             requestQueue.poll();
         }
 
