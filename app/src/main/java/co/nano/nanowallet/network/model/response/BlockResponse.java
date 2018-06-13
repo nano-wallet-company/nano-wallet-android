@@ -8,7 +8,7 @@ import co.nano.nanowallet.network.model.BaseResponse;
  * BlockItem Item
  */
 
-public class BlockItem {
+public class BlockResponse extends BaseResponse {
     @SerializedName("type")
     private String type;
 
@@ -36,7 +36,7 @@ public class BlockItem {
     @SerializedName("signature")
     private String signature;
 
-    public BlockItem() {
+    public BlockResponse() {
     }
 
     public String getType() {

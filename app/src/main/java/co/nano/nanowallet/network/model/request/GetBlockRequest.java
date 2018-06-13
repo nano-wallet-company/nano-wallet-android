@@ -22,7 +22,7 @@ public class GetBlockRequest extends BaseRequest {
     }
 
     public GetBlockRequest(String hash) {
-        this.action = Actions.HISTORY.toString();
+        this.action = Actions.GET_BLOCK.toString();
         this.hash = hash;
     }
 

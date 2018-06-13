@@ -45,7 +45,7 @@ import co.nano.nanowallet.network.model.request.block.OpenBlock;
 import co.nano.nanowallet.network.model.request.block.ReceiveBlock;
 import co.nano.nanowallet.network.model.request.block.SendBlock;
 import co.nano.nanowallet.network.model.request.block.StateBlock;
-import co.nano.nanowallet.network.model.response.BlockItem;
+import co.nano.nanowallet.network.model.response.BlockResponse;
 import co.nano.nanowallet.network.model.response.CurrentPriceResponse;
 import co.nano.nanowallet.network.model.response.PendingTransactionResponseItem;
 import co.nano.nanowallet.network.model.response.ProcessResponse;
@@ -55,6 +55,7 @@ import co.nano.nanowallet.network.model.response.WarningResponse;
 import co.nano.nanowallet.network.model.response.WorkResponse;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.util.ExceptionHandler;
+import co.nano.nanowallet.util.NumberUtil;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
 import io.realm.Realm;
 import okhttp3.OkHttpClient;
@@ -223,8 +224,8 @@ public class AccountService {
             }
         } else if (event != null && event instanceof ProcessResponse) {
             handleProcessResponse((ProcessResponse) event);
-        } else if (event != null && event instanceof BlockItem) {
-            handleBlockItemResponse((BlockItem) event);
+        } else if (event != null && event instanceof BlockResponse) {
+            handleBlockItemResponse((BlockResponse) event);
         } else {
             // update block count on subscribe request
             if (event instanceof SubscribeResponse) {
@@ -287,23 +288,23 @@ public class AccountService {
      *
      * @param blockItem Block Item Response
      */
-    private void handleBlockItemResponse(BlockItem blockItem) {
+    private void handleBlockItemResponse(BlockResponse blockItem) {
         String hash = NanoUtil.computeStateHash(
-                blockItem.getAccount(),
+                NanoUtil.addressToPublic(blockItem.getAccount()),
                 blockItem.getPrevious(),
-                blockItem.getRepresentative(),
-                blockItem.getBalance(),
+                NanoUtil.addressToPublic(blockItem.getRepresentative()),
+                NumberUtil.getRawAsHex(blockItem.getBalance()),
                 blockItem.getLink());
 
         // compare hash to the hash we sent
         RequestItem getBlockRequest = requestQueue.peek();
         if (getBlockRequest.getRequest() instanceof GetBlockRequest &&
                 hash.equals(((GetBlockRequest) getBlockRequest.getRequest()).getHash())) {
-
             // update amount on receive request
             requestQueue.poll();
             RequestItem nextRequest = requestQueue.peek();
             if (nextRequest != null && nextRequest.getRequest() instanceof StateBlock) {
+                ((StateBlock) nextRequest.getRequest()).setRepresentative(blockItem.getRepresentative());
                 ((StateBlock) nextRequest.getRequest()).setBalance(
                         new BigInteger(blockItem.getBalance())
                                 .add(new BigInteger(((StateBlock) nextRequest.getRequest()).getBalance()))
@@ -311,7 +312,6 @@ public class AccountService {
                 );
             }
 
-            processQueue();
         } else {
             ExceptionHandler.handle(new Exception("hash comparison failed"));
             // TODO: Analytics for fail (could not decode head block)
@@ -319,8 +319,9 @@ public class AccountService {
             // skip processing the receive call as something failed
             requestQueue.poll();
             requestQueue.poll();
-            processQueue();
         }
+
+        processQueue();
 
     }
 
@@ -341,9 +342,14 @@ public class AccountService {
             if (nextBlockRequest != null && nextBlockRequest.getRequest() instanceof Block) {
                 ((Block) nextBlockRequest.getRequest()).setWork(workResponse.getWork());
             } else {
-                nextBlockRequest = requestQueue.get(1);
-                if (nextBlockRequest != null && nextBlockRequest.getRequest() instanceof Block) {
-                    ((Block) nextBlockRequest.getRequest()).setWork(workResponse.getWork());
+                if (requestQueue.size() > 1) {
+                    nextBlockRequest = requestQueue.get(1);
+                    if (nextBlockRequest != null && nextBlockRequest.getRequest() instanceof Block) {
+                        ((Block) nextBlockRequest.getRequest()).setWork(workResponse.getWork());
+                    } else {
+                        // Work was submitted without a block request following - should never happen
+                        ExceptionHandler.handle(new Exception("Queue Error: work was submitted without a block request following"));
+                    }
                 } else {
                     // Work was submitted without a block request following - should never happen
                     ExceptionHandler.handle(new Exception("Queue Error: work was submitted without a block request following"));
@@ -468,7 +474,12 @@ public class AccountService {
 
                     checkState();
                     Timber.d("SEND: %s", gson.toJson(new ProcessRequest(block)));
-                    websocket.send(gson.toJson(new ProcessRequest(block)));
+                    if (((Block) requestItem.getRequest()).getWork() != null) {
+                        websocket.send(gson.toJson(new ProcessRequest(block)));
+                    } else {
+                        ExceptionHandler.handle(new Exception("Work request failed."));
+                        processQueue();
+                    }
                 } else {
                     checkState();
                     Timber.d("SEND: %s", gson.toJson(requestItem.getRequest()));
@@ -556,10 +567,10 @@ public class AccountService {
      */
     private void requestReceive(String previous, String source, BigInteger balance) {
         // create a work block
-        requestQueue.add(new RequestItem<>(new WorkRequest(wallet.getAccountHistory().get(0).getHash())));
+        requestQueue.add(new RequestItem<>(new WorkRequest(previous)));
 
         // create a get_block request
-        requestQueue.add(new RequestItem<>(new GetBlockRequest(wallet.getAccountHistory().get(0).getHash())));
+        requestQueue.add(new RequestItem<>(new GetBlockRequest(previous)));
 
         // create a state block for receiving
         requestQueue.add(new RequestItem<>(new StateBlock(
@@ -583,6 +594,9 @@ public class AccountService {
     public void requestSend(String previous, Address destination, BigInteger balance) {
         // create a work block
         requestQueue.add(new RequestItem<>(new WorkRequest(previous)));
+
+        // create a get_block request
+        //requestQueue.add(new RequestItem<>(new GetBlockRequest(previous)));
 
         // create a state block for sending
         requestQueue.add(new RequestItem<>(new StateBlock(

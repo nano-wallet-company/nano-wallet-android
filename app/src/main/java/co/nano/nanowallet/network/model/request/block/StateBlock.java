@@ -40,11 +40,11 @@ public class StateBlock extends Block {
     @JsonProperty("link")
     private String link;
 
-    @JsonProperty("work")
-    private String work;
-
     @JsonProperty("signature")
     private String signature;
+
+    private String privateKey;
+    private String publicKey;
 
     public StateBlock() {
         this.type = BlockTypes.STATE.toString();
@@ -53,7 +53,8 @@ public class StateBlock extends Block {
     public StateBlock(BlockTypes blockType, String private_key, String previous,
                       String representative,
                       String balance, String link) {
-        String publicKey = NanoUtil.privateToPublic(private_key);
+        this.privateKey = private_key;
+        this.publicKey = NanoUtil.privateToPublic(private_key);
         Address linkAddress = new Address(link);
         link = linkAddress.isValidAddress() ? NanoUtil.addressToPublic(linkAddress.getAddress()) : link;
 
@@ -65,13 +66,17 @@ public class StateBlock extends Block {
         this.balance = balance;
         this.link = link;
 
+        sign();
+    }
+
+    private void sign() {
         String hash = NanoUtil.computeStateHash(
                 publicKey,
                 previous,
                 NanoUtil.addressToPublic(representative),
                 NumberUtil.getRawAsHex(this.balance),
                 link);
-        this.signature = NanoUtil.sign(private_key, hash);
+        this.signature = NanoUtil.sign(privateKey, hash);
     }
 
     public String getType() {
@@ -112,6 +117,7 @@ public class StateBlock extends Block {
 
     public void setBalance(String balance) {
         this.balance = balance;
+        sign();
     }
 
     public String getLink() {
