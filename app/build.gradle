@@ -16,7 +16,7 @@ android {
         applicationId "co.nano.nanowallet"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 21
+        versionCode 22
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
@@ -50,8 +50,8 @@ android {
 
 dependencies {
     final AWESOME_QRCODE_VERSION = '1.0.6'
-    final EPOXY_VERSION = '2.8.0'
-    final CONSTRAINT_LAYOUT_VERSION = '1.1.0-beta5'
+    final EPOXY_VERSION = '2.12.0'
+    final CONSTRAINT_LAYOUT_VERSION = '1.1.1'
     final DAGGER_VERSION = '2.14.1'
     final ESPRESSO_VERSION = '3.0.1'
     final FINGERPRINT_VERSION = '3.2.1'
@@ -59,12 +59,12 @@ dependencies {
     final GSON_VERSION = '2.8.2'
     final J_UNIT_VERSION = '4.12'
     final PINLOCKVIEW_VERSION = '2.1.0'
-    final RX_ANDROID = '2.0.1'
+    final RX_ANDROID = '2.0.2'
     final RXBUS_VERSION = '2.0.0'
     final RX_JAVA_2 = '2.1.8'
     final SUPPORT_LIBRARY_VERSION = '27.1.1'
     final TEST_RUNNER_VERSION = '1.0.1'
-    final TIMBER_VERSION = '4.6.0'
+    final TIMBER_VERSION = '4.7.0'
     final VAULT_VERSION = '1.4.0'
     final OKHTTP_VERSION = '3.10.0'
     final ZXING_VERSION = '1.9'
