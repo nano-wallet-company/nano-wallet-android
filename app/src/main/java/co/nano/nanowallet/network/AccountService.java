@@ -325,13 +325,23 @@ public class AccountService {
             } else {
                 ExceptionHandler.handle(new Exception("hash comparison failed"));
 
-                // skip processing the receive call as something failed
+                // skip processing the send/receive call as something failed in the hash comparison
                 requestQueue.poll();
                 requestQueue.poll();
             }
         } else {
+            // the head block was not a state block
+
+            // send a no-op to convert them to state blocks
+            RequestItem getBlockRequest = requestQueue.peek();
+            if (blockItem.getBalance() != null) {
+                requestChange(wallet.getFrontierBlock(), new BigInteger(blockItem.getBalance()), blockItem.getRepresentative(), true);
+            }
+
+            // skip the next requests
             requestQueue.poll();
             requestQueue.poll();
+
 
         }
 
@@ -628,6 +638,35 @@ public class AccountService {
                 wallet.getRepresentative(),
                 balance.toString(),
                 destination.getAddress()
+        )));
+
+        processQueue();
+    }
+
+    /**
+     * Make a no-op request
+     *
+     * @param previous    Previous hash
+     * @param balance     Current Wallet Balance
+     * @param representative Represnetative
+     */
+    public void requestChange(String previous, BigInteger balance, String representative, boolean noop) {
+        // create a work block
+        requestQueue.add(new RequestItem<>(new WorkRequest(previous)));
+
+        if (!noop) {
+            // create a get_block request
+            requestQueue.add(new RequestItem<>(new GetBlockRequest(previous)));
+        }
+
+        // create a state block for sending
+        requestQueue.add(new RequestItem<>(new StateBlock(
+                BlockTypes.CHANGE,
+                private_key,
+                previous,
+                representative,
+                balance.toString(),
+                "0000000000000000000000000000000000000000000000000000000000000000"
         )));
 
         processQueue();

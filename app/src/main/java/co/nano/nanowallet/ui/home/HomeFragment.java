@@ -187,6 +187,7 @@ public class HomeFragment extends BaseFragment {
             showAnalyticsOptIn(analyticsService, realm);
         }
 
+
         return view;
     }
 
