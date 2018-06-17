@@ -459,9 +459,8 @@ public class SendFragment extends BaseFragment {
         if (destination.isValidAddress()) {
             RxBus.get().post(new ShowOverlay());
             BigInteger sendAmount = NumberUtil.getAmountAsRawBigInteger(wallet.getSendNanoAmount());
-            BigInteger balance = wallet.getAccountBalanceNanoRaw().toBigInteger().subtract(sendAmount);
 
-            accountService.requestSend(wallet.getFrontierBlock(), destination, balance);
+            accountService.requestSend(wallet.getFrontierBlock(), destination, sendAmount);
             analyticsService.track(AnalyticsEvents.SEND_BEGAN);
         } else {
             showError(R.string.send_error_alert_title, R.string.send_error_alert_message);

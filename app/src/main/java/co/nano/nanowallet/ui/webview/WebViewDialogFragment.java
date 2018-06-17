@@ -96,7 +96,7 @@ public class WebViewDialogFragment extends BaseDialogFragment {
 
             binding.dialogAppBarProgress.setIndeterminate(true);
         }
-        
+
         binding.webviewWebview.setWebViewClient(new WebViewClient() {});
         binding.webviewWebview.setWebChromeClient(mWebChromeClient);
         binding.webviewWebview.setInitialScale(1);

@@ -307,16 +307,23 @@ public class AccountService {
                 RequestItem nextRequest = requestQueue.peek();
                 if (nextRequest != null && nextRequest.getRequest() instanceof StateBlock) {
                     ((StateBlock) nextRequest.getRequest()).setRepresentative(blockItem.getRepresentative());
-                    ((StateBlock) nextRequest.getRequest()).setBalance(
-                            new BigInteger(blockItem.getBalance())
-                                    .add(new BigInteger(((StateBlock) nextRequest.getRequest()).getBalance()))
-                                    .toString()
-                    );
+                    if (((StateBlock) nextRequest.getRequest()).getInternal_block_type() == BlockTypes.SEND) {
+                        ((StateBlock) nextRequest.getRequest()).setBalance(
+                                new BigInteger(blockItem.getBalance())
+                                        .subtract(new BigInteger(((StateBlock) nextRequest.getRequest()).getSendAmount()))
+                                        .toString()
+                        );
+                    } else {
+                        ((StateBlock) nextRequest.getRequest()).setBalance(
+                                new BigInteger(blockItem.getBalance())
+                                        .add(new BigInteger(((StateBlock) nextRequest.getRequest()).getBalance()))
+                                        .toString()
+                        );
+                    }
                 }
 
             } else {
                 ExceptionHandler.handle(new Exception("hash comparison failed"));
-                // TODO: Analytics for fail (could not decode head block)
 
                 // skip processing the receive call as something failed
                 requestQueue.poll();
@@ -324,6 +331,8 @@ public class AccountService {
             }
         } else {
             requestQueue.poll();
+            requestQueue.poll();
+
         }
 
         processQueue();
@@ -479,11 +488,19 @@ public class AccountService {
 
                     checkState();
                     Timber.d("SEND: %s", gson.toJson(new ProcessRequest(block)));
-                    if (((Block) requestItem.getRequest()).getWork() != null) {
-                        websocket.send(gson.toJson(new ProcessRequest(block)));
-                    } else {
+
+                    if (((Block) requestItem.getRequest()).getWork() == null) {
                         ExceptionHandler.handle(new Exception("Work request failed."));
+                        requestQueue.poll();
                         processQueue();
+                    } else if ((requestItem.getRequest() instanceof StateBlock) &&
+                            ((Block) requestItem.getRequest()).getInternal_block_type() == BlockTypes.SEND &&
+                            ((StateBlock) requestItem.getRequest()).getBalance() == null) {
+                        ExceptionHandler.handle(new Exception("Head block request failed."));
+                        requestQueue.poll();
+                        processQueue();
+                    } else {
+                        websocket.send(gson.toJson(new ProcessRequest(block)));
                     }
                 } else {
                     checkState();
@@ -601,7 +618,7 @@ public class AccountService {
         requestQueue.add(new RequestItem<>(new WorkRequest(previous)));
 
         // create a get_block request
-        //requestQueue.add(new RequestItem<>(new GetBlockRequest(previous)));
+        requestQueue.add(new RequestItem<>(new GetBlockRequest(previous)));
 
         // create a state block for sending
         requestQueue.add(new RequestItem<>(new StateBlock(
@@ -759,6 +776,7 @@ public class AccountService {
             }
         }
     }
+
 
     /**
      * Close the web socket

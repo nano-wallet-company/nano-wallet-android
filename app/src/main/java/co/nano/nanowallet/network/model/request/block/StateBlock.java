@@ -1,7 +1,9 @@
 package co.nano.nanowallet.network.model.request.block;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.google.gson.annotations.SerializedName;
 
 import co.nano.nanowallet.NanoUtil;
 import co.nano.nanowallet.model.Address;
@@ -43,6 +45,9 @@ public class StateBlock extends Block {
     @JsonProperty("signature")
     private String signature;
 
+    @SerializedName("sendAmount")
+    private String sendAmount;
+
     private String privateKey;
     private String publicKey;
 
@@ -63,10 +68,16 @@ public class StateBlock extends Block {
         this.previous = previous;
         this.account = NanoUtil.publicToAddress(publicKey);
         this.representative = representative;
-        this.balance = balance;
+        if (blockType == BlockTypes.SEND) {
+            this.sendAmount = balance;
+        } else {
+            this.balance = balance;
+        }
         this.link = link;
 
-        sign();
+        if (this.balance != null) {
+            sign();
+        }
     }
 
     private void sign() {
@@ -144,5 +155,14 @@ public class StateBlock extends Block {
 
     public void setSignature(String signature) {
         this.signature = signature;
+    }
+
+    @JsonIgnore
+    public String getSendAmount() {
+        return sendAmount;
+    }
+
+    public void setSendAmount(String sendAmount) {
+        this.sendAmount = sendAmount;
     }
 }
