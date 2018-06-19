@@ -316,7 +316,7 @@ public class AccountService {
                     } else {
                         ((StateBlock) nextRequest.getRequest()).setBalance(
                                 new BigInteger(blockItem.getBalance())
-                                        .add(new BigInteger(((StateBlock) nextRequest.getRequest()).getBalance()))
+                                        .add(new BigInteger(((StateBlock) nextRequest.getRequest()).getSendAmount()))
                                         .toString()
                         );
                     }
@@ -504,7 +504,8 @@ public class AccountService {
                         requestQueue.poll();
                         processQueue();
                     } else if ((requestItem.getRequest() instanceof StateBlock) &&
-                            ((Block) requestItem.getRequest()).getInternal_block_type() == BlockTypes.SEND &&
+                            (((Block) requestItem.getRequest()).getInternal_block_type() == BlockTypes.SEND ||
+                            ((Block) requestItem.getRequest()).getInternal_block_type() == BlockTypes.RECEIVE) &&
                             ((StateBlock) requestItem.getRequest()).getBalance() == null) {
                         ExceptionHandler.handle(new Exception("Head block request failed."));
                         requestQueue.poll();
@@ -798,7 +799,10 @@ public class AccountService {
                 Object o = item.getRequest();
                 if (((o instanceof ReceiveBlock ||
                         (o instanceof StateBlock &&
-                                ((StateBlock) o).getInternal_block_type().equals(BlockTypes.RECEIVE))) || o instanceof WorkRequest) && !item.isProcessing()) {
+                                ((StateBlock) o).getInternal_block_type().equals(BlockTypes.RECEIVE))) ||
+                        o instanceof WorkRequest ||
+                        o instanceof GetBlockRequest
+                ) && !item.isProcessing()) {
                     objectsToUpdate.add(o);
                 }
             }
@@ -812,6 +816,8 @@ public class AccountService {
                 ((StateBlock) o).setPrevious(frontier);
             } else if (o != null && o instanceof WorkRequest) {
                 ((WorkRequest) o).setHash(frontier);
+            } else if (o != null && o instanceof GetBlockRequest) {
+                ((GetBlockRequest) o).setHash(frontier);
             }
         }
     }

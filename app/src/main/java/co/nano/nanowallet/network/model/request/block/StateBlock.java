@@ -68,7 +68,7 @@ public class StateBlock extends Block {
         this.previous = previous;
         this.account = NanoUtil.publicToAddress(publicKey);
         this.representative = representative;
-        if (blockType == BlockTypes.SEND) {
+        if (blockType == BlockTypes.SEND || blockType == BlockTypes.RECEIVE) {
             this.sendAmount = balance;
         } else {
             this.balance = balance;
