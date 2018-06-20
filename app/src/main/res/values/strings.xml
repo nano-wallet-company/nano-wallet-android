@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Nano</string>
 
-    <string name="version_display">NANO V%1$s (%2$d)</string>
+    <string name="version_display">Nano Wallet Company, LLC\nV%1$s (%2$d)</string>
 
     <!-- Intro Screens -->
     <string name="intro_welcome_title">Welcome to Nano</string>
@@ -13,7 +13,7 @@
     <string name="intro_seed_seed_hint">(Seed Address)</string>
     <string name="intro_seed_confirm_cta">Confirm Seed</string>
     <string name="intro_new_wallet_title">Your Nano Wallet Seed</string>
-    <string name="intro_new_wallet_message"><![CDATA[<font color=\"#000034\">Your Nano Wallet Seed is how we generate your wallet. It\'s also how you log into the Android Wallet or any of our other wallets, including NanoWallet.io</font><br><br><font color=\"#ee4b66\">If you lose your Wallet Seed, your funds cannot be recovered.</font><br><br><font color=\"#000034\">Keep your Wallet Seed somewhere safe (like 1Password, LastPass, or print it out and put it in a safe) and </font><font color=\"#ee4b66\">never give it to anyone, ever.</font>]]></string>
+    <string name="intro_new_wallet_message"><![CDATA[<font color=\"#000034\">Your Nano Wallet Seed is a unique code that enables you to access your wallet on the Nano network.<br><br>It is the only way for you to recover your wallet and access any Nano currency you may have.</font><br><br><font color=\"#ee4b66\">We do not have access to it and cannot recover your Wallet Seed or any funds in your wallet without your Wallet Seed.</font><br><br><font color=\"#000034\">You are solely responsible for recording your Wallet Seed in a safe and secure place and manner.</font> <font color=\"#ee4b66\">Never share your Wallet Seed with anyone.</font>]]></string>
     <string name="intro_new_wallet_confirm">I Understand, Continue</string>
     <string name="intro_new_wallet_seed_copied">Your Wallet Seed is pastable for 2 minutes. After, you can access it in Settings.\n\nPlease backup your Wallet Seed somewhere safe like 1Password, LastPass, or print it out and put it in a safe.</string>
     <string name="intro_new_wallet_seed_done">Okay</string>
