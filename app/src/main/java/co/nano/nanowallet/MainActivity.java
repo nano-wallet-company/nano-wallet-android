@@ -168,13 +168,14 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         Credentials credentials = realm.where(Credentials.class).findFirst();
 
         // initialize analytics
-        if (credentials != null && credentials.getHasAgreedToTracking()) {
-            analyticsService.start();
-        } else if (credentials != null && !credentials.getHasAnsweredAnalyticsQuestion()) {
-            analyticsService.startAnswersOnly(); // for legal
-        } else {
-            analyticsService.stop();
-        }
+        analyticsService.start();
+//        if (credentials != null && credentials.getHasAgreedToTracking()) {
+//            analyticsService.start();
+//        } else if (credentials != null && !credentials.getHasAnsweredAnalyticsQuestion()) {
+//            analyticsService.startAnswersOnly(); // for legal
+//        } else {
+//            analyticsService.stop();
+//        }
 
         if (credentials == null) {
             // if we don't have a wallet, start the intro

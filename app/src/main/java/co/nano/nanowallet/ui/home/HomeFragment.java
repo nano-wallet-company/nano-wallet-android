@@ -183,9 +183,9 @@ public class HomeFragment extends BaseFragment {
         updateAmounts();
 
         Credentials credentials = realm.where(Credentials.class).findFirst();
-        if (credentials != null && !credentials.getHasAnsweredAnalyticsQuestion()) {
-            showAnalyticsOptIn(analyticsService, realm);
-        }
+//        if (credentials != null && !credentials.getHasAnsweredAnalyticsQuestion()) {
+//            showAnalyticsOptIn(analyticsService, realm);
+//        }
 
 
         return view;

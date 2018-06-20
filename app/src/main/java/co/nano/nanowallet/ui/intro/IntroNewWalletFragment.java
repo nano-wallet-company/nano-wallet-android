@@ -103,9 +103,9 @@ public class IntroNewWalletFragment extends BaseFragment {
 
         accountService.open();
 
-        if (credentials != null && !credentials.getHasAnsweredAnalyticsQuestion()) {
-            showAnalyticsOptIn(analyticsService, realm);
-        }
+//        if (credentials != null && !credentials.getHasAnsweredAnalyticsQuestion()) {
+//            showAnalyticsOptIn(analyticsService, realm);
+//        }
 
         return view;
     }
