@@ -27,12 +27,10 @@
     <string name="intro_legal_description">Your use of this Nano Wallet mobile application is subject to your agreement to all terms and conditions of the End User License Agreement and Privacy Policy linked below (collectively, the "Terms and Conditions"). Please tap the links below and read all Terms and Conditions carefully. By checking the boxes below and tapping “Agree,” you acknowledge that you have read, understand and agree to all of the Terms and Conditions, which are binding legal agreements. If you do not understand or agree to any of the Terms and Conditions, you are not licensed or authorized to use this application and should delete it from your device.</string>
     <string name="intro_legal_confirm">Agree</string>
     <string name="intro_legal_deny">Disagree</string>
-    <string name="intro_legal_checkbox_disclaimer_label">NanoLabs Mobile Disclaimer</string>
     <string name="intro_legal_checkbox_eula_label">End User License Agreement</string>
     <string name="intro_legal_checkbox_pp_label">Privacy Policy</string>
-    <string name="intro_legal_checkbox_disclaimer_link">https://nano.org/mobile-disclaimer</string>
-    <string name="intro_legal_checkbox_eula_link">https://nano.org/mobile-end-user-license-agreement</string>
-    <string name="intro_legal_checkbox_pp_link">https://nano.org/mobile-privacy-policy</string>
+    <string name="intro_legal_checkbox_eula_link">http://nanowalletcompany.com/android-eula</string>
+    <string name="intro_legal_checkbox_pp_link">http://nanowalletcompany.com/mobile-privacy-policy</string>
     <string name="intro_legal_alert_title">Log Out Warning</string>
     <string name="intro_legal_alert_message">Not agreeing will result in logging out of the app.</string>
     <string name="intro_legal_alert_confirm_cta">Log Me Out</string>
@@ -73,7 +71,7 @@
     <string name="settings_fingerprint_title">Copy Wallet Seed</string>
     <string name="settings_fingerprint_description">Verify your identity to view your wallet seed.</string>
     <string name="settings_fingerprint_success">Fingerprint recognized</string>
-    <string name="settings_disclaimer"><![CDATA[Read the <a href="https://nano.org/mobile-disclaimer">Mobile Disclaimer</a>,<br><a href="https://nano.org/mobile-end-user-license-agreement">EULA</a> and <a href="https://nano.org//mobile-privacy-policy">Privacy Policy</a>]]></string>
+    <string name="settings_disclaimer"><![CDATA[Read the <a href="http://nanowalletcompany.com/android-eula">EULA</a> and <a href="http://nanowalletcompany.com/mobile-privacy-policy">Privacy Policy</a>]]></string>
 
     <!-- Receive Screen -->
     <string name="receive_title">Receive</string>

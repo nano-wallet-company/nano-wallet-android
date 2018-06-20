@@ -108,8 +108,6 @@ public class IntroLegalFragment extends BaseFragment {
         // bind data to view
         binding.setHandlers(new ClickHandlers());
         binding.introLegalTitle.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
-        binding.introLegalCheckboxDisclaimer.setOnTouchListener(checkBoxTouchListener);
-        binding.introLegalLabelDisclaimer.setPaintFlags(binding.introLegalCheckboxDisclaimer.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         binding.introLegalCheckboxEula.setOnTouchListener(checkBoxTouchListener);
         binding.introLegalLabelEula.setPaintFlags(binding.introLegalCheckboxEula.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         binding.introLegalCheckboxPp.setOnTouchListener(checkBoxTouchListener);
@@ -130,12 +128,9 @@ public class IntroLegalFragment extends BaseFragment {
     @Subscribe
     public void receiveHistory(AcceptAgreement acceptAgreement) {
         if (binding != null &&
-                binding.introLegalCheckboxDisclaimer != null &&
                 binding.introLegalCheckboxEula != null &&
                 binding.introLegalCheckboxPp != null) {
-            if (acceptAgreement.getAgreementId().equals(LegalTypes.DISCLAIMER.getName())) {
-                binding.introLegalCheckboxDisclaimer.setChecked(true);
-            } else if (acceptAgreement.getAgreementId().equals(LegalTypes.EULA.getName())) {
+            if (acceptAgreement.getAgreementId().equals(LegalTypes.EULA.getName())) {
                 binding.introLegalCheckboxEula.setChecked(true);
             } else if (acceptAgreement.getAgreementId().equals(LegalTypes.PRIVACY.getName())) {
                 binding.introLegalCheckboxPp.setChecked(true);
@@ -147,8 +142,7 @@ public class IntroLegalFragment extends BaseFragment {
      * Set the state of the agree button
      */
     private void setAgreeButtonState() {
-        if (binding.introLegalCheckboxDisclaimer.isChecked() &&
-                binding.introLegalCheckboxEula.isChecked() &&
+        if (binding.introLegalCheckboxEula.isChecked() &&
                 binding.introLegalCheckboxPp.isChecked()) {
             binding.introLegalButtonConfirm.setEnabled(true);
         } else {
@@ -220,13 +214,6 @@ public class IntroLegalFragment extends BaseFragment {
             sendCheckToggledEvent(AnalyticsEvents.PRIVACY_POLICY_AGREEMENT_TOGGLED, isChecked);
         }
 
-        public void onDisclaimerLinkClicked(View view) {
-            openAgreementView(getString(R.string.intro_legal_checkbox_disclaimer_link),
-                    getString(R.string.intro_legal_checkbox_disclaimer_label),
-                    LegalTypes.DISCLAIMER.getName());
-            sendLinkViewedEvent(AnalyticsEvents.DISCLAIMER_VIEWED);
-        }
-
         public void onEULALinkClicked(View view) {
             openAgreementView(getString(R.string.intro_legal_checkbox_eula_link),
                     getString(R.string.intro_legal_checkbox_eula_label),
@@ -274,8 +261,7 @@ public class IntroLegalFragment extends BaseFragment {
          * @param view View
          */
         public void onClickConfirm(View view) {
-            if (binding.introLegalCheckboxDisclaimer.isChecked() &&
-                    binding.introLegalCheckboxEula.isChecked() &&
+            if (binding.introLegalCheckboxEula.isChecked() &&
                     binding.introLegalCheckboxPp.isChecked()) {
 
                 // set confirm flag
