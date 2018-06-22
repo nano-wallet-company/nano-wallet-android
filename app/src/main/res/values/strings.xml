@@ -29,8 +29,8 @@
     <string name="intro_legal_deny">Disagree</string>
     <string name="intro_legal_checkbox_eula_label">End User License Agreement</string>
     <string name="intro_legal_checkbox_pp_label">Privacy Policy</string>
-    <string name="intro_legal_checkbox_eula_link">http://nanowalletcompany.com/android-eula</string>
-    <string name="intro_legal_checkbox_pp_link">http://nanowalletcompany.com/mobile-privacy-policy</string>
+    <string name="intro_legal_checkbox_eula_link">https://nanowalletcompany.com/android-eula</string>
+    <string name="intro_legal_checkbox_pp_link">https://nanowalletcompany.com/mobile-privacy-policy</string>
     <string name="intro_legal_alert_title">Log Out Warning</string>
     <string name="intro_legal_alert_message">Not agreeing will result in logging out of the app.</string>
     <string name="intro_legal_alert_confirm_cta">Log Me Out</string>
@@ -72,7 +72,7 @@
     <string name="settings_fingerprint_title">Copy Wallet Seed</string>
     <string name="settings_fingerprint_description">Verify your identity to view your wallet seed.</string>
     <string name="settings_fingerprint_success">Fingerprint recognized</string>
-    <string name="settings_disclaimer"><![CDATA[Read the <a href="http://nanowalletcompany.com/android-eula">EULA</a> and <a href="http://nanowalletcompany.com/mobile-privacy-policy">Privacy Policy</a>]]></string>
+    <string name="settings_disclaimer"><![CDATA[Read the <a href="https://nanowalletcompany.com/android-eula">EULA</a> and <a href="https://nanowalletcompany.com/mobile-privacy-policy">Privacy Policy</a>]]></string>
 
     <!-- Receive Screen -->
     <string name="receive_title">Receive</string>
@@ -137,12 +137,10 @@
     <string name="seed_update_address_alert_neutral_cta">I have copied my wallet seed</string>
     <string name="seed_update_address_alert_confirm_cta">Transfer balance to new wallet</string>
 
-    <string name="seed_update_verify_title">Please verify your new seed by typing it in below:</string>
+    <string name="seed_update_verify_title">Please verify your new Wallet Seed by typing it in below:</string>
     <string name="seed_update_verify_confirm">Transfer balance to new wallet</string>
-    <string name="seed_update_verify_message">Seeds don't match. Please try again.</string>
-    <string name="seed_update_verify_cancel">Transfer balance to new wallet</string>
-
-
+    <string name="seed_update_verify_error">Seed does not match. Please try again.</string>
+    <string name="seed_update_verify_cancel">Cancel</string>
 
     <string name="seed_update_send_completed_alert_title">Log into your new wallet</string>
     <string name="seed_update_send_completed_alert_message">Log out of this wallet and log in to Nano Wallet for Android again with your new seed you recently copied.</string>

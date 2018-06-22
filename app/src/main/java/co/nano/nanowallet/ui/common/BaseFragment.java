@@ -10,6 +10,8 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
@@ -17,7 +19,6 @@ import android.text.InputType;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import co.nano.nanowallet.NanoUtil;
@@ -269,46 +270,48 @@ public class BaseFragment extends Fragment {
 
                     addressDialog.setOnShowListener(dialog1 -> {
                         Button copy = ((AlertDialog) dialog1).getButton(AlertDialog.BUTTON_NEGATIVE);
-                        Button ok = ((AlertDialog) dialog1).getButton(AlertDialog.BUTTON_POSITIVE);
 
                         copy.setOnClickListener(view -> {
-                            ok.setOnClickListener(view2 -> {
-                                addressDialog.dismiss();
+                            addressDialog.dismiss();
 
-                                // create seed verify alert
-                                final EditText input = new EditText(getContext());
-                                input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                                AlertDialog seedVerifyBuilder = new AlertDialog.Builder(getContext())
-                                        .setTitle(R.string.seed_update_verify_title)
-                                        .setView(input)
-                                        .setPositiveButton(R.string.seed_update_verify_confirm, null)
-                                        .setNegativeButton(R.string.seed_update_verify_cancel, (dialog22, which12) -> dialog22.cancel())
-                                        .create();
+                            // create seed verify alert
+                            final TextInputLayout layout = new TextInputLayout(view.getContext());
+                            layout.setPadding((int) UIUtil.convertDpToPixel(20f, view.getContext()), 0, (int) UIUtil.convertDpToPixel(20f, view.getContext()), 0);
+                            final TextInputEditText input = new TextInputEditText(view.getContext());
+                            layout.addView(input);
 
-                                seedVerifyBuilder.setOnShowListener(dialog32 -> {
-                                    Button ok2 = ((AlertDialog) dialog1).getButton(AlertDialog.BUTTON_POSITIVE);
-                                    ok2.setOnClickListener(view3 -> {
-                                                if (input.getText().toString().equals(newSeed)) {
-                                                    if (getActivity() instanceof WindowControl) {
-                                                        // navigate to send screen
-                                                        dialog32.dismiss();
-                                                        ((WindowControl) getActivity()).getFragmentUtility().add(
-                                                                SendFragment.newInstance(newSeed),
-                                                                FragmentUtility.Animation.ENTER_LEFT_EXIT_RIGHT,
-                                                                FragmentUtility.Animation.ENTER_RIGHT_EXIT_LEFT,
-                                                                SendFragment.TAG
-                                                        );
-                                                    } else {
-                                                        addressDialog.setMessage(getString(R.string.seed_update_verify_message));
-                                                    }
+                            input.setInputType(InputType.TYPE_CLASS_TEXT);
+                            input.setSingleLine(false);
+                            input.setAllCaps(true);
+                            AlertDialog seedVerifyBuilder = new AlertDialog.Builder(getContext())
+                                    .setTitle(R.string.seed_update_verify_title)
+                                    .setView(layout)
+                                    .setPositiveButton(R.string.seed_update_verify_confirm, null)
+                                    .setNegativeButton(R.string.seed_update_verify_cancel, (dialog22, which12) -> dialog22.cancel())
+                                    .create();
+
+                            seedVerifyBuilder.setOnShowListener(dialog32 -> {
+                                Button ok2 = ((AlertDialog) dialog32).getButton(AlertDialog.BUTTON_POSITIVE);
+                                ok2.setOnClickListener(view3 -> {
+                                            if (input.getText().toString().toLowerCase().equals(newSeed.toLowerCase())) {
+                                                if (getActivity() instanceof WindowControl) {
+                                                    // navigate to send screen
+                                                    dialog32.dismiss();
+                                                    ((WindowControl) getActivity()).getFragmentUtility().add(
+                                                            SendFragment.newInstance(newSeed),
+                                                            FragmentUtility.Animation.ENTER_LEFT_EXIT_RIGHT,
+                                                            FragmentUtility.Animation.ENTER_RIGHT_EXIT_LEFT,
+                                                            SendFragment.TAG
+                                                    );
                                                 }
+                                            } else {
+                                                layout.setError(getString(R.string.seed_update_verify_error));
                                             }
-                                    );
+                                        }
+                                );
 
-                                });
                             });
-                            ok.setText(getString(R.string.seed_update_address_alert_confirm_cta));
-                            ok.setVisibility(View.VISIBLE);
+                            seedVerifyBuilder.show();
                         });
                     });
                     addressDialog.show();
