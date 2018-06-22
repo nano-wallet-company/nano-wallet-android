@@ -47,21 +47,27 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity implements WindowControl, ActivityWithComponent {
-    protected ActivityComponent mActivityComponent;
-    @Inject
-    Realm realm;
-    @Inject
-    AccountService accountService;
-    @Inject
-    NanoWallet nanoWallet;
-    @Inject
-    SharedPreferencesUtil sharedPreferencesUtil;
-    @Inject
-    AnalyticsService analyticsService;
     private FragmentUtility mFragmentUtility;
     private Toolbar mToolbar;
     private TextView mToolbarTitle;
+    protected ActivityComponent mActivityComponent;
     private FrameLayout mOverlay;
+
+    @Inject
+    Realm realm;
+
+    @Inject
+    AccountService accountService;
+
+    @Inject
+    NanoWallet nanoWallet;
+
+    @Inject
+    SharedPreferencesUtil sharedPreferencesUtil;
+
+    @Inject
+    AnalyticsService analyticsService;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

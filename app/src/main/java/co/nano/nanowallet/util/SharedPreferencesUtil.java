@@ -55,6 +55,14 @@ public class SharedPreferencesUtil {
         return editor.commit();
     }
 
+    private void setInBackground(String key, boolean value) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+
+        editor.putBoolean(key, value);
+
+        editor.apply();
+    }
+
     public boolean hasLocalCurrency() {
         return has(LOCAL_CURRENCY);
     }
@@ -95,7 +103,11 @@ public class SharedPreferencesUtil {
         return get(FROM_NEW_WALLET, false);
     }
 
-    public boolean setFromNewWallet(Boolean fromNewWallet) {
+    public boolean setFromNewWallet(Boolean fromNewWallet, Boolean inBackground) {
+        if (inBackground) {
+            setInBackground(FROM_NEW_WALLET, fromNewWallet);
+            return true;
+        }
         return set(FROM_NEW_WALLET, fromNewWallet);
     }
 

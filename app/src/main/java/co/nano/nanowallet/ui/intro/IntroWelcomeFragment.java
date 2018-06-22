@@ -7,16 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.CustomEvent;
-
 import javax.inject.Inject;
 
 import co.nano.nanowallet.BuildConfig;
 import co.nano.nanowallet.NanoUtil;
 import co.nano.nanowallet.R;
-import co.nano.nanowallet.analytics.AnalyticsEvents;
-import co.nano.nanowallet.analytics.AnalyticsService;
 import co.nano.nanowallet.databinding.FragmentIntroWelcomeBinding;
 import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
@@ -31,14 +26,12 @@ import io.realm.Realm;
  */
 
 public class IntroWelcomeFragment extends BaseFragment {
-    private FragmentIntroWelcomeBinding binding;
     public static String TAG = IntroWelcomeFragment.class.getSimpleName();
-
     @Inject
     Realm realm;
-
     @Inject
     SharedPreferencesUtil sharedPreferencesUtil;
+    private FragmentIntroWelcomeBinding binding;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -74,13 +67,13 @@ public class IntroWelcomeFragment extends BaseFragment {
                     credentials.setSeed(NanoUtil.generateSeed());
                 });
                 // if this preference was saved successfully, launch the Legal Fragment
-                if (sharedPreferencesUtil.setFromNewWallet(true))
-                ((WindowControl) getActivity()).getFragmentUtility().replace(
-                        IntroLegalFragment.newInstance(),
-                        FragmentUtility.Animation.ENTER_LEFT_EXIT_RIGHT,
-                        FragmentUtility.Animation.ENTER_RIGHT_EXIT_LEFT,
-                        IntroLegalFragment.TAG
-                );
+                if (sharedPreferencesUtil.setFromNewWallet(true, false)) {
+                    showIntoLegalFragment();
+                }else{ // otherwise save preference in the background thread
+                    sharedPreferencesUtil.setFromNewWallet(true, true);
+                    showIntoLegalFragment();
+
+                }
             }
         }
 
@@ -95,6 +88,15 @@ public class IntroWelcomeFragment extends BaseFragment {
                 );
             }
         }
+    }
+
+    private void showIntoLegalFragment() {
+        ((WindowControl) getActivity()).getFragmentUtility().replace(
+                IntroLegalFragment.newInstance(),
+                FragmentUtility.Animation.ENTER_LEFT_EXIT_RIGHT,
+                FragmentUtility.Animation.ENTER_RIGHT_EXIT_LEFT,
+                IntroLegalFragment.TAG
+        );
     }
 
 }
