@@ -46,26 +46,21 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity implements WindowControl, ActivityWithComponent {
+    protected ActivityComponent mActivityComponent;
+    @Inject
+    Realm realm;
+    @Inject
+    AccountService accountService;
+    @Inject
+    NanoWallet nanoWallet;
+    @Inject
+    SharedPreferencesUtil sharedPreferencesUtil;
+    @Inject
+    AnalyticsService analyticsService;
     private FragmentUtility mFragmentUtility;
     private Toolbar mToolbar;
     private TextView mToolbarTitle;
-    protected ActivityComponent mActivityComponent;
     private FrameLayout mOverlay;
-
-    @Inject
-    Realm realm;
-
-    @Inject
-    AccountService accountService;
-
-    @Inject
-    NanoWallet nanoWallet;
-
-    @Inject
-    SharedPreferencesUtil sharedPreferencesUtil;
-
-    @Inject
-    AnalyticsService analyticsService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -213,12 +208,12 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         // null out component
         mActivityComponent = null;
 
-        sharedPreferencesUtil.setConfirmedSeedBackedUp(false);
-        sharedPreferencesUtil.setFromNewWallet(false);
 
-        // go to the welcome fragment
-        getFragmentUtility().clearStack();
-        getFragmentUtility().replace(new IntroWelcomeFragment(), FragmentUtility.Animation.CROSSFADE);
+        //  if preferences have successfully been saved, go to the welcome fragment
+        if (sharedPreferencesUtil.setFromNewWallet(false) && sharedPreferencesUtil.setConfirmedSeedBackedUp(false)) {
+            getFragmentUtility().clearStack();
+            getFragmentUtility().replace(new IntroWelcomeFragment(), FragmentUtility.Animation.CROSSFADE);
+        }
     }
 
     @Subscribe
@@ -244,7 +239,6 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
     public FragmentUtility getFragmentUtility() {
         return mFragmentUtility;
     }
-
 
 
     /**

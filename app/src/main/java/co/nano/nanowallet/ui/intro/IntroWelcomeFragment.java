@@ -2,6 +2,7 @@ package co.nano.nanowallet.ui.intro;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +41,7 @@ public class IntroWelcomeFragment extends BaseFragment {
     SharedPreferencesUtil sharedPreferencesUtil;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // init dependency injection
         if (getActivity() instanceof ActivityWithComponent) {
@@ -72,8 +73,8 @@ public class IntroWelcomeFragment extends BaseFragment {
                     Credentials credentials = realm.createObject(Credentials.class);
                     credentials.setSeed(NanoUtil.generateSeed());
                 });
-
-                sharedPreferencesUtil.setFromNewWallet(true);
+                // if this preference was saved successfully, launch the Legal Fragment
+                if (sharedPreferencesUtil.setFromNewWallet(true))
                 ((WindowControl) getActivity()).getFragmentUtility().replace(
                         IntroLegalFragment.newInstance(),
                         FragmentUtility.Animation.ENTER_LEFT_EXIT_RIGHT,

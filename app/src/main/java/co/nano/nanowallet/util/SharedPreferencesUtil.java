@@ -35,7 +35,7 @@ public class SharedPreferencesUtil {
         return mPrefs.getBoolean(key, defValue);
     }
 
-    private void set(String key, String value) {
+    private boolean set(String key, String value) {
         SharedPreferences.Editor editor = mPrefs.edit();
 
         if (value != null) {
@@ -44,15 +44,15 @@ public class SharedPreferencesUtil {
             editor.remove(key);
         }
 
-        editor.apply();
+        return editor.commit();
     }
 
-    private void set(String key, boolean value) {
+    private boolean set(String key, boolean value) {
         SharedPreferences.Editor editor = mPrefs.edit();
 
         editor.putBoolean(key, value);
 
-        editor.apply();
+        return editor.commit();
     }
 
     public boolean hasLocalCurrency() {
@@ -67,8 +67,8 @@ public class SharedPreferencesUtil {
         set(LOCAL_CURRENCY, localCurrency.toString());
     }
 
-    public void clearLocalCurrency() {
-        set(LOCAL_CURRENCY, null);
+    public boolean clearLocalCurrency() {
+        return set(LOCAL_CURRENCY, null);
     }
 
     public boolean hasAppInstallUuid() {
@@ -95,8 +95,8 @@ public class SharedPreferencesUtil {
         return get(FROM_NEW_WALLET, false);
     }
 
-    public void setFromNewWallet(Boolean fromNewWallet) {
-        set(FROM_NEW_WALLET, fromNewWallet);
+    public boolean setFromNewWallet(Boolean fromNewWallet) {
+        return set(FROM_NEW_WALLET, fromNewWallet);
     }
 
     public void clearFromNewWallet() {
@@ -111,17 +111,16 @@ public class SharedPreferencesUtil {
         return get(CONFIRMED_SEED_BACKEDUP, false);
     }
 
-    public void setConfirmedSeedBackedUp(Boolean confirmedSeedBackedUp) {
-        set(CONFIRMED_SEED_BACKEDUP, confirmedSeedBackedUp);
+    public boolean setConfirmedSeedBackedUp(Boolean confirmedSeedBackedUp) {
+        return set(CONFIRMED_SEED_BACKEDUP, confirmedSeedBackedUp);
     }
 
-    public void clearConfirmedSeedBackedUp() {
-        set(CONFIRMED_SEED_BACKEDUP, false);
+    public boolean clearConfirmedSeedBackedUp() {
+        return set(CONFIRMED_SEED_BACKEDUP, false);
     }
 
-    public void clearAll() {
-        clearLocalCurrency();
-        clearConfirmedSeedBackedUp();
+    public boolean clearAll() {
+        return clearLocalCurrency() && clearConfirmedSeedBackedUp();
     }
 
 }

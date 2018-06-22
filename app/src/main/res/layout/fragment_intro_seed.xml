@@ -113,7 +113,7 @@
                 android:onClick="@{handlers::onClickCamera}"
                 android:paddingBottom="43dp"
                 android:paddingEnd="20dp"
-                android:paddingRight="20dp"
+                android:paddingStart="20dp"
                 android:paddingTop="43dp"
                 app:layout_constraintEnd_toEndOf="@+id/intro_seed_seed"
                 app:layout_constraintTop_toTopOf="@+id/intro_seed_seed"
