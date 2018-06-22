@@ -92,6 +92,18 @@
             app:layout_constraintTop_toBottomOf="@+id/settings_local_currency_spinner" />
 
         <TextView
+            android:id="@+id/settings_show_new_seed"
+            style="@style/TextStyle14"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginTop="@{safeUnbox(showCurrency) ? @dimen/margin_visible : @dimen/margin_gone}"
+            android:background="@drawable/bg_border_top_bottom_dark"
+            android:gravity="center"
+            android:onClick="@{handlers::onClickShowNewSeed}"
+            android:text="@string/settings_show_new_seed"
+            app:layout_constraintTop_toBottomOf="@+id/settings_show_seed" />
+
+        <TextView
             android:id="@+id/settings_disclaimer"
             style="@style/TextStyle20"
             android:layout_width="wrap_content"
@@ -100,7 +112,7 @@
             android:alpha="0.4"
             app:layout_constraintEnd_toStartOf="@+id/settings_guideline_vert"
             app:layout_constraintStart_toStartOf="@+id/settings_guideline_vert"
-            app:layout_constraintTop_toBottomOf="@+id/settings_show_seed"
+            app:layout_constraintTop_toBottomOf="@+id/settings_show_new_seed"
             tools:text="@string/settings_disclaimer" />
 
         <TextView

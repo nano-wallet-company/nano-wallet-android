@@ -101,6 +101,10 @@ public class AccountService {
         }
     }
 
+    public boolean isRequestQueueEmpty() {
+        return requestQueue.size() == 0;
+    }
+
     public void open() {
         wallet.setBlockCount(-1);
 

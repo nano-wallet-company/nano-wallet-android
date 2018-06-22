@@ -27,8 +27,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.CustomEvent;
 import com.github.ajalt.reprint.core.AuthenticationFailureReason;
 import com.github.ajalt.reprint.core.Reprint;
 import com.hwangjr.rxbus.annotation.Subscribe;
@@ -39,6 +37,7 @@ import java.util.HashMap;
 
 import javax.inject.Inject;
 
+import co.nano.nanowallet.NanoUtil;
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.analytics.AnalyticsEvents;
 import co.nano.nanowallet.analytics.AnalyticsService;
@@ -75,6 +74,8 @@ public class SendFragment extends BaseFragment {
     public static String TAG = SendFragment.class.getSimpleName();
     private boolean localCurrencyActive = false;
     private AlertDialog fingerprintDialog;
+    private static final String ARG_NEW_SEED = "argNewSeed";
+    private String newSeed;
 
     @Inject
     NanoWallet wallet;
@@ -110,10 +111,27 @@ public class SendFragment extends BaseFragment {
         return fragment;
     }
 
+    /**
+     * Create new instance of the fragment (handy pattern if any data needs to be passed to it)
+     *
+     * @return New instance of SendFragment
+     */
+    public static SendFragment newInstance(String newSeed) {
+        Bundle args = new Bundle();
+        args.putString(ARG_NEW_SEED, newSeed);
+        SendFragment fragment = new SendFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        if (getArguments() != null) {
+            newSeed = getArguments().getString(ARG_NEW_SEED);
+        }
     }
 
     @Override
@@ -185,6 +203,14 @@ public class SendFragment extends BaseFragment {
 
         binding.sendAddress.setBackgroundResource(binding.sendAddress.getText().length() > 0 ? R.drawable.bg_seed_input_active : R.drawable.bg_seed_input);
         UIUtil.colorizeSpannable(binding.sendAddress.getText(), getContext());
+
+
+        // updates to handle seed conversion 1.0.2
+        if (newSeed != null) {
+            String address = NanoUtil.publicToAddress(NanoUtil.privateToPublic(NanoUtil.seedToPrivate(newSeed)));
+            binding.sendAddress.setText(address);
+            setShortAddress();
+        }
 
         return view;
     }
@@ -275,7 +301,30 @@ public class SendFragment extends BaseFragment {
         RxBus.get().post(new HideOverlay());
         accountService.requestUpdate();
         analyticsService.track(AnalyticsEvents.SEND_FINISHED);
-        goBack();
+
+        // updates to handle seed conversion 1.0.2
+        if (newSeed != null) {
+            realm.beginTransaction();
+            Credentials credentials = realm.where(Credentials.class).findFirst();
+            if (credentials != null) {
+                credentials.setHasSentToNewSeed(true);
+                credentials.setNewlyGeneratedSeed(newSeed);
+            }
+            realm.commitTransaction();
+            AlertDialog.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder = new AlertDialog.Builder(getContext(), android.R.style.Theme_Material_Light_Dialog_Alert);
+            } else {
+                builder = new AlertDialog.Builder(getContext());
+            }
+
+            builder.setTitle(R.string.seed_update_send_completed_alert_title)
+                    .setMessage(R.string.seed_update_send_completed_alert_message)
+                    .setPositiveButton(R.string.seed_update_send_completed_alert_confirm, (dialog, which) -> goBack())
+                    .show();
+        } else {
+            goBack();
+        }
     }
 
     /**

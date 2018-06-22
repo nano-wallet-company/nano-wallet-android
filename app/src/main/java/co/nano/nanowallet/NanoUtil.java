@@ -4,12 +4,11 @@ package co.nano.nanowallet;
   Utilities for crypto functions
  */
 
+import co.nano.nanowallet.util.SecureRandomUtil;
 import org.libsodium.jni.NaCl;
 import org.libsodium.jni.Sodium;
 
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Locale;
 import java.security.SecureRandom;
 
 public class NanoUtil {
@@ -25,7 +24,7 @@ public class NanoUtil {
      */
     public static String generateSeed() {
         int numchars = 64;
-        SecureRandom random = new SecureRandom();
+        SecureRandom random = SecureRandomUtil.secureRandom();
         StringBuilder sb = new StringBuilder();
         while (sb.length() < numchars) {
             sb.append(Integer.toHexString(random.nextInt()));
