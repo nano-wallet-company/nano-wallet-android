@@ -1,0 +1,113 @@
+<resources>
+    <string name="app_name">נאנו</string>
+
+    <string name="version_display">חברת הארנק של נאנו, LLC\nV%1$s (%2$d)</string>
+
+    <!-- Intro Screens -->
+    <string name="intro_welcome_title">ברוך הבא לנאנו</string>
+    <string name="intro_welcome_new_wallet_cta">צור ארנק חדש</string>
+    <string name="intro_welcome_have_wallet_cta">התחבר באמצעות סיד</string>
+    <string name="intro_seed_steps">%d / 2</string>
+    <string name="intro_seed_title">הדבק או סרוק\nקוד להתחיל</string>
+    <string name="intro_seed_seed_label">סיד</string>
+    <string name="intro_seed_seed_hint">(כתובת סיד)</string>
+    <string name="intro_seed_confirm_cta">אמת סיד</string>
+    <string name="intro_new_wallet_title">הסיד של הארנק שלך</string>
+    <string name="intro_new_wallet_message"><![CDATA[<font color=\"#000034\">Your Nano Wallet Seed is a unique code that enables you to access your wallet on the Nano network.<br><br>It is the only way for you to recover your wallet and access any Nano currency you may have.</font><br><br><font color=\"#ee4b66\">We do not have access to it and cannot recover your Wallet Seed or any funds in your wallet without your Wallet Seed.</font><br><br><font color=\"#000034\">You are solely responsible for recording your Wallet Seed in a safe and secure place and manner.</font> <font color=\"#ee4b66\">Never share your Wallet Seed with anyone.</font>]]></string>
+    <string name="intro_new_wallet_confirm">אני מבין, המשך</string>
+    <string name="intro_new_wallet_seed_copied">Your Wallet Seed is pastable for 2 minutes. After, you can access it in Settings.\n\nPlease backup your Wallet Seed somewhere safe like 1Password, LastPass, or print it out and put it in a safe.</string>
+    <string name="intro_new_wallet_seed_done">אישור</string>
+    <string name="intro_new_wallet_seed_label">לחץ להעתיק</string>
+    <string name="intro_new_wallet_seed_copied_title">הסיד של הארנק הועתק!</string>
+    <string name="intro_new_wallet_continue_title">ברוך הבא לארנק נאנו!</string>
+    <string name="intro_new_wallet_continue_message">בבקשה וודא שאתה שומר את הסיד של הארנק שלך במקום בטוח.</string>
+    <string name="intro_new_wallet_continue_positive">אני גיביתי את הסיד של הארנק שלי</string>
+    <string name="intro_new_wallet_continue_negative">חזור</string>
+    <string name="intro_legal_title">תנאי שימוש</string>
+    <string name="intro_legal_description">Your use of this Nano Wallet mobile application is subject to your agreement to all terms and conditions of the End User License Agreement and Privacy Policy linked below (collectively, the "Terms and Conditions"). Please tap the links below and read all Terms and Conditions carefully. By checking the boxes below and tapping “Agree,” you acknowledge that you have read, understand and agree to all of the Terms and Conditions, which are binding legal agreements. If you do not understand or agree to any of the Terms and Conditions, you are not licensed or authorized to use this application and should delete it from your device.</string>
+    <string name="intro_legal_confirm">מסכים</string>
+    <string name="intro_legal_deny">לא מסכים</string>
+    <string name="intro_legal_checkbox_eula_label">הסכם רישיון למשתמש קצה</string>
+    <string name="intro_legal_checkbox_pp_label">מדיניות פרטיות</string>
+    <string name="intro_legal_checkbox_eula_link">http://nanowalletcompany.com/android-eula</string>
+    <string name="intro_legal_checkbox_pp_link">http://nanowalletcompany.com/mobile-privacy-policy</string>
+    <string name="intro_legal_alert_title">הזהרת התנתקות</string>
+    <string name="intro_legal_alert_message">אי הסכמה תגרום להתנתקות מהאפליקציה.</string>
+    <string name="intro_legal_alert_confirm_cta">התנתק</string>
+    <string name="intro_legal_alert_cancel_cta">ביטול</string>
+
+    <!-- Analytics Opt-In -->
+    <string name="analytics_optin_alert_title">הצטרפות ל- ניתוח מידע</string>
+    <string name="analytics_optin_alert_message">Nano (\'we\' or \'us\') would like to collect your device ID, as well as usage metrics and error and crash reports relating to your use of this Nano Wallet mobile application (the \'Wallet\'), in order to help us understand how users are using the Wallet and where errors might occur in the Wallet, and to use this data to help us maintain, develop and improve the Wallet and our products and services. \n\n No data about your name, contact information, funds, Nano tokens, Wallet Seed or private keys are ever collected through the Wallet. You can see exactly what types of data we collect through the Wallet by viewing our Privacy Policy.\n\nDo you consent to our collection and use of this data for these purposes? (Your consent is not a prerequisite for using the Wallet and, if you consent, you will have the right to withdraw your consent at any time as described in the Privacy Policy.)</string>
+    <string name="analytics_optin_alert_confirm_cta">אני מסכים</string>
+    <string name="analytics_optin_alert_cancel_cta">אני לא מסכים</string>
+
+    <!-- Pin Screen -->
+    <string name="pin_create_title">צור קוד בעל 4 תווים</string>
+    <string name="pin_confirm_title">אמת את הקוד</string>
+    <string name="pin_enter_title">הכנס קוד</string>
+    <string name="pin_confirm_error">הקוד לא תואם לאימות</string>
+    <string name="pin_error">הוכנס קוד לא תקין</string>
+
+    <!-- Home Screen -->
+    <string name="home_send_cta">שלח</string>
+    <string name="home_receive_cta">קבל</string>
+    <string name="home_explore_url">https://www.nanode.co/block/%s</string>
+    <string name="error_message">יש בעית חיבור. בבקשה נסה שוב.</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">הגדרות</string>
+    <string name="settings_local_currency">מטבע מקומי</string>
+    <string name="settings_show_seed">העתק את הסיד של הארנק שלי</string>
+    <string name="settings_log_out">התנתק</string>
+    <string name="settings_seed_alert_title">זה הסיד של הארנק שלך, היזהר</string>
+    <string name="settings_seed_alert_message">לחץ על הכפתור למטה על מנת להעתיק את הסיד ולהדביק אותו מאוחר יותר. הסיד ניתן להדבקה למשך 2 דקות.\nאנחנו ממליצים להעתיק לאפליקציה כמו 1Password, LastPass, או להדפיס את הסיד ולהחביא אותו במקום בטוח.\nאל תשתף את הסיד שלך עם אף אחד אף פעם בשום תנאי.</string>
+    <string name="settings_seed_alert_confirm_cta">העתק סיד</string>
+    <string name="settings_seed_alert_cancel_cta">ביטול</string>
+    <string name="settings_logout_alert_title">אתה בטוח שאתה רוצה להתנתק?</string>
+    <string name="settings_logout_alert_message">התנתקות תגרום להסרת הסיד, המפתחות וכל המידע שקשור לנאנו ממכשיר זה.</string>
+    <string name="settings_logout_alert_confirm_cta">אישור</string>
+    <string name="settings_logout_alert_cancel_cta">ביטול</string>
+    <string name="settings_fingerprint_title">העתק את הסיד של הארנק</string>
+    <string name="settings_fingerprint_description">אמת את הזהות שלך לצפייה בסיד של הארנק שלך.</string>
+    <string name="settings_fingerprint_success">טביעת אצבע זוהתה</string>
+    <string name="settings_disclaimer"><![CDATA[קרא את <a href="http://nanowalletcompany.com/android-eula">EULA</a> ו <a href="http://nanowalletcompany.com/mobile-privacy-policy">מדיניות הפרטיות</a>]]></string>
+
+    <!-- Receive Screen -->
+    <string name="receive_title">קבל</string>
+    <string name="receive_instructions">סרוק את ה QR קוד\n למטה בשביל לקבל נאנו</string>
+    <string name="receive_copy_cta">העתק כתובת</string>
+    <string name="receive_address_label">כתובת נאנו</string>
+    <string name="receive_copy_message"><![CDATA[<font color=\"#ffffff\">כתובת הנאנו שלך הועתקה.<br>שתף אותה עם חבר לקבל נאנו!</font>]]></string>
+    <string name="receive_copy_done">בוצע</string>
+    <string name="receive_share_title">שתף באמצעות…</string>
+    <string name="receive_card_label">$nano\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020nano.org</string>
+    <string name="receive_card_title">נאנו</string>
+    <string name="receive_qrcode_description">QR קוד</string>
+
+    <!-- Send Screen -->
+    <string name="send_title">שלח ל</string>
+    <string name="send_address_hint">(הכנס כתובת)</string>
+    <string name="send_max_cta">מקסימום</string>
+    <string name="send_send_cta">שלח</string>
+    <string name="send_camera">מצלמה</string>
+    <string name="send_amount_too_large_alert_title">כמות גדולה מידי</string>
+    <string name="send_amount_too_large_alert_message">הכמות שאתה הכנסתה גדולה יותר מהייתרה שלך.\n\nמילאנו את הטופס עם כל הייתרה שלך לשליחה.</string>
+    <string name="send_amount_too_large_alert_cta">אישור</string>
+    <string name="send_error_alert_title">משהו השתבש</string>
+    <string name="send_error_alert_message">נתקלנו בבעיה, אנחנו עובדים על פתרון. בבקשה נסה שוב בעוד כמה דקות.</string>
+    <string name="send_confirm_address_cta">אמת כתובת</string>
+    <string name="send_fingerprint_title">שלח נאנו</string>
+    <string name="send_pin_description">שלח %s נאנו?</string>
+    <string name="send_fingerprint_description">אמת טביעת אצבע לשלוח %s נאנו</string>
+    <string name="send_fingerprint_hint">חיישן טביעת אצבע</string>
+    <string name="send_fingerprint_success">טביעת אצבע אומתה</string>
+
+    <!-- Scan Screen -->
+    <string name="scan_instruction_label">סרוק סיד באמצעות QR קוד\n לשחזור ארנק קיים</string>
+    <string name="scan_send_instruction_label">סרוק כתובת נאנו באמצעות QR קוד</string>
+    <string name="scan_seed_error">בבקשה סרוק סיד תקין</string>
+
+    <!-- Webview Screen -->
+    <string name="webview_agreement_accept_cta">אני מסכים</string>
+</resources>
