@@ -109,7 +109,7 @@ public class Credentials extends RealmObject {
     }
 
     public Boolean getHasSentToNewSeed() {
-        return hasSentToNewSeed;
+        return hasSentToNewSeed == null ? false : hasSentToNewSeed;
     }
 
     public void setHasSentToNewSeed(Boolean hasSentToNewSeed) {
