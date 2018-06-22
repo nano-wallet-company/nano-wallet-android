@@ -19,6 +19,7 @@ public class Credentials extends RealmObject {
     private Boolean hasCompletedLegalAgreements;
     private Boolean hasAgreedToTracking;
     private Boolean hasAnsweredAnalyticsQuestion;
+    private Boolean seedIsSecure;
 
     public static final List<Character> VALID_SEED_CHARACTERS = Arrays.asList('a', 'b', 'c', 'd', 'e', 'f', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
 
@@ -36,6 +37,7 @@ public class Credentials extends RealmObject {
             return;
         }
 
+        this.seedIsSecure = true;
         this.seed = seed;
         this.privateKey = NanoUtil.seedToPrivate(seed);
     }
@@ -86,6 +88,14 @@ public class Credentials extends RealmObject {
 
     public void setHasAnsweredAnalyticsQuestion(Boolean hasAnsweredAnalyticsQuestion) {
         this.hasAnsweredAnalyticsQuestion = hasAnsweredAnalyticsQuestion;
+    }
+
+    public Boolean getSeedIsSecure() {
+        return seedIsSecure == null ? false : seedIsSecure;
+    }
+
+    public void setSeedIsSecure(Boolean seedIsSecure) {
+        this.seedIsSecure = seedIsSecure;
     }
 
     // Generated fields
@@ -142,7 +152,9 @@ public class Credentials extends RealmObject {
             return false;
         if (uuid != null ? !uuid.equals(that.uuid) : that.uuid != null) return false;
         if (pin != null ? !pin.equals(that.pin) : that.pin != null) return false;
-        return hasCompletedLegalAgreements != null ? hasCompletedLegalAgreements.equals(that.hasCompletedLegalAgreements) : that.hasCompletedLegalAgreements == null;
+        if (hasCompletedLegalAgreements != null ? !hasCompletedLegalAgreements.equals(that.hasCompletedLegalAgreements) : that.hasCompletedLegalAgreements != null) return false;
+        if (seedIsSecure != null ? !seedIsSecure.equals(that.seedIsSecure) : that.seedIsSecure != null) return false;
+        return true;
     }
 
     @Override
@@ -152,6 +164,7 @@ public class Credentials extends RealmObject {
         result = 31 * result + (uuid != null ? uuid.hashCode() : 0);
         result = 31 * result + (pin != null ? pin.hashCode() : 0);
         result = 31 * result + (hasCompletedLegalAgreements != null ? hasCompletedLegalAgreements.hashCode() : 0);
+        result = 31 * result + (seedIsSecure != null ? seedIsSecure.hashCode() : 0);
         return result;
     }
 
@@ -163,6 +176,7 @@ public class Credentials extends RealmObject {
                 ", uuid='" + uuid + '\'' +
                 ", pin='" + pin + '\'' +
                 ", hasCompletedLegalAgreements=" + hasCompletedLegalAgreements +
+                ", seedIsSecure=" + seedIsSecure +
                 '}';
     }
 }

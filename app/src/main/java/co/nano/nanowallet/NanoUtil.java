@@ -10,7 +10,7 @@ import org.libsodium.jni.Sodium;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.Random;
+import java.security.SecureRandom;
 
 public class NanoUtil {
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
@@ -25,7 +25,7 @@ public class NanoUtil {
      */
     public static String generateSeed() {
         int numchars = 64;
-        Random random = new Random();
+        SecureRandom random = new SecureRandom();
         StringBuilder sb = new StringBuilder();
         while (sb.length() < numchars) {
             sb.append(Integer.toHexString(random.nextInt()));
