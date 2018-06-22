@@ -27,6 +27,7 @@ import co.nano.nanowallet.analytics.AnalyticsService;
 import co.nano.nanowallet.broadcastreceiver.ClipboardAlarmReceiver;
 import co.nano.nanowallet.bus.Logout;
 import co.nano.nanowallet.bus.RxBus;
+import co.nano.nanowallet.bus.SeedCreatedWithAnotherWallet;
 import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.ui.pin.CreatePinDialogFragment;
 import co.nano.nanowallet.ui.pin.PinDialogFragment;
@@ -291,6 +292,7 @@ public class BaseFragment extends Fragment {
                     addressDialog.show();
                 })
                 .setNegativeButton(R.string.seed_update_alert_cancel_cta, (dialog, which) -> {
+                    RxBus.get().post(new SeedCreatedWithAnotherWallet());
                 })
                 .show();
     }
