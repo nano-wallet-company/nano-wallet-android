@@ -210,7 +210,6 @@ public class SendFragment extends BaseFragment {
             String address = NanoUtil.publicToAddress(NanoUtil.privateToPublic(NanoUtil.seedToPrivate(newSeed)));
             binding.sendAddress.setText(address);
             setShortAddress();
-            binding.getHandlers().onClickMax(view);
         }
 
         return view;
