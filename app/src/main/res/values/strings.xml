@@ -137,6 +137,13 @@
     <string name="seed_update_address_alert_neutral_cta">I have copied my wallet seed</string>
     <string name="seed_update_address_alert_confirm_cta">Transfer balance to new wallet</string>
 
+    <string name="seed_update_verify_title">Please verify your new seed by typing it in below:</string>
+    <string name="seed_update_verify_confirm">Transfer balance to new wallet</string>
+    <string name="seed_update_verify_message">Seeds don't match. Please try again.</string>
+    <string name="seed_update_verify_cancel">Transfer balance to new wallet</string>
+
+
+
     <string name="seed_update_send_completed_alert_title">Log into your new wallet</string>
     <string name="seed_update_send_completed_alert_message">Log out of this wallet and log in to Nano Wallet for Android again with your new seed you recently copied.</string>
     <string name="seed_update_send_completed_alert_confirm">Okay</string>
@@ -145,4 +152,5 @@
     <string name="seed_reminder_alert_message">Due to a security update, you migrated your Wallet Seed.\n\nYour new seed is\n%1$s\n\nYour new address is\n%2$s\n\nLog out and log back in with your new seed</string>
     <string name="seed_reminder_alert_neutral_cta">Okay</string>
     <string name="seed_reminder_alert_confirm_cta">Log Out</string>
+
 </resources>
