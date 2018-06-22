@@ -58,11 +58,12 @@
     <!-- Settings Screen -->
     <string name="settings_title">Settings</string>
     <string name="settings_local_currency">Local Currency</string>
-    <string name="settings_show_seed">Copy My Wallet Seed</string>
+    <string name="settings_show_seed">Show My Wallet Seed</string>
+    <string name="settings_show_new_seed">Show My New Wallet Seed</string>
     <string name="settings_log_out">Log Out</string>
     <string name="settings_seed_alert_title">Here is your Wallet Seed, be careful.</string>
     <string name="settings_seed_alert_message">Tap the button below to copy your Seed to paste later. The Seed is pasteable for 2 minutes and then expires.\n\nWe suggest copying to an app like 1Password, LastPass, or printing the Seed out and hiding it somewhere safe.\n\nNever share your seed with anyone, ever, under any circumstances.</string>
-    <string name="settings_seed_alert_confirm_cta">Copy Seed</string>
+    <string name="settings_seed_alert_confirm_cta">Okay</string>
     <string name="settings_seed_alert_cancel_cta">Cancel</string>
     <string name="settings_logout_alert_title">Are you sure you want to log out?</string>
     <string name="settings_logout_alert_message">Logging out will remove your seed, keys, and all of your Nano-related data from this device.</string>
@@ -132,7 +133,7 @@
     <string name="seed_update_alert_confirm_cta">Generate new wallet seed</string>
 
     <string name="seed_update_address_alert_title">Copy your new Wallet Seed and transfer funds</string>
-    <string name="seed_update_address_alert_message">In the future, you will use this newly generated Wallet Seed to access your Nano. Write id down and save it somewhere secure. Note: screenshots do not work in Nano Wallet\n\nYour new Wallet Seed is\n%1$s\n\nYour new Wallet Address is\n%2$s</string>
+    <string name="seed_update_address_alert_message">In the future, you will use this newly generated Wallet Seed to access your Nano. Write it down and save it somewhere secure. Note: screenshots do not work in Nano Wallet\n\nYour new Wallet Seed is\n%1$s\n\nYour new Wallet Address is\n%2$s</string>
     <string name="seed_update_address_alert_neutral_cta">I have copied my wallet seed</string>
     <string name="seed_update_address_alert_confirm_cta">Transfer balance to new wallet</string>
 

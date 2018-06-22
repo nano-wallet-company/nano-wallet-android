@@ -58,6 +58,7 @@ public class SettingsDialogFragment extends BaseDialogFragment {
     public static String TAG = SettingsDialogFragment.class.getSimpleName();
     private Boolean showCurrency = false;
     private AlertDialog fingerprintDialog;
+    private Boolean clickedNewSeed = false;
 
     @Inject
     SharedPreferencesUtil sharedPreferencesUtil;
@@ -166,6 +167,11 @@ public class SettingsDialogFragment extends BaseDialogFragment {
             toolbar.setNavigationOnClickListener(v1 -> window.dismiss());
         }
 
+        Credentials credentials = realm.where(Credentials.class).findFirst();
+        if (credentials != null) {
+            binding.settingsShowNewSeed.setVisibility(credentials.getNewlyGeneratedSeed() != null ? View.VISIBLE : View.GONE);
+        }
+
         return view;
     }
 
@@ -226,6 +232,35 @@ public class SettingsDialogFragment extends BaseDialogFragment {
         return 0;
     }
 
+    private void showSeed() {
+        Credentials credentials = realm.where(Credentials.class).findFirst();
+
+        if (Reprint.isHardwarePresent() && Reprint.hasFingerprintRegistered()) {
+            // show fingerprint dialog
+            LayoutInflater factory = LayoutInflater.from(getContext());
+            @SuppressLint("InflateParams") final View viewFingerprint = factory.inflate(R.layout.view_fingerprint, null);
+            showFingerprintDialog(viewFingerprint);
+            com.github.ajalt.reprint.rxjava2.RxReprint.authenticate()
+                    .subscribe(result -> {
+                        switch (result.status) {
+                            case SUCCESS:
+                                showFingerprintSuccess(viewFingerprint);
+                                break;
+                            case NONFATAL_FAILURE:
+                                showFingerprintError(result.failureReason, result.errorMessage, viewFingerprint);
+                                break;
+                            case FATAL_FAILURE:
+                                showFingerprintError(result.failureReason, result.errorMessage, viewFingerprint);
+                                break;
+                        }
+                    });
+        } else if (credentials != null && credentials.getPin() != null) {
+            showPinScreen(getString(R.string.settings_fingerprint_description));
+        } else if (credentials != null && credentials.getPin() == null) {
+            showCreatePinScreen();
+        }
+    }
+
     public class ClickHandlers {
         public void onClickLocalCurrency(View view) {
             showCurrency = !showCurrency;
@@ -233,32 +268,13 @@ public class SettingsDialogFragment extends BaseDialogFragment {
         }
 
         public void onClickShowSeed(View view) {
-            Credentials credentials = realm.where(Credentials.class).findFirst();
+            clickedNewSeed = false;
+            showSeed();
+        }
 
-            if (Reprint.isHardwarePresent() && Reprint.hasFingerprintRegistered()) {
-                // show fingerprint dialog
-                LayoutInflater factory = LayoutInflater.from(getContext());
-                @SuppressLint("InflateParams") final View viewFingerprint = factory.inflate(R.layout.view_fingerprint, null);
-                showFingerprintDialog(viewFingerprint);
-                com.github.ajalt.reprint.rxjava2.RxReprint.authenticate()
-                        .subscribe(result -> {
-                            switch (result.status) {
-                                case SUCCESS:
-                                    showFingerprintSuccess(viewFingerprint);
-                                    break;
-                                case NONFATAL_FAILURE:
-                                    showFingerprintError(result.failureReason, result.errorMessage, viewFingerprint);
-                                    break;
-                                case FATAL_FAILURE:
-                                    showFingerprintError(result.failureReason, result.errorMessage, viewFingerprint);
-                                    break;
-                            }
-                        });
-            } else if (credentials != null && credentials.getPin() != null) {
-                showPinScreen(getString(R.string.settings_fingerprint_description));
-            } else if (credentials != null && credentials.getPin() == null) {
-                showCreatePinScreen();
-            }
+        public void onClickShowNewSeed(View view) {
+            clickedNewSeed = true;
+            showSeed();
         }
 
         public void onClickLogOut(View view) {
@@ -295,28 +311,18 @@ public class SettingsDialogFragment extends BaseDialogFragment {
         }
 
         Credentials credentials = realm.where(Credentials.class).findFirst();
-        AlertDialog dialog = builder.setTitle(R.string.settings_seed_alert_title)
-                .setMessage(R.string.settings_seed_alert_message)
-                .setPositiveButton(R.string.settings_seed_alert_confirm_cta, (d, which) -> {
-                    analyticsService.track(AnalyticsEvents.SEED_COPIED);
-                    // copy seed to clipboard
-                    android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-                    if (credentials != null) {
-                        android.content.ClipData clip = android.content.ClipData.newPlainText("seed", credentials.getSeed());
-                        if (clipboard != null) {
-                            clipboard.setPrimaryClip(clip);
-                        }
+        if (credentials != null) {
+            AlertDialog dialog = builder.setTitle(R.string.settings_seed_alert_title)
+                    .setMessage(clickedNewSeed ? credentials.getNewlyGeneratedSeed().replaceAll("(.{4})", "$1 ") : credentials.getSeed().replaceAll("(.{4})", "$1 "))
+                    .setPositiveButton(R.string.settings_seed_alert_confirm_cta, (d, which) -> {
+                        analyticsService.track(AnalyticsEvents.SEED_COPIED);
+                    })
+                    .setIcon(R.drawable.ic_warning)
+                    .show();
 
-                        setClearClipboardAlarm();
-                    }
-                })
-                .setNegativeButton(R.string.settings_seed_alert_cancel_cta, (d, which) -> {
-                    // do nothing which dismisses the dialog
-                })
-                .setIcon(R.drawable.ic_warning)
-                .show();
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+            if (dialog.getWindow() != null) {
+                dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+            }
         }
 
         KeyboardUtil.hideKeyboard(getActivity());
