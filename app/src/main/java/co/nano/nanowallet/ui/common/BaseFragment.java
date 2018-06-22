@@ -258,9 +258,10 @@ public class BaseFragment extends Fragment {
                 .setPositiveButton(R.string.seed_update_alert_confirm_cta, (dialog, which) -> {
                     dialog.dismiss();
                     String newSeed = NanoUtil.generateSeed();
+                    String newSeedDisplay = newSeed.replaceAll("(.{4})", "$1 ");
                     String address = NanoUtil.publicToAddress(NanoUtil.privateToPublic(NanoUtil.seedToPrivate(newSeed)));
                     AlertDialog addressDialog = builder.setTitle(R.string.seed_update_address_alert_title)
-                            .setMessage(getString(R.string.seed_update_address_alert_message, newSeed, address))
+                            .setMessage(getString(R.string.seed_update_address_alert_message, newSeedDisplay, address))
                             .setPositiveButton(null, null)
                             .setNegativeButton(R.string.seed_update_address_alert_neutral_cta, null)
                             .setCancelable(false)
@@ -271,13 +272,6 @@ public class BaseFragment extends Fragment {
                         Button ok = ((AlertDialog) dialog1).getButton(AlertDialog.BUTTON_POSITIVE);
 
                         copy.setOnClickListener(view -> {
-                            // copy seed to clipboard
-                            android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-                            android.content.ClipData clip = android.content.ClipData.newPlainText("seed", newSeed);
-                            if (clipboard != null) {
-                                clipboard.setPrimaryClip(clip);
-                            }
-
                             ok.setOnClickListener(view2 -> {
                                     if (getActivity() instanceof WindowControl) {
                                         addressDialog.dismiss();
@@ -312,8 +306,9 @@ public class BaseFragment extends Fragment {
             builder = new AlertDialog.Builder(getContext());
         }
         String address = NanoUtil.publicToAddress(NanoUtil.privateToPublic(NanoUtil.seedToPrivate(seed)));
+        String newSeedDisplay = seed.replaceAll("(.{4})", "$1 ");
         AlertDialog reminderDialog = builder.setTitle(R.string.seed_reminder_alert_title)
-                .setMessage(getString(R.string.seed_reminder_alert_message, seed, address))
+                .setMessage(getString(R.string.seed_reminder_alert_message, newSeedDisplay, address))
                 .setPositiveButton(R.string.seed_reminder_alert_confirm_cta, null)
                 .setNegativeButton(R.string.seed_reminder_alert_neutral_cta, null)
                 .create();
@@ -323,12 +318,7 @@ public class BaseFragment extends Fragment {
             Button ok = ((AlertDialog) dialog1).getButton(AlertDialog.BUTTON_POSITIVE);
 
             copy.setOnClickListener(view -> {
-                // copy seed to clipboard
-                android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-                android.content.ClipData clip = android.content.ClipData.newPlainText("seed", seed);
-                if (clipboard != null) {
-                    clipboard.setPrimaryClip(clip);
-                }
+                dialog1.dismiss();
             });
 
             ok.setOnClickListener(view2 -> {

@@ -132,8 +132,8 @@
     <string name="seed_update_alert_confirm_cta">Generate new wallet seed</string>
 
     <string name="seed_update_address_alert_title">Copy your new Wallet Seed and transfer funds</string>
-    <string name="seed_update_address_alert_message">In the future, you will use this newly generated Wallet Seed to access your Nano. Copy it now and save it somewhere secure. Note: screenshots do not work in Nano Wallet\n\nYour new Wallet Seed is\n%1$s\n\nYour new Wallet Address is\n%2$s</string>
-    <string name="seed_update_address_alert_neutral_cta">Copy seed</string>
+    <string name="seed_update_address_alert_message">In the future, you will use this newly generated Wallet Seed to access your Nano. Write id down and save it somewhere secure. Note: screenshots do not work in Nano Wallet\n\nYour new Wallet Seed is\n%1$s\n\nYour new Wallet Address is\n%2$s</string>
+    <string name="seed_update_address_alert_neutral_cta">I have copied my wallet seed</string>
     <string name="seed_update_address_alert_confirm_cta">Transfer balance to new wallet</string>
 
     <string name="seed_update_send_completed_alert_title">Log into your new wallet</string>
@@ -142,6 +142,6 @@
 
     <string name="seed_reminder_alert_title">New Wallet Seed Reminder</string>
     <string name="seed_reminder_alert_message">Due to a security update, you migrated your Wallet Seed.\n\nYour new seed is\n%1$s\n\nYour new address is\n%2$s\n\nLog out and log back in with your new seed</string>
-    <string name="seed_reminder_alert_neutral_cta">Copy Seed</string>
+    <string name="seed_reminder_alert_neutral_cta">Okay</string>
     <string name="seed_reminder_alert_confirm_cta">Log Out</string>
 </resources>
