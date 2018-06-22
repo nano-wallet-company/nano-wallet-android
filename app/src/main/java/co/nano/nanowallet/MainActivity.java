@@ -25,6 +25,7 @@ import co.nano.nanowallet.bus.HideOverlay;
 import co.nano.nanowallet.bus.Logout;
 import co.nano.nanowallet.bus.OpenWebView;
 import co.nano.nanowallet.bus.RxBus;
+import co.nano.nanowallet.bus.SeedCreatedWithAnotherWallet;
 import co.nano.nanowallet.bus.ShowOverlay;
 import co.nano.nanowallet.di.activity.ActivityComponent;
 import co.nano.nanowallet.di.activity.ActivityModule;
@@ -233,6 +234,16 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
     @Subscribe
     public void hideOverlay(HideOverlay hideOverlay) {
         mOverlay.setVisibility(View.GONE);
+    }
+
+    @Subscribe
+    public void seedCreatedWithAnotherWallet(SeedCreatedWithAnotherWallet seedCreatedWithAnotherWallet) {
+        realm.executeTransaction(realm -> {
+            Credentials credentials = realm.where(Credentials.class).findFirst();
+            if (credentials != null) {
+                credentials.setSeedIsSecure(true);
+            }
+        });
     }
 
     @Override

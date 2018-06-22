@@ -20,6 +20,8 @@ public class Credentials extends RealmObject {
     private Boolean hasAgreedToTracking;
     private Boolean hasAnsweredAnalyticsQuestion;
     private Boolean seedIsSecure;
+    private String newlyGeneratedSeed;
+    private Boolean hasSentToNewSeed;
 
     public static final List<Character> VALID_SEED_CHARACTERS = Arrays.asList('a', 'b', 'c', 'd', 'e', 'f', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
 
@@ -96,6 +98,22 @@ public class Credentials extends RealmObject {
 
     public void setSeedIsSecure(Boolean seedIsSecure) {
         this.seedIsSecure = seedIsSecure;
+    }
+
+    public String getNewlyGeneratedSeed() {
+        return newlyGeneratedSeed;
+    }
+
+    public void setNewlyGeneratedSeed(String newlyGeneratedSeed) {
+        this.newlyGeneratedSeed = newlyGeneratedSeed;
+    }
+
+    public Boolean getHasSentToNewSeed() {
+        return hasSentToNewSeed == null ? false : hasSentToNewSeed;
+    }
+
+    public void setHasSentToNewSeed(Boolean hasSentToNewSeed) {
+        this.hasSentToNewSeed = hasSentToNewSeed;
     }
 
     // Generated fields

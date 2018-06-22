@@ -10,20 +10,29 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
+import android.text.InputType;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
+import co.nano.nanowallet.NanoUtil;
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.analytics.AnalyticsService;
 import co.nano.nanowallet.broadcastreceiver.ClipboardAlarmReceiver;
+import co.nano.nanowallet.bus.Logout;
+import co.nano.nanowallet.bus.RxBus;
+import co.nano.nanowallet.bus.SeedCreatedWithAnotherWallet;
 import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.ui.pin.CreatePinDialogFragment;
 import co.nano.nanowallet.ui.pin.PinDialogFragment;
 import co.nano.nanowallet.ui.scan.ScanActivity;
+import co.nano.nanowallet.ui.send.SendFragment;
 import co.nano.nanowallet.util.ExceptionHandler;
 import io.realm.Realm;
 
@@ -235,6 +244,118 @@ public class BaseFragment extends Fragment {
         }
         v.setTransformationMethod(new LinkTransformationMethod());
         v.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    protected void showSeedUpdateAlert() {
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(getContext(), android.R.style.Theme_Material_Light_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(getContext());
+        }
+
+        builder.setTitle(R.string.seed_update_alert_title)
+                .setMessage(R.string.seed_update_alert_message)
+                .setPositiveButton(R.string.seed_update_alert_confirm_cta, (dialog, which) -> {
+                    dialog.dismiss();
+                    String newSeed = NanoUtil.generateSeed();
+                    String newSeedDisplay = newSeed.replaceAll("(.{4})", "$1 ");
+                    String address = NanoUtil.publicToAddress(NanoUtil.privateToPublic(NanoUtil.seedToPrivate(newSeed)));
+                    AlertDialog addressDialog = builder.setTitle(R.string.seed_update_address_alert_title)
+                            .setMessage(getString(R.string.seed_update_address_alert_message, newSeedDisplay, address))
+                            .setPositiveButton(null, null)
+                            .setNegativeButton(R.string.seed_update_address_alert_neutral_cta, null)
+                            .setCancelable(false)
+                            .create();
+
+                    addressDialog.setOnShowListener(dialog1 -> {
+                        Button copy = ((AlertDialog) dialog1).getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                        copy.setOnClickListener(view -> {
+                            addressDialog.dismiss();
+
+                            // create seed verify alert
+                            final TextInputLayout layout = new TextInputLayout(view.getContext());
+                            layout.setPadding((int) UIUtil.convertDpToPixel(20f, view.getContext()), 0, (int) UIUtil.convertDpToPixel(20f, view.getContext()), 0);
+                            final TextInputEditText input = new TextInputEditText(view.getContext());
+                            layout.addView(input);
+
+                            input.setInputType(InputType.TYPE_CLASS_TEXT);
+                            input.setSingleLine(false);
+                            input.setAllCaps(true);
+                            AlertDialog seedVerifyBuilder = new AlertDialog.Builder(getContext())
+                                    .setTitle(R.string.seed_update_verify_title)
+                                    .setView(layout)
+                                    .setPositiveButton(R.string.seed_update_verify_confirm, null)
+                                    .setNegativeButton(R.string.seed_update_verify_cancel, (dialog22, which12) -> dialog22.cancel())
+                                    .create();
+
+                            seedVerifyBuilder.setOnShowListener(dialog32 -> {
+                                Button ok2 = ((AlertDialog) dialog32).getButton(AlertDialog.BUTTON_POSITIVE);
+                                ok2.setOnClickListener(view3 -> {
+                                            if (input.getText().toString().toLowerCase().equals(newSeed.toLowerCase())) {
+                                                if (getActivity() instanceof WindowControl) {
+                                                    // navigate to send screen
+                                                    dialog32.dismiss();
+                                                    ((WindowControl) getActivity()).getFragmentUtility().add(
+                                                            SendFragment.newInstance(newSeed),
+                                                            FragmentUtility.Animation.ENTER_LEFT_EXIT_RIGHT,
+                                                            FragmentUtility.Animation.ENTER_RIGHT_EXIT_LEFT,
+                                                            SendFragment.TAG
+                                                    );
+                                                }
+                                            } else {
+                                                layout.setError(getString(R.string.seed_update_verify_error));
+                                            }
+                                        }
+                                );
+
+                            });
+                            seedVerifyBuilder.show();
+                        });
+                    });
+                    addressDialog.show();
+                })
+                .setNegativeButton(R.string.seed_update_alert_cancel_cta, (dialog, which) -> {
+                    RxBus.get().post(new SeedCreatedWithAnotherWallet());
+                })
+                .show();
+    }
+
+    /**
+     * Show opt-in alert for analytics
+     */
+    protected void showSeedReminderAlert(String seed) {
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(getContext(), android.R.style.Theme_Material_Light_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(getContext());
+        }
+        String address = NanoUtil.publicToAddress(NanoUtil.privateToPublic(NanoUtil.seedToPrivate(seed)));
+        String newSeedDisplay = seed.replaceAll("(.{4})", "$1 ");
+        AlertDialog reminderDialog = builder.setTitle(R.string.seed_reminder_alert_title)
+                .setMessage(getString(R.string.seed_reminder_alert_message, newSeedDisplay, address))
+                .setPositiveButton(R.string.seed_reminder_alert_confirm_cta, null)
+                .setNegativeButton(R.string.seed_reminder_alert_neutral_cta, null)
+                .create();
+
+        reminderDialog.setOnShowListener(dialog1 -> {
+            Button copy = ((AlertDialog) dialog1).getButton(AlertDialog.BUTTON_NEGATIVE);
+            Button ok = ((AlertDialog) dialog1).getButton(AlertDialog.BUTTON_POSITIVE);
+
+            copy.setOnClickListener(view -> {
+                dialog1.dismiss();
+            });
+
+            ok.setOnClickListener(view2 -> {
+                if (getActivity() instanceof WindowControl) {
+                    reminderDialog.dismiss();
+                    RxBus.get().post(new Logout());
+                }
+            });
+        });
+        reminderDialog.show();
     }
 
 

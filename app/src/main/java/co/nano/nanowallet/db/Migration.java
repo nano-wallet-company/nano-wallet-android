@@ -57,6 +57,15 @@ public class Migration implements RealmMigration {
             }
             oldVersion++;
         }
+
+        if (oldVersion == 6) {
+            RealmObjectSchema credentialsSchema = schema.get("Credentials");
+            if (credentialsSchema != null) {
+                credentialsSchema.addField("newlyGeneratedSeed", String.class);
+                credentialsSchema.addField("hasSentToNewSeed", Boolean.class);
+            }
+            oldVersion++;
+        }
     }
 
     @Override

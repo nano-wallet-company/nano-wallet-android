@@ -187,6 +187,11 @@ public class HomeFragment extends BaseFragment {
 //            showAnalyticsOptIn(analyticsService, realm);
 //        }
 
+        if (credentials != null && !credentials.getSeedIsSecure() && !credentials.getHasSentToNewSeed()) {
+            showSeedUpdateAlert();
+        } else if (credentials != null && credentials.getNewlyGeneratedSeed() != null) {
+            showSeedReminderAlert(credentials.getNewlyGeneratedSeed());
+        }
 
         return view;
     }
@@ -292,5 +297,4 @@ public class HomeFragment extends BaseFragment {
             }
         }
     }
-
 }
