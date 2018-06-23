@@ -93,8 +93,4 @@ public class IntroWelcomeFragment extends BaseFragment {
         }
     }
 
-    private void showIntoLegalFragment() {
-
-    }
-
 }
