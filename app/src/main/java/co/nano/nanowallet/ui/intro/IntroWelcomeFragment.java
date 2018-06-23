@@ -66,14 +66,17 @@ public class IntroWelcomeFragment extends BaseFragment {
                     Credentials credentials = realm.createObject(Credentials.class);
                     credentials.setSeed(NanoUtil.generateSeed());
                 });
-                // if this preference was saved successfully, launch the Legal Fragment
-                if (sharedPreferencesUtil.setFromNewWallet(true, false)) {
-                    showIntoLegalFragment();
-                }else{ // otherwise save preference in the background thread
+                // if this preference wasn't saved successfully, save it in the background
+                if (!sharedPreferencesUtil.setFromNewWallet(true, false)) {
                     sharedPreferencesUtil.setFromNewWallet(true, true);
-                    showIntoLegalFragment();
-
                 }
+
+                ((WindowControl) getActivity()).getFragmentUtility().replace(
+                        IntroLegalFragment.newInstance(),
+                        FragmentUtility.Animation.ENTER_LEFT_EXIT_RIGHT,
+                        FragmentUtility.Animation.ENTER_RIGHT_EXIT_LEFT,
+                        IntroLegalFragment.TAG
+                );
             }
         }
 
@@ -91,12 +94,7 @@ public class IntroWelcomeFragment extends BaseFragment {
     }
 
     private void showIntoLegalFragment() {
-        ((WindowControl) getActivity()).getFragmentUtility().replace(
-                IntroLegalFragment.newInstance(),
-                FragmentUtility.Animation.ENTER_LEFT_EXIT_RIGHT,
-                FragmentUtility.Animation.ENTER_RIGHT_EXIT_LEFT,
-                IntroLegalFragment.TAG
-        );
+
     }
 
 }
