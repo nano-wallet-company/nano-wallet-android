@@ -130,7 +130,10 @@ public class AccountService {
                 .pingInterval(TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS)
                 .build();
 
-        Request request = new Request.Builder().url(BuildConfig.CONNECTION_URL).build();
+        Request request = new Request.Builder()
+                .url(BuildConfig.CONNECTION_URL)
+                .addHeader("X-Client-Version", Integer.toString(BuildConfig.VERSION_CODE))
+                .build();
 
         WebSocketListener listener = new WebSocketListener() {
             @Override
