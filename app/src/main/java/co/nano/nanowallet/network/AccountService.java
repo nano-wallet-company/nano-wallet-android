@@ -744,8 +744,8 @@ public class AccountService {
         }
         for (RequestItem item : requestQueue) {
             if (item.getRequest() instanceof OpenBlock ||
-                    item.getRequest() instanceof StateBlock &&
-                    ((StateBlock) item.getRequest()).getInternal_block_type().equals(BlockTypes.OPEN)) {
+                    (item.getRequest() instanceof StateBlock &&
+                    ((StateBlock) item.getRequest()).getInternal_block_type().equals(BlockTypes.OPEN))) {
                 return true;
             }
         }
