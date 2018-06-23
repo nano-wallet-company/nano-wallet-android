@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
 
 
         //  if preferences have successfully been saved, go to the welcome fragment
-        if (sharedPreferencesUtil.setFromNewWallet(false) && sharedPreferencesUtil.setConfirmedSeedBackedUp(false)) {
+        if (sharedPreferencesUtil.setFromNewWallet(false, false) && sharedPreferencesUtil.setConfirmedSeedBackedUp(false)) {
             getFragmentUtility().clearStack();
             getFragmentUtility().replace(new IntroWelcomeFragment(), FragmentUtility.Animation.CROSSFADE);
         }
