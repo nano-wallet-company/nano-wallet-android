@@ -25,11 +25,14 @@ public class NanoUtil {
     public static String generateSeed() {
         int numchars = 64;
         SecureRandom random = SecureRandomUtil.secureRandom();
-        StringBuilder sb = new StringBuilder();
-        while (sb.length() < numchars) {
-            sb.append(Integer.toHexString(random.nextInt()));
+        byte[] randomBytes = new byte[numchars / 2];
+        random.nextBytes(randomBytes);
+      
+        StringBuilder sb = new StringBuilder(numchars);
+        for(byte b: randomBytes){        
+            sb.append(String.format("%02X", b));
         }
-        return sb.toString().substring(0, numchars).toUpperCase();
+        return sb.toString();
     }
 
     /**
