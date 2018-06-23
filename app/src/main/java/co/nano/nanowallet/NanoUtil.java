@@ -30,9 +30,9 @@ public class NanoUtil {
       
         StringBuilder sb = new StringBuilder(numchars);
         for(byte b: randomBytes){        
-            sb.append(String.format("%02x", b));
+            sb.append(String.format("%02X", b));
         }
-        return sb.toString().toUpperCase();
+        return sb.toString();
     }
 
     /**
