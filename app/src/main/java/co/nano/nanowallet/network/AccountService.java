@@ -314,6 +314,7 @@ public class AccountService {
                 RequestItem nextRequest = requestQueue.peek();
                 if (nextRequest != null && nextRequest.getRequest() instanceof StateBlock) {
                     ((StateBlock) nextRequest.getRequest()).setRepresentative(blockItem.getRepresentative());
+                    ((StateBlock) nextRequest.getRequest()).setPrevious(hash);
                     if (((StateBlock) nextRequest.getRequest()).getInternal_block_type() == BlockTypes.SEND) {
                         ((StateBlock) nextRequest.getRequest()).setBalance(
                                 new BigInteger(blockItem.getBalance())
@@ -584,7 +585,7 @@ public class AccountService {
      */
     private void requestOpen(String previous, String source, BigInteger balance) {
         // create a work block
-        requestQueue.add(new RequestItem<>(new WorkRequest(wallet.getFrontierBlock())));
+        requestQueue.add(new RequestItem<>(new WorkRequest(wallet.getPublicKey())));
 
         // create a state block for open
         requestQueue.add(new RequestItem<>(new StateBlock(
@@ -745,7 +746,9 @@ public class AccountService {
             return false;
         }
         for (RequestItem item : requestQueue) {
-            if (item.getRequest() instanceof OpenBlock) {
+            if (item.getRequest() instanceof OpenBlock ||
+                    (item.getRequest() instanceof StateBlock &&
+                    ((StateBlock) item.getRequest()).getInternal_block_type().equals(BlockTypes.OPEN))) {
                 return true;
             }
         }
