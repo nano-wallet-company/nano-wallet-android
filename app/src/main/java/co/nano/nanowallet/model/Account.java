@@ -9,22 +9,22 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.util.Arrays;
 
-public class Account extends Key {
+public class Account {
     public static final String PREFIX_SEPARATOR = "_";
 
     private static final byte[] BYTES_PADDING = new byte[]{0, 0, 0};
     private static final String STRING_PADDING = "1111";
 
-    public static Account parseHumanReadable(String accountString) {
-        int separatorIndex = accountString.indexOf(PREFIX_SEPARATOR);
+    public static Account parseHumanReadable(String humanReadable) {
+        int separatorIndex = humanReadable.indexOf(PREFIX_SEPARATOR);
         if (separatorIndex == -1) {
-            throw new IllegalArgumentException("Given account string does not contain separator: " + accountString);
+            throw new IllegalArgumentException("Given account string does not contain separator: " + humanReadable);
         }
-        String encodedData = STRING_PADDING + accountString.substring(separatorIndex + PREFIX_SEPARATOR.length());
+        String encodedData = STRING_PADDING + humanReadable.substring(separatorIndex + PREFIX_SEPARATOR.length());
         byte[] data = NanoBaseEncoding.get().decode(encodedData);
         for (int i = 0; i < BYTES_PADDING.length; i++) {
             if (data[i] != BYTES_PADDING[i]) {
-                throw new IllegalArgumentException("Given account string decodes with invalid padding: " + accountString);
+                throw new IllegalArgumentException("Given account string decodes with invalid padding: " + humanReadable);
             }
         }
 
@@ -34,32 +34,52 @@ public class Account extends Key {
         byte[] hash = Arrays.copyOfRange(data, hashIndex, data.length);
         Bytes.reverse(hash);
         if (!Blake2bUtil.verify(hash, rawBytes)) {
-            throw new IllegalArgumentException("Given account string has invalid hash: " + accountString);
+            throw new IllegalArgumentException("Given account string has invalid hash: " + humanReadable);
         }
-        return new Account(rawBytes);
+        return new Account(Key.fromBytes(rawBytes), humanReadable);
     }
 
     public static Account parseHexString(String hexString) {
-        return new Account(Key.parseHexString(hexString).rawBytes);
+        return new Account(Key.parseHexString(hexString), null);
     }
 
-    public Account(byte[] rawBytes) {
-        super(rawBytes);
+    private final Key publicKey;
+    private String humanReadable;
+
+    private Account(Key publicKey, String humanReadable) {
+        this.publicKey = publicKey;
+        this.humanReadable = humanReadable;
+    }
+
+    public Key getPublicKey() {
+        return publicKey;
+    }
+
+    public String toHexString() {
+        return getPublicKey().toHexString();
     }
 
     public String toHumanReadable() {
-        return toHumanReadable(Prefix.DEFAULT);
+        if (humanReadable == null) {
+            humanReadable = toHumanReadable(Prefix.DEFAULT);
+        }
+        return humanReadable;
     }
 
     public String toHumanReadable(Prefix prefix) {
-        byte[] hash = Blake2bUtil.hash(5, rawBytes);
+        if (humanReadable != null && humanReadable.startsWith(prefix.getAccountString())) {
+            return humanReadable;
+        }
+        byte[] publicKeyBytes = getPublicKey().getBytesArrayCopy();
+
+        byte[] hash = Blake2bUtil.hash(5, publicKeyBytes);
         Bytes.reverse(hash);
 
         StringWriter writer = new StringWriter(64);
         OutputStream encodingStream = NanoBaseEncoding.get().encodingStream(writer);
         try {
             encodingStream.write(BYTES_PADDING);
-            encodingStream.write(rawBytes);
+            encodingStream.write(publicKeyBytes);
             encodingStream.write(hash);
             encodingStream.flush();
         } catch (IOException ex) {
@@ -72,6 +92,10 @@ public class Account extends Key {
             throw new IllegalArgumentException("Calculated encoded string has invalid padding: " + encodedString);
         }
 
-        return prefix.getAccountString() + PREFIX_SEPARATOR + encodedString.substring(STRING_PADDING.length());
+        String result = prefix.getAccountString() + PREFIX_SEPARATOR + encodedString.substring(STRING_PADDING.length());
+        if (humanReadable == null) {
+            humanReadable = result;
+        }
+        return result;
     }
 }

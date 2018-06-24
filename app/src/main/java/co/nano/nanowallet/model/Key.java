@@ -12,23 +12,36 @@ public class Key {
 
     public static Key parseHexString(String hexString) {
         byte[] bytes = HEX_ENCONDING.decode(Ascii.toUpperCase(hexString));
-        return new Key(bytes);
+        return new Key(bytes, hexString);
     }
 
-    protected final byte[] rawBytes;
-
-    public Key(byte[] rawBytes) {
+    public static Key fromBytes(byte[] rawBytes) {
         if (rawBytes.length != BYTES_LENGTH) {
             throw new IllegalArgumentException("Keys are expected to be " + BYTES_LENGTH + " bytes long, got " + rawBytes.length);
         }
-        this.rawBytes = Arrays.copyOf(rawBytes, rawBytes.length);
+        return new Key(Arrays.copyOf(rawBytes, rawBytes.length), null);
+    }
+
+    private final byte[] rawBytes;
+    private String hexString;
+
+    private Key(byte[] rawBytes, String hexString) {
+        this.rawBytes = rawBytes;
+        this.hexString = hexString;
     }
 
     public ByteBuffer getBytes() {
         return ByteBuffer.wrap(rawBytes).asReadOnlyBuffer();
     }
 
+    public byte[] getBytesArrayCopy() {
+        return Arrays.copyOf(rawBytes, rawBytes.length);
+    }
+
     public String toHexString() {
-        return HEX_ENCONDING.encode(rawBytes);
+        if (hexString == null) {
+            hexString = HEX_ENCONDING.encode(rawBytes);
+        }
+        return hexString;
     }
 }
