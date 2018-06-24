@@ -1,17 +1,15 @@
 package co.nano.nanowallet.model;
 
-import com.google.common.base.Ascii;
-import com.google.common.io.BaseEncoding;
+import co.nano.nanowallet.NanoUtil;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 public class Key {
     public static final int BYTES_LENGTH = 32;
-    public static final BaseEncoding HEX_ENCONDING = BaseEncoding.base16().upperCase();
 
     public static Key fromHexString(String hexString) {
-        byte[] bytes = HEX_ENCONDING.decode(Ascii.toUpperCase(hexString));
+        byte[] bytes = NanoUtil.hexToBytes(hexString);
         return new Key(bytes, hexString);
     }
 
@@ -40,7 +38,7 @@ public class Key {
 
     public String toHexString() {
         if (hexString == null) {
-            hexString = HEX_ENCONDING.encode(rawBytes);
+            hexString = NanoUtil.bytesToHex(rawBytes);
         }
         return hexString;
     }

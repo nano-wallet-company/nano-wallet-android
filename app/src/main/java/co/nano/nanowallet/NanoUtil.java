@@ -314,7 +314,7 @@ public class NanoUtil {
         return data;
     }
 
-    private static void reverse(byte[] array) {
+    public static void reverse(byte[] array) {
         if (array == null) {
             return;
         }
@@ -330,7 +330,7 @@ public class NanoUtil {
         }
     }
 
-    private static String encode(String hex_data) {
+    public static String encode(String hex_data) {
         StringBuilder bits = new StringBuilder();
         bits.insert(0, new BigInteger(hex_data, 16).toString(2));
         while (bits.length() < hex_data.length() * 4) {
@@ -351,7 +351,7 @@ public class NanoUtil {
         return output.toString();
     }
 
-    private static String decode(String data) {
+    public static String decode(String data) {
         StringBuilder bits = new StringBuilder();
         for (int i = 0; i < data.length(); i++) {
             int index = codeArray.indexOf(data.substring(i, i + 1).charAt(0));

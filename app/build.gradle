@@ -57,7 +57,6 @@ dependencies {
     final FINGERPRINT_VERSION = '3.2.1'
     final GSON_FIRE_VERSION = '1.8.2'
     final GSON_VERSION = '2.8.2'
-    final GUAVA_VERSION = '25.1-android'
     final J_UNIT_VERSION = '4.12'
     final PINLOCKVIEW_VERSION = '2.1.0'
     final RX_ANDROID = '2.0.2'
@@ -82,9 +81,6 @@ dependencies {
     // Dagger (dependency injection)
     implementation "com.google.dagger:dagger:$DAGGER_VERSION"
     annotationProcessor "com.google.dagger:dagger-compiler:$DAGGER_VERSION"
-
-    // Guava
-    implementation "com.google.guava:guava:$GUAVA_VERSION"
 
     // Epoxy
     implementation "com.airbnb.android:epoxy:$EPOXY_VERSION"
@@ -157,4 +153,3 @@ dependencies {
         transitive = true
     }
 }
-
