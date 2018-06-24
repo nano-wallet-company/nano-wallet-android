@@ -17,16 +17,6 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.CustomEvent;
-import com.github.sumimakito.awesomeqr.AwesomeQRCode;
-
-import java.io.File;
-import java.io.FileOutputStream;
-
-import javax.inject.Inject;
-
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.analytics.AnalyticsEvents;
 import co.nano.nanowallet.analytics.AnalyticsService;
@@ -37,7 +27,12 @@ import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.BaseDialogFragment;
 import co.nano.nanowallet.ui.common.UIUtil;
+import com.github.sumimakito.awesomeqr.AwesomeQRCode;
 import io.realm.Realm;
+
+import javax.inject.Inject;
+import java.io.File;
+import java.io.FileOutputStream;
 
 /**
  * Settings main screen
@@ -88,7 +83,7 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
         // get data
         Credentials credentials = realm.where(Credentials.class).findFirst();
         if (credentials != null) {
-            address = new Address(credentials.getAddressString());
+            address = Address.fromAddressString(credentials.getAddressString());
         }
 
         // inflate the view
@@ -102,15 +97,14 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
                 binding.receiveAddress != null &&
                 binding.receiveCard != null &&
                 binding.receiveCard.cardAddress != null &&
-                address != null &&
-                address.getAddress() != null) {
-            binding.receiveAddress.setText(UIUtil.getColorizedSpannable(address.getAddress(), getContext()));
-            binding.receiveCard.cardAddress.setText(UIUtil.getColorizedSpannable(address.getAddress(), getContext()));
+                address != null) {
+            binding.receiveAddress.setText(UIUtil.getColorizedSpannable(address.getAccount().toHumanReadable(), getContext()));
+            binding.receiveCard.cardAddress.setText(UIUtil.getColorizedSpannable(address.getAccount().toHumanReadable(), getContext()));
         }
 
         // generate QR code
         new AwesomeQRCode.Renderer()
-                .contents(address.getAddress())
+                .contents(address.getAccount().toHumanReadable())
                 .size((int) UIUtil.convertDpToPixel(QRCODE_SIZE, getContext()))
                 .margin((int) UIUtil.convertDpToPixel(20, getContext()))
                 .dotScale(0.55f)
@@ -186,7 +180,7 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
             Uri imageUri = FileProvider.getUriForFile(getContext(), "co.nano.nanowallet.fileprovider", newFile);
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            shareIntent.putExtra(Intent.EXTRA_TEXT, address.getAddress());
+            shareIntent.putExtra(Intent.EXTRA_TEXT, address.getAccount().toHumanReadable());
             shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
             shareIntent.setDataAndType(imageUri, getActivity().getContentResolver().getType(imageUri));
             shareIntent.setType("image/*");
@@ -199,7 +193,7 @@ public class ReceiveDialogFragment extends BaseDialogFragment {
 
             // copy address to clipboard
             android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-            android.content.ClipData clip = android.content.ClipData.newPlainText(ClipboardAlarmReceiver.CLIPBOARD_NAME, address.getAddress());
+            android.content.ClipData clip = android.content.ClipData.newPlainText(ClipboardAlarmReceiver.CLIPBOARD_NAME, address.getAccount().toHumanReadable());
             if (clipboard != null) {
                 clipboard.setPrimaryClip(clip);
             }

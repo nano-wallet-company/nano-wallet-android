@@ -54,7 +54,7 @@ public class AccountHistoryResponseItem {
     }
 
     public Spannable getAddressShort() {
-        return new Address(account).getColorizedShortSpannable();
+        return Address.fromAddressString(account).getColorizedShortSpannable();
     }
 
     public void setAccount(String account) {

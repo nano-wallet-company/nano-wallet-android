@@ -129,7 +129,7 @@ public class Credentials extends RealmObject {
     public Address getAddress() {
         String publicKey = getPublicKey();
         if (publicKey != null) {
-            return new Address(NanoUtil.publicToAddress(publicKey));
+            return new Address(Account.fromHexString(publicKey), null);
         } else {
             return null;
         }

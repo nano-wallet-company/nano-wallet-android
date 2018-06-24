@@ -6,99 +6,72 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Address class
  */
-
 public class Address implements Serializable {
-    private String value;
-    private String amount;
+    public static final String SHORT_SEPARATOR = "...";
+    public static final int SHORT_CHAR_COUNT = 5;
 
-    public static final List<Character> VALID_ADDRESS_CHARACTERS = Arrays.asList('a','b','c','d','e','f','g','h','i','j','k','m','n','o','p','q','r','s','t','u','w','x','y','z','1','3','4','5','6','7','8','9','_');
+    public static Address fromAddressString(String addressString) {
+        String[] split = addressString.split(":");
 
-    public Address() {
+        if (split.length > 1) {
+            Uri uri = Uri.parse(split[1]);
+            Account account = Account.fromHumanReadable(uri.getPath());
+            String amountString = uri.getQueryParameter("amount");
+            RawAmount rawAmount = amountString == null ? null : RawAmount.fromString(amountString);
+            return new Address(account, rawAmount);
+        } else {
+            return new Address(Account.fromHumanReadable(addressString), null);
+        }
     }
 
-    public Address(String value) {
-        this.value = value;
-        parseAddress();
-    }
+    private final Account account;
+    private final RawAmount rawAmount;
 
-    public boolean hasXrbAddressFormat() {
-        return value.contains("xrb_");
-    }
-
-    public boolean hasNanoAddressFormat() {
-        return value.contains("nano_");
+    public Address(Account account, @Nullable RawAmount rawAmount) {
+        if (account == null) {
+            throw new IllegalArgumentException("account cannot be null");
+        }
+        this.account = account;
+        this.rawAmount = rawAmount;
     }
 
     public String getShortString() {
+        String accountString = getAccount().toHumanReadable();
         int frontStartIndex = 0;
-        int frontEndIndex = hasXrbAddressFormat() ? 9 : 10;
-        int backStartIndex = value.length() - 5;
-        return value.substring(frontStartIndex, frontEndIndex) +
-                "..." +
-                value.substring(backStartIndex, value.length());
+        int frontEndIndex = accountString.indexOf(Account.PREFIX_SEPARATOR) + Account.PREFIX_SEPARATOR.length() + SHORT_CHAR_COUNT;
+        int backStartIndex = accountString.length() - SHORT_CHAR_COUNT;
+        return accountString.substring(frontStartIndex, frontEndIndex) +
+                SHORT_SEPARATOR +
+                accountString.substring(backStartIndex);
     }
 
     public Spannable getColorizedShortSpannable() {
-        Spannable s = new SpannableString(getShortString());
+        String shortString = getShortString();
+        Spannable spannable = new SpannableString(shortString);
         int frontStartIndex = 0;
-        int frontEndIndex = hasXrbAddressFormat() ? 9 : 10;
-        int backStartIndex = s.length() - 5;
+        int frontEndIndex = shortString.indexOf(SHORT_SEPARATOR);
+        int backStartIndex = frontEndIndex + SHORT_SEPARATOR.length();
 
         // colorize the string
-        s.setSpan(new ForegroundColorSpan(Color.parseColor("#4a90e2")), frontStartIndex, frontEndIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        s.setSpan(new ForegroundColorSpan(Color.parseColor("#e1990e")), backStartIndex, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        return s;
+        spannable.setSpan(new ForegroundColorSpan(Color.parseColor("#4a90e2")), frontStartIndex, frontEndIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannable.setSpan(new ForegroundColorSpan(Color.parseColor("#e1990e")), backStartIndex, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return spannable;
     }
 
-    public String getAddress() {
-        return value;
+    @Nonnull
+    public Account getAccount() {
+        return account;
     }
 
-    public String getAddressWithoutPrefix() {
-        return value.replace("xrb_", "");
+    @Nullable
+    public RawAmount getRawAmount() {
+        return rawAmount;
     }
-
-    public String getAmount() {
-        return amount;
-    }
-
-    public boolean isValidAddress() {
-        if (getAddress().length() != 64) {
-            return false;
-        }
-        boolean isMatch = true;
-        for (int i = 0; i < value.length() && isMatch; i++) {
-            char letter = value.toLowerCase().charAt(i);
-            if (!VALID_ADDRESS_CHARACTERS.contains(letter)) {
-                isMatch = false;
-            }
-        }
-        return isMatch;
-    }
-
-    private void parseAddress() {
-        if (this.value != null) {
-            String[] _split = value.split(":");
-            if (_split.length > 1) {
-                String _addressString = _split[1];
-                Uri uri = Uri.parse(_addressString);
-                if (uri.getPath() != null) {
-                    this.value = uri.getPath();
-                }
-                if (uri.getQueryParameter("amount") != null) {
-                    this.amount = uri.getQueryParameter("amount");
-                }
-            }
-
-        }
-
-    }
-
 }

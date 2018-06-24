@@ -14,10 +14,10 @@ public class AccountTest {
     @Test
     public void humanReadableEncoding() {
         testData.forEach((hexString, accountString) -> {
-            Account accountFromHex = Account.parseHexString(hexString);
+            Account accountFromHex = Account.fromHexString(hexString);
             Assert.assertEquals(accountString, accountFromHex.toHumanReadable(Prefix.XRB));
 
-            Account accountFromHumanReadable = Account.parseHumanReadable(accountString);
+            Account accountFromHumanReadable = Account.fromHumanReadable(accountString);
             Assert.assertEquals(hexString, accountFromHumanReadable.toHexString());
         });
     }

@@ -3,26 +3,6 @@ package co.nano.nanowallet.network;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.internal.LinkedTreeMap;
-
-import java.math.BigInteger;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import co.nano.nanowallet.BuildConfig;
 import co.nano.nanowallet.NanoUtil;
 import co.nano.nanowallet.bus.RxBus;
@@ -57,6 +37,11 @@ import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.util.ExceptionHandler;
 import co.nano.nanowallet.util.NumberUtil;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.internal.LinkedTreeMap;
 import io.realm.Realm;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -64,6 +49,18 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import timber.log.Timber;
+
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.math.BigInteger;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Methods for calling the account service
@@ -513,7 +510,7 @@ public class AccountService {
                         processQueue();
                     } else if ((requestItem.getRequest() instanceof StateBlock) &&
                             (((Block) requestItem.getRequest()).getInternal_block_type() == BlockTypes.SEND ||
-                            ((Block) requestItem.getRequest()).getInternal_block_type() == BlockTypes.RECEIVE) &&
+                                    ((Block) requestItem.getRequest()).getInternal_block_type() == BlockTypes.RECEIVE) &&
                             ((StateBlock) requestItem.getRequest()).getBalance() == null) {
                         ExceptionHandler.handle(new Exception("Head block request failed."));
                         requestQueue.poll();
@@ -538,10 +535,10 @@ public class AccountService {
      * Request all the account info
      */
     public void requestUpdate() {
-        if (address != null && address.getAddress() != null) {
-            requestQueue.add(new RequestItem<>(new SubscribeRequest(address.getAddress(), getLocalCurrency(), wallet.getUuid())));
-            requestQueue.add(new RequestItem<>(new AccountHistoryRequest(address.getAddress(), wallet.getBlockCount() != null ? wallet.getBlockCount() : 10)));
-            requestQueue.add(new RequestItem<>(new PendingTransactionsRequest(address.getAddress(), true, wallet.getBlockCount())));
+        if (address != null) {
+            requestQueue.add(new RequestItem<>(new SubscribeRequest(address.getAccount().toHumanReadable(), getLocalCurrency(), wallet.getUuid())));
+            requestQueue.add(new RequestItem<>(new AccountHistoryRequest(address.getAccount().toHumanReadable(), wallet.getBlockCount() != null ? wallet.getBlockCount() : 10)));
+            requestQueue.add(new RequestItem<>(new PendingTransactionsRequest(address.getAccount().toHumanReadable(), true, wallet.getBlockCount())));
             processQueue();
         }
     }
@@ -550,8 +547,8 @@ public class AccountService {
      * Request subscribe
      */
     public void requestSubscribe() {
-        if (address != null && address.getAddress() != null) {
-            requestQueue.add(new RequestItem<>(new SubscribeRequest(address.getAddress(), getLocalCurrency(), wallet.getUuid())));
+        if (address != null) {
+            requestQueue.add(new RequestItem<>(new SubscribeRequest(address.getAccount().toHumanReadable(), getLocalCurrency(), wallet.getUuid())));
             processQueue();
         }
     }
@@ -560,8 +557,8 @@ public class AccountService {
      * Request Pending Blocks
      */
     public void requestPending() {
-        if (address != null && address.getAddress() != null) {
-            requestQueue.add(new RequestItem<>(new PendingTransactionsRequest(address.getAddress(), true, wallet.getBlockCount())));
+        if (address != null) {
+            requestQueue.add(new RequestItem<>(new PendingTransactionsRequest(address.getAccount().toHumanReadable(), true, wallet.getBlockCount())));
             processQueue();
         }
     }
@@ -570,8 +567,8 @@ public class AccountService {
      * Request AccountHistory
      */
     private void requestAccountHistory() {
-        if (address != null && address.getAddress() != null) {
-            requestQueue.add(new RequestItem<>(new AccountHistoryRequest(address.getAddress(), wallet.getBlockCount() != null ? wallet.getBlockCount() : 10)));
+        if (address != null) {
+            requestQueue.add(new RequestItem<>(new AccountHistoryRequest(address.getAccount().toHumanReadable(), wallet.getBlockCount() != null ? wallet.getBlockCount() : 10)));
             processQueue();
         }
     }
@@ -646,7 +643,7 @@ public class AccountService {
                 previous,
                 wallet.getRepresentative(),
                 balance.toString(),
-                destination.getAddress()
+                destination.getAccount().toHumanReadable()
         )));
 
         processQueue();
@@ -655,8 +652,8 @@ public class AccountService {
     /**
      * Make a no-op request
      *
-     * @param previous    Previous hash
-     * @param balance     Current Wallet Balance
+     * @param previous       Previous hash
+     * @param balance        Current Wallet Balance
      * @param representative Represnetative
      */
     public void requestChange(String previous, BigInteger balance, String representative, boolean noop) {
@@ -693,7 +690,7 @@ public class AccountService {
             return null;
         } else {
             Credentials credentials = realm.copyFromRealm(_credentials);
-            return new Address(credentials.getAddressString());
+            return Address.fromAddressString(credentials.getAddressString());
         }
     }
 
@@ -748,7 +745,7 @@ public class AccountService {
         for (RequestItem item : requestQueue) {
             if (item.getRequest() instanceof OpenBlock ||
                     (item.getRequest() instanceof StateBlock &&
-                    ((StateBlock) item.getRequest()).getInternal_block_type().equals(BlockTypes.OPEN))) {
+                            ((StateBlock) item.getRequest()).getInternal_block_type().equals(BlockTypes.OPEN))) {
                 return true;
             }
         }

@@ -2,29 +2,13 @@ package co.nano.nanowallet.model;
 
 import com.google.common.base.Ascii;
 import com.google.common.io.BaseEncoding;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 public class Key {
     public static final int BYTES_LENGTH = 32;
     public static final BaseEncoding HEX_ENCONDING = BaseEncoding.base16().upperCase();
-
-    public static final TypeAdapter<Key> TYPE_ADAPTER = new TypeAdapter<Key>() {
-        @Override
-        public void write(JsonWriter out, Key value) throws IOException {
-            out.value(value.toHexString());
-        }
-
-        @Override
-        public Key read(JsonReader in) throws IOException {
-            return Key.fromHexString(in.nextString());
-        }
-    };
 
     public static Key fromHexString(String hexString) {
         byte[] bytes = HEX_ENCONDING.decode(Ascii.toUpperCase(hexString));
@@ -59,5 +43,10 @@ public class Key {
             hexString = HEX_ENCONDING.encode(rawBytes);
         }
         return hexString;
+    }
+
+    @Override
+    public String toString() {
+        return toHexString();
     }
 }

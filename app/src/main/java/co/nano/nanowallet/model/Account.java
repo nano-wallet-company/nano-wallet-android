@@ -3,9 +3,6 @@ package co.nano.nanowallet.model;
 import co.nano.nanowallet.util.Blake2bUtil;
 import com.google.common.io.NanoBaseEncoding;
 import com.google.common.primitives.Bytes;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -14,18 +11,6 @@ import java.util.Arrays;
 
 public class Account {
     public static final String PREFIX_SEPARATOR = "_";
-
-    public static TypeAdapter<Account> TYPE_ADAPTER = new TypeAdapter<Account>() {
-        @Override
-        public void write(JsonWriter out, Account value) throws IOException {
-            out.value(value.toHumanReadable());
-        }
-
-        @Override
-        public Account read(JsonReader in) throws IOException {
-            return Account.fromHumanReadable(in.nextString());
-        }
-    };
 
     private static final byte[] BYTES_PADDING = new byte[]{0, 0, 0};
     private static final String STRING_PADDING = "1111";
@@ -112,5 +97,10 @@ public class Account {
             humanReadable = result;
         }
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return toHumanReadable();
     }
 }

@@ -60,8 +60,11 @@ public class StateBlock extends Block {
                       String balance, String link) {
         this.privateKey = private_key;
         this.publicKey = NanoUtil.privateToPublic(private_key);
-        Address linkAddress = new Address(link);
-        link = linkAddress.isValidAddress() ? NanoUtil.addressToPublic(linkAddress.getAddress()) : link;
+        try {
+            link = Address.fromAddressString(link).getAccount().toHexString();
+        } catch (IllegalArgumentException ex) {
+            // ignore
+        }
 
         this.setInternal_block_type(blockType);
         this.type = BlockTypes.STATE.toString();

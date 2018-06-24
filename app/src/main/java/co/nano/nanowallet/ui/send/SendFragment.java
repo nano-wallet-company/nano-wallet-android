@@ -26,17 +26,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import com.github.ajalt.reprint.core.AuthenticationFailureReason;
-import com.github.ajalt.reprint.core.Reprint;
-import com.hwangjr.rxbus.annotation.Subscribe;
-
-import java.math.BigInteger;
-import java.text.NumberFormat;
-import java.util.HashMap;
-
-import javax.inject.Inject;
-
 import co.nano.nanowallet.NanoUtil;
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.analytics.AnalyticsEvents;
@@ -62,7 +51,15 @@ import co.nano.nanowallet.ui.common.UIUtil;
 import co.nano.nanowallet.ui.scan.ScanActivity;
 import co.nano.nanowallet.util.NumberUtil;
 import co.nano.nanowallet.util.SharedPreferencesUtil;
+import com.github.ajalt.reprint.core.AuthenticationFailureReason;
+import com.github.ajalt.reprint.core.Reprint;
+import com.hwangjr.rxbus.annotation.Subscribe;
 import io.realm.Realm;
+
+import javax.inject.Inject;
+import java.math.BigInteger;
+import java.text.NumberFormat;
+import java.util.HashMap;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -231,15 +228,13 @@ public class SendFragment extends BaseFragment {
                 Bundle res = data.getExtras();
                 if (res != null) {
                     // parse address
-                    Address address = new Address(res.getString(ScanActivity.QR_CODE_RESULT));
+                    Address address = Address.fromAddressString(res.getString(ScanActivity.QR_CODE_RESULT));
 
                     // set to scanned value
-                    if (address.getAddress() != null) {
-                        binding.sendAddress.setText(address.getAddress());
-                    }
+                    binding.sendAddress.setText(address.getAccount().toHumanReadable());
 
-                    if (address.getAmount() != null) {
-                        wallet.setSendNanoAmount(address.getAmount());
+                    if (address.getRawAmount() != null) {
+                        wallet.setSendNanoAmount(address.getRawAmount().toNanoAmount().toPlainString());
                         binding.setWallet(wallet);
                     }
 
@@ -329,6 +324,7 @@ public class SendFragment extends BaseFragment {
 
     /**
      * Pin entered correctly
+     *
      * @param pinComplete PinComplete object
      */
     @Subscribe
@@ -349,8 +345,9 @@ public class SendFragment extends BaseFragment {
 
     private boolean validateRequest() {
         // check for valid address
-        Address destination = new Address(binding.sendAddress.getText().toString());
-        if (!destination.isValidAddress()) {
+        try {
+            Address.fromAddressString(binding.sendAddress.getText().toString());
+        } catch (IllegalArgumentException e) {
             showError(R.string.send_error_alert_title, R.string.send_error_alert_message);
             return false;
         }
@@ -378,8 +375,9 @@ public class SendFragment extends BaseFragment {
         boolean enableSend = true;
 
         // check for valid address
-        Address destination = new Address(binding.sendAddress.getText().toString());
-        if (!destination.isValidAddress()) {
+        try {
+            Address.fromAddressString(binding.sendAddress.getText().toString());
+        } catch (IllegalArgumentException e) {
             enableSend = false;
         }
 
@@ -492,11 +490,11 @@ public class SendFragment extends BaseFragment {
 
     private void setShortAddress() {
         // set short address if appropriate
-        Address address = new Address(binding.sendAddress.getText().toString());
-        if (address.isValidAddress()) {
+        try {
+            Address address = Address.fromAddressString(binding.sendAddress.getText().toString());
             binding.sendAddressDisplay.setText(address.getColorizedShortSpannable());
             binding.sendAddressDisplay.setBackgroundResource(binding.sendAddressDisplay.length() > 0 ? R.drawable.bg_seed_input_active : R.drawable.bg_seed_input);
-        } else {
+        } catch (IllegalArgumentException e) {
             binding.sendAddressDisplay.setText("");
             binding.sendAddressDisplay.setBackgroundResource(binding.sendAddressDisplay.length() > 0 ? R.drawable.bg_seed_input_active : R.drawable.bg_seed_input);
         }
@@ -504,18 +502,20 @@ public class SendFragment extends BaseFragment {
     }
 
     private void executeSend() {
-        Address destination = new Address(binding.sendAddress.getText().toString());
-        if (destination.isValidAddress()) {
-            RxBus.get().post(new ShowOverlay());
-            BigInteger sendAmount = NumberUtil.getAmountAsRawBigInteger(wallet.getSendNanoAmount());
-
-            accountService.requestSend(wallet.getFrontierBlock(), destination, sendAmount);
-            analyticsService.track(AnalyticsEvents.SEND_BEGAN);
-        } else {
+        Address destination;
+        try {
+            destination = Address.fromAddressString(binding.sendAddress.getText().toString());
+        } catch (IllegalArgumentException ex) {
             showError(R.string.send_error_alert_title, R.string.send_error_alert_message);
+            return;
         }
-    }
 
+        RxBus.get().post(new ShowOverlay());
+        BigInteger sendAmount = NumberUtil.getAmountAsRawBigInteger(wallet.getSendNanoAmount());
+
+        accountService.requestSend(wallet.getFrontierBlock(), destination, sendAmount);
+        analyticsService.track(AnalyticsEvents.SEND_BEGAN);
+    }
 
 
     public class ClickHandlers {
