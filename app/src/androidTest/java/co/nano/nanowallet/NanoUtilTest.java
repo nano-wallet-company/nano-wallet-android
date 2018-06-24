@@ -1,23 +1,20 @@
 package co.nano.nanowallet;
 
 import android.support.test.runner.AndroidJUnit4;
-import android.test.InstrumentationTestCase;
-
+import co.nano.nanowallet.network.model.request.block.OpenBlock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import co.nano.nanowallet.network.model.request.block.OpenBlock;
 import timber.log.Timber;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test the Nano Utility functions
  */
-
-
 @RunWith(AndroidJUnit4.class)
-public class NanoUtilTest extends InstrumentationTestCase {
+public class NanoUtilTest {
     private String seed;
     private String privateKey;
     private String publicKey;
@@ -28,7 +25,6 @@ public class NanoUtilTest extends InstrumentationTestCase {
 
     @Before
     public void setUp() throws Exception {
-        super.setUp();
         seed = "387151e6ea2a42eead77f26b1c0fc4c485df4e78902ada848ff97fc5dce85e81";
         privateKey = "C5469190B25E850CED298E57723258F716A4E1956AC2BC60DA023300476D1212";
         publicKey = "9D473FD0CAD0D43DD79B9FDCAC6FED51EDE7E78279A84142290487CF864B8B8F";
@@ -102,9 +98,20 @@ public class NanoUtilTest extends InstrumentationTestCase {
         NanoUtil.hexStringToByteArray("fukSkBVmBBwKMmzgH78wl9h07MTWSvBVORsxFvoLPTBoUHKdRyFnbOVBuztny5yzn40DwIFbdeQyjkAOZu3PTgCU5Ulv9oswJhR4kdDp18axXPT3JeCJxA8NO0Ln7JB");
     }
 
+    @Test
+    public void nanoXrbPrefixSupport() {
+        String nanoAddress = "nano_1thingspmippfngcrtk1ofd3uwftffnu4qu9xkauo9zkiuep6iknzci3jxa6";
+        String xrbAddress = "xrb_1thingspmippfngcrtk1ofd3uwftffnu4qu9xkauo9zkiuep6iknzci3jxa6";
+        String nanoPublic = NanoUtil.addressToPublic(nanoAddress);
+        assertEquals(64, nanoPublic.length());
+        byte[] nanoBytes = NanoUtil.hexToBytes(nanoPublic);
+        assertEquals(32, nanoBytes.length);
+        String xrbPublic = NanoUtil.bytesToHex(nanoBytes);
+        assertEquals(nanoPublic, xrbPublic);
+        assertEquals(xrbAddress, NanoUtil.publicToAddress(xrbPublic));
+    }
+
     @After
     public void tearDown() throws Exception {
-        super.tearDown();
     }
 }
-

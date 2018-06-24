@@ -253,8 +253,8 @@ public class NanoUtil {
      * @return Public Key
      */
     public static String addressToPublic(String encoded_address) {
-        Sodium sodium = NaCl.sodium();
-        String data = encoded_address.substring(4, 56);
+        NaCl.sodium();
+        String data = encoded_address.split("_")[1].substring(0, 52);
         byte[] data_b = NanoUtil.hexStringToByteArray(decode(data));
 
         byte[] state = new byte[Sodium.crypto_generichash_statebytes()];
