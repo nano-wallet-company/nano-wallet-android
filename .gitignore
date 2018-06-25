@@ -27,8 +27,10 @@ local.properties
 .idea/scopes/scope_settings.xml
 .idea/runConfigurations.xml
 .idea/vcs.xml
-.idea/codeStyles/Project.xml
+.idea/codeStyles/
 .idea/caches/build_file_checksums.ser
+.idea/dictionaries/
+.idea/inspectionProfiles/
 *.iml
 
 # OS-specific files
