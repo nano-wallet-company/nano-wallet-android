@@ -101,9 +101,6 @@ dependencies {
     // JSON Serialization
     implementation "com.google.code.gson:gson:$GSON_VERSION"
     implementation "io.gsonfire:gson-fire:$GSON_FIRE_VERSION"
-    implementation "com.fasterxml.jackson.core:jackson-core:2.9.4"
-    implementation "com.fasterxml.jackson.core:jackson-annotations:2.9.4"
-    implementation "com.fasterxml.jackson.core:jackson-databind:2.9.4"
 
     // Fingerprint
     implementation "com.github.ajalt.reprint:core:$FINGERPRINT_VERSION@aar"

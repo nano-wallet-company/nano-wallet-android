@@ -1,6 +1,5 @@
 package co.nano.nanowallet.network.model.request.block;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.google.gson.annotations.SerializedName;
 
 import co.nano.nanowallet.NanoUtil;
@@ -10,14 +9,6 @@ import co.nano.nanowallet.network.model.BlockTypes;
  * Subscribe to websocket server for updates regarding the specified account.
  * First action to take when connecting when app opens or reconnects, IF a wallet already exists
  */
-@JsonPropertyOrder({
-        "type",
-        "source",
-        "representative",
-        "account",
-        "work",
-        "signature"
-})
 public class OpenBlock extends Block {
     @SerializedName("type")
     private String type;

@@ -4,8 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.internal.LinkedTreeMap;
@@ -495,14 +493,7 @@ public class AccountService {
 
                 if (requestItem.getRequest() instanceof Block) {
                     // escape the block to match https://github.com/clemahieu/raiblocks/wiki/RPC-protocol#process-block
-                    // use jackson here to maintain field order
-                    ObjectMapper mapper = new ObjectMapper();
-                    String block = "";
-                    try {
-                        block = mapper.writeValueAsString(requestItem.getRequest());
-                    } catch (JsonProcessingException e) {
-                        ExceptionHandler.handle(e);
-                    }
+                    String block = gson.toJson(requestItem.getRequest());
 
                     checkState();
                     Timber.d("SEND: %s", gson.toJson(new ProcessRequest(block)));
@@ -513,7 +504,7 @@ public class AccountService {
                         processQueue();
                     } else if ((requestItem.getRequest() instanceof StateBlock) &&
                             (((Block) requestItem.getRequest()).getInternal_block_type() == BlockTypes.SEND ||
-                            ((Block) requestItem.getRequest()).getInternal_block_type() == BlockTypes.RECEIVE) &&
+                                    ((Block) requestItem.getRequest()).getInternal_block_type() == BlockTypes.RECEIVE) &&
                             ((StateBlock) requestItem.getRequest()).getBalance() == null) {
                         ExceptionHandler.handle(new Exception("Head block request failed."));
                         requestQueue.poll();
@@ -655,8 +646,8 @@ public class AccountService {
     /**
      * Make a no-op request
      *
-     * @param previous    Previous hash
-     * @param balance     Current Wallet Balance
+     * @param previous       Previous hash
+     * @param balance        Current Wallet Balance
      * @param representative Represnetative
      */
     public void requestChange(String previous, BigInteger balance, String representative, boolean noop) {
@@ -748,7 +739,7 @@ public class AccountService {
         for (RequestItem item : requestQueue) {
             if (item.getRequest() instanceof OpenBlock ||
                     (item.getRequest() instanceof StateBlock &&
-                    ((StateBlock) item.getRequest()).getInternal_block_type().equals(BlockTypes.OPEN))) {
+                            ((StateBlock) item.getRequest()).getInternal_block_type().equals(BlockTypes.OPEN))) {
                 return true;
             }
         }

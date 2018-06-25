@@ -2,11 +2,8 @@ package co.nano.nanowallet.di.activity;
 
 import android.content.Context;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 
 import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.network.AccountService;
@@ -24,7 +21,6 @@ import co.nano.nanowallet.network.model.response.SubscribeResponse;
 import co.nano.nanowallet.network.model.response.TransactionResponse;
 import co.nano.nanowallet.network.model.response.WarningResponse;
 import co.nano.nanowallet.network.model.response.WorkResponse;
-import co.nano.nanowallet.util.ExceptionHandler;
 import dagger.Module;
 import dagger.Provides;
 import io.gsonfire.GsonFireBuilder;
@@ -107,7 +103,6 @@ public class ActivityModule {
                             src.getAsJsonObject().addProperty("messageType", Actions.PROCESS.toString());
                         } else if (src.getAsJsonObject().get("contents") != null) {
                             // get block response
-                            ObjectMapper mapper = new ObjectMapper();
                             String content = src.getAsJsonObject().get("contents").getAsString();
                             content = content.replace("\n", "");
                             content = content.replace("\\\"", "\"");

@@ -1,8 +1,5 @@
 package co.nano.nanowallet.network.model.request.block;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.google.gson.annotations.SerializedName;
 
 import co.nano.nanowallet.NanoUtil;
@@ -13,43 +10,31 @@ import co.nano.nanowallet.util.NumberUtil;
 /**
  * Send BlockItem
  */
-@JsonPropertyOrder({
-        "type",
-        "previous",
-        "account",
-        "representative",
-        "balance",
-        "link",
-        "work",
-        "signature"
-})
 public class StateBlock extends Block {
-    @JsonProperty("type")
+    @SerializedName("type")
     private String type;
 
-    @JsonProperty("previous")
+    @SerializedName("previous")
     private String previous;
 
-    @JsonProperty("account")
+    @SerializedName("account")
     private String account;
 
-    @JsonProperty("representative")
+    @SerializedName("representative")
     private String representative;
 
-    @JsonProperty("balance")
+    @SerializedName("balance")
     private String balance;
 
-    @JsonProperty("link")
+    @SerializedName("link")
     private String link;
 
-    @JsonProperty("signature")
+    @SerializedName("signature")
     private String signature;
 
-    @SerializedName("sendAmount")
-    private String sendAmount;
-
-    private String privateKey;
-    private String publicKey;
+    private transient String sendAmount;
+    private transient String privateKey;
+    private transient String publicKey;
 
     public StateBlock() {
         this.type = BlockTypes.STATE.toString();
@@ -157,7 +142,6 @@ public class StateBlock extends Block {
         this.signature = signature;
     }
 
-    @JsonIgnore
     public String getSendAmount() {
         return sendAmount;
     }
