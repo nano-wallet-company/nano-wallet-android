@@ -7,6 +7,7 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class Address implements Serializable {
     private String amount;
 
     public static final List<Character> VALID_ADDRESS_CHARACTERS = Arrays.asList('a','b','c','d','e','f','g','h','i','j','k','m','n','o','p','q','r','s','t','u','w','x','y','z','1','3','4','5','6','7','8','9','_');
+    public static final BigDecimal RAW_PER_NANO = new BigDecimal("1000000000000000000000000000000");
 
     public Address() {
     }
@@ -93,7 +95,7 @@ public class Address implements Serializable {
                     this.value = uri.getPath();
                 }
                 if (uri.getQueryParameter("amount") != null) {
-                    this.amount = uri.getQueryParameter("amount");
+                    this.amount = (new BigDecimal(uri.getQueryParameter("amount")).divide(RAW_PER_NANO)).toString();
                 }
             }
 
