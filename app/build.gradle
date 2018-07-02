@@ -16,8 +16,8 @@ android {
         applicationId "co.nano.nanowallet"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 28
-        versionName "1.0.3"
+        versionCode 29
+        versionName "1.0.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
