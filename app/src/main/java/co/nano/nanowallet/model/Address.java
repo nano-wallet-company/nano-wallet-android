@@ -5,11 +5,17 @@ import android.net.Uri;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
+
+import org.libsodium.jni.NaCl;
+import org.libsodium.jni.Sodium;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+
+import co.nano.nanowallet.NanoUtil;
 
 /**
  * Address class
@@ -19,7 +25,6 @@ public class Address implements Serializable {
     private String value;
     private String amount;
 
-    public static final List<Character> VALID_ADDRESS_CHARACTERS = Arrays.asList('a','b','c','d','e','f','g','h','i','j','k','m','n','o','p','q','r','s','t','u','w','x','y','z','1','3','4','5','6','7','8','9','_');
     public static final BigDecimal RAW_PER_NANO = new BigDecimal("1000000000000000000000000000000");
 
     public Address() {
@@ -72,17 +77,43 @@ public class Address implements Serializable {
     }
 
     public boolean isValidAddress() {
-        if (getAddress().length() != 64) {
+        String[] parts = value.split("_");
+        if (parts.length != 2) {
             return false;
         }
-        boolean isMatch = true;
-        for (int i = 0; i < value.length() && isMatch; i++) {
-            char letter = value.toLowerCase().charAt(i);
-            if (!VALID_ADDRESS_CHARACTERS.contains(letter)) {
-                isMatch = false;
+        if (!parts[0].equals("xrb") && !parts[0].equals("nano")) {
+            return false;
+        }
+        if (parts[1].length() != 60) {
+            return false;
+        }
+        checkCharacters:
+        for (int i = 0; i < parts[1].length(); i++) {
+            char letter = parts[1].toLowerCase().charAt(i);
+            for (int j = 0; j < NanoUtil.addressCodeCharArray.length; j++) {
+                if (NanoUtil.addressCodeCharArray[j] == letter) {
+                    continue checkCharacters;
+                }
+            }
+            return false;
+        }
+        byte[] shortBytes = NanoUtil.hexToBytes(NanoUtil.decodeAddressCharacters(parts[1]));
+        byte[] bytes = new byte[37];
+        // Restore leading null bytes
+        System.arraycopy(shortBytes, 0, bytes, bytes.length - shortBytes.length, shortBytes.length);
+        byte[] checksum = new byte[5];
+        byte[] state = new byte[Sodium.crypto_generichash_statebytes()];
+        byte[] key = new byte[Sodium.crypto_generichash_keybytes()];
+        NaCl.sodium();
+        Sodium.crypto_generichash_blake2b_init(state, key, 0, 5);
+        Sodium.crypto_generichash_blake2b_update(state, bytes, 32);
+        Sodium.crypto_generichash_blake2b_final(state, checksum, checksum.length);
+        for (int i = 0; i < checksum.length; i++) {
+            if (checksum[i] != bytes[bytes.length - 1 - i]) {
+                return false;
             }
         }
-        return isMatch;
+        return true;
     }
 
     private void parseAddress() {

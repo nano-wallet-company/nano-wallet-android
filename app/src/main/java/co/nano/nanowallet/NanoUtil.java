@@ -13,8 +13,8 @@ import java.security.SecureRandom;
 
 public class NanoUtil {
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
-    private final static String codeArray = "13456789abcdefghijkmnopqrstuwxyz";
-    private final static char[] codeCharArray = codeArray.toCharArray();
+    public final static String addressCodeArray = "13456789abcdefghijkmnopqrstuwxyz";
+    public final static char[] addressCodeCharArray = addressCodeArray.toCharArray();
 
 
     /**
@@ -255,7 +255,7 @@ public class NanoUtil {
     public static String addressToPublic(String encoded_address) {
         NaCl.sodium();
         String data = encoded_address.split("_")[1].substring(0, 52);
-        byte[] data_b = NanoUtil.hexStringToByteArray(decode(data));
+        byte[] data_b = NanoUtil.hexStringToByteArray(decodeAddressCharacters(data));
 
         byte[] state = new byte[Sodium.crypto_generichash_statebytes()];
         byte[] key = new byte[Sodium.crypto_generichash_keybytes()];
@@ -314,7 +314,7 @@ public class NanoUtil {
         return data;
     }
 
-    private static void reverse(byte[] array) {
+    public static void reverse(byte[] array) {
         if (array == null) {
             return;
         }
@@ -346,15 +346,15 @@ public class NanoUtil {
         StringBuilder output = new StringBuilder();
         int slice = data.length() / 5;
         for (int this_slice = 0; this_slice < slice; this_slice++) {
-            output.append(codeCharArray[Integer.parseInt(data.substring(this_slice * 5, this_slice * 5 + 5), 2)]);
+            output.append(addressCodeCharArray[Integer.parseInt(data.substring(this_slice * 5, this_slice * 5 + 5), 2)]);
         }
         return output.toString();
     }
 
-    private static String decode(String data) {
+    public static String decodeAddressCharacters(String data) {
         StringBuilder bits = new StringBuilder();
         for (int i = 0; i < data.length(); i++) {
-            int index = codeArray.indexOf(data.substring(i, i + 1).charAt(0));
+            int index = addressCodeArray.indexOf(data.substring(i, i + 1).charAt(0));
             bits.append(Integer.toBinaryString(0x20 | index).substring(1));
         }
         return new BigInteger(bits.toString(), 2).toString(16);
