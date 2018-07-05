@@ -1,0 +1,154 @@
+<resources>
+    <string name="app_name">Nano</string>
+
+    <string name="version_display">Nano Wallet Company, LLC\nV%1$s (%2$d)</string>
+
+    <!-- Intro Screens -->
+    <string name="intro_welcome_title">Willkommen bei Nano</string>
+    <string name="intro_welcome_new_wallet_cta">Eine neue Wallet erstellen</string>
+    <string name="intro_welcome_have_wallet_cta">Einen vorhandenen Wallet-Seed eingeben</string>
+    <string name="intro_seed_steps">%d / 2</string>
+    <string name="intro_seed_title">Paste a seed or scan a\ncode to begin</string>
+    <string name="intro_seed_seed_label">Seed</string>
+    <string name="intro_seed_seed_hint">(Seed-Adresse)</string>
+    <string name="intro_seed_confirm_cta">Seed bestätigen</string>
+    <string name="intro_new_wallet_title">Dein Nano Wallet-Seed</string>
+    <string name="intro_new_wallet_message"><![CDATA[<font color=\"#000034\">Dein Nano Wallet-Seed ist ein einzigartiger Code, der es ermöglicht, auf deine Nano Wallet auf dem Nano-Netzwerk zuzugreifen.<br><br>Er ist der einzige Weg um deine Wallet wiederherzustellen und auf jegliche Nano-Währung die du hast zuzugreifen.</font><br><br><font color=\"#ee4b66\">Wir haben keinen Zugriff darauf und können weder deinen Wallet-Seed noch jegliche Gelder in deiner Wallet ohne den Seed wiederherstellen.</font><br><br><font color=\"#000034\">Nur du bist dafür verantwortlich, deinen Wallet-Seed an einem sicheren Ort und auf einem sicheren Weg aufzuzeichnen.</font> <font color=\"#ee4b66\">Teile deinen Wallet-Seed niemals mit anderen Personen.</font>]]></string>
+    <string name="intro_new_wallet_confirm">Ich verstehe, fortfahren</string>
+    <string name="intro_new_wallet_seed_copied">Dein Wallet-Seed ist zwei Minuten einfügbar. Danach kannst du in den Einstellungen darauf zugreifen.\n\nBitte sichere deinen Wallet-Seed an einem sicheren Ort wie 1Password, LastPass oder drucke ihn aus und leg ihn in einen Safe.</string>
+    <string name="intro_new_wallet_seed_done">Okay</string>
+    <string name="intro_new_wallet_seed_label">Tippe zum Kopieren</string>
+    <string name="intro_new_wallet_seed_copied_title">Wallet-Seed kopiert</string>
+    <string name="intro_new_wallet_continue_title">Willkommen bei Nano Wallet!</string>
+    <string name="intro_new_wallet_continue_message">Bitte bestätige, dass du deinen Wallet-Seed an einem sicheren Ort gesichert hast.</string>
+    <string name="intro_new_wallet_continue_positive">Ich habe meinen Seed gesichert!</string>
+    <string name="intro_new_wallet_continue_negative">Zurück</string>
+    <string name="intro_legal_title">Nutzungsbedingungen</string>
+    <string name="intro_legal_description">Deine Benutzung von dieser Nano Wallet Mobile-Applikation unterliegt deiner Einverständnis zu allen Geschäftsbedingungen der Endnutzer-Lizenzvereinbarung und Datenschutzerklärung, die unten verlinkt sind (kollektiv die "Geschäftsbedingungen"). Bitte tippe die Links unten an und lies alle Geschäftsbedingungen genau durch. Durch das Ankreuzen der Boxen unten und das antippen von “Annehmen”, bestätigst du dass du alle Geschäftsbedingungen, welche bindende rechtliche Vereinbarungen sind, gelesen und verstanden hast und sie akzeptierst. Falls du irgendeine Geschäftsbedinung nicht verstehst oder nicht damit einverstanden bist, bist du nicht lizenziert oder authorisiert, diese Applikation zu benutzen und solltest sie von deinem Gerät löschen.</string>
+    <string name="intro_legal_confirm">Annehmen</string>
+    <string name="intro_legal_deny">Ablehnen</string>
+    <string name="intro_legal_checkbox_eula_label">Endbenutzer-Lizenzvertrag</string>
+    <string name="intro_legal_checkbox_pp_label">Datenschutzerklärung</string>
+    <string name="intro_legal_checkbox_eula_link">https://nanowalletcompany.com/android-eula</string>
+    <string name="intro_legal_checkbox_pp_link">https://nanowalletcompany.com/mobile-privacy-policy</string>
+    <string name="intro_legal_alert_title">Abmelde-Warnung</string>
+    <string name="intro_legal_alert_message">Das Ablehnen wird die Abmeldung aus der App zur Folge haben.</string>
+    <string name="intro_legal_alert_confirm_cta">Melde mich ab</string>
+    <string name="intro_legal_alert_cancel_cta">Abbrechen</string>
+
+    <!-- Analytics Opt-In -->
+    <string name="analytics_optin_alert_title">Analytik-Einverständniserklärung</string>
+    <string name="analytics_optin_alert_message">Nano (\'wir\' oder \'uns\') würde gerne deine Geräte-ID, wie auch Nutzungs-Metriken und Fehler- und Absturzberichte im Zusammenhang zu deiner Nutzung dieser Nano Wallet Mobil-Application (der \'Wallet\')aufzeichnen, um uns verstehen zu helfen wie Nutzer die Wallet benutzen und wo Fehler in der Wallet vorkommen könnten. Diese Daten werden uns helfen die Wallet, unsere Produkte und Dienste zu pflegen, zu entwickeln und zu verbessern.\n\nKeine Daten über deinen Namen, Kontaktinformationen, Gelder, Nano Tokens, Wallet Seed oder private Schlüssel werden je durch die Wallet gesammelt. Du kannst genau sehen welche Daten wir durch die App sammeln indem du die Datenschutzerklärung anschaust.\n\nStimmst du der Sammlung und Nutzung dieser Daten für diese Zwecke zu? (Deine Einwilligung ist keine Voraussetzung für das Benutzen der Wallet und, wenn du einwilligst hast du das Recht diese Einwilligung jederzeit zurückzuziehen, wie in der Datenschutzerklärung beschrieben.)</string>
+    <string name="analytics_optin_alert_confirm_cta">Ich stimme zu</string>
+    <string name="analytics_optin_alert_cancel_cta">Ich stimme nicht zu</string>
+
+    <!-- Pin Screen -->
+    <string name="pin_create_title">Erstelle einen 4-stelligen Android-Code</string>
+    <string name="pin_confirm_title">Bestätige deinen Code</string>
+    <string name="pin_enter_title">Code eingeben</string>
+    <string name="pin_confirm_error">Codes stimmen nicht überein</string>
+    <string name="pin_error">Falscher Code!</string>
+
+    <!-- Home Screen -->
+    <string name="home_send_cta">Senden</string>
+    <string name="home_receive_cta">Empfangen</string>
+    <string name="home_explore_url">https://www.nanode.co/block/%s</string>
+    <string name="error_message">Ein Problem mit der Verbindung ist aufgetreten. Bitte versuche es erneut.</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Einstellungen</string>
+    <string name="settings_local_currency">Lokale Währung</string>
+    <string name="settings_show_seed">Meinen Wallet-Seed anzeigen</string>
+    <string name="settings_show_new_seed">Meinen neuen Wallet-Seed anzeigen</string>
+    <string name="settings_log_out">Abmelden</string>
+    <string name="settings_seed_alert_title">Hier ist dein Wallet-Seed, sei vorsichtig.</string>
+    <string name="settings_seed_alert_message">Tippe auf den Knopf unten um deinen Seed zu kopieren und später einzufügen. Der Seed ist zwei Minuten lang einfügbar und verfällt dann.\n\nWir empfehlen das Kopieren in eine App wie 1Password oder LastPass oder den Seed auszudrucken und sicher zu verwahren.\n\nTeile deinen Seed niemals, mit niemandem, unter keinen Umständen!</string>
+    <string name="settings_seed_alert_confirm_cta">Okay</string>
+    <string name="settings_seed_alert_cancel_cta">Abbrechen</string>
+    <string name="settings_logout_alert_title">Bist du sicher, dass du dich abmelden willst?</string>
+    <string name="settings_logout_alert_message">Ausloggen wird deinen Seed, Schlüssel und alle mit Nano in Verbindung stehenden Dateien von deinem Gerät löschen.</string>
+    <string name="settings_logout_alert_confirm_cta">Okay</string>
+    <string name="settings_logout_alert_cancel_cta">Abbrechen</string>
+    <string name="settings_fingerprint_title">Wallet-Seed kopieren</string>
+    <string name="settings_fingerprint_description">Verifiziere deine Identität um auf die Wallet zuzugreifen.</string>
+    <string name="settings_fingerprint_success">Fingerabdruck erkannt</string>
+    <string name="settings_disclaimer"><![CDATA[Lies die <a href="https://nanowalletcompany.com/android-eula">EULA</a> and <a href="https://nanowalletcompany.com/mobile-privacy-policy">Datenschutzerklärung</a>]]></string>
+
+    <!-- Receive Screen -->
+    <string name="">Empfangen</string>
+    <string name="receive_instructions">Scanne den QR-Code\nunten um NANO zu empfangen</string>
+    <string name="receive_copy_cta">Adresse kopieren</string>
+    <string name="receive_address_label">Nano Adresse</string>
+    <string name="receive_copy_message"><![CDATA[<font color=\"#ffffff\">Deine Nano Adresse wurde kopiert.<br>Teile sie mit einem Freund um Nano zu empfangen!</font>]]></string>
+    <string name="receive_copy_done">Fertig</string>
+    <string name="receive_share_title">Teilen mit...</string>
+    <string name="receive_card_label">$nano\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020nano.org</string>
+    <string name="receive_card_title">Nano</string>
+    <string name="receive_qrcode_description">QR-Code</string>
+
+    <!-- Send Screen -->
+    <string name="send_title">Senden an</string>
+    <string name="send_address_hint">(Adresse eingeben)</string>
+    <string name="send_max_cta">Max</string>
+    <string name="send_keyboard_decimal">.</string>
+    <string name="send_keyboard_one">1</string>
+    <string name="send_keyboard_two">2</string>
+    <string name="send_keyboard_three">3</string>
+    <string name="send_keyboard_four">4</string>
+    <string name="send_keyboard_five">5</string>
+    <string name="send_keyboard_six">6</string>
+    <string name="send_keyboard_seven">7</string>
+    <string name="send_keyboard_eight">8</string>
+    <string name="send_keyboard_nine">9</string>
+    <string name="send_keyboard_zero">0</string>
+    <string name="send_keyboard_delete">&lt;</string>
+    <string name="send_send_cta">Senden</string>
+    <string name="send_camera">Kamera</string>
+    <string name="send_nano_hint">0</string>
+    <string name="send_localcurrency_hint">0.00</string>
+    <string name="send_amount_too_large_alert_title">Betrag zu groß</string>
+    <string name="send_amount_too_large_alert_message">Der eingegebene Betrag ist größer als dein Guthaben.\n\nWir haben deine ganzes Guthaben zum Senden eingegeben.</string>
+    <string name="send_amount_too_large_alert_cta">Okay</string>
+    <string name="send_error_alert_title">Etwas ist schiefgelaufen</string>
+    <string name="send_error_alert_message">Wir haben einen Fehler entdeckt und arbeiten daran ihn zu beheben. Bitte versuche es in ein paar Minuten erneut.</string>
+    <string name="send_confirm_address_cta">Adresse bestätigen</string>
+    <string name="send_fingerprint_title">Nano senden</string>
+    <string name="send_pin_description">%s Nano senden?</string>
+    <string name="send_fingerprint_description"> Fingerprint bestätigen um %s Nano zu senden</string>
+    <string name="send_fingerprint_hint">Fingerabdrucksensor</string>
+    <string name="send_fingerprint_success">Fingerabdruck erkannt</string>
+
+    <!-- Scan Screen -->
+    <string name="scan_instruction_label">Scanne einen Nano oder RaiBlocks\nWallet-Seed QR-Code um\neine vorhandene Wallet zu importieren</string>
+    <string name="scan_send_instruction_label">Scanne eine Nano oder RaiBlocks\nAdressen QR-Code</string>
+    <string name="scan_seed_error">Bitte scanne einen korrekten Seed.</string>
+
+    <!-- Webview Screen -->
+    <string name="webview_agreement_accept_cta">Ich akzeptiere</string>
+
+    <!-- Seed Update Alert -->
+    <string name="seed_update_alert_title">Kritisch: Aktualisiere deinen Wallet-Seed</string>
+    <string name="seed_update_alert_message">In der Version 1.0 haben wir einen kritischen Fehler bei der Erstellung von Wallet-Seeds entdeckt. Das erfordert, dass du einen brandneuen Wallet-Seed erstellst und dein Nano in eine neue Wallet transferierst, wenn deine Wallet mit der Nano-Wallet für Android generiert wurde.</string>
+    <string name="seed_update_alert_cancel_cta">Mein Seed wurde mit einer anderen Wallet generiert</string>
+    <string name="seed_update_alert_confirm_cta">Neuen Wallet-Seed generieren</string>
+
+    <string name="seed_update_address_alert_title">Kopiere deinen neuen Wallet-Seed und transferiere Gelder</string>
+    <string name="seed_update_address_alert_message">In der Zukunft wirst du diesen neu generierten Wallet-Seed benutzen, um auf dein Nano zuzugreifen. Schreib ihn auf und speichere ihn an einem sicheren Ort. Hinweis: Screenshots funktionieren nicht in Nano Wallet.\n\nDein neuer Wallet-Seed ist\n%1$s\n\nDeine neue Wallet-Adresse ist\n%2$s</string>
+    <string name="seed_update_address_alert_neutral_cta">Ich habe meinen Wallet-Seed kopiert.</string>
+    <string name="seed_update_address_alert_confirm_cta">Transferiere Bilanz zur neuen Wallet</string>
+
+    <string name="seed_update_verify_title">Bitte verifiziere deinen neuen Wallet-Seed, indem du ihn unten eintippst.</string>
+    <string name="seed_update_verify_confirm">Transferiere Bilanz zur neuen Wallet</string>
+    <string name="seed_update_verify_error">Seed stimmt nicht überein. Bitte versuche es erneut.</string>
+    <string name="seed_update_verify_cancel">Abbrechen</string>
+
+    <string name="seed_update_send_completed_alert_title">In deine neue Wallet einloggen.</string>
+    <string name="seed_update_send_completed_alert_message">Aus dieser Wallet ausloggen und mit dem neuen Seed (den du kopiert hast) wieder in Nano Wallet für Android einloggen.</string>
+    <string name="seed_update_send_completed_alert_confirm">Okay</string>
+
+    <string name="seed_reminder_alert_title">Neuer Wallet-Seed Erinnerung</string>
+    <string name="seed_reminder_alert_message">Wegen einem Sicherheitsupdate hast du deinen Wallet-Seed migriert.\n\nDein neuer Seed ist\n%1$s\n\nDeine neue Adresse ist\n%2$s\n\nLog dich aus und log dich mit deinem neuen Seed wieder ein.</string>
+    <string name="seed_reminder_alert_neutral_cta">Okay</string>
+    <string name="seed_reminder_alert_confirm_cta">Ausloggen</string>
+
+</resources>
