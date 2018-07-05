@@ -125,8 +125,11 @@ public class Address implements Serializable {
                 if (uri.getPath() != null) {
                     this.value = uri.getPath();
                 }
-                if (uri.getQueryParameter("amount") != null) {
-                    this.amount = (new BigDecimal(uri.getQueryParameter("amount")).divide(RAW_PER_NANO)).toString();
+                if (uri.getQueryParameter("amount") != null && !uri.getQueryParameter("amount").equals("")) {
+                    try {
+                        this.amount = (new BigDecimal(uri.getQueryParameter("amount")).divide(RAW_PER_NANO)).toString();
+                    } catch (NumberFormatException e) {
+                    }
                 }
             }
 
