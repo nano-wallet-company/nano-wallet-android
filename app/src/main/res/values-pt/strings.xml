@@ -6,22 +6,22 @@
     <!-- Intro Screens -->
     <string name="intro_welcome_title">Bem-vindo a Nano</string>
     <string name="intro_welcome_new_wallet_cta">Criar uma nova carteira</string>
-    <string name="intro_welcome_have_wallet_cta">Digite uma semente de carteira existente</string>
+    <string name="intro_welcome_have_wallet_cta">Digite uma seed de carteira existente</string>
     <string name="intro_seed_steps">%d / 2</string>
-    <string name="intro_seed_title">Cole uma semente ou escaneie um\nnó para começar</string>
-    <string name="intro_seed_seed_label">Semente</string>
-    <string name="intro_seed_seed_hint">(Endereço da Semenete)</string>
-    <string name="intro_seed_confirm_cta">Confirmar semente</string>
-    <string name="intro_new_wallet_title">Sua Semente Nano</string>
-    <string name="intro_new_wallet_message"><![CDATA[<font color=\"#000034\">Sua Semente Nano é um código único que te possibilita acessar sua carteira na Rede Nano.<br><br>É o único meio de recuperar sua carteira e acessar qualquer moeda Nano que você possa ter.</font><br><br><font color=\"#ee4b66\">Nós não temos acesso a ela e não podemos recuperar sua Semente de Carteira ou qualquer fundo em sua carteira sem sua Semente de Carteira.</font><br><br><font color=\"#000034\">Você é o único responsável por anotar e guardar de maneira segura sua Semente de Carteira.</font> <font color=\"#ee4b66\">Nunca compartilhe com ninguém sua Semente de Carteira.</font>]]></string>
+    <string name="intro_seed_title">Cole uma seed ou escaneie um\nnó para começar</string>
+    <string name="intro_seed_seed_label">Seed</string>
+    <string name="intro_seed_seed_hint">(Endereço da Seed)</string>
+    <string name="intro_seed_confirm_cta">Confirmar seed</string>
+    <string name="intro_new_wallet_title">Sua Seed Nano</string>
+    <string name="intro_new_wallet_message"><![CDATA[<font color=\"#000034\">Sua Seed Nano é um código único que te possibilita acessar sua carteira na Rede Nano.<br><br>É o único meio de recuperar sua carteira e acessar qualquer moeda Nano que você possa ter.</font><br><br><font color=\"#ee4b66\">Nós não temos acesso a ela e não podemos recuperar sua Seed de Carteira ou qualquer fundo em sua carteira sem sua Seed de Carteira.</font><br><br><font color=\"#000034\">Você é o único responsável por anotar e guardar de maneira segura sua Seed de Carteira.</font> <font color=\"#ee4b66\">Nunca compartilhe com ninguém sua Seed de Carteira.</font>]]></string>
     <string name="intro_new_wallet_confirm">Eu compreendo, Continuar</string>
-    <string name="intro_new_wallet_seed_copied">Sua Semente de Carteira é colável por 2 minutos. Depois, você poderá acessa-la em Configurações.\n\nPor favor faça um backup da sua Semente de Carteira em algum local seguro como 1Password, LastPass, ou imprima e armazene em um local seguro.</string>
+    <string name="intro_new_wallet_seed_copied">Sua Seed de Carteira é colável por 2 minutos. Depois, você poderá acessa-la em Configurações.\n\nPor favor faça um backup da sua Seed de Carteira em algum local seguro como 1Password, LastPass, ou imprima e armazene em um local seguro.</string>
     <string name="intro_new_wallet_seed_done">Pronto</string>
     <string name="intro_new_wallet_seed_label">Toque para copiar</string>
-    <string name="intro_new_wallet_seed_copied_title">Semente de Carteira copiada</string>
+    <string name="intro_new_wallet_seed_copied_title">Seed de Carteira copiada</string>
     <string name="intro_new_wallet_continue_title">Bem-vindo a Carteira Nano!</string>
-    <string name="intro_new_wallet_continue_message">Por favor confirme que armazenou devidamente sua Semente de Carteira em algum lugar seguro.</string>
-    <string name="intro_new_wallet_continue_positive">Eu fiz um backup da minha Semente de Carteira</string>
+    <string name="intro_new_wallet_continue_message">Por favor confirme que armazenou devidamente sua Seed de Carteira em algum lugar seguro.</string>
+    <string name="intro_new_wallet_continue_positive">Eu fiz um backup da minha Seed de Carteira</string>
     <string name="intro_new_wallet_continue_negative">Voltar</string>
     <string name="intro_legal_title">Termos e Condições</string>
     <string name="intro_legal_description">O seu uso sobre o aplicativo móvel Nano Wallet está sujeito ao seu acordo para todos os termos e condições do Acordo de Licença de Usuário Final e Política de Privacidade listados abaixo(coletivamente, os "Termos e Condições"). Por favor toque sobre os links abaixo e leia todos os Termos e Condições cuidadosamente. Checando as caixas abaixo e tocando em "Concordo", você reconhece que leu, entendeu e aceitou todos os Termos e Condições, que são acordos legais vinculativos. Se você não entendeu ou descorda de qualquer um dos Termos e Condições, você não está licenciado ou autorizado a user esse aplicativo e deve remove-lo do seu aparelho.</string>
@@ -38,7 +38,7 @@
 
     <!-- Analytics Opt-In -->
     <string name="analytics_optin_alert_title">Analytics Opt-In</string>
-    <string name="analytics_optin_alert_message">Nano (\'nós\') gostaria de coletar o ID do seu dispositivo, assim como as métricas de uso, erro e relatórios de quebras relacionado ao uso dessa aplicação móvel Nano Wallet (a \'Wallet\'), a fim de nos ajudar a entender como usuários estão utilizando a Carteira e onde os erros podem acontecer em sua Carteira, e usar esse dado para nos ajudar a manter, desenvolver e melhorar a Carteira, nossos produtos e serviços. \n\n Nenhum dado sobre seu nome, informação de contato, saldo, tokens Nano, Semente de Carteira ou chaves privadas nunca serão coletados através da Carteira. Você pode ver exatamente quais tipos de dados nós coletamos através da Carteira, vendo nossa Política de Privacidade.\n\nVocê concorda com a nossa coleta e uso destes dados para estes propósitos? (Seu consentimento não é um pré-requisito para usar a Carteira, e se você consentir, você terá o direito de negar seu consentimento a qualquer momento, como está descrito na Política de Privacidade.)</string>
+    <string name="analytics_optin_alert_message">Nano (\'nós\') gostaria de coletar o ID do seu dispositivo, assim como as métricas de uso, erro e relatórios de quebras relacionado ao uso dessa aplicação móvel Nano Wallet (a \'Wallet\'), a fim de nos ajudar a entender como usuários estão utilizando a Carteira e onde os erros podem acontecer em sua Carteira, e usar esse dado para nos ajudar a manter, desenvolver e melhorar a Carteira, nossos produtos e serviços. \n\n Nenhum dado sobre seu nome, informação de contato, saldo, tokens Nano, Seed de Carteira ou chaves privadas nunca serão coletados através da Carteira. Você pode ver exatamente quais tipos de dados nós coletamos através da Carteira, vendo nossa Política de Privacidade.\n\nVocê concorda com a nossa coleta e uso destes dados para estes propósitos? (Seu consentimento não é um pré-requisito para usar a Carteira, e se você consentir, você terá o direito de negar seu consentimento a qualquer momento, como está descrito na Política de Privacidade.)</string>
     <string name="analytics_optin_alert_confirm_cta">Eu concordo</string>
     <string name="analytics_optin_alert_cancel_cta">Eu Nâo Concordo</string>
 
@@ -58,19 +58,19 @@
     <!-- Settings Screen -->
     <string name="settings_title">Configurações</string>
     <string name="settings_local_currency">Moeda Local</string>
-    <string name="settings_show_seed">Mostrar Minha Semente de Carteira</string>
-    <string name="settings_show_new_seed">Mostrar Minha Nova Semente de Carteira</string>
+    <string name="settings_show_seed">Mostrar Minha Seed</string>
+    <string name="settings_show_new_seed">Mostrar Minha Nova Seed</string>
     <string name="settings_log_out">Desconectar</string>
-    <string name="settings_seed_alert_title">Aqui está sua Semente de Carteira, seja cuidadoso.</string>
-    <string name="settings_seed_alert_message">Tap the button below to copy your Seed to paste later. The Seed is pasteable for 2 minutes and then expires.\n\nWe suggest copying to an app like 1Password, LastPass, or printing the Seed out and hiding it somewhere safe.\n\nNever share your seed with anyone, ever, under any circumstances.</string>
+    <string name="settings_seed_alert_title">Aqui está sua Seed, seja cuidadoso.</string>
+    <string name="settings_seed_alert_message">Toque sobre o botão abaixo para copiará sua Semente para colar depois. A Semente é colável por 2 minutos e então expira.n\nNós sugemos copiar para um aplicativo como 1Password, LastPass, ou imprimir a Seed e esconder em algum local seguro.\n\nNão compartilhe a sua seed com alguém, nunca, em quaisquer circunstâncias.</string>
     <string name="settings_seed_alert_confirm_cta">Confirmar</string>
     <string name="settings_seed_alert_cancel_cta">Cancelar</string>
     <string name="settings_logout_alert_title">Tem certeza que deseja desconectar?</string>
-    <string name="settings_logout_alert_message">Desconectar removerá sua semente, chaves, e todo o dado relacionado com a Nano desse dispositivo.</string>
+    <string name="settings_logout_alert_message">Desconectar removerá sua seed, chaves, e todo o dado relacionado com a Nano desse dispositivo.</string>
     <string name="settings_logout_alert_confirm_cta">Confirmar</string>
     <string name="settings_logout_alert_cancel_cta">Cancelar</string>
-    <string name="settings_fingerprint_title">Copiar Semente de Carteira</string>
-    <string name="settings_fingerprint_description">Verifique sua identidade para visualizar sua sua semente de carteira.</string>
+    <string name="settings_fingerprint_title">Copiar Seed</string>
+    <string name="settings_fingerprint_description">Verifique sua identidade para visualizar a seed da sua carteira.</string>
     <string name="settings_fingerprint_success">Digital reconhecida</string>
     <string name="settings_disclaimer"><![CDATA[Leia o <a href="https://nanowalletcompany.com/android-eula">EULA</a> e <a href="https://nanowalletcompany.com/mobile-privacy-policy">Política de Privacidade</a>]]></string>
 
@@ -119,35 +119,35 @@
     <string name="send_fingerprint_success">Digital reconhecida</string>
 
     <!-- Scan Screen -->
-    <string name="scan_instruction_label">Escaneie o QR Code de uma semente de carteira\nNano ou Raiblocks para \nimportar uma carteira existente</string>
+    <string name="scan_instruction_label">Escaneie o QR Code de uma seed de carteira\nNano ou Raiblocks para \nimportar uma carteira existente</string>
     <string name="scan_send_instruction_label">Escaneie um QR Code de endereço \nNano ou Raiblocks</string>
-    <string name="scan_seed_error">Por favor escaneie uma semente válida.</string>
+    <string name="scan_seed_error">Por favor escaneie uma seed válida.</string>
 
     <!-- Webview Screen -->
     <string name="webview_agreement_accept_cta">Eu aceito</string>
 
     <!-- Seed Update Alert -->
-    <string name="seed_update_alert_title">Crítico: Atualize sua Semente de Carteira</string>
-    <string name="seed_update_alert_message">Na versão 1.0, nós descobrimos um bug critico no modo que as Sementes de Carteira eram geradas. Isso exige que você gere uma nova semente de carteira e transfira suas Nanos para a nova carteira se sua carteira foi criada na Nano Wallet Android.</string>
-    <string name="seed_update_alert_cancel_cta">Minha semente foi criada em outra carteira</string>
-    <string name="seed_update_alert_confirm_cta">Gerar nova semente de carteira</string>
+    <string name="seed_update_alert_title">Crítico: Atualize sua Seed de Carteira</string>
+    <string name="seed_update_alert_message">Na versão 1.0, nós descobrimos um bug critico no modo que as Seeds de Carteira eram geradas. Isso exige que você gere uma nova seed de carteira e transfira suas Nanos para a nova carteira se sua carteira foi criada na Nano Wallet Android.</string>
+    <string name="seed_update_alert_cancel_cta">Minha seed foi criada em outra carteira</string>
+    <string name="seed_update_alert_confirm_cta">Gerar nova seed de carteira</string>
 
-    <string name="seed_update_address_alert_title">Copiar sua nova Semente de Carteira e transferir fundos</string>
-    <string name="seed_update_address_alert_message">No futuro, você usará essa nova Semente de Carteira gerada para acessar sua Nano. Anote e guarde em algum lugar seguro. Nota: screenshots não funcionam na Nano Wallet\n\nSua nova Semente de Carteira é\n%1$s\n\nSeu novo Endereço de Carteira é\n%2$s</string>
-    <string name="seed_update_address_alert_neutral_cta">Eu copiei minha semente de carteira</string>
+    <string name="seed_update_address_alert_title">Copiar sua nova Seed de Carteira e transferir fundos</string>
+    <string name="seed_update_address_alert_message">No futuro, você usará essa nova Seed de Carteira gerada para acessar sua Nano. Anote e guarde em algum lugar seguro. Nota: screenshots não funcionam na Nano Wallet\n\nSua nova Seed de Carteira é\n%1$s\n\nSeu novo Endereço de Carteira é\n%2$s</string>
+    <string name="seed_update_address_alert_neutral_cta">Eu copiei minha seed de carteira</string>
     <string name="seed_update_address_alert_confirm_cta">Transferir saldo para carteira nova</string>
 
-    <string name="seed_update_verify_title">Por favor verifique sua nova Semente de Carteira escrevendo-a abaixo:</string>
+    <string name="seed_update_verify_title">Por favor verifique sua nova Seed de Carteira escrevendo-a abaixo:</string>
     <string name="seed_update_verify_confirm">Transferir saldo para nova carteira</string>
-    <string name="seed_update_verify_error">Semente não corresponde. Por favor tente novamente.</string>
+    <string name="seed_update_verify_error">Seed não corresponde. Por favor tente novamente.</string>
     <string name="seed_update_verify_cancel">Cancelar</string>
 
     <string name="seed_update_send_completed_alert_title">Conectar em sua nova carteira</string>
-    <string name="seed_update_send_completed_alert_message">Desconectar dessa carteira e conectar na Nano Wallet Android novamente com sua nova semente de carteira copiada recentemente.</string>
+    <string name="seed_update_send_completed_alert_message">Desconectar dessa carteira e conectar na Nano Wallet Android novamente com sua nova seed de carteira copiada recentemente.</string>
     <string name="seed_update_send_completed_alert_confirm">Confirmar</string>
 
-    <string name="seed_reminder_alert_title">Lembrete da Nova Semente de Carteira</string>
-    <string name="seed_reminder_alert_message">Devído a uma atualização de segurança, você migrou sua Semente de Carteira.\n\nSua nova semente é\n%1$s\n\nSeu novo endereço é\n%2$s\n\nDesconecte e conecte novamente com sua nova semente</string>
+    <string name="seed_reminder_alert_title">Lembrete da Nova Seed</string>
+    <string name="seed_reminder_alert_message">Devído a uma atualização de segurança, você migrou sua Seed de Carteira.\n\nSua nova seed é\n%1$s\n\nSeu novo endereço é\n%2$s\n\nDesconecte e conecte novamente com sua nova seed</string>
     <string name="seed_reminder_alert_neutral_cta">Confirmar</string>
     <string name="seed_reminder_alert_confirm_cta">Desconectar</string>
 
