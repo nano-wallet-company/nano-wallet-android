@@ -96,4 +96,8 @@ public class NumberUtil {
         sb.append(hex);
         return sb.toString().toUpperCase();
     }
+
+    public static String getRawFromHex(String hex) {
+        return new BigInteger(hex,16).toString(10);
+    }
 }

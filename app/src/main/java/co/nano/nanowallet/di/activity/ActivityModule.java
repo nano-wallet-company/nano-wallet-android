@@ -1,12 +1,14 @@
 package co.nano.nanowallet.di.activity;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.network.AccountService;
@@ -17,6 +19,7 @@ import co.nano.nanowallet.network.model.response.AccountCheckResponse;
 import co.nano.nanowallet.network.model.response.AccountHistoryResponse;
 import co.nano.nanowallet.network.model.response.BlockItem;
 import co.nano.nanowallet.network.model.response.BlockResponse;
+import co.nano.nanowallet.network.model.response.BlocksInfoResponse;
 import co.nano.nanowallet.network.model.response.CurrentPriceResponse;
 import co.nano.nanowallet.network.model.response.ErrorResponse;
 import co.nano.nanowallet.network.model.response.ProcessResponse;
@@ -105,24 +108,18 @@ public class ActivityModule {
                                 src.getAsJsonObject().get("type").getAsString().equals(BlockTypes.STATE.toString())) {
                             // state block response
                             src.getAsJsonObject().addProperty("messageType", Actions.PROCESS.toString());
-                        } else if (src.getAsJsonObject().get("contents") != null) {
-                            // get block response
-                            ObjectMapper mapper = new ObjectMapper();
-                            String content = src.getAsJsonObject().get("contents").getAsString();
-                            content = content.replace("\n", "");
-                            content = content.replace("\\\"", "\"");
-                            src.getAsJsonObject().remove("contents");
-                            BlockItem blockItem = new Gson().fromJson(content, BlockItem.class);
-                            src.getAsJsonObject().addProperty("type", blockItem.getType());
-                            src.getAsJsonObject().addProperty("account", blockItem.getAccount());
-                            src.getAsJsonObject().addProperty("previous", blockItem.getPrevious());
-                            src.getAsJsonObject().addProperty("representative", blockItem.getRepresentative());
-                            src.getAsJsonObject().addProperty("balance", blockItem.getBalance());
-                            src.getAsJsonObject().addProperty("link", blockItem.getLink());
-                            src.getAsJsonObject().addProperty("link_as_account", blockItem.getLink_as_account());
-                            src.getAsJsonObject().addProperty("work", blockItem.getWork());
-                            src.getAsJsonObject().addProperty("signature", blockItem.getSignature());
-                            src.getAsJsonObject().addProperty("messageType", "contents");
+                        } else if (src.getAsJsonObject().get("blocks") != null) {
+                            JsonElement blocksElement = src.getAsJsonObject().get("blocks");
+                            if (blocksElement.isJsonObject()) {
+                                JsonObject blocks = blocksElement.getAsJsonObject();
+                                String key = blocks.keySet().iterator().next();
+                                if (key != null) {
+                                    if (blocks.get(key).getAsJsonObject().has("block_account")) {
+                                        // get blocks info response
+                                        src.getAsJsonObject().addProperty("messageType", Actions.GET_BLOCKS_INFO.toString());
+                                    }
+                                }
+                            }
                         }
                     }
                 }).registerTypeSelector(BaseResponse.class, readElement -> {
@@ -145,6 +142,8 @@ public class ActivityModule {
                             return AccountCheckResponse.class;
                         } else if (kind.equals(Actions.PROCESS.toString())) {
                             return ProcessResponse.class;
+                        } else if (kind.equals(Actions.GET_BLOCKS_INFO.toString())) {
+                            return BlocksInfoResponse.class;
                         } else if (kind.equals("block")) {
                             return TransactionResponse.class;
                         } else if (kind.equals("contents")) {

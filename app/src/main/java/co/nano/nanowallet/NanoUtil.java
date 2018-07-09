@@ -198,6 +198,30 @@ public class NanoUtil {
     }
 
     /**
+     * Compute hash to use to generate a change work block
+     *
+     * @param previous         Previous transaction
+     * @param representative   Representative address
+     * @return String of hash
+     */
+    public static String computeChangeHash(String previous, String representative) {
+        Sodium sodium = NaCl.sodium();
+        byte[] state = new byte[Sodium.crypto_generichash_statebytes()];
+        byte[] key = new byte[Sodium.crypto_generichash_keybytes()];
+
+        byte[] previous_b = hexToBytes(previous);
+        byte[] source_b = hexToBytes(representative);
+        byte[] output = new byte[32];
+
+        Sodium.crypto_generichash_blake2b_init(state, key, 0, 32);
+        Sodium.crypto_generichash_blake2b_update(state, previous_b, previous_b.length);
+        Sodium.crypto_generichash_blake2b_update(state, source_b, source_b.length);
+        Sodium.crypto_generichash_blake2b_final(state, output, output.length);
+
+        return bytesToHex(output);
+    }
+
+    /**
      * Sign a message with a private key
      *
      * @param private_key Private Key

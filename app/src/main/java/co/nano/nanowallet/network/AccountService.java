@@ -3,6 +3,7 @@ package co.nano.nanowallet.network;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +15,7 @@ import java.math.BigInteger;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -35,7 +37,7 @@ import co.nano.nanowallet.network.model.BaseResponse;
 import co.nano.nanowallet.network.model.BlockTypes;
 import co.nano.nanowallet.network.model.RequestItem;
 import co.nano.nanowallet.network.model.request.AccountHistoryRequest;
-import co.nano.nanowallet.network.model.request.GetBlockRequest;
+import co.nano.nanowallet.network.model.request.GetBlocksInfoRequest;
 import co.nano.nanowallet.network.model.request.PendingTransactionsRequest;
 import co.nano.nanowallet.network.model.request.ProcessRequest;
 import co.nano.nanowallet.network.model.request.SubscribeRequest;
@@ -45,7 +47,9 @@ import co.nano.nanowallet.network.model.request.block.OpenBlock;
 import co.nano.nanowallet.network.model.request.block.ReceiveBlock;
 import co.nano.nanowallet.network.model.request.block.SendBlock;
 import co.nano.nanowallet.network.model.request.block.StateBlock;
-import co.nano.nanowallet.network.model.response.BlockResponse;
+import co.nano.nanowallet.network.model.response.BlockInfoItem;
+import co.nano.nanowallet.network.model.response.BlockItem;
+import co.nano.nanowallet.network.model.response.BlocksInfoResponse;
 import co.nano.nanowallet.network.model.response.CurrentPriceResponse;
 import co.nano.nanowallet.network.model.response.PendingTransactionResponseItem;
 import co.nano.nanowallet.network.model.response.ProcessResponse;
@@ -231,8 +235,8 @@ public class AccountService {
             }
         } else if (event != null && event instanceof ProcessResponse) {
             handleProcessResponse((ProcessResponse) event);
-        } else if (event != null && event instanceof BlockResponse) {
-            handleBlockItemResponse((BlockResponse) event);
+        } else if (event != null && event instanceof BlocksInfoResponse) {
+            handleBlocksInfoResponse((BlocksInfoResponse) event);
         } else {
             // update block count on subscribe request
             if (event instanceof SubscribeResponse) {
@@ -291,70 +295,128 @@ public class AccountService {
     }
 
     /**
-     * When a block item comes back. We need to verify the hash, amount, etc...
+     * When block info comes back. We need to verify the hash, amount, etc...
      *
-     * @param blockItem Block Item Response
+     * @param blocksInfo BlocksInfoResponse Response
      */
-    private void handleBlockItemResponse(BlockResponse blockItem) {
+    private void handleBlocksInfoResponse(BlocksInfoResponse blocksInfo) {
+        HashMap<String, BlockInfoItem> blocks = blocksInfo.getBlocks();
+        if (blocks.size () != 1) {
+            ExceptionHandler.handle(new Exception("unexpected amount of blocks in blocks_info response"));
+            requestQueue.poll();
+            requestQueue.poll();
+            return;
+        }
+        String hash = blocks.keySet().iterator().next();
+        BlockInfoItem blockInfo = blocks.get(hash);
 
-        if (blockItem.getType().equals(BlockTypes.STATE.toString())) {
-            String hash = NanoUtil.computeStateHash(
-                    NanoUtil.addressToPublic(blockItem.getAccount()),
-                    blockItem.getPrevious(),
-                    NanoUtil.addressToPublic(blockItem.getRepresentative()),
-                    NumberUtil.getRawAsHex(blockItem.getBalance()),
-                    blockItem.getLink());
+        ObjectMapper mapper = new ObjectMapper();
+        BlockItem block;
+        try {
+            block = mapper.readValue(blockInfo.getContents(), BlockItem.class);
+        } catch (Exception e) {
+            ExceptionHandler.handle(e);
+            requestQueue.poll();
+            requestQueue.poll();
+            return;
+        }
 
-            // compare hash to the hash we sent
-            RequestItem getBlockRequest = requestQueue.peek();
-            if (getBlockRequest.getRequest() instanceof GetBlockRequest &&
-                    hash.equals(((GetBlockRequest) getBlockRequest.getRequest()).getHash())) {
-                // update amount on receive request
-                requestQueue.poll();
-                RequestItem nextRequest = requestQueue.peek();
-                if (nextRequest != null && nextRequest.getRequest() instanceof StateBlock) {
-                    ((StateBlock) nextRequest.getRequest()).setRepresentative(blockItem.getRepresentative());
-                    ((StateBlock) nextRequest.getRequest()).setPrevious(hash);
-                    if (((StateBlock) nextRequest.getRequest()).getInternal_block_type() == BlockTypes.SEND) {
-                        ((StateBlock) nextRequest.getRequest()).setBalance(
-                                new BigInteger(blockItem.getBalance())
-                                        .subtract(new BigInteger(((StateBlock) nextRequest.getRequest()).getSendAmount()))
-                                        .toString()
-                        );
-                    } else {
-                        ((StateBlock) nextRequest.getRequest()).setBalance(
-                                new BigInteger(blockItem.getBalance())
-                                        .add(new BigInteger(((StateBlock) nextRequest.getRequest()).getSendAmount()))
-                                        .toString()
-                        );
-                    }
-                }
-
-            } else {
-                ExceptionHandler.handle(new Exception("hash comparison failed"));
-
-                // skip processing the send/receive call as something failed in the hash comparison
+        if (block.getType().equals(BlockTypes.STATE.toString())) {
+            String calculatedHash = NanoUtil.computeStateHash(
+                    NanoUtil.addressToPublic(block.getAccount()),
+                    block.getPrevious(),
+                    NanoUtil.addressToPublic(block.getRepresentative()),
+                    NumberUtil.getRawAsHex(block.getBalance()),
+                    block.getLink());
+            if (!blockInfo.getBalance().equals(block.getBalance())) {
+                ExceptionHandler.handle(new Exception("balance in state block doesn't match balance in block info"));
                 requestQueue.poll();
                 requestQueue.poll();
+                return;
+            }
+            if (!hash.equals(calculatedHash)) {
+                ExceptionHandler.handle(new Exception("balance in state block doesn't match balance in block info"));
+                ExceptionHandler.handle(new Exception("state block hash doesn't match hash from block info"));
+                requestQueue.poll();
+                requestQueue.poll();
+                return;
+            }
+        } else if (block.getType().equals(BlockTypes.SEND.toString())) {
+            String calculatedHash = NanoUtil.computeSendHash(
+                    block.getPrevious(),
+                    NanoUtil.addressToPublic(block.getDestination()),
+                    block.getBalance());
+            if (!blockInfo.getBalance().equals(NumberUtil.getRawFromHex(block.getBalance()))) {
+                ExceptionHandler.handle(new Exception("balance in send block doesn't match balance in block info"));
+                requestQueue.poll();
+                requestQueue.poll();
+                return;
+            }
+            if (!hash.equals(calculatedHash)) {
+                ExceptionHandler.handle(new Exception("send block hash doesn't match hash from block info"));
+                requestQueue.poll();
+                requestQueue.poll();
+                return;
+            }
+        } else if (block.getType().equals(BlockTypes.RECEIVE.toString())) {
+            String calculatedHash = NanoUtil.computeReceiveHash(block.getPrevious(), block.getSource());
+            if (!hash.equals(calculatedHash)) {
+                ExceptionHandler.handle(new Exception("receive block hash doesn't match hash from block info"));
+                requestQueue.poll();
+                requestQueue.poll();
+                return;
+            }
+        } else if (block.getType().equals(BlockTypes.OPEN.toString())) {
+            String calculatedHash = NanoUtil.computeOpenHash(
+                    block.getSource(),
+                    NanoUtil.addressToPublic(block.getRepresentative()),
+                    NanoUtil.addressToPublic(block.getAccount()));
+            if (!hash.equals(calculatedHash)) {
+                ExceptionHandler.handle(new Exception("open block hash doesn't match hash from block info"));
+                requestQueue.poll();
+                requestQueue.poll();
+                return;
+            }
+        } else if (block.getType().equals(BlockTypes.CHANGE.toString())) {
+            String calculatedHash = NanoUtil.computeChangeHash(
+                    block.getPrevious(),
+                    NanoUtil.addressToPublic(block.getRepresentative()));
+            if (!hash.equals(calculatedHash)) {
+                ExceptionHandler.handle(new Exception("change block hash doesn't match hash from block info"));
+                requestQueue.poll();
+                requestQueue.poll();
+                return;
             }
         } else {
-            // the head block was not a state block
+            ExceptionHandler.handle(new Exception("unexpected block type " + block.getType()));
+            requestQueue.poll();
+            requestQueue.poll();
+            return;
+        }
 
-            // send a no-op to convert them to state blocks
-            RequestItem getBlockRequest = requestQueue.peek();
-            if (blockItem.getBalance() != null) {
-                requestChange(wallet.getFrontierBlock(), new BigInteger(blockItem.getBalance()), blockItem.getRepresentative(), true);
+        requestQueue.poll();
+        RequestItem nextRequest = requestQueue.peek();
+        if (nextRequest != null && nextRequest.getRequest() instanceof StateBlock) {
+            if (block.getRepresentative() != null) {
+                ((StateBlock) nextRequest.getRequest()).setRepresentative(block.getRepresentative());
             }
-
-            // skip the next requests
-            requestQueue.poll();
-            requestQueue.poll();
-
-
+            ((StateBlock) nextRequest.getRequest()).setPrevious(hash);
+            if (((StateBlock) nextRequest.getRequest()).getInternal_block_type() == BlockTypes.SEND) {
+                ((StateBlock) nextRequest.getRequest()).setBalance(
+                        new BigInteger(blockInfo.getBalance())
+                                .subtract(new BigInteger(((StateBlock) nextRequest.getRequest()).getSendAmount()))
+                                .toString()
+                );
+            } else {
+                ((StateBlock) nextRequest.getRequest()).setBalance(
+                        new BigInteger(blockInfo.getBalance())
+                                .add(new BigInteger(((StateBlock) nextRequest.getRequest()).getSendAmount()))
+                                .toString()
+                );
+            }
         }
 
         processQueue();
-
     }
 
 
@@ -611,7 +673,7 @@ public class AccountService {
         requestQueue.add(new RequestItem<>(new WorkRequest(previous)));
 
         // create a get_block request
-        requestQueue.add(new RequestItem<>(new GetBlockRequest(previous)));
+        requestQueue.add(new RequestItem<>(new GetBlocksInfoRequest(new String[] {previous})));
 
         // create a state block for receiving
         requestQueue.add(new RequestItem<>(new StateBlock(
@@ -637,7 +699,7 @@ public class AccountService {
         requestQueue.add(new RequestItem<>(new WorkRequest(previous)));
 
         // create a get_block request
-        requestQueue.add(new RequestItem<>(new GetBlockRequest(previous)));
+        requestQueue.add(new RequestItem<>(new GetBlocksInfoRequest(new String[] {previous})));
 
         // create a state block for sending
         requestQueue.add(new RequestItem<>(new StateBlock(
@@ -665,7 +727,7 @@ public class AccountService {
 
         if (!noop) {
             // create a get_block request
-            requestQueue.add(new RequestItem<>(new GetBlockRequest(previous)));
+            requestQueue.add(new RequestItem<>(new GetBlocksInfoRequest(new String[] {previous})));
         }
 
         // create a state block for sending
@@ -811,7 +873,7 @@ public class AccountService {
                         (o instanceof StateBlock &&
                                 ((StateBlock) o).getInternal_block_type().equals(BlockTypes.RECEIVE))) ||
                         o instanceof WorkRequest ||
-                        o instanceof GetBlockRequest
+                        o instanceof GetBlocksInfoRequest
                 ) && !item.isProcessing()) {
                     objectsToUpdate.add(o);
                 }
@@ -826,8 +888,8 @@ public class AccountService {
                 ((StateBlock) o).setPrevious(frontier);
             } else if (o != null && o instanceof WorkRequest) {
                 ((WorkRequest) o).setHash(frontier);
-            } else if (o != null && o instanceof GetBlockRequest) {
-                ((GetBlockRequest) o).setHash(frontier);
+            } else if (o != null && o instanceof GetBlocksInfoRequest) {
+                ((GetBlocksInfoRequest) o).setHashes(new String[] {frontier});
             }
         }
     }
