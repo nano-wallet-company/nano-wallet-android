@@ -345,8 +345,8 @@ public class AccountService {
             String calculatedHash = NanoUtil.computeSendHash(
                     block.getPrevious(),
                     NanoUtil.addressToPublic(block.getDestination()),
-                    NumberUtil.getRawAsHex(block.getBalance()));
-            if (!blockInfo.getBalance().equals(block.getBalance())) {
+                    block.getBalance());
+            if (!blockInfo.getBalance().equals(NumberUtil.getRawFromHex(block.getBalance()))) {
                 ExceptionHandler.handle(new Exception("balance in send block doesn't match balance in block info"));
                 requestQueue.poll();
                 requestQueue.poll();
