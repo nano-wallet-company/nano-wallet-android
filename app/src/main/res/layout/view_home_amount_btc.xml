@@ -25,6 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
             android:layout_marginRight="5dp"
+            android:layout_marginTop="10dp"
             app:layout_constraintEnd_toStartOf="@+id/amount_btc_title"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_currency_btc" />
