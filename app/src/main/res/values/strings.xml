@@ -151,4 +151,7 @@
     <string name="seed_reminder_alert_neutral_cta">Okay</string>
     <string name="seed_reminder_alert_confirm_cta">Log Out</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

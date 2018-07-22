@@ -4,6 +4,8 @@ package co.nano.nanowallet;
   Utilities for crypto functions
  */
 
+import android.util.Log;
+
 import co.nano.nanowallet.util.SecureRandomUtil;
 import org.libsodium.jni.NaCl;
 import org.libsodium.jni.Sodium;
@@ -16,6 +18,33 @@ public class NanoUtil {
     public final static String addressCodeArray = "13456789abcdefghijkmnopqrstuwxyz";
     public final static char[] addressCodeCharArray = addressCodeArray.toCharArray();
 
+
+    /*
+     * Turns Nano's biggest unit into RAW.
+     */
+    public static String turnNANOAmountIntoRAW(String nanoAmount)
+    {
+        String tempStr=null;
+        if(nanoAmount.contains("."))
+        {
+            String[] parts = nanoAmount.split("\\.");
+            while (parts[1].length() < 30) {
+                parts[1] += "0";
+            }
+            tempStr = parts[0] + parts[1];
+            while (tempStr.charAt(0) == '0')
+                tempStr = tempStr.substring(1);
+        }
+        else
+        {
+            tempStr=nanoAmount;
+            for (int i=0; i < 30; i++)
+            {
+                tempStr += "0";
+            }
+        }
+        return tempStr;
+    }
 
     /**
      * Generate a new Wallet Seed
@@ -154,11 +183,11 @@ public class NanoUtil {
 
     /**
      * Compute hash for a universal (state) block
-     * @param account This account's xrb_ address.
+     * @param account This account's xrb_ address. -- to whom it may concern: This is not correct. You actually need the PubKey because it does hexToBytes next. xrb_ is not hex.
      * @param previous Previous head block on account; 0 if open block.
-     * @param representative Representative xrb_ address.
+     * @param representative Representative xrb_ address. -- Same here. Requires the PubKey.
      * @param balance Resulting balance
-     * @param link Multipurpose Field
+     * @param link Multipurpose Field -- Same here as well.
      * @return String of hash
      */
     public static String computeStateHash(String account,

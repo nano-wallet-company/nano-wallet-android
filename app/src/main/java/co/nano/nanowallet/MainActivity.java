@@ -2,9 +2,13 @@ package co.nano.nanowallet;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +19,7 @@ import android.widget.TextView;
 
 import com.hwangjr.rxbus.annotation.Subscribe;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -34,6 +39,10 @@ import co.nano.nanowallet.di.application.ApplicationComponent;
 import co.nano.nanowallet.model.Credentials;
 import co.nano.nanowallet.model.NanoWallet;
 import co.nano.nanowallet.network.AccountService;
+import co.nano.nanowallet.model.RFIDViewMessage;
+import co.nano.nanowallet.ui.RFID.RFIDUiDebugMessage;
+import co.nano.nanowallet.ui.RFID.RFIDUiInvoice;
+import co.nano.nanowallet.ui.RFID.RFIDUiStatus;
 import co.nano.nanowallet.ui.common.ActivityWithComponent;
 import co.nano.nanowallet.ui.common.FragmentUtility;
 import co.nano.nanowallet.ui.common.WindowControl;
@@ -46,12 +55,17 @@ import co.nano.nanowallet.util.SharedPreferencesUtil;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
+import android.support.v4.app.Fragment;
+import co.nano.nanowallet.model.RFIDCardService;
+
 public class MainActivity extends AppCompatActivity implements WindowControl, ActivityWithComponent {
     private FragmentUtility mFragmentUtility;
     private Toolbar mToolbar;
     private TextView mToolbarTitle;
     protected ActivityComponent mActivityComponent;
     private FrameLayout mOverlay;
+    public RFIDStaticHandler handler;
+    Credentials credentials;
 
     @Inject
     Realm realm;
@@ -68,9 +82,128 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
     @Inject
     AnalyticsService analyticsService;
 
+    public Credentials getCredentials()
+    {
+        return credentials;
+    }
+
+    /*
+     * The RFID stuff happens on a different thread. That thread needs this handler to interact with the MainActivity to change the views etc.
+     * Android Studio says this handler needs to be static to prevent a memory leak.
+     */
+    public static class RFIDStaticHandler extends Handler
+    {
+        HashMap<String, Fragment> existingFragments = new HashMap<>();
+        static MainActivity mainActivity;
+        static void setMainActivity(MainActivity _mainActivity)
+        {
+            mainActivity = _mainActivity;
+        }
+        String lastFragmentName = "";
+
+        @Override
+        public void handleMessage(Message msg)
+        {
+            if(msg.obj!=null && msg.obj instanceof RFIDUiDebugMessage)
+            {
+                RFIDUiDebugMessage debugMsg = (RFIDUiDebugMessage)msg.obj;
+                Log.w(debugMsg.getTag(), debugMsg.getMessage());
+                return;
+            }
+
+            RFIDViewMessage viewMsg = (RFIDViewMessage) msg.obj;
+
+            if(viewMsg.getIsCredentialsUpdate())
+            {
+                mainActivity.credentials = mainActivity.realm.where(Credentials.class).findFirst();
+            }
+            else
+            {
+                int fragmentId = viewMsg.getNextViewId();
+                if(fragmentId == RFIDViewMessage.resetUiID) { // had to pick some number to do this...
+                    mainActivity.initUi();
+                    return;
+                }
+
+                if (fragmentId != -1) {
+                    try {
+                        Fragment frgmt;
+                        String currentFragmentName;
+
+                        // Create either invoice or status fragment or find it by id if already exists
+                        if(viewMsg.getIsShowInvoice())
+                        {
+                            frgmt = new RFIDUiInvoice();
+                            currentFragmentName = "Invoice";
+                        }else
+                        {
+                            frgmt = new RFIDUiStatus();
+                            currentFragmentName = "Status";
+                        }
+                        boolean removeCurrentFragmentBeforeReadding = currentFragmentName.equals(lastFragmentName);
+                        lastFragmentName = currentFragmentName;
+
+                        if(existingFragments.containsKey(currentFragmentName))
+                            frgmt = existingFragments.get(currentFragmentName);
+                        else {
+                            existingFragments.put(currentFragmentName,frgmt);
+                        }
+
+                        if (frgmt != null)
+                        {
+                            //Log.w("Hndlr", "innnn");
+                            FragmentTransaction transaction = mainActivity.getSupportFragmentManager().beginTransaction();
+
+                            // Replace whatever is in the fragment_container view with this fragment,
+                            // and add the transaction to the back stack
+
+                            // Replacing a fragment with itself does not update it (does not create a new view.)
+                            // But this should be updated (for example new invoice overwrites another) so if it's an identical fragment, we remove it before adding.
+                            if(removeCurrentFragmentBeforeReadding)
+                                transaction.remove(frgmt);
+
+                            transaction.replace(R.id.container, frgmt);
+                            transaction.addToBackStack(null);
+                            // Commit the transaction
+                            transaction.commit();
+
+                            if (fragmentId == R.id.fragment_rfid_invoice) {
+                                ((RFIDUiInvoice)frgmt).setMainActivity(mainActivity);
+                                ((RFIDUiInvoice)frgmt).setRFIDInvoiceData(viewMsg);
+                            }
+                            else if(fragmentId == R.id.fragment_rfid_status)
+                            {
+                                ((RFIDUiStatus)frgmt).setMainActivity(mainActivity);
+                                ((RFIDUiStatus)frgmt).setRFIDStatusData(viewMsg);
+                            }
+                        }
+                    } catch (Exception ex) {
+                        // Should never happen but ...
+                        Log.w("Fragment ID", "ID not found", ex);
+                        mainActivity.displayRFIDErrorMessage();
+                    }
+                }
+            }
+        }
+    }
+
+    public void displayRFIDErrorMessage()
+    {
+        String[] params = new String[2];
+        params[0] = "Oops!";
+        params[1] = "Something went wrong in the RFID process. Sorry! Please try again.";
+        RFIDViewMessage viewMsg = new RFIDViewMessage(false, R.id.fragment_rfid_status, params, false);
+        Message msg = new Message();
+        msg.obj = viewMsg;
+        handler.handleMessage(msg);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        RFIDCardService.setMainActivity(this);
+        RFIDStaticHandler.setMainActivity(this);
+        handler = new RFIDStaticHandler();
 
         disableScreenCapture();
 
@@ -166,7 +299,7 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         }
 
         // get wallet seed if it exists
-        Credentials credentials = realm.where(Credentials.class).findFirst();
+        credentials = realm.where(Credentials.class).findFirst();
 
         // initialize analytics
         analyticsService.start();
@@ -178,11 +311,14 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
 //            analyticsService.stop();
 //        }
 
-        if (credentials == null) {
+        if (credentials == null)
+        {
             // if we don't have a wallet, start the intro
             mFragmentUtility.clearStack();
             mFragmentUtility.replace(new IntroWelcomeFragment());
-        } else if (credentials.getHasCompletedLegalAgreements()) {
+        }
+        else if (credentials.getHasCompletedLegalAgreements())
+        {
             mFragmentUtility.clearStack();
             if (sharedPreferencesUtil.getConfirmedSeedBackedUp()) {
                 // go to home screen
