@@ -15,20 +15,6 @@
         android:paddingRight="45dp">
 
 
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/rfid_invoice_logo"
-            android:layout_width="104dp"
-            android:layout_height="44dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:contentDescription="@string/app_name"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_logo"
-            tools:ignore="UnusedAttribute" />
-
         <android.support.constraint.Guideline
             android:id="@+id/rfid_invoice_vert"
             android:layout_width="wrap_content"
@@ -56,7 +42,7 @@
             app:layout_constraintEnd_toStartOf="@+id/rfid_invoice_vert_2"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rfid_invoice_textView_New_invoice_headline" />
+            app:layout_constraintTop_toBottomOf="@+id/rfid_invoice_textView_new_invoice_headline" />
 
         <TextView
             android:id="@+id/rfid_invoice_textView_amount_nano_value"
@@ -70,7 +56,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="@+id/rfid_invoice_vert_2"
-            app:layout_constraintTop_toBottomOf="@+id/rfid_invoice_textView_New_invoice_headline" />
+            app:layout_constraintTop_toBottomOf="@+id/rfid_invoice_textView_new_invoice_headline" />
 
         <TextView
             android:id="@+id/rfid_invoice_textView_store_name_value"
@@ -84,7 +70,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="@+id/rfid_invoice_vert_2"
-            app:layout_constraintTop_toBottomOf="@+id/rfid_invoice_textView_New_invoice_headline" />
+            app:layout_constraintTop_toBottomOf="@+id/rfid_invoice_textView_new_invoice_headline" />
 
         <TextView
             android:id="@+id/rfid_invoice_textView_amount_nano"
@@ -97,7 +83,7 @@
             app:layout_constraintEnd_toStartOf="@+id/rfid_invoice_vert_2"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rfid_invoice_textView_New_invoice_headline" />
+            app:layout_constraintTop_toBottomOf="@+id/rfid_invoice_textView_new_invoice_headline" />
 
         <TextView
             android:id="@+id/rfid_invoice_textView_amount_local_currency"
@@ -110,20 +96,20 @@
             app:layout_constraintEnd_toStartOf="@+id/rfid_invoice_vert_2"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rfid_invoice_textView_New_invoice_headline" />
+            app:layout_constraintTop_toBottomOf="@+id/rfid_invoice_textView_new_invoice_headline" />
 
         <TextView
-            android:id="@+id/rfid_invoice_textView_New_invoice_headline"
+            android:id="@+id/rfid_invoice_textView_new_invoice_headline"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="38dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="46dp"
             android:text="New RFID Invoice"
             android:textSize="28sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rfid_invoice_logo" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/rfid_invoice_textView_amount_local_currency_value"
@@ -137,7 +123,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="@+id/rfid_invoice_vert_2"
-            app:layout_constraintTop_toBottomOf="@+id/rfid_invoice_textView_New_invoice_headline" />
+            app:layout_constraintTop_toBottomOf="@+id/rfid_invoice_textView_new_invoice_headline" />
 
         <Button
             android:id="@+id/rfid_invoice_btn_pay"
@@ -160,7 +146,7 @@
             app:layout_constraintEnd_toStartOf="@+id/rfid_invoice_vert_2"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rfid_invoice_textView_New_invoice_headline" />
+            app:layout_constraintTop_toBottomOf="@+id/rfid_invoice_textView_new_invoice_headline" />
 
         <TextView
             android:id="@+id/rfid_invoice_textView_exchange_rate_value"
@@ -174,7 +160,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="@+id/rfid_invoice_vert_2"
-            app:layout_constraintTop_toBottomOf="@+id/rfid_invoice_textView_New_invoice_headline" />
+            app:layout_constraintTop_toBottomOf="@+id/rfid_invoice_textView_new_invoice_headline" />
 
         <Button
             android:id="@+id/rfid_invoice_btn_cancel"

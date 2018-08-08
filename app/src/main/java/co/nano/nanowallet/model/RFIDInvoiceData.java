@@ -54,11 +54,11 @@ public class RFIDInvoiceData
             int startLocalCurr = ((invoiceData[6] & 0xff) << 8) | (invoiceData[7] & 0xff);
             int startExchangeRate = ((invoiceData[8] & 0xff) << 8) | (invoiceData[9] & 0xff);
 
-        /*Log.w("+++startRawBalance", ""+startRawBalance);
-        Log.w("+++startSendAmount", ""+startSendAmount);
-        Log.w("+++startShopName", ""+startShopName);
-        Log.w("+++startLocalCurr", ""+startLocalCurr);
-        Log.w("+++startExchangeRate", ""+startExchangeRate);*/
+            /*Log.w("+++startRawBalance", ""+startRawBalance);
+            Log.w("+++startSendAmount", ""+startSendAmount);
+            Log.w("+++startShopName", ""+startShopName);
+            Log.w("+++startLocalCurr", ""+startLocalCurr);
+            Log.w("+++startExchangeRate", ""+startExchangeRate);*/
 
             byte[] pubKeyBoxByteConverted = new byte[32];
             System.arraycopy(invoiceData, 10, pubKeyBoxByteConverted, 0, 32);
@@ -105,7 +105,6 @@ public class RFIDInvoiceData
 
             spendAmountNANO = new String(sendAmountBytes, "ASCII");
             // Log.w(spendAmountNANO "+spendAmountNANO);
-
 
             byte[] exchangeRateBytes = new byte[exchangeRateLength];
             System.arraycopy(invoiceData, startExchangeRate, exchangeRateBytes, 0, exchangeRateLength);

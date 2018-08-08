@@ -15,25 +15,9 @@ import co.nano.nanowallet.MainActivity;
 import co.nano.nanowallet.R;
 import co.nano.nanowallet.model.RFIDViewMessage;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link RFIDUiStatus.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link RFIDUiStatus#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class RFIDUiStatus extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    Button btn_return;
+    Button btnReturn;
     MainActivity mainActivity;
 
     String headlineText = null;
@@ -57,20 +41,9 @@ public class RFIDUiStatus extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment rfid_result.
-     */
-    // TODO: Rename and change types and number of parameters
     public static RFIDUiStatus newInstance(String param1, String param2) {
         RFIDUiStatus fragment = new RFIDUiStatus();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -83,42 +56,34 @@ public class RFIDUiStatus extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        btn_return.setOnClickListener(null);
-        btn_return = null;
+        btnReturn.setOnClickListener(null);
+        btnReturn = null;
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState)
-    {
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     }
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
         View fragmentView = inflater.inflate(R.layout.fragment_rfid_status, container, false);
         TextView view_headline = (TextView)fragmentView.findViewById(R.id.rfid_status_textView_result_headline);
         TextView view_details = (TextView)fragmentView.findViewById(R.id.rfid_status_textView_result_details);
 
-        btn_return = (Button) fragmentView.findViewById(R.id.rfid_status_btn_return);
-        btn_return.setEnabled(true);
-        btn_return.setOnClickListener(new View.OnClickListener()
-        {
-            public void onClick(View v)
-            {
+        btnReturn = (Button) fragmentView.findViewById(R.id.rfid_status_btn_return);
+        btnReturn.setEnabled(true);
+        btnReturn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
                 Message msg = null;
-                RFIDViewMessage viewMsg = new RFIDViewMessage(false, RFIDViewMessage.resetUiID, null, false);
+                RFIDViewMessage viewMsg = new RFIDViewMessage(false, RFIDViewMessage.RESETUIID, null, false);
                 msg = new Message();
                 msg.obj = viewMsg;
                 mainActivity.handler.handleMessage(msg);
@@ -127,11 +92,9 @@ public class RFIDUiStatus extends Fragment {
 
         view_headline.setText(headlineText);
         view_details.setText(detailsText);
-
         return fragmentView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -155,7 +118,6 @@ public class RFIDUiStatus extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 }

@@ -2,14 +2,13 @@ package co.nano.nanowallet.model;
 
 public class RFIDViewMessage
 {
-    public static final int resetUiID = -122334455;
+    public static final int RESETUIID = -122334455; // had to pick some number to do this...
     private boolean isShowInvoice=false;
     private int nextViewId = -1;
     private Object[] params = null;
     private boolean isCredentialsUpdate=false;
 
-    public RFIDViewMessage(boolean _isShowInvoice, int _nextViewId, Object[] _params, boolean _isCredentialsUpdate)
-    {
+    public RFIDViewMessage(boolean _isShowInvoice, int _nextViewId, Object[] _params, boolean _isCredentialsUpdate) {
         isShowInvoice = _isShowInvoice;
         nextViewId = _nextViewId;
         params = _params;

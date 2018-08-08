@@ -15,20 +15,6 @@
         android:paddingRight="45dp">
 
 
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/rfid_status_logo"
-            android:layout_width="104dp"
-            android:layout_height="44dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:contentDescription="@string/app_name"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_logo"
-            tools:ignore="UnusedAttribute" />
-
         <android.support.constraint.Guideline
             android:id="@+id/rfid_status_vert"
             android:layout_width="wrap_content"
@@ -40,7 +26,7 @@
         <TextView
             android:id="@+id/rfid_status_textView_result_details"
             android:layout_width="212dp"
-            android:layout_height="0dp"
+            android:layout_height="46dp"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
@@ -57,18 +43,18 @@
         <TextView
             android:id="@+id/rfid_status_textView_result_headline"
             android:layout_width="197dp"
-            android:layout_height="32dp"
-            android:layout_marginBottom="8dp"
+            android:layout_height="29dp"
+            android:layout_marginBottom="372dp"
             android:layout_marginTop="8dp"
             android:text="SUCCESS / ERROR"
             android:textAlignment="center"
             android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.502"
+            app:layout_constraintHorizontal_bias="0.54"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rfid_status_logo"
-            app:layout_constraintVertical_bias="0.3" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
 
         <Button
             android:id="@+id/rfid_status_btn_return"

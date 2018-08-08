@@ -46,7 +46,9 @@ public class RFIDCardService extends HostApduService {
     String TAG = "CardService";
     public static RFIDInvoiceData invoice = null;
     static MainActivity mainActivity;
-
+    String privateKey = null;
+    String address = null;
+    String precomputedWork = null; // This is currently possible but not necessary. If this is passed, the rfid pos doesn't have to do pow.
     byte[] invoiceArray = null; // incoming invoice as a byte array, is parsed in RFIDInvoiceData
     int invoiceStartIndex = 3; // index 0, 1 and 2 in the incoming byte array are the header and message length. real invoice data starts at index 3.
     int invoiceArrayCurrentIndex=0; // array position for copying the incoming bytes into the invoiceArray
@@ -73,6 +75,189 @@ public class RFIDCardService extends HostApduService {
 
     }
 
+    /*
+     * Incoming bytes via nfc are either file selection to select this app to communicate with
+     * or a message (invoice, payment status request, etc)
+     */
+    private boolean isMessage(byte[] inByte) {
+        if(inByte[1]== (byte)0xCA)
+            return true;
+        else
+            return false;
+    }
+
+    /*
+     * Drop header bytes of message
+     */
+    private byte[] getMessageBytes(byte[] inByte) {
+        byte[] newArray = new byte[inByte.length-5];
+        for(int i=5; i<inByte.length; i++) {
+            newArray[i-5] = inByte[i];
+        }
+        return newArray;
+    }
+
+    public static final byte[] intToByteArray(int value) {
+        return new byte[] {
+                (byte)(value >> 8),
+                (byte)value};
+    }
+
+    private void setCredentials()
+    {
+        RFIDViewMessage viewMsg = new RFIDViewMessage(false, -1, null, true);
+        Message msg = new Message();
+        msg.obj = viewMsg;
+        mainActivity.handler.handleMessage(msg);
+        Credentials credentials = mainActivity.getCredentials();
+        privateKey = credentials.getPrivateKey();
+        address = credentials.getAddressString();
+        precomputedWork = null;
+    }
+
+    private byte[] incomingInvoiceStart(byte[] messageBytes) {
+        /*
+         * Get the length of the invoice from the first two bytes, then store the message in an array
+         */
+        invoiceLength = ((messageBytes[1] & 0xff) << 8) | (messageBytes[2] & 0xff); // bytes in index 1 and 2 tell how long the incoming invoice is
+        invoiceArray = new byte[invoiceLength];
+
+        /*
+         * Copy invoice
+         */
+        invoiceArrayCurrentIndex = 0;
+        int bytesToCopyFromThisArray = 255 - invoiceStartIndex;
+        if (invoiceLength < bytesToCopyFromThisArray)
+            bytesToCopyFromThisArray = invoiceLength;
+        System.arraycopy(messageBytes, invoiceStartIndex, invoiceArray, 0, bytesToCopyFromThisArray);
+        invoiceArrayCurrentIndex += bytesToCopyFromThisArray;
+
+        if (invoiceArray.length == invoiceLength) {
+            /*
+             * If the invoice bytes have all been read, create the invoice
+             */
+            createInvoice();
+        }
+
+        /*
+         * Return the length of the message bytes to the pos for confirmation
+         */
+        return intToByteArray(messageBytes.length);
+    }
+
+    private byte[] incomingInvoiceFollowup(byte[] messageBytes) {
+
+        //  Log.w(TAG, "...Spotted invoice followup...");
+        System.arraycopy(messageBytes, 1, invoiceArray, invoiceArrayCurrentIndex, messageBytes.length - 1);
+        if (invoiceArray.length == invoiceLength) {
+            /*
+             * Create invoice if all bytes read
+             */
+            createInvoice();
+        }
+            /*
+             * Return message bytes length as confirmation
+             */
+        return intToByteArray(messageBytes.length);
+    }
+
+    private void displayPaymentSent()
+    {
+        RFIDViewMessage viewMsg = null;
+        Message msg = null;
+        String[] params = null;
+
+        params = new String[2];
+        params[0] = "Success";
+        params[1] = "You have authorized the payment.";
+        viewMsg = new RFIDViewMessage(false, R.id.fragment_rfid_status, params, false);
+        msg = new Message();
+        msg.obj = viewMsg;
+        mainActivity.handler.handleMessage(msg);
+    }
+
+    private void processFinalResult(byte[] messageBytes) {
+        //Log.w(TAG, "Final result");
+        RFIDViewMessage viewMsg = null;
+        Message msg = null;
+        String[] params = null;
+        // Log.w(TAG, "Got final result");
+        byte messageLength = messageBytes[1];
+        // Log.w(TAG, "messageLength = " + messageLength);
+        if (messageLength == messageBytes.length - 2) {
+            byte[] finalResultBytes = new byte[messageBytes.length - 2];
+            System.arraycopy(messageBytes, 2, finalResultBytes, 0, finalResultBytes.length);
+            String finalResult = new String(finalResultBytes);
+            String[] resultArr = finalResult.split(":");
+            switch (resultArr[0]) {
+                case "b":
+                    params = new String[2];
+                    params[0] = "New balance";
+                    params[1] = turnRAWAmountIntoNANO(resultArr[1])+" Nano";
+                    viewMsg = new RFIDViewMessage(false, R.id.fragment_rfid_status, params, false);
+                    msg = new Message();
+                    msg.obj = viewMsg;
+                    mainActivity.handler.handleMessage(msg);
+                    break;
+                case "e":
+                    //  Log.w(TAG, "Its an error.. " + resultArr[1]);
+                    params = new String[2];
+                    params[0] = "Error";
+                    params[1] = resultArr[1];
+                    viewMsg = new RFIDViewMessage(false, R.id.fragment_rfid_status, params, false);
+                    msg = new Message();
+                    msg.obj = viewMsg;
+                    //Log.w(TAG, "Its an error, handler==null = " + (mainActivity.handler == null));
+                    mainActivity.handler.handleMessage(msg);
+                    // Log.w(TAG, "after handler");
+                    break;
+            }
+        } else {
+            params = new String[2];
+            params[0] = "No reply";
+            params[1] = "Your payment was likely accepted anyway.";
+            viewMsg = new RFIDViewMessage(false, R.id.fragment_rfid_status, params, false);
+            msg = new Message();
+            msg.obj = viewMsg;
+            mainActivity.handler.handleMessage(msg);
+        }
+    }
+
+    private byte[] processSignedPacketRequest() {
+        if (invoice != null) {
+            if (invoice.getPaymentDecisionStatus() == RFIDInvoiceData.PAYMENT_DECISION_PAY) {
+                byte[] signatureForPos = invoice.getSignatureForRFIDPos();
+                if (signatureForPos != null) {
+                    return signatureForPos;
+                }
+            }
+        }
+        return null;
+    }
+
+    private byte[] processAccountRequest() {
+        byte[] replyBytes = null;
+        invoice = null;
+        byte[] pubKey = NanoUtil.hexStringToByteArray(NanoUtil.addressToPublic(address));
+        byte[] preCompWorkBytes = null;
+        int arrayLength = 1 + pubKey.length;
+
+        // If there is precomputed work, add that to our response
+        if (precomputedWork != null && precomputedWork.length() == 16) {
+            arrayLength += 8;
+            preCompWorkBytes = NanoUtil.hexToBytes(precomputedWork);
+        }
+
+        replyBytes = new byte[arrayLength];
+        replyBytes[0] = RFIDHeaders.ACCOUNT_REQUEST;
+        System.arraycopy(pubKey, 0, replyBytes, 1, pubKey.length);
+
+        if (preCompWorkBytes != null) {
+            System.arraycopy(preCompWorkBytes, 0, replyBytes, 1 + pubKey.length, preCompWorkBytes.length);
+        }
+        return replyBytes;
+    }
+
     /**
      * This method will be called when a command APDU has been received from a remote device. A
      * response APDU can be provided directly by returning a byte-array in this method. In general
@@ -92,227 +277,89 @@ public class RFIDCardService extends HostApduService {
      * @return a byte-array containing the response APDU, or null if no response APDU can be sent
      * at this point.
      */
-
-    /*
-     * Incoming bytes via nfc are either file selection to communicate with this app,
-     * or a message (invoice, payment status request, etc)
-     */
-    private boolean isMessage(byte[] inByte)
-    {
-        if(inByte[1]== (byte)0xCA)
-            return true;
-        else
-            return false;
-    }
-
-    /*
-     * Drop header bytes of message
-     */
-    private byte[] getMessageBytes(byte[] inByte)
-    {
-        byte[] newArray = new byte[inByte.length-5];
-        for(int i=5; i<inByte.length; i++)
-        {
-            newArray[i-5] = inByte[i];
-        }
-        return newArray;
-    }
-
-    public static final byte[] intToByteArray(int value) {
-        return new byte[] {
-                (byte)(value >> 8),
-                (byte)value};
-    }
-
-    String privateKey = null;
-    String address = null;
-    String precomputedWork = null; // This is currently possible but not necessary. If this is passed, the rfid pos doesn't have to do pow.
-
     @Override
-    public byte[] processCommandApdu(byte[] commandApdu, Bundle extras)
-    {
+    public byte[] processCommandApdu(byte[] commandApdu, Bundle extras) {
         byte[] messageBytes = null;
         byte[] returnBytes = new byte[]{(byte) 0x90, (byte) 0x00}; // 90 00 means command successful in the ISO 14443-4 protocol. Is returned if nothing else is returned or the nfc reader acts funny.
 
         try {
-
             if (privateKey == null) {
-                RFIDViewMessage viewMsg = new RFIDViewMessage(false, -1, null, true);
-                Message msg = new Message();
-                msg.obj = viewMsg;
-                mainActivity.handler.handleMessage(msg);
-                Credentials credentials = mainActivity.getCredentials();
-                privateKey = credentials.getPrivateKey();
-                address = credentials.getAddressString();
-                precomputedWork = null;
+                /*
+                 * There's rfid data incoming, but this class doesn't know the private key of the user.
+                 * It sends a message to the MainActivity to get the credentials
+                 */
+                setCredentials();
             }
 
-            if(privateKey==null || address==null)
+            if(privateKey == null || address == null) {
+                /*
+                 * We failed to get the private key. It's best to show an error.
+                 */
                 mainActivity.displayRFIDErrorMessage();
+            }
 
             if (isMessage(commandApdu)) {
-                // Log.w("Beep", "It's a message!");
-
+                /*
+                 * This is a message for this app. If it's null or has no length, send back a standard reply
+                 */
                 messageBytes = getMessageBytes(commandApdu);
                 if ((messageBytes != null && messageBytes.length > 0) == false) {
                     return new byte[]{(byte) 0x90, (byte) 0x00};
                 }
             }
 
-            if (messageBytes == null || messageBytes.length == 0 || Arrays.equals(commandApdu, loginByteArray))
+            if (messageBytes == null || messageBytes.length == 0 || Arrays.equals(commandApdu, loginByteArray)) {
+                /*
+                 * This is a file select command. Send back a standard reply
+                 */
                 return new byte[]{(byte) 0x90, (byte) 0x00};
+            }
 
             if (messageBytes[0] == RFIDHeaders.INCOMING_INVOICE_START) {
-
-                // Log.w(TAG, "...Spotted invoice start...");
-                invoiceLength = ((messageBytes[1] & 0xff) << 8) | (messageBytes[2] & 0xff); // bytes in index 1 and 2 tell how long the incoming invoice is
-                // Log.w(TAG, "...invoiceLength = " + invoiceLength);
-                invoiceArray = new byte[invoiceLength];
-
-                // Copy inv
-                invoiceArrayCurrentIndex = 0;
-                int bytesToCopyFromThisArray = 255 - invoiceStartIndex;
-                if (invoiceLength < bytesToCopyFromThisArray)
-                    bytesToCopyFromThisArray = invoiceLength;
-                System.arraycopy(messageBytes, invoiceStartIndex, invoiceArray, 0, bytesToCopyFromThisArray);
-                invoiceArrayCurrentIndex += bytesToCopyFromThisArray;
-
-                if (invoiceArray.length == invoiceLength) {
-                    // If the invoice bytes have all been read, create the invoice
-                    createInvoice();
-                }
-
-                // Return the message bytes to the pos for confirmation
-                returnBytes = intToByteArray(messageBytes.length);
+                /*
+                 * This is the beginning of an invoice.
+                 */
+                return incomingInvoiceStart(messageBytes);
             }
 
             if (messageBytes.length == 1 && messageBytes[0] == RFIDHeaders.SIGNED_PACKET_RECEIVED_OK) {
-                // The box has successfuly received the signature and tells the app so!
-
-                RFIDViewMessage viewMsg = null;
-                Message msg = null;
-                String[] params = null;
-
-                params = new String[2];
-                params[0] = "Success";
-                params[1] = "You have authorized the payment.";
-                viewMsg = new RFIDViewMessage(false, R.id.fragment_rfid_status, params, false);
-                msg = new Message();
-                msg.obj = viewMsg;
-                mainActivity.handler.handleMessage(msg);
+                /*
+                 * The box has successfuly received the signature and tells the app so! The app then tells the user.
+                 */
+                displayPaymentSent();
             }
 
             if (messageBytes[0] == RFIDHeaders.INCOMING_INVOICE_FOLLOWUP) {
-                // Invoice followup.. for invoices that are longer than 252 bytes
-
-                //  Log.w(TAG, "...Spotted invoice followup...");
-                int remainingBytes = invoiceArray.length - invoiceArrayCurrentIndex;
-                System.arraycopy(messageBytes, 1, invoiceArray, invoiceArrayCurrentIndex, messageBytes.length - 1);
-
-                if (invoiceArray.length == invoiceLength) {
-                    // Create invoice if all bytes read
-                    createInvoice();
-                }
-                // Return message bytes length as confirmation
-                returnBytes = intToByteArray(messageBytes.length);
+                /*
+                 * Invoice followup.. for invoices that are longer than 252 bytes
+                 */
+                return incomingInvoiceFollowup(messageBytes);
             }
 
-            // The following happens at the very end of the transaction after the pos has passed the packet on to the node.
-            // It may not happen at all if the customer moves his phone away from the reader quickly after authorizing, but most of the time this happens.
-            // It displays the outcome of the transaction to the customer. That's either the new balance, or an error message.
+
             if (messageBytes[0] == RFIDHeaders.FINAL_RESULT_HEADER) {
-                Log.w(TAG, "Final result");
-                RFIDViewMessage viewMsg = null;
-                Message msg = null;
-                String[] params = null;
-
-                // Log.w(TAG, "Got final result");
-                byte messageLength = messageBytes[1];
-                // Log.w(TAG, "messageLength = " + messageLength);
-                if (messageLength == messageBytes.length - 2) {
-                    byte[] finalResultBytes = new byte[messageBytes.length - 2];
-                    System.arraycopy(messageBytes, 2, finalResultBytes, 0, finalResultBytes.length);
-                    String finalResult = new String(finalResultBytes);
-                    String[] resultArr = finalResult.split(":");
-                    switch (resultArr[0]) {
-                        case "b":
-                            params = new String[2];
-                            params[0] = "New balance";
-                            params[1] = turnRAWAmountIntoNANO(resultArr[1])+" Nano";
-                            viewMsg = new RFIDViewMessage(false, R.id.fragment_rfid_status, params, false);
-                            msg = new Message();
-                            msg.obj = viewMsg;
-                            mainActivity.handler.handleMessage(msg);
-                            break;
-                        case "e":
-                          //  Log.w(TAG, "Its an error.. " + resultArr[1]);
-                            params = new String[2];
-                            params[0] = "Error";
-                            params[1] = resultArr[1];
-                            viewMsg = new RFIDViewMessage(false, R.id.fragment_rfid_status, params, false);
-                            msg = new Message();
-                            msg.obj = viewMsg;
-                            //Log.w(TAG, "Its an error, handler==null = " + (mainActivity.handler == null));
-                            mainActivity.handler.handleMessage(msg);
-                           // Log.w(TAG, "after handler");
-                            break;
-                    }
-                } else {
-                    params = new String[2];
-                    params[0] = "No reply";
-                    params[1] = "Your payment was likely accepted anyway.";
-                    viewMsg = new RFIDViewMessage(false, R.id.fragment_rfid_status, params, false);
-                    msg = new Message();
-                    msg.obj = viewMsg;
-                    mainActivity.handler.handleMessage(msg);
-                }
+                /*
+                 * The following happens at the very end of the transaction after the pos has passed the packet on to the node.
+                 * It may not happen at all if the customer moves his phone away from the reader quickly after authorizing, but most of the time this happens.
+                 * It displays the outcome of the transaction to the customer. That's either the new balance, or an error message.
+                 */
+                processFinalResult(messageBytes);
             }
 
 
-            if (messageBytes[0] == RFIDHeaders.SIGNED_PACKET_REQUEST) // is a request for the user's decision where to pay or not
-            {
-                //  Log.w(TAG, "signed packet request 1");
-                if (invoice != null) {
-                    // Log.w(TAG, "signed packet request 2");
-                    if (invoice.getPaymentDecisionStatus() == RFIDInvoiceData.PAYMENT_DECISION_PAY) {
-                        //  Log.w(TAG, "signed packet request 3");
-                        byte[] signatureForPos = invoice.getSignatureForRFIDPos();
-                        if (signatureForPos != null) {
-                            //   Log.w(TAG, "signed packet request 4");
-                            returnBytes = signatureForPos;
-                        }
-                    }
-                }
+            if (messageBytes[0] == RFIDHeaders.SIGNED_PACKET_REQUEST) {
+                /*
+                 * This is a request for the user's signature for the packet for payment
+                 */
+                return processSignedPacketRequest();
             }
 
             if (messageBytes[0] == RFIDHeaders.ACCOUNT_REQUEST) // is a request for the user's account so the packet can be crafted on the pos
             {
-
-                //Log.w(TAG, "Account request");
-                // Beginning of protocol, reset invoice
-                invoice = null;
-
-                // The address is turned into a pubkey, then into a byte array to save bytes
-                //Log.w(TAG, "Address = " + address);
-                byte[] pubKey = NanoUtil.hexStringToByteArray(NanoUtil.addressToPublic(address));
-                byte[] preCompWorkBytes = null;
-
-                // return bytes is 1 byte header + pubkey
-                int arrayLength = 1 + pubKey.length;
-
-                // If there is precomputed work, add that to our response
-                if (precomputedWork != null && precomputedWork.length() == 16) {
-                    arrayLength += 8;
-                    preCompWorkBytes = NanoUtil.hexToBytes(precomputedWork);
-                }
-
-                returnBytes = new byte[arrayLength];
-                returnBytes[0] = RFIDHeaders.ACCOUNT_REQUEST;
-                System.arraycopy(pubKey, 0, returnBytes, 1, pubKey.length);
-
-                if (preCompWorkBytes != null) {
-                    System.arraycopy(preCompWorkBytes, 0, returnBytes, 1 + pubKey.length, preCompWorkBytes.length);
-                }
+                /*
+                 * This is the beginning of the protocol, reset the invoice and send the xrb_ account to the pos
+                 */
+                return processAccountRequest();
             }
         }
         catch(Exception ex)
@@ -353,6 +400,9 @@ public class RFIDCardService extends HostApduService {
         return "Error converting";
     }
 
+    /*
+     * Stores the current invoice data in the variable invoice, also passes on a message to the MainActivity to display the invoice
+     */
     void createInvoice()
     {
         invoice = new RFIDInvoiceData(invoiceArray, mainActivity);
@@ -370,7 +420,6 @@ public class RFIDCardService extends HostApduService {
         // Log.w(TAG, "localCurrAmountFormatted = " + localCurrAmountFormatted);
         // Log.w(TAG, "invoice.exchangeRate = " + invoice.getExchangeRate());
         // Log.w(TAG, "invoice.spendAmountNANO = " + invoice.getSpendAmountNANO());
-
         // show rfid invoice fragment
         RFIDViewMessage viewMsg = new RFIDViewMessage(true, R.id.fragment_rfid_invoice, params, false);
         Message msg = new Message();

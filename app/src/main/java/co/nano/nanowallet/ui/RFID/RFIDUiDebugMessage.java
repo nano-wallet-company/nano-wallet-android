@@ -8,8 +8,7 @@ public class RFIDUiDebugMessage
     private String tag;
     private String message;
 
-    public RFIDUiDebugMessage(String _tag, String _message)
-    {
+    public RFIDUiDebugMessage(String _tag, String _message) {
         tag = _tag;
         message = _message;
     }

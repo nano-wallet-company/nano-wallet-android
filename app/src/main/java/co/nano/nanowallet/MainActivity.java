@@ -66,6 +66,9 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
     private FrameLayout mOverlay;
     public RFIDStaticHandler handler;
     Credentials credentials;
+    static HashMap<String, Fragment> existingRFIDFragments = new HashMap<>();
+    static String lastRFIDFragmentName = "";
+    static String currentRFIDFragmentName;
 
     @Inject
     Realm realm;
@@ -87,98 +90,89 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
         return credentials;
     }
 
+    private static Fragment getRFIDFragmentForShow(RFIDViewMessage viewMsg) {
+        Fragment frgmt = null;
+
+        // Create either fragment of 'new invoice' or 'status of current invoice' or get the old fragment if it has been created before
+        if(viewMsg.getIsShowInvoice()) {
+            currentRFIDFragmentName = "Invoice";
+        }else {
+            currentRFIDFragmentName = "Status";
+        }
+        lastRFIDFragmentName = currentRFIDFragmentName;
+
+        if(existingRFIDFragments.containsKey(currentRFIDFragmentName))
+            frgmt = existingRFIDFragments.get(currentRFIDFragmentName);
+        else {
+            if(currentRFIDFragmentName.equals("Invoice"))
+                frgmt = new RFIDUiInvoice();
+            else if (currentRFIDFragmentName.equals("Status"))
+                frgmt = new RFIDUiStatus();
+            existingRFIDFragments.put(currentRFIDFragmentName,frgmt);
+        }
+        return frgmt;
+    }
+
     /*
      * The RFID stuff happens on a different thread. That thread needs this handler to interact with the MainActivity to change the views etc.
      * Android Studio says this handler needs to be static to prevent a memory leak.
      */
-    public static class RFIDStaticHandler extends Handler
-    {
-        HashMap<String, Fragment> existingFragments = new HashMap<>();
+    public static class RFIDStaticHandler extends Handler {
         static MainActivity mainActivity;
-        static void setMainActivity(MainActivity _mainActivity)
-        {
+        static void setMainActivity(MainActivity _mainActivity) {
             mainActivity = _mainActivity;
         }
-        String lastFragmentName = "";
 
         @Override
-        public void handleMessage(Message msg)
-        {
-            if(msg.obj!=null && msg.obj instanceof RFIDUiDebugMessage)
-            {
+        public void handleMessage(Message msg) {
+            // A debug message is printed via Log.w
+            if(msg.obj!=null && msg.obj instanceof RFIDUiDebugMessage) {
                 RFIDUiDebugMessage debugMsg = (RFIDUiDebugMessage)msg.obj;
                 Log.w(debugMsg.getTag(), debugMsg.getMessage());
                 return;
             }
-
+            // If it's not a debug message, it's a message about changing the view
             RFIDViewMessage viewMsg = (RFIDViewMessage) msg.obj;
 
-            if(viewMsg.getIsCredentialsUpdate())
-            {
+            if(viewMsg.getIsCredentialsUpdate()) {
                 mainActivity.credentials = mainActivity.realm.where(Credentials.class).findFirst();
             }
-            else
-            {
-                int fragmentId = viewMsg.getNextViewId();
-                if(fragmentId == RFIDViewMessage.resetUiID) { // had to pick some number to do this...
+            else {
+                int fragmentId = viewMsg.getNextViewId(); // ID of the view that will be shown
+
+                // Return to the main view, for example when pressing cancel or return
+                if(fragmentId == RFIDViewMessage.RESETUIID) {
                     mainActivity.initUi();
                     return;
                 }
 
                 if (fragmentId != -1) {
                     try {
-                        Fragment frgmt;
-                        String currentFragmentName;
-
-                        // Create either invoice or status fragment or find it by id if already exists
-                        if(viewMsg.getIsShowInvoice())
-                        {
-                            frgmt = new RFIDUiInvoice();
-                            currentFragmentName = "Invoice";
-                        }else
-                        {
-                            frgmt = new RFIDUiStatus();
-                            currentFragmentName = "Status";
-                        }
-                        boolean removeCurrentFragmentBeforeReadding = currentFragmentName.equals(lastFragmentName);
-                        lastFragmentName = currentFragmentName;
-
-                        if(existingFragments.containsKey(currentFragmentName))
-                            frgmt = existingFragments.get(currentFragmentName);
-                        else {
-                            existingFragments.put(currentFragmentName,frgmt);
-                        }
-
-                        if (frgmt != null)
-                        {
-                            //Log.w("Hndlr", "innnn");
+                        Fragment frgmt = getRFIDFragmentForShow(viewMsg);
+                        if (frgmt != null) {
                             FragmentTransaction transaction = mainActivity.getSupportFragmentManager().beginTransaction();
 
                             // Replace whatever is in the fragment_container view with this fragment,
                             // and add the transaction to the back stack
-
                             // Replacing a fragment with itself does not update it (does not create a new view.)
-                            // But this should be updated (for example new invoice overwrites another) so if it's an identical fragment, we remove it before adding.
-                            if(removeCurrentFragmentBeforeReadding)
-                                transaction.remove(frgmt);
+                            // But this should be updated now (for example new invoice overwrites another) so if it's an identical fragment, we remove it before adding it again.
 
+                            if(currentRFIDFragmentName.equals(lastRFIDFragmentName))
+                                transaction.remove(frgmt);
                             transaction.replace(R.id.container, frgmt);
                             transaction.addToBackStack(null);
-                            // Commit the transaction
                             transaction.commit();
 
                             if (fragmentId == R.id.fragment_rfid_invoice) {
                                 ((RFIDUiInvoice)frgmt).setMainActivity(mainActivity);
                                 ((RFIDUiInvoice)frgmt).setRFIDInvoiceData(viewMsg);
                             }
-                            else if(fragmentId == R.id.fragment_rfid_status)
-                            {
+                            else if(fragmentId == R.id.fragment_rfid_status) {
                                 ((RFIDUiStatus)frgmt).setMainActivity(mainActivity);
                                 ((RFIDUiStatus)frgmt).setRFIDStatusData(viewMsg);
                             }
                         }
                     } catch (Exception ex) {
-                        // Should never happen but ...
                         Log.w("Fragment ID", "ID not found", ex);
                         mainActivity.displayRFIDErrorMessage();
                     }
@@ -391,8 +385,6 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
     public FragmentUtility getFragmentUtility() {
         return mFragmentUtility;
     }
-
-
 
     /**
      * Set the status bar to a particular color
