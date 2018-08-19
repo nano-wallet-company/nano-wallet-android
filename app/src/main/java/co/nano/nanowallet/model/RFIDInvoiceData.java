@@ -118,8 +118,7 @@ public class RFIDInvoiceData
             BigInteger oldAmount = rawBalanceBefore;
             rawBalanceAfter = oldAmount.subtract(rawSpendAmount);
         }
-        catch(Exception ex)
-        {
+        catch(Exception ex) {
             Log.w("RFIDInvoiceData", "Exception", ex);
             mainActivity.displayRFIDErrorMessage();
         }

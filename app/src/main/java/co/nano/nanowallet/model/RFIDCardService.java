@@ -72,7 +72,6 @@ public class RFIDCardService extends HostApduService {
     @Override
     public void onDeactivated(int reason) {
         Log.w("Deactivated", "Reason "+reason);
-
     }
 
     /*
@@ -376,8 +375,7 @@ public class RFIDCardService extends HostApduService {
     {
         if (amount.length() < 30)
         {
-            while (amount.length() < 30)
-            {
+            while (amount.length() < 30) {
                 amount = "0" + amount;
             }
             amount = "0." + amount;
@@ -385,13 +383,10 @@ public class RFIDCardService extends HostApduService {
         }
         else
         {
-            if(amount.length()==30)
-            {
+            if(amount.length()==30) {
                 amount = "0." + amount;
                 return amount;
-            }
-            else if(amount.length()>30)
-            {
+            } else if(amount.length()>30) {
                 int startIndex = amount.length()-30;
                 amount = amount.substring(0, startIndex) + "." + amount.substring(startIndex);
                 return amount;

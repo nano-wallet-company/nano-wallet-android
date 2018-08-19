@@ -118,29 +118,29 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
      * Android Studio says this handler needs to be static to prevent a memory leak.
      */
     public static class RFIDStaticHandler extends Handler {
+        Fragment previousFrgmt = null;
         static MainActivity mainActivity;
-        static void setMainActivity(MainActivity _mainActivity) {
+        static void setMainActivity(MainActivity _mainActivity)
+        {
             mainActivity = _mainActivity;
         }
 
         @Override
-        public void handleMessage(Message msg) {
-            // A debug message is printed via Log.w
+        public void handleMessage(Message msg)
+        {
             if(msg.obj!=null && msg.obj instanceof RFIDUiDebugMessage) {
                 RFIDUiDebugMessage debugMsg = (RFIDUiDebugMessage)msg.obj;
                 Log.w(debugMsg.getTag(), debugMsg.getMessage());
                 return;
             }
-            // If it's not a debug message, it's a message about changing the view
-            RFIDViewMessage viewMsg = (RFIDViewMessage) msg.obj;
 
+            RFIDViewMessage viewMsg = (RFIDViewMessage) msg.obj;
             if(viewMsg.getIsCredentialsUpdate()) {
                 mainActivity.credentials = mainActivity.realm.where(Credentials.class).findFirst();
             }
-            else {
-                int fragmentId = viewMsg.getNextViewId(); // ID of the view that will be shown
-
-                // Return to the main view, for example when pressing cancel or return
+            else
+            {
+                int fragmentId = viewMsg.getNextViewId();
                 if(fragmentId == RFIDViewMessage.RESETUIID) {
                     mainActivity.initUi();
                     return;
@@ -148,19 +148,24 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
 
                 if (fragmentId != -1) {
                     try {
-                        Fragment frgmt = getRFIDFragmentForShow(viewMsg);
+                        Fragment frgmt = null;
+                        // Create either invoice or status fragment or find it by id if already exists
+                        if(viewMsg.getIsShowInvoice()) {
+                            frgmt = new RFIDUiInvoice();
+                        } else {
+                            frgmt = new RFIDUiStatus();
+                        }
+
                         if (frgmt != null) {
                             FragmentTransaction transaction = mainActivity.getSupportFragmentManager().beginTransaction();
 
                             // Replace whatever is in the fragment_container view with this fragment,
                             // and add the transaction to the back stack
-                            // Replacing a fragment with itself does not update it (does not create a new view.)
-                            // But this should be updated now (for example new invoice overwrites another) so if it's an identical fragment, we remove it before adding it again.
-
-                            if(currentRFIDFragmentName.equals(lastRFIDFragmentName))
-                                transaction.remove(frgmt);
+                            if(previousFrgmt!=null)
+                                transaction.remove(previousFrgmt);
                             transaction.replace(R.id.container, frgmt);
                             transaction.addToBackStack(null);
+                            // Commit the transaction
                             transaction.commit();
 
                             if (fragmentId == R.id.fragment_rfid_invoice) {
@@ -171,8 +176,10 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
                                 ((RFIDUiStatus)frgmt).setMainActivity(mainActivity);
                                 ((RFIDUiStatus)frgmt).setRFIDStatusData(viewMsg);
                             }
+                            previousFrgmt = frgmt;
                         }
                     } catch (Exception ex) {
+                        // Should never happen but ...
                         Log.w("Fragment ID", "ID not found", ex);
                         mainActivity.displayRFIDErrorMessage();
                     }
