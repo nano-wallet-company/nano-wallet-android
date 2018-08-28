@@ -4,6 +4,7 @@ import android.util.Log;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.concurrent.locks.ReentrantLock;
 
 import co.nano.nanowallet.MainActivity;
 import co.nano.nanowallet.NanoUtil;
@@ -14,6 +15,8 @@ public class RFIDInvoiceData
     public static final byte PAYMENT_DECISION_UNDECIDED       = 0x12;
 
     private byte paymentDecisionStatus=PAYMENT_DECISION_UNDECIDED;
+
+    ReentrantLock signatureLock = new ReentrantLock();
 
     // All received from the rfid pos or calculated
     private String storeName=null;
@@ -41,9 +44,24 @@ public class RFIDInvoiceData
     public String getSpendAmountNANO() { return spendAmountNANO; }
     public String getPreviousBlock() { return previousBlock; }
     public String getAppRepAddress() { return appRepAddress; }
-    public byte[] getSignatureForRFIDPos() { return signatureForRFIDPos; }
-    public void setSignatureForRFIDPos(byte[] sign) { signatureForRFIDPos = sign; }
     public void setPaymentDecisionStatus(byte status) { paymentDecisionStatus = status; }
+    public byte[] getSignatureForRFIDPos() {
+        signatureLock.lock();
+        try {
+            return signatureForRFIDPos;
+        } finally {
+            signatureLock.unlock();
+        }
+    }
+    public void setSignatureForRFIDPos(byte[] sign) {
+        signatureLock.lock();
+        try
+        {
+            signatureForRFIDPos = sign;
+        } finally {
+            signatureLock.unlock();
+        }
+    }
 
     public RFIDInvoiceData(byte[] invoiceData, MainActivity mainActivity)
     {
@@ -63,7 +81,7 @@ public class RFIDInvoiceData
             byte[] pubKeyBoxByteConverted = new byte[32];
             System.arraycopy(invoiceData, 10, pubKeyBoxByteConverted, 0, 32);
             posAddress = NanoUtil.publicToAddress(NanoUtil.bytesToHex(pubKeyBoxByteConverted));
-            //Log.w("++boxAddress++", boxAddress);
+            //Log.w("++boxAddress++", posAddress);
 
             byte[] previousBlockByteConverted = new byte[32];
             System.arraycopy(invoiceData, 42, previousBlockByteConverted, 0, 32);

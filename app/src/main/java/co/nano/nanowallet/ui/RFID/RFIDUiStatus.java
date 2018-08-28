@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import co.nano.nanowallet.MainActivity;
 import co.nano.nanowallet.R;
+import co.nano.nanowallet.model.RFIDCardService;
 import co.nano.nanowallet.model.RFIDViewMessage;
 
 public class RFIDUiStatus extends Fragment {
@@ -82,6 +83,7 @@ public class RFIDUiStatus extends Fragment {
         btnReturn.setEnabled(true);
         btnReturn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                RFIDCardService.invoice.setSignatureForRFIDPos(null);
                 Message msg = null;
                 RFIDViewMessage viewMsg = new RFIDViewMessage(false, RFIDViewMessage.RESETUIID, null, false);
                 msg = new Message();
@@ -92,6 +94,12 @@ public class RFIDUiStatus extends Fragment {
 
         view_headline.setText(headlineText);
         view_details.setText(detailsText);
+
+        if(headlineText.equals("Payment prepared"))
+            btnReturn.setText("CANCEL");
+        else
+            btnReturn.setText("RETURN");
+
         return fragmentView;
     }
 

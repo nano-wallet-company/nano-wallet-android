@@ -88,6 +88,7 @@ public class RFIDUiInvoice extends Fragment {
         btnCancel.setEnabled(true);
         btnCancel.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                RFIDCardService.invoice.setSignatureForRFIDPos(null);
                 Message msg = null;
                 RFIDViewMessage viewMsg = new RFIDViewMessage(false, RFIDViewMessage.RESETUIID, null, false);
                 msg = new Message();
