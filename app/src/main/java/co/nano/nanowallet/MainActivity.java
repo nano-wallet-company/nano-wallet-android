@@ -181,22 +181,28 @@ public class MainActivity extends AppCompatActivity implements WindowControl, Ac
                     } catch (Exception ex) {
                         // Should never happen but ...
                         Log.w("Fragment ID", "ID not found", ex);
-                        mainActivity.displayRFIDErrorMessage();
+                        // Afaik this happens when the app is minimised and the handler isn't ready.
+                        // .. imo this could be swallowed as I see no better way to handle this.
+                        // It's better not to display an error message in the app here. If this fails, likely the error message will fail to display too, and then cause recursive exception throwing in this place.
                     }
                 }
             }
         }
     }
 
-    public void displayRFIDErrorMessage()
-    {
-        String[] params = new String[2];
-        params[0] = "Oops!";
-        params[1] = "Something went wrong in the RFID process. Sorry! Please try again.";
-        RFIDViewMessage viewMsg = new RFIDViewMessage(false, R.id.fragment_rfid_status, params, false);
-        Message msg = new Message();
-        msg.obj = viewMsg;
-        handler.handleMessage(msg);
+    public void displayRFIDErrorMessage() {
+        try {
+            String[] params = new String[2];
+            params[0] = "Oops!";
+            params[1] = "Something went wrong in the RFID process. Sorry! Please try again.";
+            RFIDViewMessage viewMsg = new RFIDViewMessage(false, R.id.fragment_rfid_status, params, false);
+            Message msg = new Message();
+            msg.obj = viewMsg;
+            handler.handleMessage(msg);
+        } catch(Exception ex)
+        {
+            // .. imo this could be swallowed as I see no better way to handle this.
+        }
     }
 
     @Override
