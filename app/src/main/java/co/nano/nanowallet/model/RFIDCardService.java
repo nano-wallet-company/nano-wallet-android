@@ -287,7 +287,15 @@ public class RFIDCardService extends HostApduService {
                  * There's rfid data incoming, but this class doesn't know the private key of the user.
                  * It sends a message to the MainActivity to get the credentials
                  */
-                setCredentials();
+                try {
+                    setCredentials();
+                }
+                catch(Exception ex)
+                {
+                    // this likely happens if no credentials were found
+                    returnBytes = new byte[] { (byte)0x90, (byte)0x00 }; // reply with ok
+                    return returnBytes;
+                }
             }
 
             if(privateKey == null || address == null) {
