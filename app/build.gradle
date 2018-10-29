@@ -16,8 +16,8 @@ android {
         applicationId "co.nano.nanowallet"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 32
-        versionName "1.0.7"
+        versionCode 34
+        versionName "1.0.9"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -65,7 +65,7 @@ dependencies {
     final SUPPORT_LIBRARY_VERSION = '27.1.1'
     final TEST_RUNNER_VERSION = '1.0.1'
     final TIMBER_VERSION = '4.7.0'
-    final VAULT_VERSION = '1.4.0'
+    final VAULT_VERSION = '1.4.2'
     final OKHTTP_VERSION = '3.10.0'
     final ZXING_VERSION = '1.9'
 
