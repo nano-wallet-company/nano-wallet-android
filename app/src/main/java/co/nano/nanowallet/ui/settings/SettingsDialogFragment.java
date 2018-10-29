@@ -318,7 +318,9 @@ public class SettingsDialogFragment extends BaseDialogFragment {
                         analyticsService.track(AnalyticsEvents.SEED_COPIED);
                     })
                     .setIcon(R.drawable.ic_warning)
-                    .show();
+                    .create();
+            dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+            dialog.show();
 
             if (dialog.getWindow() != null) {
                 dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
