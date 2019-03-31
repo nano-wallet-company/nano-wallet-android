@@ -262,7 +262,7 @@ public class NanoUtil {
         reverse(check_b);
 
         StringBuilder resultAddress = new StringBuilder();
-        resultAddress.insert(0, "xrb_");
+        resultAddress.insert(0, "nano_");
         resultAddress.append(encodedAddress);
         resultAddress.append(encode(NanoUtil.bytesToHex(check_b)));
 

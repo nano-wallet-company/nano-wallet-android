@@ -30,6 +30,7 @@
         <EditText
             android:id="@+id/send_address"
             style="@style/SeedInput"
+            android:maxLength="65"
             android:layout_height="0dp"
             android:layout_marginBottom="20dp"
             android:layout_marginEnd="37dp"
@@ -66,6 +67,7 @@
         <TextView
             android:id="@+id/send_address_display"
             style="@style/SeedInput"
+            android:maxLength="65"
             android:layout_height="0dp"
             android:layout_marginBottom="16dp"
             android:layout_marginEnd="37dp"
