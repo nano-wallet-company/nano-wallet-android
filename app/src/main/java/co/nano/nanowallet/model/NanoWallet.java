@@ -53,6 +53,7 @@ public class NanoWallet {
 
     // for sending
     private String sendNanoAmount;
+    private String sendRawAmount;
     private String sendLocalCurrencyAmount;
     private String publicKey;
 
@@ -179,6 +180,15 @@ public class NanoWallet {
     }
 
     /**
+     * Get RAW amount set for send
+     *
+     * @return String
+     */
+    public String getSendRawAmount() {
+        return sendRawAmount;
+    }
+
+    /**
      * Return the currency formatted local currency amount as a string
      *
      * @return Formatted Nano amount
@@ -211,13 +221,22 @@ public class NanoWallet {
         return amount.replaceAll("[^\\d.]", "");
     }
 
+    /**
+     * Set RAW amount which will also set nano amount and local currency amount
+     *
+     * @param rawAmount String raw Amount from input
+     */
+    public void setSendRawAmount(String rawAmount) {
+        this.sendRawAmount = rawAmount;
+        this.setSendNanoAmountPreservingRaw(NumberUtil.getRawAsUsableString(rawAmount));
+    }
 
     /**
-     * Set Nano amount which will also set the local currency amount
+     * Get Nano amount entered
      *
-     * @param nanoAmount String Nano Amount from input
+     * @return String
      */
-    public void setSendNanoAmount(String nanoAmount) {
+    private void setSendNanoAmountPreservingRaw(String nanoAmount) {
         this.sendNanoAmount = sanitize(nanoAmount);
         if (nanoAmount.length() > 0) {
             if (this.sendNanoAmount.equals(".")) {
@@ -241,6 +260,16 @@ public class NanoWallet {
             this.sendLocalCurrencyAmount = "";
         }
         validateSendAmount();
+    }
+
+    /**
+     * Set Nano amount which will also set the local currency amount
+     *
+     * @param nanoAmount String Nano Amount from input
+     */
+    public void setSendNanoAmount(String nanoAmount) {
+        this.sendRawAmount = null;
+        setSendNanoAmountPreservingRaw(nanoAmount);
     }
 
     /**

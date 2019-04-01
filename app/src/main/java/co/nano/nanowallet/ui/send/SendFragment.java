@@ -239,7 +239,7 @@ public class SendFragment extends BaseFragment {
                     }
 
                     if (address.getAmount() != null) {
-                        wallet.setSendNanoAmount(address.getAmount());
+                        wallet.setSendRawAmount(address.getAmount());
                         binding.setWallet(wallet);
                     }
 
@@ -359,7 +359,12 @@ public class SendFragment extends BaseFragment {
         if (wallet.getSendNanoAmount().isEmpty()) {
             return false;
         }
-        BigInteger balance = NumberUtil.getAmountAsRawBigInteger(wallet.getSendNanoAmount());
+        BigInteger balance;
+        if (wallet.getSendRawAmount() != null) {
+            balance = new BigInteger(wallet.getSendRawAmount());
+        } else {
+            balance = NumberUtil.getAmountAsRawBigInteger(wallet.getSendNanoAmount());
+        }
         if (balance.compareTo(wallet.getAccountBalanceNanoRaw().toBigInteger()) > 0) {
             showError(R.string.send_error_alert_title, R.string.send_error_alert_message);
             return false;
@@ -507,7 +512,12 @@ public class SendFragment extends BaseFragment {
         Address destination = new Address(binding.sendAddress.getText().toString());
         if (destination.isValidAddress()) {
             RxBus.get().post(new ShowOverlay());
-            BigInteger sendAmount = NumberUtil.getAmountAsRawBigInteger(wallet.getSendNanoAmount());
+            BigInteger sendAmount;
+            if (wallet.getSendRawAmount() != null) {
+                sendAmount = new BigInteger(wallet.getSendRawAmount());
+            } else {
+                sendAmount = NumberUtil.getAmountAsRawBigInteger(wallet.getSendNanoAmount());
+            }
 
             accountService.requestSend(wallet.getFrontierBlock(), destination, sendAmount);
             analyticsService.track(AnalyticsEvents.SEND_BEGAN);
