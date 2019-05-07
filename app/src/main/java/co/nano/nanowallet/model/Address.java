@@ -33,6 +33,8 @@ public class Address implements Serializable {
     }
 
     public Address(String value) {
+        value = value.replace("xrb_", "nano_");
+
         this.value = parseAddress(value);
     }
 
