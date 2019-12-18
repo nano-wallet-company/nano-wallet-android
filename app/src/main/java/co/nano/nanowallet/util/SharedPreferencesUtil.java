@@ -16,6 +16,7 @@ public class SharedPreferencesUtil {
     private static final String APP_INSTALL_UUID = "app_install_uuid";
     private static final String CONFIRMED_SEED_BACKEDUP = "confirmed_seed_backedup";
     private static final String FROM_NEW_WALLET = "from_new_wallet";
+    private static final String BANNER_COLLAPSED = "banner_collapsed";
 
     private final SharedPreferences mPrefs;
 
@@ -117,6 +118,14 @@ public class SharedPreferencesUtil {
 
     public void clearConfirmedSeedBackedUp() {
         set(CONFIRMED_SEED_BACKEDUP, false);
+    }
+
+    public void setBannerCollapsed(Boolean bannerCollapsed) {
+        set(BANNER_COLLAPSED, bannerCollapsed);
+    }
+
+    public Boolean getBannerCollapsed() {
+        return get(BANNER_COLLAPSED, false);
     }
 
     public void clearAll() {
