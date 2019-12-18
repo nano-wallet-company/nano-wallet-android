@@ -46,6 +46,7 @@ import co.nano.nanowallet.ui.send.SendFragment;
 import co.nano.nanowallet.ui.settings.SettingsDialogFragment;
 import co.nano.nanowallet.ui.webview.WebViewDialogFragment;
 import co.nano.nanowallet.util.ExceptionHandler;
+import co.nano.nanowallet.util.SharedPreferencesUtil;
 import io.realm.Realm;
 
 /**
@@ -71,6 +72,9 @@ public class HomeFragment extends BaseFragment {
 
     @Inject
     AnalyticsService analyticsService;
+
+    @Inject
+    SharedPreferencesUtil sharedPreferencesUtil;
 
     @Inject
     Realm realm;
@@ -193,7 +197,34 @@ public class HomeFragment extends BaseFragment {
             showSeedReminderAlert(credentials.getNewlyGeneratedSeed());
         }
 
+        // Setup banner
+        // Banner is expanded by default the first time, collapsed thereafter
+        boolean collapsed = sharedPreferencesUtil.getBannerCollapsed();
+        if (!collapsed) {
+            binding.topBannerDetailText.setVisibility(View.VISIBLE);
+            binding.bannerExpand.setRotation(0);
+            sharedPreferencesUtil.setBannerCollapsed(true);
+        }
+
+        binding.bannerExpand.setOnClickListener(view -> this.bannerExpand());
+        binding.topBannerText.setOnClickListener(view -> this.bannerExpand());
+        binding.topBannerDetailText.setOnClickListener(view -> this.bannerExpand());
+
         return view;
+    }
+
+    public void bannerExpand() {
+        if (binding.topBannerDetailText.getVisibility() != View.GONE) {
+            // Collapse banner
+            binding.topBannerDetailText.setVisibility(View.GONE);
+            binding.topBannerText.setVisibility(View.VISIBLE);
+            binding.bannerExpand.setRotation(180);
+        } else {
+            // Expand banner
+            binding.topBannerDetailText.setVisibility(View.VISIBLE);
+            binding.topBannerText.setVisibility(View.GONE);
+            binding.bannerExpand.setRotation(0);
+        }
     }
 
     @Subscribe
@@ -279,6 +310,15 @@ public class HomeFragment extends BaseFragment {
                     resetStatusBar(dialog);
                 }
             }
+        }
+
+        public void onClickAnnouncement(View view) {
+            // show webview dialog
+            WebViewDialogFragment dialog = WebViewDialogFragment.newInstance(getString(R.string.shutdown_announcement_url), "");
+            dialog.show(((WindowControl) getActivity()).getFragmentUtility().getFragmentManager(),
+                    WebViewDialogFragment.TAG);
+
+            resetStatusBar(dialog);
         }
 
         /**

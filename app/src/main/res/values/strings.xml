@@ -151,4 +151,10 @@
     <string name="seed_reminder_alert_neutral_cta">Okay</string>
     <string name="seed_reminder_alert_confirm_cta">Log Out</string>
 
+    <!-- Banner Text -->
+    <string name="shutdown_header">This app will not be fully functional after February 10, 2020.</string>
+    <string name="shutdown_detail">The Nano Wallet Company (NWC) is discontinuing this mobile wallet in favor of other superior wallets developed by the Nano community. On February 10, 2020 the servers will be turned off and this app will no longer be able to send or receive Nano. <b>Please securely copy and store your seed which will keep your Nano safe and allow you to use other wallets to send and receive.</b>  Instructions and more details can be found in our official announcement.</string>
+    <string name="shutdown_button">View Announcement</string>
+    <string name="shutdown_announcement_url">https://nanowalletcompany.com</string>
+
 </resources>
